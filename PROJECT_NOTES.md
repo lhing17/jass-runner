@@ -1,0 +1,132 @@
+# JASS Runner 项目笔记
+
+## 项目概述
+JASS Runner 是一个用Python实现的JASS脚本模拟运行工具，用于魔兽争霸III地图开发者测试和自动化测试。
+
+### 核心需求
+1. 在游戏外解释执行JASS脚本
+2. 模拟JASS native函数行为，输出日志（如"XXX单位已被杀死"）
+3. 用帧系统模拟计时器执行，支持快速模拟长时间游戏行为
+4. 可扩展的native函数模拟框架
+5. 简单帧循环和调试支持
+6. 从文件读取JASS脚本
+
+## 项目进展
+
+### 已完成的工作
+
+#### 1. 需求分析和设计阶段 (2026-02-24)
+- 使用superpowers:brainstorming技能进行需求分析
+- 确定技术方案：Python实现，轻量级解释器+插件系统
+- 创建详细设计文档：`docs/plans/2026-02-24-jass-simulator-design.md`
+  - 架构设计（5个核心组件）
+  - 目录结构
+  - 详细类设计
+  - 使用示例和扩展性设计
+
+#### 2. 实施计划阶段 (2026-02-24)
+- 创建5个阶段的详细实施计划：
+  1. **Phase 1**: 项目设置和核心基础设施 (`docs/plans/2026-02-24-jass-simulator-phase1-setup.md`)
+  2. **Phase 2**: 解释器和执行引擎 (`docs/plans/2026-02-24-jass-simulator-phase2-interpreter.md`)
+  3. **Phase 3**: Native函数框架 (`docs/plans/2026-02-24-jass-simulator-phase3-natives.md`)
+  4. **Phase 4**: 计时器系统 (`docs/plans/2026-02-24-jass-simulator-phase4-timer.md`)
+  5. **Phase 5**: 虚拟机核心 (`docs/plans/2026-02-24-jass-simulator-phase5-vm.md`)
+
+#### 3. 第一阶段实施 - 任务1完成 (2026-02-24)
+- 使用superpowers:executing-plans技能开始实施
+- 完成Phase 1 Task 1: 创建项目结构
+  - 创建 `pyproject.toml` - 项目配置和依赖管理
+  - 创建 `README.md` - 项目文档
+  - 创建 `src/jass_runner/__init__.py` - 包结构
+  - 创建 `tests/__init__.py` - 测试包
+  - 创建 `examples/hello_world.j` - 示例JASS脚本
+- 提交更改：`git commit -m "feat: initial project setup"`
+
+#### 4. 项目文档完善 (2026-02-24)
+- 创建 `CLAUDE.md` - Claude Code工作指导文档（中文）
+  - 项目概述和架构设计
+  - 开发命令和测试流程
+  - 关键设计模式和扩展指南
+
+### 当前状态
+- ✅ 需求分析和设计完成
+- ✅ 5个阶段实施计划完成
+- ✅ Phase 1 Task 1完成（项目基础结构）
+- ⏳ Phase 1 剩余任务待实施
+
+### 代码库结构
+```
+jass-runner/
+├── pyproject.toml          # 项目配置
+├── README.md              # 项目说明
+├── CLAUDE.md              # Claude工作指导
+├── src/jass_runner/__init__.py  # 包入口
+├── tests/__init__.py      # 测试包
+├── examples/hello_world.j # 示例脚本
+├── docs/plans/           # 实施计划文档
+│   ├── 2026-02-24-jass-simulator-design.md
+│   ├── 2026-02-24-jass-simulator-phase1-setup.md
+│   ├── 2026-02-24-jass-simulator-phase2-interpreter.md
+│   ├── 2026-02-24-jass-simulator-phase3-natives.md
+│   ├── 2026-02-24-jass-simulator-phase4-timer.md
+│   └── 2026-02-24-jass-simulator-phase5-vm.md
+└── .git/                 # 版本控制
+```
+
+## 技术架构
+
+### 五层架构设计
+1. **解析器层** - JASS语法解析，生成AST
+2. **解释器层** - AST执行，变量作用域管理
+3. **Native函数框架** - 插件式native函数模拟
+4. **计时器系统** - 帧基计时器模拟
+5. **虚拟机核心** - 组件集成和CLI
+
+### 关键技术栈
+- Python 3.8+
+- pytest (测试框架)
+- setuptools (包管理)
+- 自定义解析器（无外部依赖）
+
+## 下一步行动
+
+### 短期任务 (Phase 1 剩余)
+1. **Task 2**: 设置测试基础设施
+   - 创建 `tests/conftest.py`
+   - 创建 `tests/test_project_structure.py`
+2. **Task 3**: 创建基本词法分析器
+   - 创建 `src/jass_runner/parser/lexer.py`
+   - 创建 `tests/parser/test_lexer.py`
+3. **Task 4**: 创建基本语法分析器
+   - 创建 `src/jass_runner/parser/parser.py`
+   - 创建 `tests/parser/test_parser.py`
+
+### 中期任务 (后续阶段)
+- Phase 2: 解释器和执行引擎
+- Phase 3: Native函数框架
+- Phase 4: 计时器系统
+- Phase 5: 虚拟机核心
+
+## 开发原则
+
+1. **TDD方法**：测试驱动开发，先写失败测试
+2. **小步提交**：每个任务完成后立即提交
+3. **代码质量**：使用flake8进行代码检查
+4. **文档驱动**：保持文档与代码同步更新
+
+## 关键决策记录
+
+1. **编程语言选择**：Python 3.8+，因其易用性和丰富的库生态系统
+2. **架构选择**：轻量级解释器+插件系统，平衡性能和扩展性
+3. **计时器实现**：帧基模拟而非实时，支持快速测试
+4. **Native函数设计**：插件式架构，便于扩展和测试
+
+## 待解决问题
+
+1. **JASS语法覆盖**：需要确定支持的JASS语法子集
+2. **性能考虑**：大规模脚本执行的性能优化
+3. **错误处理**：详细的错误信息和调试支持
+4. **测试覆盖率**：确保关键功能的测试覆盖
+
+---
+*最后更新: 2026-02-24*
