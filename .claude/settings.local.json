@@ -1,0 +1,12 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(git init:*)",
+      "Bash(git add:*)",
+      "Bash(git commit -m \"$\\(cat <<''EOF''\nAdd JASS simulator design document\n\n## Summary\n- Created comprehensive design document for JASS模拟运行工具\n- Outlined architecture with parser, interpreter, native functions, timer system\n- Defined plugin-based native function framework\n- Designed frame-based timer system for fast simulation\n- Included usage examples and extensibility patterns\n\n## Design Highlights\n- Python-based lightweight interpreter with plugin architecture\n- Extensible native function system for custom implementations\n- Frame-based timer system with debug support\n- File-based script loading for testing scenarios\n\n🤖 Generated with [Claude Code]\\(https://claude.com/claude-code\\)\nEOF\n\\)\")",
+      "Bash(ls:*)",
+      "Bash(python:*)",
+      "Bash(git commit -m \"$\\(cat <<''EOF''\nfeat: initial project setup\n\nCo-Authored-By: Claude \\(DeepSeek-V3.2\\) <noreply@anthropic.com>\nEOF\n\\)\")"
+    ]
+  }
+}
