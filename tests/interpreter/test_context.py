@@ -47,3 +47,22 @@ def test_nested_contexts():
 
     # Parent cannot access child variable
     assert parent.has_variable('local') == False
+
+
+def test_execution_context_with_natives():
+    """Test execution context with native functions."""
+    from jass_runner.interpreter.context import ExecutionContext
+    from jass_runner.natives.factory import NativeFactory
+
+    factory = NativeFactory()
+    registry = factory.create_default_registry()
+
+    context = ExecutionContext(native_registry=registry)
+
+    # Check native registry is attached
+    assert context.native_registry is registry
+
+    # Check we can get native functions
+    display_func = context.get_native_function("DisplayTextToPlayer")
+    assert display_func is not None
+    assert display_func.name == "DisplayTextToPlayer"
