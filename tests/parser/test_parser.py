@@ -6,7 +6,10 @@ from the lexer into an Abstract Syntax Tree (AST).
 """
 
 import pytest
-from src.jass_runner.parser.parser import Parser, AST, FunctionDecl, Parameter
+from src.jass_runner.parser.parser import (
+    Parser, AST, FunctionDecl, Parameter,
+    ParseError, MissingKeywordError, UnexpectedTokenError, ParameterError
+)
 
 
 class TestParserBasic:
@@ -187,3 +190,88 @@ endfunction"""
         param2 = func.parameters[1]
         assert param2.line == 1
         assert param2.column == 32  # "real" token starts at column 32
+
+
+class TestParserErrorReporting:
+    """Tests for enhanced error reporting in the parser."""
+
+    def test_parser_collects_errors_instead_of_silent_failure(self):
+        """Test that parser collects errors when parsing fails."""
+        code = """
+function missing_takes returns nothing
+endfunction
+"""
+        parser = Parser(code)
+        ast = parser.parse()
+
+        # Should still return an AST (may be empty)
+        assert isinstance(ast, AST)
+
+        # Should have collected errors
+        # This test will fail initially since error collection is not implemented
+        assert hasattr(parser, 'errors')
+        assert len(parser.errors) > 0
+
+        # Check error details
+        error = parser.errors[0]
+        assert hasattr(error, 'message')
+        assert hasattr(error, 'line')
+        assert hasattr(error, 'column')
+        assert "takes" in error.message.lower()  # Error about missing 'takes' keyword
+
+    def test_parser_continues_parsing_after_error(self):
+        """Test that parser continues after encountering an error."""
+        code = """
+function invalid takes // missing parameter list
+endfunction
+
+function valid takes nothing returns nothing
+endfunction
+"""
+        parser = Parser(code)
+        ast = parser.parse()
+
+        # Should parse the valid function despite earlier error
+        assert len(ast.functions) == 1
+        assert ast.functions[0].name == "valid"
+
+        # Should have collected error about invalid function
+        assert len(parser.errors) >= 1
+
+    def test_parser_provides_detailed_error_messages(self):
+        """Test that parser provides detailed error messages with position."""
+        code = """function test takes integer x real y returns nothing
+endfunction"""
+        parser = Parser(code)
+        ast = parser.parse()
+
+        # Should have error about missing comma
+        assert len(parser.errors) >= 1
+
+        # Find error about missing comma
+        comma_errors = [e for e in parser.errors if "comma" in e.message.lower()]
+        assert len(comma_errors) > 0, f"No comma error found in errors: {parser.errors}"
+        error = comma_errors[0]
+
+        # Error should have position information
+        assert error.line == 1
+        # Column should point to where comma is expected
+        assert error.column > 0
+
+        # Error message should be descriptive
+        assert "comma" in error.message.lower() or "separator" in error.message.lower()
+
+    def test_parser_handles_multiple_errors(self):
+        """Test that parser can collect multiple errors."""
+        code = """
+function bad1 takes integer x real y returns nothing
+endfunction
+
+function bad2 takes nothing returns // missing return type
+endfunction
+"""
+        parser = Parser(code)
+        ast = parser.parse()
+
+        # Should collect multiple errors
+        assert len(parser.errors) >= 2

@@ -11,7 +11,46 @@ from .lexer import Lexer, Token
 
 
 @dataclass
+class ParseError:
+    """Base class for parser errors."""
+    message: str
+    line: int
+    column: int
+
+    def __str__(self) -> str:
+        return f"{self.message} at line {self.line}, column {self.column}"
+
+
+@dataclass
+class MissingKeywordError(ParseError):
+    """Error when a required keyword is missing."""
+    keyword: str
+
+    def __str__(self) -> str:
+        return (f"Missing keyword '{self.keyword}' {self.message} "
+                f"at line {self.line}, column {self.column}")
+
+
+@dataclass
+class UnexpectedTokenError(ParseError):
+    """Error when an unexpected token is encountered."""
+    expected: str
+    actual: str
+
+    def __str__(self) -> str:
+        return (f"Expected {self.expected}, got '{self.actual}' {self.message} "
+                f"at line {self.line}, column {self.column}")
+
+
+@dataclass
+class ParameterError(ParseError):
+    """Error in parameter list parsing."""
+    pass
+
+
+@dataclass
 class Parameter:
+    """Function parameter node."""
     """Function parameter node."""
     name: str
     type: str
@@ -38,6 +77,11 @@ class AST:
 class Parser:
     """Recursive descent parser for JASS code."""
 
+    # JASS type keywords that can appear in parameter lists
+    TYPE_KEYWORDS = {
+        'integer', 'real', 'string', 'boolean', 'code', 'handle', 'nothing'
+    }
+
     def __init__(self, code: str):
         """Initialize parser with JASS code.
 
@@ -48,6 +92,7 @@ class Parser:
         self.tokens: List[Token] = []
         self.current_token: Optional[Token] = None
         self.token_index = 0
+        self.errors: List[ParseError] = []
 
     def parse(self) -> AST:
         """Parse the JASS code and return an AST.
@@ -99,6 +144,24 @@ class Parser:
             # Parse function name
             if (self.current_token is None
                     or self.current_token.type != 'IDENTIFIER'):
+                # Create error message
+                if self.current_token is None:
+                    error = UnexpectedTokenError(
+                        message="Expected function name identifier, got end of input",
+                        expected="identifier",
+                        actual="end of input",
+                        line=start_line,
+                        column=start_column + len('function ')  # Approximate position
+                    )
+                else:
+                    error = UnexpectedTokenError(
+                        message="Expected function name identifier",
+                        expected="identifier",
+                        actual=self.current_token.value,
+                        line=self.current_token.line,
+                        column=self.current_token.column
+                    )
+                self.add_error(error)
                 self.skip_to_next_function()
                 return None
 
@@ -107,6 +170,16 @@ class Parser:
 
             # Match 'takes' keyword
             if not self.match_keyword('takes'):
+                # Create error for missing 'takes' keyword
+                error_line = self.current_token.line if self.current_token else start_line
+                error_column = self.current_token.column if self.current_token else start_column + len('function ') + len(func_name)
+                error = MissingKeywordError(
+                    message="Missing 'takes' keyword in function declaration",
+                    keyword='takes',
+                    line=error_line,
+                    column=error_column
+                )
+                self.add_error(error)
                 self.skip_to_next_function()
                 return None
 
@@ -115,11 +188,33 @@ class Parser:
 
             # Match 'returns' keyword
             if not self.match_keyword('returns'):
+                # Create error for missing 'returns' keyword
+                error_line = self.current_token.line if self.current_token else start_line
+                # Approximate column: after function name, takes, and parameters
+                error_column = self.current_token.column if self.current_token else start_column + len('function ') + len(func_name) + len(' takes ')  # Approximation
+                error = MissingKeywordError(
+                    message="Missing 'returns' keyword in function declaration",
+                    keyword='returns',
+                    line=error_line,
+                    column=error_column
+                )
+                self.add_error(error)
                 self.skip_to_next_function()
                 return None
 
             # Parse return type
             if self.current_token is None:
+                # Create error for missing return type
+                error_line = start_line
+                error_column = start_column + len('function ') + len(func_name) + len(' takes ')  # Approximation
+                error = UnexpectedTokenError(
+                    message="Expected return type, got end of input",
+                    expected="return type (nothing, integer, real, string, boolean, code, handle)",
+                    actual="end of input",
+                    line=error_line,
+                    column=error_column
+                )
+                self.add_error(error)
                 self.skip_to_next_function()
                 return None
 
@@ -167,6 +262,22 @@ class Parser:
             if param is not None:
                 parameters.append(param)
 
+        # Check for missing comma: if next token looks like a type keyword
+        # (but not 'nothing' since that's handled above)
+        if (self.current_token is not None and
+                self.current_token.value in self.TYPE_KEYWORDS and
+                self.current_token.value != 'nothing'):
+            # Missing comma error
+            error = ParseError(
+                message=f"Missing comma between parameters, got '{self.current_token.value}'",
+                line=self.current_token.line,
+                column=self.current_token.column
+            )
+            self.add_error(error)
+            # Try to recover by parsing this as another parameter
+            # (skip the type token and expect a name, which will likely fail)
+            # For now, just continue and let the parser handle it
+
         return parameters
 
     def parse_parameter(self) -> Optional[Parameter]:
@@ -176,6 +287,12 @@ class Parser:
             Parameter if successful, None if parsing failed
         """
         if self.current_token is None:
+            # This shouldn't happen in normal parsing, but add error for safety
+            self.add_error(ParseError(
+                message="Unexpected end of input while parsing parameter",
+                line=0,  # Unknown line
+                column=0  # Unknown column
+            ))
             return None
 
         # Parameter type
@@ -187,6 +304,24 @@ class Parser:
         # Parameter name
         if (self.current_token is None
                 or self.current_token.type != 'IDENTIFIER'):
+            # Create error for missing parameter name
+            if self.current_token is None:
+                error = UnexpectedTokenError(
+                    message="Expected parameter name, got end of input",
+                    expected="identifier",
+                    actual="end of input",
+                    line=type_line,
+                    column=type_column + len(param_type)  # Approximate position after type
+                )
+            else:
+                error = UnexpectedTokenError(
+                    message="Expected parameter name after type",
+                    expected="identifier",
+                    actual=self.current_token.value,
+                    line=self.current_token.line,
+                    column=self.current_token.column
+                )
+            self.add_error(error)
             return None
 
         param_name = self.current_token.value
@@ -198,6 +333,10 @@ class Parser:
             line=type_line,
             column=type_column
         )
+
+    def add_error(self, error: ParseError) -> None:
+        """Add an error to the error list."""
+        self.errors.append(error)
 
     def match_keyword(self, keyword: str) -> bool:
         """Check if current token matches the given keyword.
