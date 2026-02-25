@@ -248,7 +248,7 @@ JASS Runner 是一个用Python实现的JASS脚本模拟运行工具，用于魔�
 - ✅ Phase 3 Task 1完成（创建NativeFunction基础类）
 - ✅ Phase 3 Task 2完成（创建NativeRegistry系统）
 - ✅ Phase 3 Task 3完成（实现DisplayTextToPlayer native函数）
-- ⏳ Phase 3 Task 4进行中（实现KillUnit native函数）
+- ✅ Phase 3 Task 4完成（实现KillUnit native函数）
 
 ### 代码库结构 (更新)
 ```
@@ -327,13 +327,12 @@ jass-runner/
    - ⏳ 创建Phase 3总结
 
 ### 当前待办任务 (Phase 3 继续)
-1. **Phase 3 Task 4**: 实现KillUnit native函数
-2. **Phase 3 Task 5**: 创建NativeFunction Factory
-3. **Phase 3 Task 6**: 集成Natives与Interpreter
-4. **Phase 3 Task 7**: 添加Native Function Call支持到Interpreter
-5. **Phase 3 Task 8**: 创建集成测试
-6. **Phase 3 Task 9**: 添加更多Basic Native Functions
-7. **Phase 3 Task 10**: 创建Phase 3文档
+1. **Phase 3 Task 5**: 创建NativeFunction Factory
+2. **Phase 3 Task 6**: 集成Natives与Interpreter
+3. **Phase 3 Task 7**: 添加Native Function Call支持到Interpreter
+4. **Phase 3 Task 8**: 创建集成测试
+5. **Phase 3 Task 9**: 添加更多Basic Native Functions
+6. **Phase 3 Task 10**: 创建Phase 3文档
 
 ### 中期任务 (后续阶段)
 - Phase 3: Native函数框架
@@ -362,4 +361,4 @@ jass-runner/
 4. **测试覆盖率**：确保关键功能的测试覆盖
 
 ---
-*最后更新: 2026-02-25 (Phase 3 任务1-3完成，实现了NativeFunction抽象基类、NativeRegistry注册系统、DisplayTextToPlayer native函数，新增3个测试文件，共36个测试全部通过，继续实施Phase 3 Task 4: KillUnit native函数)*
+*最后更新: 2026-02-25 (Phase 3 任务1-4完成，实现了NativeFunction抽象基类、NativeRegistry注册系统、DisplayTextToPlayer和KillUnit native函数，新增3个测试文件，共36个测试全部通过，继续实施Phase 3 Task 5: NativeFunction Factory)*
