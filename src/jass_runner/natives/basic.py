@@ -37,7 +37,7 @@ class DisplayTextToPlayer(NativeFunction):
         返回：
             None
         """
-        logger.info(f"[DisplayTextToPlayer] Player {player}: {message}")
+        logger.info(f"[DisplayTextToPlayer]玩家{player}: {message}")
         return None
 
 
@@ -66,8 +66,8 @@ class KillUnit(NativeFunction):
             bool: 成功杀死单位返回True，否则返回False
         """
         if unit_identifier is None:
-            logger.warning("[KillUnit] Attempted to kill None unit")
+            logger.warning("[KillUnit]尝试击杀None单位")
             return False
 
-        logger.info(f"[KillUnit] Unit {unit_identifier} has been killed")
+        logger.info(f"[KillUnit] 单位{unit_identifier}已被击杀")
         return True
