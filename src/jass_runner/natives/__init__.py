@@ -1,0 +1,1 @@
+"""JASS native functions module."""
