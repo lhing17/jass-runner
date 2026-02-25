@@ -77,6 +77,20 @@ JASS Runner 是一个用Python实现的JASS脚本模拟运行工具，用于魔�
   - 遵循TDD方法：先写失败测试，再实现功能
   - 测试验证：`pytest tests/parser/test_lexer.py -v` 全部通过
 
+#### 9. 词法分析器完善 (2026-02-25)
+- 完善Phase 1 Task 3: 扩展词法分析器功能
+  - 根据用户提供的关键词列表完善JASS关键词识别
+    - 新增10个关键词：`true`, `false`, `null`, `elseif`, `return`, `and`, `or`, `not`, `globals`, `endglobals`
+    - 完整支持35个JASS关键词，覆盖用户提供的完整列表
+  - 添加对 `/* ... */` 格式的多行注释支持
+    - 更新token模式，添加 `MULTILINE_COMMENT` 正则表达式模式
+    - 修改注释跳过逻辑，正确处理多行注释
+  - 扩展测试覆盖，验证新功能：
+    - 新增 `test_lexer_new_keywords()` 测试新关键词识别
+    - 新增 `test_lexer_multiline_comment()` 测试多行注释处理
+    - 新增 `test_lexer_all_keywords()` 验证所有35个关键词
+  - 测试验证：`pytest tests/parser/test_lexer.py -v` 所有5个测试通过
+
 #### 8. 代码库维护和推送 (2026-02-25)
 - 添加 `.gitignore` 文件，管理版本控制忽略规则
   - 忽略Python开发缓存文件（__pycache__, *.pyc等）
@@ -92,7 +106,7 @@ JASS Runner 是一个用Python实现的JASS脚本模拟运行工具，用于魔�
 - ✅ 5个阶段实施计划完成
 - ✅ Phase 1 Task 1完成（项目基础结构）
 - ✅ Phase 1 Task 2完成（测试基础设施）
-- ✅ Phase 1 Task 3完成（基本词法分析器）
+- ✅ Phase 1 Task 3完成（基本词法分析器已完善）
 - ⏳ Phase 1 Task 4待实施（基本语法分析器）
 
 ### 代码库结构
@@ -167,4 +181,4 @@ jass-runner/
 4. **测试覆盖率**：确保关键功能的测试覆盖
 
 ---
-*最后更新: 2026-02-25 (所有修改已提交并推送，准备Phase 1 Task 4)*
+*最后更新: 2026-02-25 (词法分析器已完善，支持完整关键词列表和多行注释，准备Phase 1 Task 4)*

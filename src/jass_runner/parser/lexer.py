@@ -20,12 +20,16 @@ class Lexer:
         'function', 'takes', 'returns', 'nothing', 'integer', 'real',
         'string', 'boolean', 'code', 'handle', 'endfunction', 'call',
         'if', 'then', 'else', 'endif', 'loop', 'endloop', 'exitwhen',
-        'set', 'local', 'constant', 'array', 'native', 'type', 'extends'
+        'set', 'local', 'constant', 'array', 'native', 'type', 'extends',
+        # Additional keywords from user-provided list
+        'true', 'false', 'null', 'elseif', 'return', 'and', 'or', 'not',
+        'globals', 'endglobals'
     }
 
     # Basic token patterns (update order for better matching)
     TOKEN_PATTERNS = [
         ('WHITESPACE', r'\s+'),
+        ('MULTILINE_COMMENT', r'/\*[\s\S]*?\*/'),
         ('COMMENT', r'//.*'),
         ('STRING', r'"[^"]*"'),
         ('NUMBER', r'\d+(\.\d+)?'),
@@ -53,7 +57,7 @@ class Lexer:
                     value = match.group(0)
 
                     # Skip whitespace and comments
-                    if token_type not in ('WHITESPACE', 'COMMENT'):
+                    if token_type not in ('WHITESPACE', 'COMMENT', 'MULTILINE_COMMENT'):
                         # Check if identifier is a keyword
                         actual_type = token_type
                         if token_type == 'IDENTIFIER' and value in self.KEYWORDS:
