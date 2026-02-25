@@ -1,36 +1,36 @@
-"""Expression evaluator for JASS."""
+"""JASS表达式求值器。"""
 
 from typing import Any
 from .context import ExecutionContext
 
 
 class Evaluator:
-    """Evaluates JASS expressions."""
+    """求值JASS表达式。"""
 
     def __init__(self, context: ExecutionContext):
         self.context = context
 
     def evaluate(self, expression: str) -> Any:
-        """Evaluate a JASS expression."""
+        """求值一个JASS表达式。"""
         expression = expression.strip()
 
-        # Handle string literals
+        # 处理字符串字面量
         if expression.startswith('"') and expression.endswith('"'):
             return expression[1:-1]
 
-        # Handle integer literals
+        # 处理整数字面量
         if expression.isdigit():
             return int(expression)
 
-        # Handle float literals
+        # 处理浮点数字面量
         try:
             return float(expression)
         except ValueError:
             pass
 
-        # Handle variable references
+        # 处理变量引用
         if self.context.has_variable(expression):
             return self.context.get_variable(expression)
 
-        # Default: return as string
+        # 默认：作为字符串返回
         return expression

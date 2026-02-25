@@ -1,3 +1,3 @@
-"""JASS Runner - JASS script simulator for Warcraft III."""
+"""JASS Runner - 魔兽争霸III JASS脚本模拟器。"""
 
 __version__ = "0.1.0"

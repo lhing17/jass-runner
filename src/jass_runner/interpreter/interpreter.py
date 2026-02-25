@@ -1,4 +1,4 @@
-"""JASS interpreter."""
+"""JASS解释器。"""
 
 from typing import Any
 from .context import ExecutionContext
@@ -7,7 +7,7 @@ from ..parser.parser import AST, FunctionDecl, LocalDecl
 
 
 class Interpreter:
-    """Interprets and executes JASS AST."""
+    """解释和执行JASS AST。"""
 
     def __init__(self):
         self.global_context = ExecutionContext()
@@ -15,35 +15,35 @@ class Interpreter:
         self.functions = {}
 
     def execute(self, ast: AST):
-        """Execute the AST."""
-        # Register all functions
+        """执行AST。"""
+        # 注册所有函数
         for func in ast.functions:
             self.functions[func.name] = func
 
-        # Find and execute main function
+        # 查找并执行main函数
         if 'main' in self.functions:
             self.execute_function(self.functions['main'])
 
     def execute_function(self, func: FunctionDecl):
-        """Execute a function."""
-        # Create new context for function execution
+        """执行一个函数。"""
+        # 为函数执行创建新上下文
         func_context = ExecutionContext(self.global_context)
         self.current_context = func_context
 
-        # Execute function body
+        # 执行函数体
         if func.body:
             for statement in func.body:
                 self.execute_statement(statement)
 
-        # Restore previous context
+        # 恢复之前的上下文
         self.current_context = self.global_context
 
     def execute_statement(self, statement: Any):
-        """Execute a single statement."""
+        """执行单个语句。"""
         if isinstance(statement, LocalDecl):
             self.execute_local_declaration(statement)
 
     def execute_local_declaration(self, decl: LocalDecl):
-        """Execute a local variable declaration."""
-        # Set the variable in current context
+        """执行局部变量声明。"""
+        # 在当前上下文中设置变量
         self.current_context.set_variable(decl.name, decl.value)

@@ -1,8 +1,8 @@
 """
-JASS parser implementation.
+JASS解析器实现。
 
-This module implements a recursive descent parser for JASS code.
-It converts token streams from the lexer into an Abstract Syntax Tree (AST).
+此模块实现JASS代码的递归下降解析器。
+它将词法分析器的标记流转换为抽象语法树（AST）。
 """
 
 from dataclasses import dataclass
@@ -12,7 +12,7 @@ from .lexer import Lexer, Token
 
 @dataclass
 class ParseError:
-    """Base class for parser errors."""
+    """解析器错误的基类。"""
     message: str
     line: int
     column: int
@@ -23,7 +23,7 @@ class ParseError:
 
 @dataclass
 class MissingKeywordError(ParseError):
-    """Error when a required keyword is missing."""
+    """缺少必需的关键词时的错误。"""
     keyword: str
 
     def __str__(self) -> str:
@@ -33,7 +33,7 @@ class MissingKeywordError(ParseError):
 
 @dataclass
 class UnexpectedTokenError(ParseError):
-    """Error when an unexpected token is encountered."""
+    """遇到意外标记时的错误。"""
     expected: str
     actual: str
 
@@ -44,23 +44,22 @@ class UnexpectedTokenError(ParseError):
 
 @dataclass
 class ParameterError(ParseError):
-    """Error in parameter list parsing."""
+    """参数列表解析中的错误。"""
     pass
 
 
 @dataclass
 class Parameter:
-    """Function parameter node."""
-    """Function parameter node."""
+    """函数参数节点。"""
     name: str
     type: str
-    line: int  # Line number from token
-    column: int  # Column number from token
+    line: int  # 来自标记的行号
+    column: int  # 来自标记的列号
 
 
 @dataclass
 class LocalDecl:
-    """Represents a local variable declaration."""
+    """表示局部变量声明。"""
     name: str
     type: str
     value: Any
@@ -68,34 +67,34 @@ class LocalDecl:
 
 @dataclass
 class FunctionDecl:
-    """Function declaration node."""
+    """函数声明节点。"""
     name: str
     parameters: List[Parameter]
     return_type: str
     line: int
     column: int
-    body: Optional[List[Any]] = None  # Now will contain statements
+    body: Optional[List[Any]] = None  # 现在将包含语句
 
 
 @dataclass
 class AST:
-    """Abstract Syntax Tree root node."""
+    """抽象语法树根节点。"""
     functions: List[FunctionDecl]
 
 
 class Parser:
-    """Recursive descent parser for JASS code."""
+    """JASS代码的递归下降解析器。"""
 
-    # JASS type keywords that can appear in parameter lists
+    # 可能出现在参数列表中的JASS类型关键词
     TYPE_KEYWORDS = {
         'integer', 'real', 'string', 'boolean', 'code', 'handle', 'nothing'
     }
 
     def __init__(self, code: str):
-        """Initialize parser with JASS code.
+        """使用JASS代码初始化解析器。
 
-        Args:
-            code: JASS source code to parse
+        参数：
+            code: 要解析的JASS源代码
         """
         self.lexer = Lexer(code)
         self.tokens: List[Token] = []
@@ -104,12 +103,12 @@ class Parser:
         self.errors: List[ParseError] = []
 
     def parse(self) -> AST:
-        """Parse the JASS code and return an AST.
+        """解析JASS代码并返回AST。
 
-        Returns:
-            AST containing all parsed function declarations
+        返回：
+            包含所有已解析函数声明的AST
         """
-        # Get all tokens from lexer, filtering out whitespace and comments
+        # 从词法分析器获取所有标记，过滤掉空白和注释
         self.tokens = [
             token for token in self.lexer.tokenize()
             if token.type not in ('WHITESPACE', 'COMMENT', 'MULTILINE_COMMENT')
@@ -123,7 +122,7 @@ class Parser:
 
         functions: List[FunctionDecl] = []
 
-        # Main parsing loop: look for function declarations
+        # 主解析循环：查找函数声明
         while self.current_token is not None:
             if (self.current_token.type == 'KEYWORD'
                     and self.current_token.value == 'function'):
@@ -136,31 +135,31 @@ class Parser:
         return AST(functions=functions)
 
     def parse_function_declaration(self) -> Optional[FunctionDecl]:
-        """Parse a function declaration.
+        """解析函数声明。
 
-        Returns:
-            FunctionDecl if successful, None if parsing failed
+        返回：
+            如果成功返回FunctionDecl，如果解析失败返回None
         """
-        # Store position for error reporting
+        # 存储位置用于错误报告
         start_line = self.current_token.line
         start_column = self.current_token.column
 
         try:
-            # Match 'function' keyword
+            # 匹配'function'关键词
             if not self.match_keyword('function'):
                 return None
 
-            # Parse function name
+            # 解析函数名
             if (self.current_token is None
                     or self.current_token.type != 'IDENTIFIER'):
-                # Create error message
+                # 创建错误信息
                 if self.current_token is None:
                     error = UnexpectedTokenError(
                         message="Expected function name identifier, got end of input",
                         expected="identifier",
                         actual="end of input",
                         line=start_line,
-                        column=start_column + len('function ')  # Approximate position
+                        column=start_column + len('function ')  # 近似位置
                     )
                 else:
                     error = UnexpectedTokenError(
@@ -177,9 +176,9 @@ class Parser:
             func_name = self.current_token.value
             self.next_token()
 
-            # Match 'takes' keyword
+            # 匹配'takes'关键词
             if not self.match_keyword('takes'):
-                # Create error for missing 'takes' keyword
+                # 为缺失的'takes'关键词创建错误
                 error_line = self.current_token.line if self.current_token else start_line
                 error_column = self.current_token.column if self.current_token else start_column + len('function ') + len(func_name)
                 error = MissingKeywordError(
@@ -192,15 +191,15 @@ class Parser:
                 self.skip_to_next_function()
                 return None
 
-            # Parse parameter list
+            # 解析参数列表
             parameters = self.parse_parameter_list()
 
-            # Match 'returns' keyword
+            # 匹配'returns'关键词
             if not self.match_keyword('returns'):
-                # Create error for missing 'returns' keyword
+                # 为缺失的'returns'关键词创建错误
                 error_line = self.current_token.line if self.current_token else start_line
-                # Approximate column: after function name, takes, and parameters
-                error_column = self.current_token.column if self.current_token else start_column + len('function ') + len(func_name) + len(' takes ')  # Approximation
+                # 近似列位置：在函数名、takes和参数之后
+                error_column = self.current_token.column if self.current_token else start_column + len('function ') + len(func_name) + len(' takes ')  # 近似值
                 error = MissingKeywordError(
                     message="Missing 'returns' keyword in function declaration",
                     keyword='returns',
@@ -211,11 +210,11 @@ class Parser:
                 self.skip_to_next_function()
                 return None
 
-            # Parse return type
+            # 解析返回类型
             if self.current_token is None:
-                # Create error for missing return type
+                # 为缺失的返回类型创建错误
                 error_line = start_line
-                error_column = start_column + len('function ') + len(func_name) + len(' takes ')  # Approximation
+                error_column = start_column + len('function ') + len(func_name) + len(' takes ')  # 近似值
                 error = UnexpectedTokenError(
                     message="Expected return type, got end of input",
                     expected="return type (nothing, integer, real, string, boolean, code, handle)",
@@ -230,7 +229,7 @@ class Parser:
             return_type = self.current_token.value
             self.next_token()
 
-            # Parse function body
+            # 解析函数体
             body = []
             while self.current_token and not (self.current_token.type == 'KEYWORD' and self.current_token.value == 'endfunction'):
                 statement = self.parse_statement()
@@ -240,7 +239,7 @@ class Parser:
             if self.current_token and self.current_token.value == 'endfunction':
                 self.next_token()
 
-            # Create function declaration
+            # 创建函数声明
             return FunctionDecl(
                 name=func_name,
                 parameters=parameters,
@@ -251,87 +250,87 @@ class Parser:
             )
 
         except Exception:
-            # If any error occurs, skip to next function
+            # 如果发生任何错误，跳到下一个函数
             self.skip_to_next_function()
             return None
 
     def parse_parameter_list(self) -> List[Parameter]:
-        """Parse a parameter list.
+        """解析参数列表。
 
-        Returns:
-            List of Parameter objects
+        返回：
+            Parameter对象列表
         """
         parameters: List[Parameter] = []
 
-        # Check for 'nothing'
+        # 检查是否为'nothing'
         if (self.current_token is not None
                 and self.current_token.value == 'nothing'):
             self.next_token()
             return parameters
 
-        # Parse first parameter
+        # 解析第一个参数
         param = self.parse_parameter()
         if param is not None:
             parameters.append(param)
 
-        # Parse additional parameters separated by commas
+        # 解析用逗号分隔的附加参数
         while (self.current_token is not None and
                self.current_token.value == ','):
-            self.next_token()  # Skip comma
+            self.next_token()  # 跳过逗号
             param = self.parse_parameter()
             if param is not None:
                 parameters.append(param)
 
-        # Check for missing comma: if next token looks like a type keyword
-        # (but not 'nothing' since that's handled above)
+        # 检查缺失的逗号：如果下一个标记看起来像类型关键词
+        # （但不是'nothing'，因为上面已经处理了）
         if (self.current_token is not None and
                 self.current_token.value in self.TYPE_KEYWORDS and
                 self.current_token.value != 'nothing'):
-            # Missing comma error
+            # 缺失逗号错误
             error = ParseError(
                 message=f"Missing comma between parameters, got '{self.current_token.value}'",
                 line=self.current_token.line,
                 column=self.current_token.column
             )
             self.add_error(error)
-            # Try to recover by parsing this as another parameter
-            # (skip the type token and expect a name, which will likely fail)
-            # For now, just continue and let the parser handle it
+            # 尝试通过将其解析为另一个参数来恢复
+            # （跳过类型标记并期望一个名称，这很可能会失败）
+            # 目前，只需继续并让解析器处理它
 
         return parameters
 
     def parse_parameter(self) -> Optional[Parameter]:
-        """Parse a single parameter.
+        """解析单个参数。
 
-        Returns:
-            Parameter if successful, None if parsing failed
+        返回：
+            如果成功返回Parameter，如果解析失败返回None
         """
         if self.current_token is None:
-            # This shouldn't happen in normal parsing, but add error for safety
+            # 在正常解析中这不应该发生，但为了安全添加错误
             self.add_error(ParseError(
                 message="Unexpected end of input while parsing parameter",
-                line=0,  # Unknown line
-                column=0  # Unknown column
+                line=0,  # 未知行
+                column=0  # 未知列
             ))
             return None
 
-        # Parameter type
+        # 参数类型
         param_type = self.current_token.value
         type_line = self.current_token.line
         type_column = self.current_token.column
         self.next_token()
 
-        # Parameter name
+        # 参数名
         if (self.current_token is None
                 or self.current_token.type != 'IDENTIFIER'):
-            # Create error for missing parameter name
+            # 为缺失的参数名创建错误
             if self.current_token is None:
                 error = UnexpectedTokenError(
                     message="Expected parameter name, got end of input",
                     expected="identifier",
                     actual="end of input",
                     line=type_line,
-                    column=type_column + len(param_type)  # Approximate position after type
+                    column=type_column + len(param_type)  # 类型后的近似位置
                 )
             else:
                 error = UnexpectedTokenError(
@@ -355,17 +354,17 @@ class Parser:
         )
 
     def add_error(self, error: ParseError) -> None:
-        """Add an error to the error list."""
+        """添加错误到错误列表。"""
         self.errors.append(error)
 
     def match_keyword(self, keyword: str) -> bool:
-        """Check if current token matches the given keyword.
+        """检查当前标记是否匹配给定的关键词。
 
-        Args:
-            keyword: Keyword to match
+        参数：
+            keyword: 要匹配的关键词
 
-        Returns:
-            True if matches, False otherwise
+        返回：
+            如果匹配返回True，否则返回False
         """
         if (self.current_token is not None and
                 self.current_token.type == 'KEYWORD' and
@@ -375,7 +374,7 @@ class Parser:
         return False
 
     def next_token(self) -> None:
-        """Advance to the next token."""
+        """前进到下一个标记。"""
         self.token_index += 1
         if self.token_index < len(self.tokens):
             self.current_token = self.tokens[self.token_index]
@@ -383,7 +382,7 @@ class Parser:
             self.current_token = None
 
     def skip_to_next_function(self) -> None:
-        """Skip tokens until next function declaration or end of tokens."""
+        """跳过标记直到下一个函数声明或标记结束。"""
         while self.current_token is not None:
             if (self.current_token.type == 'KEYWORD'
                     and self.current_token.value == 'function'):
@@ -391,49 +390,49 @@ class Parser:
             self.next_token()
 
     def parse_statement(self) -> Optional[Any]:
-        """Parse a statement."""
+        """解析语句。"""
         if not self.current_token:
             return None
 
-        # Parse local declaration
+        # 解析局部声明
         if self.current_token.type == 'KEYWORD' and self.current_token.value == 'local':
             return self.parse_local_declaration()
 
-        # Skip other tokens for now
+        # 目前跳过其他标记
         self.next_token()
         return None
 
     def parse_local_declaration(self) -> Optional[LocalDecl]:
-        """Parse a local variable declaration."""
+        """解析局部变量声明。"""
         try:
-            # Skip 'local' keyword
+            # 跳过'local'关键词
             self.next_token()
 
-            # Get variable type (can be keyword like 'integer' or identifier)
+            # 获取变量类型（可以是关键词如'integer'或标识符）
             if not self.current_token:
                 return None
             var_type = self.current_token.value
             self.next_token()
 
-            # Get variable name
+            # 获取变量名
             if not self.current_token or self.current_token.type != 'IDENTIFIER':
                 return None
             var_name = self.current_token.value
             self.next_token()
 
-            # Check for assignment
+            # 检查赋值
             value = None
             if self.current_token and self.current_token.value == '=':
                 self.next_token()
-                # Parse expression (simplified)
+                # 解析表达式（简化）
                 if self.current_token:
                     if self.current_token.type == 'NUMBER':
                         value = int(self.current_token.value)
                     elif self.current_token.type == 'STRING':
-                        value = self.current_token.value[1:-1]  # Remove quotes
+                        value = self.current_token.value[1:-1]  # 移除引号
                     self.next_token()
 
-            # Skip semicolon if present
+            # 如果存在分号则跳过
             if self.current_token and self.current_token.value == ';':
                 self.next_token()
 

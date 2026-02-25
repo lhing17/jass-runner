@@ -1,1 +1,1 @@
-"""JASS interpreter module."""
+"""JASS解释器模块。"""

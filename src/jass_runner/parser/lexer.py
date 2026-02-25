@@ -1,4 +1,4 @@
-"""Simple JASS lexer."""
+"""简单的JASS词法分析器。"""
 
 from dataclasses import dataclass
 from typing import List, Iterator
@@ -6,14 +6,14 @@ import re
 
 @dataclass
 class Token:
-    """Represents a token in JASS code."""
+    """表示JASS代码中的一个标记。"""
     type: str
     value: str
     line: int
     column: int
 
 class Lexer:
-    """Simple lexer for JASS code."""
+    """简单的JASS代码词法分析器。"""
 
     # JASS keywords
     KEYWORDS = {
@@ -21,12 +21,12 @@ class Lexer:
         'string', 'boolean', 'code', 'handle', 'endfunction', 'call',
         'if', 'then', 'else', 'endif', 'loop', 'endloop', 'exitwhen',
         'set', 'local', 'constant', 'array', 'native', 'type', 'extends',
-        # Additional keywords from user-provided list
+        # 用户提供列表中的额外关键词
         'true', 'false', 'null', 'elseif', 'return', 'and', 'or', 'not',
         'globals', 'endglobals'
     }
 
-    # Basic token patterns (update order for better matching)
+    # 基本标记模式（更新顺序以获得更好的匹配）
     TOKEN_PATTERNS = [
         ('WHITESPACE', r'\s+'),
         ('MULTILINE_COMMENT', r'/\*[\s\S]*?\*/'),
@@ -45,7 +45,7 @@ class Lexer:
         self.column = 1
 
     def tokenize(self) -> Iterator[Token]:
-        """Generate tokens from the code."""
+        """从代码生成标记。"""
         while self.pos < len(self.code):
             matched = False
 
@@ -56,9 +56,9 @@ class Lexer:
                 if match:
                     value = match.group(0)
 
-                    # Skip whitespace and comments
+                    # 跳过空白和注释
                     if token_type not in ('WHITESPACE', 'COMMENT', 'MULTILINE_COMMENT'):
-                        # Check if identifier is a keyword
+                        # 检查标识符是否为关键词
                         actual_type = token_type
                         if token_type == 'IDENTIFIER' and value in self.KEYWORDS:
                             actual_type = 'KEYWORD'
@@ -70,19 +70,19 @@ class Lexer:
                             column=self.column
                         )
 
-                    # Update position and line/column counters
+                    # 更新位置和行/列计数器
                     self.pos = match.end()
                     self._update_position(value)
                     matched = True
                     break
 
             if not matched:
-                # No pattern matched, skip one character
+                # 没有匹配的模式，跳过一个字符
                 self._update_position(self.code[self.pos])
                 self.pos += 1
 
     def _update_position(self, text: str):
-        """Update line and column counters based on text."""
+        """基于文本更新行和列计数器。"""
         lines = text.count('\n')
         if lines > 0:
             self.line += lines
