@@ -175,6 +175,56 @@ JASS Runner 是一个用Python实现的JASS脚本模拟运行工具，用于魔�
   - 成功推送到GitHub远程仓库
 - 清理开发环境，准备下一阶段任务
 
+#### 15. 第三阶段实施 - 任务1完成 (2026-02-25)
+- 完成Phase 3 Task 1: 创建Native Function基础类
+  - 使用superpowers:executing-plans技能开始Phase 3实施
+  - 创建natives包结构：`src/jass_runner/natives/`
+  - 创建 `src/jass_runner/natives/__init__.py` - natives模块初始化
+  - 创建 `src/jass_runner/natives/base.py` - NativeFunction抽象基类
+    - 实现抽象类`NativeFunction`，继承自`ABC`
+    - 定义抽象属性`name`和抽象方法`execute`
+    - 支持所有native函数的统一接口
+  - 创建 `tests/natives/test_base.py` - 基础类测试
+    - 测试抽象类无法实例化
+    - 验证抽象方法和属性存在
+    - 遵循TDD方法：先写失败测试，再实现功能
+  - 测试验证：`pytest tests/natives/test_base.py::test_native_function_base_class -v` 通过
+  - 提交更改：`git commit -m "feat: add NativeFunction base class"`
+
+#### 16. 第三阶段实施 - 任务2完成 (2026-02-25)
+- 完成Phase 3 Task 2: 创建Native Registry系统
+  - 创建 `src/jass_runner/natives/registry.py` - NativeRegistry注册系统
+    - 实现`NativeRegistry`类管理native函数
+    - 提供`register()`方法注册native函数
+    - 提供`get()`方法按名称获取native函数
+    - 提供`get_all()`方法获取所有注册函数
+    - 使用字典存储函数，以name为键
+  - 更新 `src/jass_runner/natives/__init__.py` - 导出registry
+    - 添加`NativeRegistry`到`__all__`导出列表
+  - 创建 `tests/natives/test_registry.py` - registry测试
+    - 测试registry创建和基本方法
+    - 遵循TDD方法：先写失败测试，再实现功能
+  - 测试验证：`pytest tests/natives/test_registry.py::test_native_registry_creation -v` 通过
+  - 提交更改：`git commit -m "feat: add native function registry"`
+
+#### 17. 第三阶段实施 - 任务3完成 (2026-02-25)
+- 完成Phase 3 Task 3: 实现第一个Native Function (DisplayTextToPlayer)
+  - 创建 `src/jass_runner/natives/basic.py` - 基础native函数实现
+    - 实现`DisplayTextToPlayer`类，继承自`NativeFunction`
+    - `name`属性返回"DisplayTextToPlayer"
+    - `execute()`方法模拟显示文本到玩家，使用logging输出信息
+    - 参数：`player`（玩家ID）、`x`、`y`（坐标）、`message`（消息文本）
+  - 创建 `tests/natives/test_basic.py` - 基础native函数测试
+    - 测试`DisplayTextToPlayer`创建和执行
+    - 验证`name`属性和返回类型
+  - 更新 `tests/natives/test_registry.py` - 添加registry集成测试
+    - 测试`DisplayTextToPlayer`在registry中的注册和获取
+    - 验证native函数实例可以被正确检索
+  - 测试验证：两个测试全部通过
+    - `pytest tests/natives/test_basic.py::test_display_text_to_player -v` 通过
+    - `pytest tests/natives/test_registry.py::test_register_and_get_native_function -v` 通过
+  - 提交更改：`git commit -m "feat: implement DisplayTextToPlayer native function"`
+
 ### 当前状态
 - ✅ 需求分析和设计完成
 - ✅ 5个阶段实施计划完成
@@ -195,17 +245,46 @@ JASS Runner 是一个用Python实现的JASS脚本模拟运行工具，用于魔�
 - ✅ Phase 2 Task 7完成（创建解析器和解释器的集成测试）
 - ✅ Phase 2 Task 8完成（创建Phase 2总结）
 - ✅ **Phase 2 所有任务完成**
+- ✅ Phase 3 Task 1完成（创建NativeFunction基础类）
+- ✅ Phase 3 Task 2完成（创建NativeRegistry系统）
+- ✅ Phase 3 Task 3完成（实现DisplayTextToPlayer native函数）
+- ⏳ Phase 3 Task 4进行中（实现KillUnit native函数）
 
-### 代码库结构
+### 代码库结构 (更新)
 ```
 jass-runner/
 ├── pyproject.toml          # 项目配置
 ├── README.md              # 项目说明
 ├── CLAUDE.md              # Claude工作指导
-├── src/jass_runner/__init__.py  # 包入口
-├── tests/__init__.py      # 测试包
+├── src/jass_runner/
+│   ├── __init__.py        # 包入口
+│   ├── parser/           # 解析器层
+│   │   ├── __init__.py
+│   │   ├── lexer.py      # 词法分析器
+│   │   └── parser.py     # 语法分析器
+│   ├── interpreter/      # 解释器层
+│   │   ├── __init__.py
+│   │   ├── context.py    # 执行上下文
+│   │   ├── evaluator.py  # 表达式求值器
+│   │   └── interpreter.py # 解释器核心
+│   └── natives/          # Native函数框架 (Phase 3)
+│       ├── __init__.py   # 模块初始化
+│       ├── base.py       # NativeFunction抽象基类
+│       ├── registry.py   # NativeRegistry注册系统
+│       └── basic.py      # 基础native函数实现
+├── tests/
+│   ├── __init__.py       # 测试包
+│   ├── conftest.py       # pytest配置
+│   ├── test_project_structure.py
+│   ├── parser/          # 解析器测试
+│   ├── interpreter/     # 解释器测试
+│   ├── natives/         # native函数测试 (Phase 3)
+│   │   ├── test_base.py    # 基础类测试
+│   │   ├── test_registry.py # 注册系统测试
+│   │   └── test_basic.py   # 基础native函数测试
+│   └── integration/     # 集成测试
 ├── examples/hello_world.j # 示例脚本
-├── docs/plans/           # 实施计划文档
+├── docs/plans/         # 实施计划文档
 │   ├── 2026-02-24-jass-simulator-design.md
 │   ├── 2026-02-24-jass-simulator-phase1-setup.md
 │   ├── 2026-02-24-jass-simulator-phase2-interpreter.md
@@ -214,7 +293,7 @@ jass-runner/
 │   └── 2026-02-24-jass-simulator-phase5-vm.md
 ├── docs/phase1_summary.md # Phase 1总结
 ├── docs/phase2_summary.md # Phase 2总结
-└── .git/                 # 版本控制
+└── .git/               # 版本控制
 ```
 
 ## 技术架构
@@ -234,15 +313,27 @@ jass-runner/
 
 ## 下一步行动
 
-### 短期任务 (Phase 3 开始)
-1. **Phase 3: Native函数框架** (准备开始)
-   - ⏳ 设计Native函数插件系统架构
-   - ⏳ 实现NativeFunction抽象基类
-   - ⏳ 创建NativeRegistry注册系统
-   - ⏳ 实现基本Native函数（打印、数学运算等）
+### 短期任务 (Phase 3 进行中)
+1. **Phase 3: Native函数框架** (进行中，3/10任务完成)
+   - ✅ 设计Native函数插件系统架构
+   - ✅ 实现NativeFunction抽象基类
+   - ✅ 创建NativeRegistry注册系统
+   - ⏳ 实现基本Native函数（DisplayTextToPlayer已完成，KillUnit进行中）
    - ⏳ 集成Native函数到解释器执行环境
-   - ⏳ 创建Native函数测试
+   - ⏳ 创建Native函数测试（基础测试已完成）
+   - ⏳ 创建NativeFactory工厂类
+   - ⏳ 实现更多Native函数（CreateUnit、GetUnitState等）
+   - ⏳ 创建集成测试
    - ⏳ 创建Phase 3总结
+
+### 当前待办任务 (Phase 3 继续)
+1. **Phase 3 Task 4**: 实现KillUnit native函数
+2. **Phase 3 Task 5**: 创建NativeFunction Factory
+3. **Phase 3 Task 6**: 集成Natives与Interpreter
+4. **Phase 3 Task 7**: 添加Native Function Call支持到Interpreter
+5. **Phase 3 Task 8**: 创建集成测试
+6. **Phase 3 Task 9**: 添加更多Basic Native Functions
+7. **Phase 3 Task 10**: 创建Phase 3文档
 
 ### 中期任务 (后续阶段)
 - Phase 3: Native函数框架
@@ -271,4 +362,4 @@ jass-runner/
 4. **测试覆盖率**：确保关键功能的测试覆盖
 
 ---
-*最后更新: 2026-02-25 (Phase 2 所有任务完成，实现了解释器结构、变量作用域管理、表达式求值、语句解析和执行，32个测试全部通过，准备开始Phase 3: Native函数框架)*
+*最后更新: 2026-02-25 (Phase 3 任务1-3完成，实现了NativeFunction抽象基类、NativeRegistry注册系统、DisplayTextToPlayer native函数，新增3个测试文件，共36个测试全部通过，继续实施Phase 3 Task 4: KillUnit native函数)*
