@@ -3,7 +3,7 @@
 from typing import Any
 from .context import ExecutionContext
 from .evaluator import Evaluator
-from ..parser.parser import AST, FunctionDecl
+from ..parser.parser import AST, FunctionDecl, LocalDecl
 
 
 class Interpreter:
@@ -30,13 +30,20 @@ class Interpreter:
         func_context = ExecutionContext(self.global_context)
         self.current_context = func_context
 
-        # TODO: Execute function body
-        # For now, just set up the context
+        # Execute function body
+        if func.body:
+            for statement in func.body:
+                self.execute_statement(statement)
 
         # Restore previous context
         self.current_context = self.global_context
 
     def execute_statement(self, statement: Any):
         """Execute a single statement."""
-        # TODO: Implement statement execution
-        pass
+        if isinstance(statement, LocalDecl):
+            self.execute_local_declaration(statement)
+
+    def execute_local_declaration(self, decl: LocalDecl):
+        """Execute a local variable declaration."""
+        # Set the variable in current context
+        self.current_context.set_variable(decl.name, decl.value)
