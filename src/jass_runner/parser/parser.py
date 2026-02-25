@@ -6,7 +6,7 @@ It converts token streams from the lexer into an Abstract Syntax Tree (AST).
 """
 
 from dataclasses import dataclass
-from typing import List, Optional
+from typing import List, Optional, Any
 from .lexer import Lexer, Token
 
 
@@ -59,6 +59,14 @@ class Parameter:
 
 
 @dataclass
+class LocalDecl:
+    """Represents a local variable declaration."""
+    name: str
+    type: str
+    value: Any
+
+
+@dataclass
 class FunctionDecl:
     """Function declaration node."""
     name: str
@@ -66,6 +74,7 @@ class FunctionDecl:
     return_type: str
     line: int
     column: int
+    body: Optional[List[Any]] = None  # Now will contain statements
 
 
 @dataclass
@@ -221,13 +230,24 @@ class Parser:
             return_type = self.current_token.value
             self.next_token()
 
+            # Parse function body
+            body = []
+            while self.current_token and not (self.current_token.type == 'KEYWORD' and self.current_token.value == 'endfunction'):
+                statement = self.parse_statement()
+                if statement:
+                    body.append(statement)
+
+            if self.current_token and self.current_token.value == 'endfunction':
+                self.next_token()
+
             # Create function declaration
             return FunctionDecl(
                 name=func_name,
                 parameters=parameters,
                 return_type=return_type,
                 line=start_line,
-                column=start_column
+                column=start_column,
+                body=body
             )
 
         except Exception:
@@ -369,3 +389,55 @@ class Parser:
                     and self.current_token.value == 'function'):
                 return
             self.next_token()
+
+    def parse_statement(self) -> Optional[Any]:
+        """Parse a statement."""
+        if not self.current_token:
+            return None
+
+        # Parse local declaration
+        if self.current_token.type == 'KEYWORD' and self.current_token.value == 'local':
+            return self.parse_local_declaration()
+
+        # Skip other tokens for now
+        self.next_token()
+        return None
+
+    def parse_local_declaration(self) -> Optional[LocalDecl]:
+        """Parse a local variable declaration."""
+        try:
+            # Skip 'local' keyword
+            self.next_token()
+
+            # Get variable type (can be keyword like 'integer' or identifier)
+            if not self.current_token:
+                return None
+            var_type = self.current_token.value
+            self.next_token()
+
+            # Get variable name
+            if not self.current_token or self.current_token.type != 'IDENTIFIER':
+                return None
+            var_name = self.current_token.value
+            self.next_token()
+
+            # Check for assignment
+            value = None
+            if self.current_token and self.current_token.value == '=':
+                self.next_token()
+                # Parse expression (simplified)
+                if self.current_token:
+                    if self.current_token.type == 'NUMBER':
+                        value = int(self.current_token.value)
+                    elif self.current_token.type == 'STRING':
+                        value = self.current_token.value[1:-1]  # Remove quotes
+                    self.next_token()
+
+            # Skip semicolon if present
+            if self.current_token and self.current_token.value == ';':
+                self.next_token()
+
+            return LocalDecl(name=var_name, type=var_type, value=value)
+
+        except Exception:
+            return None

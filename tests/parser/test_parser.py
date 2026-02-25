@@ -275,3 +275,38 @@ endfunction
 
         # Should collect multiple errors
         assert len(parser.errors) >= 2
+
+
+def test_parser_can_parse_local_declaration():
+    """Test that parser can parse local variable declarations."""
+    from jass_runner.parser.parser import Parser, LocalDecl
+
+    code = """
+    function test takes nothing returns nothing
+        local integer x = 42
+        local string name = "hello"
+    endfunction
+    """
+
+    parser = Parser(code)
+    ast = parser.parse()
+
+    assert len(ast.functions) == 1
+    func = ast.functions[0]
+    assert func.name == 'test'
+    assert func.body is not None
+    assert len(func.body) == 2
+
+    # Check first local declaration
+    stmt1 = func.body[0]
+    assert isinstance(stmt1, LocalDecl)
+    assert stmt1.name == 'x'
+    assert stmt1.type == 'integer'
+    assert stmt1.value == 42
+
+    # Check second local declaration
+    stmt2 = func.body[1]
+    assert isinstance(stmt2, LocalDecl)
+    assert stmt2.name == 'name'
+    assert stmt2.type == 'string'
+    assert stmt2.value == 'hello'
