@@ -1,18 +1,36 @@
-"""Native function base class."""
+"""Native函数基类。
+
+此模块定义了JASS native函数的抽象基类，所有native函数必须继承此类。
+"""
 
 from abc import ABC, abstractmethod
 
 
 class NativeFunction(ABC):
-    """Abstract base class for JASS native functions."""
+    """JASS native函数的抽象基类。
+
+    所有JASS native函数都必须继承此类，并实现name属性和execute方法。
+    """
 
     @property
     @abstractmethod
     def name(self) -> str:
-        """Get the name of the native function."""
+        """获取native函数的名称。
+
+        返回：
+            native函数的名称字符串
+        """
         pass
 
     @abstractmethod
     def execute(self, *args, **kwargs):
-        """Execute the native function with given arguments."""
+        """执行native函数。
+
+        参数：
+            *args: 位置参数
+            **kwargs: 关键字参数
+
+        返回：
+            native函数的执行结果
+        """
         pass
