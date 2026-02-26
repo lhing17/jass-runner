@@ -225,6 +225,42 @@ JASS Runner 是一个用Python实现的JASS脚本模拟运行工具，用于魔�
     - `pytest tests/natives/test_registry.py::test_register_and_get_native_function -v` 通过
   - 提交更改：`git commit -m "feat: implement DisplayTextToPlayer native function"`
 
+#### 18. 第三阶段实施 - 任务7完成 (2026-02-26)
+- 完成Phase 3 Task 7: 添加Native Function Call支持到Interpreter
+  - 在Evaluator类中添加`evaluate_native_call`方法 (`src/jass_runner/interpreter/evaluator.py:13-77`)
+  - 修改`evaluate`方法以支持AST节点处理，保持对字符串表达式的向后兼容
+  - 在解析器中添加`NativeCallNode`类定义 (`src/jass_runner/parser/parser.py:86-90`)
+  - 支持`call`语句解析：添加`parse_call_statement`方法和更新`parse_statement`方法
+  - 测试验证：`pytest tests/interpreter/test_evaluator.py::test_evaluator_can_evaluate_native_call -v`通过
+
+#### 19. 第三阶段实施 - 任务8完成 (2026-02-26)
+- 完成Phase 3 Task 8: 创建集成测试
+  - 创建`tests/integration/test_native_integration.py` - 原生函数集成测试
+  - 测试完整流程：JASS代码解析 → 原生函数注册 → 解释执行 → 日志输出验证
+  - 修复Interpreter以支持native_registry参数 (`src/jass_runner/interpreter/interpreter.py:12-16`)
+  - 更新测试以使用中文日志断言（匹配native函数实现）
+  - 测试验证：`pytest tests/integration/test_native_integration.py::test_native_function_integration -v`通过
+
+#### 20. 第三阶段实施 - 任务9完成 (2026-02-26)
+- 完成Phase 3 Task 9: 添加更多基础原生函数
+  - 实现`CreateUnit`原生函数：生成唯一单位ID并记录创建日志 (`src/jass_runner/natives/basic.py:115-135`)
+  - 实现`GetUnitState`原生函数：模拟单位状态（生命值、魔法值）查询 (`src/jass_runner/natives/basic.py:137-173`)
+  - 更新`NativeFactory`包含新函数 (`src/jass_runner/natives/factory.py:25-27`)
+  - 添加相应测试 (`tests/natives/test_basic.py:35-60`)
+  - 更新factory测试以验证4个原生函数 (`tests/natives/test_factory.py:12-34`)
+  - 测试验证：所有新增测试通过
+
+#### 21. 第三阶段实施 - 任务10完成 (2026-02-26)
+- 完成Phase 3 Task 10: 完成第3阶段文档
+  - 创建原生函数框架文档`docs/natives/README.md`
+    - 详细说明架构、使用方法、扩展指南
+    - 列出所有已实现的native函数及其参数说明
+    - 提供集成示例和设计原则
+  - 更新主`README.md`反映项目进度和文档链接
+    - 更新项目状态：Phase 1-3完成，Phase 4-5待实现
+    - 更新代码库结构说明，添加native函数层描述
+    - 添加指向native函数文档的链接
+
 ### 当前状态
 - ✅ 需求分析和设计完成
 - ✅ 5个阶段实施计划完成
@@ -251,6 +287,11 @@ JASS Runner 是一个用Python实现的JASS脚本模拟运行工具，用于魔�
 - ✅ Phase 3 Task 4完成（实现KillUnit native函数）
 - ✅ Phase 3 Task 5完成（创建NativeFunction Factory）
 - ✅ Phase 3 Task 6完成（集成Natives与Interpreter）
+- ✅ Phase 3 Task 7完成（添加Native Function Call支持到Interpreter）
+- ✅ Phase 3 Task 8完成（创建集成测试）
+- ✅ Phase 3 Task 9完成（添加更多基础原生函数）
+- ✅ Phase 3 Task 10完成（完成第3阶段文档）
+- ✅ **Phase 3 所有任务完成**
 
 ### 代码库结构 (更新)
 ```
@@ -293,6 +334,7 @@ jass-runner/
 │   ├── 2026-02-24-jass-simulator-phase3-natives.md
 │   ├── 2026-02-24-jass-simulator-phase4-timer.md
 │   └── 2026-02-24-jass-simulator-phase5-vm.md
+├── docs/natives/README.md # Native函数文档
 ├── docs/phase1_summary.md # Phase 1总结
 ├── docs/phase2_summary.md # Phase 2总结
 └── .git/               # 版本控制
