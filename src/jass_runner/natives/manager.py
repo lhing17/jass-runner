@@ -4,7 +4,7 @@
 """
 
 from typing import Dict, List, Optional
-from .handle import Handle, Unit
+from .handle import Handle, Unit, Player
 
 
 class HandleManager:
@@ -17,6 +17,15 @@ class HandleManager:
         self._handles: Dict[str, Handle] = {}  # id -> handle对象
         self._type_index: Dict[str, List[str]] = {}  # 类型索引
         self._next_id = 1
+        # 初始化16个玩家（ID 0-15）
+        self._init_players()
+
+    def _init_players(self):
+        """初始化16个玩家（ID 0-15）。"""
+        for player_id in range(16):
+            handle_id = f"player_{player_id}"
+            player = Player(handle_id, player_id)
+            self._register_handle(player)
 
     def _generate_id(self) -> int:
         """生成下一个ID。"""
@@ -52,6 +61,30 @@ class HandleManager:
         """获取单位对象，进行类型检查。"""
         handle = self.get_handle(unit_id)
         if isinstance(handle, Unit):
+            return handle
+        return None
+
+    def get_player(self, player_id: int) -> Optional[Player]:
+        """通过玩家ID获取玩家对象。
+
+        参数：
+            player_id: 玩家ID（0-15）
+
+        返回：
+            Player对象，如果ID无效则返回None
+        """
+        if not 0 <= player_id <= 15:
+            return None
+        handle_id = f"player_{player_id}"
+        handle = self.get_handle(handle_id)
+        if isinstance(handle, Player):
+            return handle
+        return None
+
+    def get_player_by_handle(self, handle_id: str) -> Optional[Player]:
+        """通过handle ID获取玩家对象。"""
+        handle = self.get_handle(handle_id)
+        if isinstance(handle, Player):
             return handle
         return None
 

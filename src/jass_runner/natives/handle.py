@@ -58,3 +58,25 @@ class Unit(Handle):
         """销毁单位，将生命值设为0。"""
         self.life = 0
         super().destroy()
+
+
+class Player(Handle):
+    """玩家handle。
+
+    属性：
+        player_id: 玩家ID（0-15）
+        name: 玩家名称
+        race: 种族（如'human', 'orc', 'undead', 'nightelf'）
+        color: 玩家颜色ID
+        slot_state: 插槽状态（'empty', 'closed', 'player'）
+        controller: 控制器类型（'user', 'computer', 'neutral', 'rescueable'）
+    """
+
+    def __init__(self, handle_id: str, player_id: int):
+        super().__init__(handle_id, "player")
+        self.player_id = player_id
+        self.name = f"玩家{player_id}"
+        self.race = "human"  # 默认人类
+        self.color = player_id  # 默认颜色等于ID
+        self.slot_state = "player" if player_id < 12 else "empty"  # 0-11为玩家，12-15为空
+        self.controller = "user" if player_id < 8 else "computer" if player_id < 12 else "neutral"

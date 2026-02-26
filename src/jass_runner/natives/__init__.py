@@ -6,7 +6,7 @@
 from .base import NativeFunction
 from .registry import NativeRegistry
 from .factory import NativeFactory
-from .handle import Handle, Unit
+from .handle import Handle, Unit, Player
 from .manager import HandleManager
 from .state import StateContext
 
@@ -16,6 +16,7 @@ __all__ = [
     "NativeFactory",
     "Handle",
     "Unit",
+    "Player",
     "HandleManager",
     "StateContext",
 ]

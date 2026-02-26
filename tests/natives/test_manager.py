@@ -6,8 +6,9 @@ def test_handle_manager_creation():
     from jass_runner.natives.manager import HandleManager
 
     manager = HandleManager()
-    assert manager._handles == {}
-    assert manager._type_index == {}
+    # 初始化时创建16个玩家
+    assert len(manager._handles) == 16
+    assert "player" in manager._type_index
     assert manager._next_id == 1
 
 
@@ -185,27 +186,79 @@ def test_handle_manager_statistics():
 
     manager = HandleManager()
 
-    # 初始状态
-    assert manager.get_total_handles() == 0
-    assert manager.get_alive_handles() == 0
+    # 初始状态（包含16个玩家）
+    assert manager.get_total_handles() == 16
+    assert manager.get_alive_handles() == 16
     assert manager.get_handle_type_count("unit") == 0
+    assert manager.get_handle_type_count("player") == 16
 
     # 创建单位
     unit_id1 = manager.create_unit("hfoo", 0, 0.0, 0.0, 0.0)
     unit_id2 = manager.create_unit("hkni", 1, 100.0, 100.0, 90.0)
 
     # 验证统计
-    assert manager.get_total_handles() == 2
-    assert manager.get_alive_handles() == 2
+    assert manager.get_total_handles() == 18
+    assert manager.get_alive_handles() == 18
     assert manager.get_handle_type_count("unit") == 2
+    assert manager.get_handle_type_count("player") == 16
 
     # 销毁一个单位
     manager.destroy_handle(unit_id1)
 
     # 验证统计更新
-    assert manager.get_total_handles() == 2  # 总数不变
-    assert manager.get_alive_handles() == 1  # 存活数减少
+    assert manager.get_total_handles() == 18  # 总数不变
+    assert manager.get_alive_handles() == 17  # 存活数减少
     assert manager.get_handle_type_count("unit") == 2  # 类型计数不变
 
     # 测试不存在的类型
     assert manager.get_handle_type_count("nonexistent") == 0
+
+
+def test_handle_manager_initializes_players():
+    """测试HandleManager初始化时创建16个玩家。"""
+    from jass_runner.natives.manager import HandleManager
+    from jass_runner.natives.handle import Player
+
+    manager = HandleManager()
+
+    # 验证16个玩家已创建
+    assert manager.get_handle_type_count("player") == 16
+    assert manager.get_alive_handles() == 16
+
+    # 验证可以通过ID获取玩家
+    for i in range(16):
+        player = manager.get_player(i)
+        assert player is not None
+        assert isinstance(player, Player)
+        assert player.player_id == i
+        assert player.id == f"player_{i}"
+
+
+def test_handle_manager_get_player_invalid_id():
+    """测试获取无效玩家ID。"""
+    from jass_runner.natives.manager import HandleManager
+
+    manager = HandleManager()
+
+    # 测试无效ID
+    assert manager.get_player(-1) is None
+    assert manager.get_player(16) is None
+    assert manager.get_player(100) is None
+
+
+def test_handle_manager_get_player_by_handle():
+    """测试通过handle ID获取玩家。"""
+    from jass_runner.natives.manager import HandleManager
+    from jass_runner.natives.handle import Player
+
+    manager = HandleManager()
+
+    # 测试获取存在的玩家
+    player = manager.get_player_by_handle("player_0")
+    assert player is not None
+    assert isinstance(player, Player)
+    assert player.player_id == 0
+
+    # 测试获取不存在的玩家
+    assert manager.get_player_by_handle("player_999") is None
+    assert manager.get_player_by_handle("unit_1") is None

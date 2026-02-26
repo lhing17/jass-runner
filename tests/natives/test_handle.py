@@ -66,3 +66,42 @@ def test_unit_destroy():
     assert unit.alive is False
     assert unit.is_alive() is False
     assert unit.life == 0  # 生命值应设为0
+
+
+def test_player_class():
+    """测试Player类的创建和属性。"""
+    from jass_runner.natives.handle import Handle, Player
+
+    # 创建Player实例
+    player = Player("player_0", 0)
+
+    # 验证继承自Handle
+    assert isinstance(player, Handle)
+    assert player.id == "player_0"
+    assert player.type_name == "player"
+    assert player.alive is True
+
+    # 验证Player特有属性
+    assert player.player_id == 0
+    assert player.name == "玩家0"
+    assert player.race == "human"
+    assert player.color == 0
+    assert player.slot_state == "player"
+    assert player.controller == "user"
+
+
+def test_player_default_values():
+    """测试Player默认值的差异化。"""
+    from jass_runner.natives.handle import Player
+
+    # 测试玩家8-11（电脑）
+    for i in range(8, 12):
+        player = Player(f"player_{i}", i)
+        assert player.controller == "computer"
+        assert player.slot_state == "player"
+
+    # 测试玩家12-15（中立/空）
+    for i in range(12, 16):
+        player = Player(f"player_{i}", i)
+        assert player.controller == "neutral"
+        assert player.slot_state == "empty"

@@ -38,9 +38,9 @@ def test_handle_lifecycle_integration():
     assert manager.get_unit(unit_id) is None
     assert manager.get_unit_state(unit_id, "UNIT_STATE_LIFE") == 0.0
 
-    # 验证统计
-    assert manager.get_total_handles() == 1
-    assert manager.get_alive_handles() == 0
+    # 验证统计（包含16个初始玩家）
+    assert manager.get_total_handles() == 17  # 16玩家 + 1单位
+    assert manager.get_alive_handles() == 16  # 16玩家存活，单位已销毁
     assert manager.get_handle_type_count("unit") == 1
 
 
@@ -66,16 +66,17 @@ def test_multiple_units_integration():
         assert unit.y == i * 100.0
         assert unit.facing == i * 90.0
 
-    # 验证统计
-    assert manager.get_total_handles() == 3
-    assert manager.get_alive_handles() == 3
+    # 验证统计（包含16个初始玩家）
+    assert manager.get_total_handles() == 19  # 16玩家 + 3单位
+    assert manager.get_alive_handles() == 19
     assert manager.get_handle_type_count("unit") == 3
+    assert manager.get_handle_type_count("player") == 16
 
     # 销毁部分单位
     assert manager.destroy_handle(unit_ids[0]) is True
     assert manager.destroy_handle(unit_ids[1]) is True
 
     # 验证统计更新
-    assert manager.get_total_handles() == 3
-    assert manager.get_alive_handles() == 1
-    assert manager.get_handle_type_count("unit") == 3
+    assert manager.get_total_handles() == 19  # 总数不变
+    assert manager.get_alive_handles() == 17  # 16玩家 + 1存活单位
+    assert manager.get_handle_type_count("unit") == 3  # 类型计数不变
