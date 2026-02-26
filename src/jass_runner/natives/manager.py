@@ -54,3 +54,11 @@ class HandleManager:
         if isinstance(handle, Unit):
             return handle
         return None
+
+    def destroy_handle(self, handle_id: str) -> bool:
+        """销毁指定的handle。"""
+        handle = self._handles.get(handle_id)
+        if handle and handle.is_alive():
+            handle.destroy()
+            return True
+        return False
