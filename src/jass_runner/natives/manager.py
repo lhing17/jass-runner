@@ -62,3 +62,20 @@ class HandleManager:
             handle.destroy()
             return True
         return False
+
+    def get_unit_state(self, unit_id: str, state_type: str) -> float:
+        """获取单位状态值。"""
+        unit = self.get_unit(unit_id)
+        if not unit:
+            return 0.0
+
+        if state_type == "UNIT_STATE_LIFE":
+            return unit.life
+        elif state_type == "UNIT_STATE_MAX_LIFE":
+            return unit.max_life
+        elif state_type == "UNIT_STATE_MANA":
+            return unit.mana
+        elif state_type == "UNIT_STATE_MAX_MANA":
+            return unit.max_mana
+        else:
+            return 0.0

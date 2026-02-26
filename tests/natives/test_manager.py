@@ -95,3 +95,42 @@ def test_handle_manager_type_index():
     assert unit_id1 in manager._type_index["unit"]
     assert unit_id2 in manager._type_index["unit"]
     assert len(manager._type_index["unit"]) == 2
+
+
+def test_handle_manager_get_unit_state():
+    """测试HandleManager获取单位状态功能。"""
+    from jass_runner.natives.manager import HandleManager
+
+    manager = HandleManager()
+
+    # 创建单位
+    unit_id = manager.create_unit("hfoo", 0, 0.0, 0.0, 0.0)
+
+    # 测试获取生命值
+    life = manager.get_unit_state(unit_id, "UNIT_STATE_LIFE")
+    assert life == 100.0
+
+    # 测试获取魔法值
+    mana = manager.get_unit_state(unit_id, "UNIT_STATE_MANA")
+    assert mana == 50.0
+
+    # 测试获取最大生命值
+    max_life = manager.get_unit_state(unit_id, "UNIT_STATE_MAX_LIFE")
+    assert max_life == 100.0
+
+    # 测试获取最大魔法值
+    max_mana = manager.get_unit_state(unit_id, "UNIT_STATE_MAX_MANA")
+    assert max_mana == 50.0
+
+    # 测试未知状态类型
+    unknown = manager.get_unit_state(unit_id, "UNKNOWN_STATE")
+    assert unknown == 0.0
+
+    # 测试不存在的单位
+    nonexistent = manager.get_unit_state("nonexistent", "UNIT_STATE_LIFE")
+    assert nonexistent == 0.0
+
+    # 测试已销毁的单位
+    manager.destroy_handle(unit_id)
+    destroyed = manager.get_unit_state(unit_id, "UNIT_STATE_LIFE")
+    assert destroyed == 0.0
