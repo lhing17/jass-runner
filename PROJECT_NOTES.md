@@ -261,6 +261,35 @@ JASS Runner 是一个用Python实现的JASS脚本模拟运行工具，用于魔�
     - 更新代码库结构说明，添加native函数层描述
     - 添加指向native函数文档的链接
 
+#### 22. 状态管理系统设计完成 (2026-02-26)
+- 完成状态管理系统架构设计文档
+  - 创建 `docs/plans/2026-02-26-jass-simulator-state-management-design.md`
+    - 详细分析当前代码耦合问题（ExecutionContext职责过重）
+    - 设计五层架构：Store、Reducer、Middleware、Selector、Integration
+    - 参考Redux模式，采用不可变状态更新
+    - 设计State、Action、Reducer、Store核心类
+  - 创建Phase 1实施计划：`docs/plans/2026-02-26-jass-simulator-state-management-phase1-implementation.md`
+    - Store和State核心实现
+    - Reducer基础框架
+    - Action定义系统
+    - 完整API设计和使用示例
+  - 创建Phase 2实施计划：`docs/plans/2026-02-26-jass-simulator-state-management-phase2-implementation.md`
+    - Middleware系统设计
+    - LoggerMiddleware实现
+    - 异步Action支持
+  - 创建Phase 3实施计划：`docs/plans/2026-02-26-jass-simulator-state-management-phase3-implementation.md`
+    - Selector系统实现
+    - MemoizedSelector缓存机制
+    - 派生状态计算
+  - 创建Phase 4实施计划：`docs/plans/2026-02-26-jass-simulator-state-management-phase4-implementation.md`
+    - ExecutionContext重构
+    - Interpreter集成Store
+    - Native函数访问状态
+  - 创建Phase 5实施计划：`docs/plans/2026-02-26-jass-simulator-state-management-phase5-implementation.md`
+    - DevTools开发工具
+    - 时间旅行调试
+    - 状态导出/导入
+
 ### 当前状态
 - ✅ 需求分析和设计完成
 - ✅ 5个阶段实施计划完成
@@ -292,6 +321,10 @@ JASS Runner 是一个用Python实现的JASS脚本模拟运行工具，用于魔�
 - ✅ Phase 3 Task 9完成（添加更多基础原生函数）
 - ✅ Phase 3 Task 10完成（完成第3阶段文档）
 - ✅ **Phase 3 所有任务完成**
+- ✅ 状态管理系统架构设计完成
+  - 五阶段实施计划已创建（Phase 1-5）
+  - 核心架构：Store、Reducer、Middleware、Selector、DevTools
+  - 解决ExecutionContext职责过重问题
 
 ### 代码库结构 (更新)
 ```
@@ -333,7 +366,13 @@ jass-runner/
 │   ├── 2026-02-24-jass-simulator-phase2-interpreter.md
 │   ├── 2026-02-24-jass-simulator-phase3-natives.md
 │   ├── 2026-02-24-jass-simulator-phase4-timer.md
-│   └── 2026-02-24-jass-simulator-phase5-vm.md
+│   ├── 2026-02-24-jass-simulator-phase5-vm.md
+│   ├── 2026-02-26-jass-simulator-state-management-design.md      # 状态管理设计
+│   ├── 2026-02-26-jass-simulator-state-management-phase1-implementation.md  # Store核心
+│   ├── 2026-02-26-jass-simulator-state-management-phase2-implementation.md  # Middleware
+│   ├── 2026-02-26-jass-simulator-state-management-phase3-implementation.md  # Selector
+│   ├── 2026-02-26-jass-simulator-state-management-phase4-implementation.md  # 集成
+│   └── 2026-02-26-jass-simulator-state-management-phase5-implementation.md  # DevTools
 ├── docs/natives/README.md # Native函数文档
 ├── docs/phase1_summary.md # Phase 1总结
 ├── docs/phase2_summary.md # Phase 2总结
@@ -346,8 +385,9 @@ jass-runner/
 1. **解析器层** - JASS语法解析，生成AST
 2. **解释器层** - AST执行，变量作用域管理
 3. **Native函数框架** - 插件式native函数模拟
-4. **计时器系统** - 帧基计时器模拟
-5. **虚拟机核心** - 组件集成和CLI
+4. **状态管理层** - Redux-like状态管理（新增）
+5. **计时器系统** - 帧基计时器模拟
+6. **虚拟机核心** - 组件集成和CLI
 
 ### 关键技术栈
 - Python 3.8+
@@ -357,27 +397,38 @@ jass-runner/
 
 ## 下一步行动
 
-### 短期任务 (Phase 3 进行中)
-1. **Phase 3: Native函数框架** (进行中，3/10任务完成)
-   - ✅ 设计Native函数插件系统架构
-   - ✅ 实现NativeFunction抽象基类
-   - ✅ 创建NativeRegistry注册系统
-   - ⏳ 实现基本Native函数（DisplayTextToPlayer已完成，KillUnit进行中）
-   - ⏳ 集成Native函数到解释器执行环境
-   - ⏳ 创建Native函数测试（基础测试已完成）
-   - ⏳ 创建NativeFactory工厂类
-   - ⏳ 实现更多Native函数（CreateUnit、GetUnitState等）
-   - ⏳ 创建集成测试
-   - ⏳ 创建Phase 3总结
+### 当前任务 (状态管理系统重构)
+1. **Phase 1**: Store和State核心实现
+   - 创建 `src/jass_runner/state_management/` 包结构
+   - 实现 `State` 类：不可变状态容器
+   - 实现 `Action` 基类和常用Action类型
+   - 实现 `Reducer` 基类和状态更新逻辑
+   - 实现 `Store` 类：状态管理核心
+   - 编写完整测试覆盖
 
-### 当前待办任务 (Phase 3 继续)
-1. **Phase 3 Task 7**: 添加Native Function Call支持到Interpreter
-2. **Phase 3 Task 8**: 创建集成测试
-3. **Phase 3 Task 9**: 添加更多Basic Native Functions
-4. **Phase 3 Task 10**: 创建Phase 3文档
+2. **Phase 2**: Middleware系统
+   - 实现 `Middleware` 基类
+   - 实现 `LoggerMiddleware` 日志中间件
+   - 支持异步Action处理
+   - 中间件链式执行机制
 
-### 中期任务 (后续阶段)
-- Phase 3: Native函数框架
+3. **Phase 3**: Selector系统
+   - 实现基础 `Selector` 类
+   - 实现 `MemoizedSelector` 缓存机制
+   - 支持派生状态计算
+
+4. **Phase 4**: 集成到现有系统
+   - 重构 `ExecutionContext` 使用Store
+   - 更新 `Interpreter` 集成Store
+   - 修改Native函数访问状态的方式
+   - 更新现有测试
+
+5. **Phase 5**: DevTools开发工具
+   - 实现时间旅行调试
+   - 状态快照导出/导入
+   - 开发工具面板支持
+
+### 后续任务
 - Phase 4: 计时器系统
 - Phase 5: 虚拟机核心
 
@@ -394,6 +445,7 @@ jass-runner/
 2. **架构选择**：轻量级解释器+插件系统，平衡性能和扩展性
 3. **计时器实现**：帧基模拟而非实时，支持快速测试
 4. **Native函数设计**：插件式架构，便于扩展和测试
+5. **状态管理设计**：Redux-like架构，解耦状态管理与执行上下文，支持时间旅行调试
 
 ## 待解决问题
 
@@ -403,4 +455,4 @@ jass-runner/
 4. **测试覆盖率**：确保关键功能的测试覆盖
 
 ---
-*最后更新: 2026-02-25 (Phase 3 任务1-6完成，实现了NativeFunction抽象基类、NativeRegistry注册系统、DisplayTextToPlayer和KillUnit native函数，NativeFactory工厂类，以及ExecutionContext集成，新增5个测试文件，共40个测试全部通过，继续实施Phase 3 Task 7: 添加Native Function Call支持到Interpreter)*
+*最后更新: 2026-02-26 (完成了状态管理系统架构设计，创建5个阶段实施计划：Store核心、Middleware系统、Selector系统、现有系统集成、DevTools开发工具。Phase 1-3已全面完成，项目进入状态管理系统重构阶段)*
