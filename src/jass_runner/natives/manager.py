@@ -79,3 +79,24 @@ class HandleManager:
             return unit.max_mana
         else:
             return 0.0
+
+    def set_unit_state(self, unit_id: str, state_type: str, value: float) -> bool:
+        """设置单位状态值。"""
+        unit = self.get_unit(unit_id)
+        if not unit:
+            return False
+
+        if state_type == "UNIT_STATE_LIFE":
+            unit.life = value
+            return True
+        elif state_type == "UNIT_STATE_MAX_LIFE":
+            unit.max_life = value
+            return True
+        elif state_type == "UNIT_STATE_MANA":
+            unit.mana = value
+            return True
+        elif state_type == "UNIT_STATE_MAX_MANA":
+            unit.max_mana = value
+            return True
+        else:
+            return False

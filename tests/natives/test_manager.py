@@ -134,3 +134,46 @@ def test_handle_manager_get_unit_state():
     manager.destroy_handle(unit_id)
     destroyed = manager.get_unit_state(unit_id, "UNIT_STATE_LIFE")
     assert destroyed == 0.0
+
+
+def test_handle_manager_set_unit_state():
+    """测试HandleManager设置单位状态功能。"""
+    from jass_runner.natives.manager import HandleManager
+
+    manager = HandleManager()
+
+    # 创建单位
+    unit_id = manager.create_unit("hfoo", 0, 0.0, 0.0, 0.0)
+
+    # 测试设置生命值
+    result = manager.set_unit_state(unit_id, "UNIT_STATE_LIFE", 75.0)
+    assert result is True
+    assert manager.get_unit_state(unit_id, "UNIT_STATE_LIFE") == 75.0
+
+    # 测试设置魔法值
+    result = manager.set_unit_state(unit_id, "UNIT_STATE_MANA", 30.0)
+    assert result is True
+    assert manager.get_unit_state(unit_id, "UNIT_STATE_MANA") == 30.0
+
+    # 测试设置最大生命值
+    result = manager.set_unit_state(unit_id, "UNIT_STATE_MAX_LIFE", 150.0)
+    assert result is True
+    assert manager.get_unit_state(unit_id, "UNIT_STATE_MAX_LIFE") == 150.0
+
+    # 测试设置最大魔法值
+    result = manager.set_unit_state(unit_id, "UNIT_STATE_MAX_MANA", 75.0)
+    assert result is True
+    assert manager.get_unit_state(unit_id, "UNIT_STATE_MAX_MANA") == 75.0
+
+    # 测试未知状态类型
+    result = manager.set_unit_state(unit_id, "UNKNOWN_STATE", 100.0)
+    assert result is False
+
+    # 测试不存在的单位
+    result = manager.set_unit_state("nonexistent", "UNIT_STATE_LIFE", 100.0)
+    assert result is False
+
+    # 测试已销毁的单位
+    manager.destroy_handle(unit_id)
+    result = manager.set_unit_state(unit_id, "UNIT_STATE_LIFE", 100.0)
+    assert result is False
