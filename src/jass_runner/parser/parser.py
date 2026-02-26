@@ -82,6 +82,13 @@ class AST:
     functions: List[FunctionDecl]
 
 
+@dataclass
+class NativeCallNode:
+    """原生函数调用节点。"""
+    func_name: str
+    args: List[Any]
+
+
 class Parser:
     """JASS代码的递归下降解析器。"""
 
