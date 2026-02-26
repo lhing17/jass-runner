@@ -3,16 +3,17 @@
 from typing import Any
 from .context import ExecutionContext
 from .evaluator import Evaluator
-from ..parser.parser import AST, FunctionDecl, LocalDecl
+from ..parser.parser import AST, FunctionDecl, LocalDecl, NativeCallNode
 
 
 class Interpreter:
     """解释和执行JASS AST。"""
 
-    def __init__(self):
-        self.global_context = ExecutionContext()
+    def __init__(self, native_registry=None):
+        self.global_context = ExecutionContext(native_registry=native_registry)
         self.current_context = self.global_context
         self.functions = {}
+        self.evaluator = Evaluator(self.current_context)
 
     def execute(self, ast: AST):
         """执行AST。"""
@@ -42,8 +43,15 @@ class Interpreter:
         """执行单个语句。"""
         if isinstance(statement, LocalDecl):
             self.execute_local_declaration(statement)
+        elif isinstance(statement, NativeCallNode):
+            self.execute_native_call(statement)
 
     def execute_local_declaration(self, decl: LocalDecl):
         """执行局部变量声明。"""
         # 在当前上下文中设置变量
         self.current_context.set_variable(decl.name, decl.value)
+
+    def execute_native_call(self, node: NativeCallNode):
+        """执行原生函数调用。"""
+        # 使用求值器求值原生调用
+        self.evaluator.evaluate(node)

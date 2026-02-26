@@ -1,7 +1,7 @@
-"""Test native function factory."""
+"""Native函数工厂测试。"""
 
 def test_native_factory_creation():
-    """Test that native factory can be created."""
+    """测试NativeFactory可以被创建。"""
     from jass_runner.natives.factory import NativeFactory
 
     factory = NativeFactory()
@@ -10,18 +10,20 @@ def test_native_factory_creation():
 
 
 def test_create_default_registry():
-    """Test creating default registry with native functions."""
+    """测试创建包含native函数的默认注册表。"""
     from jass_runner.natives.factory import NativeFactory
 
     factory = NativeFactory()
     registry = factory.create_default_registry()
 
-    # Check registry is created
+    # 检查注册表已创建
     assert registry is not None
 
-    # Check native functions are registered
+    # 检查native函数已注册
     display_func = registry.get("DisplayTextToPlayer")
     kill_func = registry.get("KillUnit")
+    create_unit_func = registry.get("CreateUnit")
+    get_unit_state_func = registry.get("GetUnitState")
 
     assert display_func is not None
     assert display_func.name == "DisplayTextToPlayer"
@@ -29,6 +31,12 @@ def test_create_default_registry():
     assert kill_func is not None
     assert kill_func.name == "KillUnit"
 
-    # Check total count
+    assert create_unit_func is not None
+    assert create_unit_func.name == "CreateUnit"
+
+    assert get_unit_state_func is not None
+    assert get_unit_state_func.name == "GetUnitState"
+
+    # 检查总数
     all_funcs = registry.get_all()
-    assert len(all_funcs) == 2
+    assert len(all_funcs) == 4

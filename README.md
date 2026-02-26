@@ -15,11 +15,14 @@ A JASS script simulator for Warcraft III map testing and automation.
 ### Completed
 - ✅ Project requirements analysis and architecture design
 - ✅ 5-phase detailed implementation plan documentation
-- ✅ Phase 1 Task 1: Basic project structure setup
-- ✅ Project documentation (CLAUDE.md, PROJECT_NOTES.md)
+- ✅ Phase 1: Project setup and core infrastructure (all tasks completed)
+- ✅ Phase 2: Interpreter and execution engine (all tasks completed)
+- ✅ Phase 3: Native function framework (all tasks completed)
+- ✅ Project documentation (CLAUDE.md, PROJECT_NOTES.md, docs/natives/README.md)
 
 ### In Progress
-- 🔄 Phase 1: Project setup and core infrastructure (remaining Tasks 2-4)
+- 🔄 Phase 4: Timer system (to be implemented)
+- 🔄 Phase 5: Virtual machine core (to be implemented)
 
 ## Technical Architecture
 
@@ -107,11 +110,11 @@ jass-runner/
 ├── PROJECT_NOTES.md       # Project progress notes
 ├── src/jass_runner/       # Source code
 │   ├── __init__.py        # Package entry point
-│   ├── parser/           # Parser (to be implemented)
-│   ├── interpreter/      # Interpreter (to be implemented)
-│   ├── natives/          # Native functions (to be implemented)
-│   ├── timer/           # Timer system (to be implemented)
-│   └── vm/              # Virtual machine core (to be implemented)
+│   ├── parser/           # Parser layer (JASS syntax parsing, AST generation)
+│   ├── interpreter/      # Interpreter layer (AST execution, variable scope)
+│   ├── natives/          # Native function framework (plugin-based simulation)
+│   ├── timer/           # Timer system (to be implemented - Phase 4)
+│   └── vm/              # Virtual machine core (to be implemented - Phase 5)
 ├── tests/                # Test code
 │   └── __init__.py       # Test package
 ├── examples/             # Example scripts
@@ -129,11 +132,13 @@ jass-runner/
 
 The project is implemented in 5 phases, detailed plans are in the `docs/plans/` directory:
 
-1. **Phase 1**: Project setup and core infrastructure (current phase)
-2. **Phase 2**: Interpreter and execution engine
-3. **Phase 3**: Native function framework
-4. **Phase 4**: Timer system
-5. **Phase 5**: Virtual machine core
+1. **Phase 1**: Project setup and core infrastructure (completed)
+2. **Phase 2**: Interpreter and execution engine (completed)
+3. **Phase 3**: Native function framework (completed)
+4. **Phase 4**: Timer system (in progress)
+5. **Phase 5**: Virtual machine core (planned)
+
+See [docs/natives/README.md](docs/natives/README.md) for native function framework documentation.
 
 ## Examples
 

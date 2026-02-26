@@ -405,6 +405,10 @@ class Parser:
         if self.current_token.type == 'KEYWORD' and self.current_token.value == 'local':
             return self.parse_local_declaration()
 
+        # 解析call语句
+        if self.current_token.type == 'KEYWORD' and self.current_token.value == 'call':
+            return self.parse_call_statement()
+
         # 目前跳过其他标记
         self.next_token()
         return None
@@ -444,6 +448,62 @@ class Parser:
                 self.next_token()
 
             return LocalDecl(name=var_name, type=var_type, value=value)
+
+        except Exception:
+            return None
+
+    def parse_call_statement(self) -> Optional[NativeCallNode]:
+        """解析call语句。"""
+        try:
+            # 跳过'call'关键词
+            self.next_token()
+
+            # 获取函数名
+            if not self.current_token or self.current_token.type != 'IDENTIFIER':
+                return None
+            func_name = self.current_token.value
+            self.next_token()
+
+            # 检查左括号
+            if not self.current_token or self.current_token.value != '(':
+                return None
+            self.next_token()
+
+            # 解析参数列表
+            args = []
+            while self.current_token and self.current_token.value != ')':
+                # 解析参数表达式（简化：字面量或标识符）
+                if self.current_token.type == 'NUMBER':
+                    arg_value = int(self.current_token.value)
+                    args.append(str(arg_value))  # 转换为字符串以便求值器处理
+                elif self.current_token.type == 'STRING':
+                    arg_value = self.current_token.value  # 保留引号以便求值器识别字符串字面量
+                    args.append(arg_value)
+                elif self.current_token.type == 'IDENTIFIER':
+                    arg_value = self.current_token.value
+                    args.append(arg_value)
+                else:
+                    # 不支持的类型
+                    break
+
+                self.next_token()
+
+                # 检查是否有逗号继续下一个参数
+                if self.current_token and self.current_token.value == ',':
+                    self.next_token()
+                    continue
+                elif self.current_token and self.current_token.value == ')':
+                    break
+
+            # 检查右括号
+            if self.current_token and self.current_token.value == ')':
+                self.next_token()
+
+            # 如果存在分号则跳过
+            if self.current_token and self.current_token.value == ';':
+                self.next_token()
+
+            return NativeCallNode(func_name=func_name, args=args)
 
         except Exception:
             return None
