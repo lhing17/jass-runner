@@ -177,3 +177,35 @@ def test_handle_manager_set_unit_state():
     manager.destroy_handle(unit_id)
     result = manager.set_unit_state(unit_id, "UNIT_STATE_LIFE", 100.0)
     assert result is False
+
+
+def test_handle_manager_statistics():
+    """测试HandleManager统计功能。"""
+    from jass_runner.natives.manager import HandleManager
+
+    manager = HandleManager()
+
+    # 初始状态
+    assert manager.get_total_handles() == 0
+    assert manager.get_alive_handles() == 0
+    assert manager.get_handle_type_count("unit") == 0
+
+    # 创建单位
+    unit_id1 = manager.create_unit("hfoo", 0, 0.0, 0.0, 0.0)
+    unit_id2 = manager.create_unit("hkni", 1, 100.0, 100.0, 90.0)
+
+    # 验证统计
+    assert manager.get_total_handles() == 2
+    assert manager.get_alive_handles() == 2
+    assert manager.get_handle_type_count("unit") == 2
+
+    # 销毁一个单位
+    manager.destroy_handle(unit_id1)
+
+    # 验证统计更新
+    assert manager.get_total_handles() == 2  # 总数不变
+    assert manager.get_alive_handles() == 1  # 存活数减少
+    assert manager.get_handle_type_count("unit") == 2  # 类型计数不变
+
+    # 测试不存在的类型
+    assert manager.get_handle_type_count("nonexistent") == 0

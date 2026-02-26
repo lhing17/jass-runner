@@ -100,3 +100,21 @@ class HandleManager:
             return True
         else:
             return False
+
+    def get_total_handles(self) -> int:
+        """获取总handle数量。"""
+        return len(self._handles)
+
+    def get_alive_handles(self) -> int:
+        """获取存活handle数量。"""
+        count = 0
+        for handle in self._handles.values():
+            if handle.is_alive():
+                count += 1
+        return count
+
+    def get_handle_type_count(self, type_name: str) -> int:
+        """获取指定类型的handle数量。"""
+        if type_name not in self._type_index:
+            return 0
+        return len(self._type_index[type_name])
