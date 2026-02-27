@@ -410,7 +410,11 @@ jass-runner/
 │   │   ├── base.py       # NativeFunction抽象基类
 │   │   ├── registry.py   # NativeRegistry注册系统
 │   │   ├── factory.py    # Native函数工厂
-│   │   └── basic.py      # 基础native函数实现
+│   │   ├── basic.py      # 基础native函数实现
+│   │   ├── handle.py     # Handle类定义（Player、Unit、Item）
+│   │   ├── manager.py    # HandleManager句柄管理器
+│   │   ├── state.py      # StateContext状态上下文
+│   │   └── timer_natives.py # 计时器相关原生函数
 │   ├── handles/          # Handle系统
 │   │   ├── __init__.py   # 模块初始化
 │   │   ├── handle.py     # Handle基类
@@ -418,9 +422,18 @@ jass-runner/
 │   │   └── player.py     # 玩家类
 │   ├── handle_manager.py # 句柄管理器
 │   ├── state_context.py  # 状态上下文
-│   └── utils/            # 工具函数
+│   ├── timer/            # 计时器系统
+│   │   ├── __init__.py
+│   │   ├── timer.py      # Timer类
+│   │   ├── system.py     # TimerSystem计时器管理
+│   │   └── simulation.py # SimulationLoop模拟循环
+│   ├── utils/            # 工具函数
+│   │   ├── __init__.py
+│   │   └── fourcc.py     # FourCC转换工具
+│   └── vm/               # 虚拟机核心
 │       ├── __init__.py
-│       └── fourcc.py     # FourCC转换工具
+│       ├── jass_vm.py    # JassVM主类
+│       └── cli.py        # 命令行接口
 ├── tests/
 │   ├── __init__.py       # 测试包
 │   ├── conftest.py       # pytest配置
@@ -428,9 +441,18 @@ jass-runner/
 │   ├── parser/          # 解析器测试
 │   ├── interpreter/     # 解释器测试
 │   ├── natives/         # native函数测试 (Phase 3)
-│   │   ├── test_base.py    # 基础类测试
-│   │   ├── test_registry.py # 注册系统测试
-│   │   └── test_basic.py   # 基础native函数测试
+│   │   ├── test_base.py       # 基础类测试
+│   │   ├── test_registry.py   # 注册系统测试
+│   │   ├── test_basic.py      # 基础native函数测试
+│   │   ├── test_handle.py     # Handle类测试
+│   │   ├── test_manager.py    # HandleManager测试
+│   │   └── test_timer_natives.py # Timer原生函数测试
+│   ├── timer/           # 计时器测试
+│   │   ├── test_timer.py
+│   │   └── test_simulation.py
+│   ├── vm/              # 虚拟机测试
+│   │   ├── test_jass_vm.py
+│   │   └── test_integration.py
 │   └── integration/     # 集成测试
 ├── examples/hello_world.j # 示例脚本
 ├── docs/plans/         # 实施计划文档
@@ -454,14 +476,14 @@ jass-runner/
 
 ## 技术架构
 
-### 六层架构设计
+### 七层架构设计
 1. **解析器层** - JASS语法解析，生成AST
 2. **解释器层** - AST执行，变量作用域管理
 3. **Native函数框架** - 插件式native函数模拟
 4. **Handle系统** - 游戏对象管理（单位、玩家等）
 5. **状态管理层** - 统一状态访问接口（StateContext + HandleManager）
-6. **计时器系统** - 帧基计时器模拟（待实现）
-7. **虚拟机核心** - 组件集成和CLI（待实现）
+6. **计时器系统** - 帧基计时器模拟
+7. **虚拟机核心** - 组件集成和CLI
 
 ### 关键技术栈
 - Python 3.8+
@@ -515,6 +537,10 @@ jass-runner/
 6. **Handle系统设计**：引入Handle基类和HandleManager，统一管理游戏对象生命周期
 7. **状态上下文设计**：StateContext作为统一状态访问接口，便于原生函数访问游戏状态
 8. **FourCC处理**：使用小端序整数表示JASS单位类型ID，提供转换工具函数
+9. **Native函数参数类型设计**：
+   - `DisplayTextToPlayer` 等函数使用对象类型（Player、Unit、Timer）而非原始ID
+   - 更符合JASS语义，提供更好的类型安全
+10. **Parser设计**：支持嵌套函数调用、布尔值字面量、函数引用等高级语法
 
 ## 待解决问题
 
@@ -524,4 +550,81 @@ jass-runner/
 4. **测试覆盖率**：确保关键功能的测试覆盖
 
 ---
-*最后更新: 2026-02-27 (完成Handle系统核心实现：Handle基类、Unit类、Player类(16玩家初始化)、HandleManager句柄管理器、StateContext状态上下文。FourCC工具函数实现。解析器增强支持函数调用作为变量初始值。解释器增强支持set语句和函数调用返回值赋值。原生函数集成状态上下文支持。)*
+#### 30. DisplayTextToPlayer 和 Player 原生函数修复 (2026-02-27)
+- **问题修复**：`DisplayTextToPlayer` 第一个参数类型修正
+  - 从 `player_id: int` 改为 `player: Player` 对象
+  - 更符合 JASS 原生函数的语义
+- **新增 `Player` 原生函数**：`src/jass_runner/natives/basic.py`
+  - 通过 `player_id` 获取 `Player` 实体
+  - 内部通过 `HandleManager.get_player()` 获取或创建 Player 对象
+- **NativeFactory 更新**：`src/jass_runner/natives/factory.py`
+  - 注册 `PlayerNative` 到默认注册表
+- **测试更新**：`tests/natives/test_basic.py`
+  - 更新 `test_display_text_to_player` 测试使用 Player 对象
+  - 新增 `test_player_native` 测试验证 Player 原生函数
+- **示例文件更新**：
+  - `hello_world.j`: `GetLocalPlayer()` → `Player(0)`
+  - `complete_example.j`: 5处 `0` → `Player(0)`
+  - `timer_example.j`: 3处 `0` → `Player(0)`
+  - `state_management_test.j`: 5处 `player` → `Player(player)`
+
+#### 31. Parser 增强 - 嵌套函数调用和高级参数支持 (2026-02-27)
+- **嵌套函数调用支持**：`src/jass_runner/parser/parser.py`
+  - 解析 `DisplayTextToPlayer(Player(0), 0, 0, "Hello")` 语法
+  - 支持函数调用作为其他函数的参数
+  - 创建 `NativeCallNode` 嵌套节点结构
+- **布尔值字面量支持**：
+  - 识别 `true` / `false` 关键字
+  - 转换为布尔类型传递给原生函数
+- **函数引用支持**：
+  - 识别 `function func_name` 语法
+  - 用于计时器回调等场景
+  - 格式化为 `function:func_name` 供求值器处理
+
+#### 32. Evaluator 增强 - 布尔值和函数引用支持 (2026-02-27)
+- **布尔值解析**：`src/jass_runner/interpreter/evaluator.py`
+  - `'true'` → `True`, `'false'` → `False`
+- **函数引用解析**：
+  - 解析 `function:func_name` 格式
+  - 创建回调包装器，支持计时器回调执行
+- **ExecutionContext 增强**：`src/jass_runner/interpreter/context.py`
+  - 添加 `interpreter` 引用，使 Evaluator 能访问函数定义
+- **Interpreter 更新**：`src/jass_runner/interpreter/interpreter.py`
+  - 创建上下文时传递 `interpreter=self`
+
+#### 33. Timer 原生函数签名修复 (2026-02-27)
+- **CreateTimer 修复**：`src/jass_runner/natives/timer_natives.py`
+  - 从返回 `timer_id: str` 改为返回 `Timer` 对象
+  - 更符合 JASS 原生函数语义
+- **Timer 操作函数修复**：
+  - `TimerStart`：第一个参数从 `timer_id: str` 改为 `timer: Timer`
+  - `TimerGetElapsed`：第一个参数从 `timer_id: str` 改为 `timer: Timer`
+  - `DestroyTimer`：第一个参数从 `timer_id: str` 改为 `timer: Timer`
+  - `PauseTimer`：第一个参数从 `timer_id: str` 改为 `timer: Timer`
+  - `ResumeTimer`：第一个参数从 `timer_id: str` 改为 `timer: Timer`
+- **测试更新**：
+  - `tests/natives/test_timer_natives.py`：更新测试使用 Timer 对象
+  - `tests/integration/test_timer_integration.py`：更新集成测试
+
+#### 34. 示例脚本修复 (2026-02-27)
+- **run_timer_example.py**：更新 API 调用
+  - `JassParser` → `Parser`
+  - `JassInterpreter` → `Interpreter`
+  - 更新方法调用以匹配新类签名
+
+### 当前状态
+- ✅ 需求分析和设计完成
+- ✅ 5个阶段实施计划完成
+- ✅ Phase 1 所有任务完成
+- ✅ Phase 2 所有任务完成
+- ✅ Phase 3 所有任务完成
+- ✅ 状态管理系统架构设计完成
+- ✅ Handle系统核心实现
+- ✅ **DisplayTextToPlayer 和 Player 原生函数修复完成**
+- ✅ **Timer 原生函数签名修复完成**
+- ✅ **Parser 增强（嵌套函数调用、布尔值、函数引用）完成**
+- ✅ **Evaluator 增强（布尔值、函数引用）完成**
+- ✅ 所有 120 个测试通过
+
+---
+*最后更新: 2026-02-27*
