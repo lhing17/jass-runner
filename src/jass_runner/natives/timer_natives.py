@@ -34,7 +34,7 @@ class TimerStart(NativeFunction):
     def name(self) -> str:
         return "TimerStart"
 
-    def execute(self, state_context, timer_id: str, timeout: float, periodic: bool, callback_func: str, *args):
+    def execute(self, state_context, timer_id: str, timeout: float, periodic: bool, callback_func, *args):
         """执行 TimerStart 原生函数。"""
         timer = self._timer_system.get_timer(timer_id)
         if not timer:
@@ -42,9 +42,11 @@ class TimerStart(NativeFunction):
             return False
 
         # 在实际实现中，callback_func 将是一个 JASS 函数引用
-        # 目前，我们创建一个简单的回调来记录日志
+        # 目前，我们创建一个包装器来调用回调并记录日志
         def callback_wrapper():
             logger.info(f"[TimerCallback] Timer {timer_id} fired with args: {args}")
+            if callback_func and callable(callback_func):
+                callback_func()
 
         timer.start(timeout, periodic, callback_wrapper, *args)
         logger.info(f"[TimerStart] Started timer {timer_id}: timeout={timeout}, periodic={periodic}")

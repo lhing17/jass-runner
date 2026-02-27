@@ -35,12 +35,13 @@ class SimulationLoop:
         """
         self.running = True
 
-        for frame in range(num_frames):
-            self.current_frame = frame
+        for i in range(num_frames):
+            # 累加当前帧数
+            self.current_frame += 1
 
             # 如果设置了帧回调，则调用
             if self._frame_callback:
-                self._frame_callback(frame)
+                self._frame_callback(self.current_frame)
 
             # 使用帧持续时间更新计时器系统
             self.timer_system.update(self.frame_duration)
