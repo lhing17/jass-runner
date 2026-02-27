@@ -1,4 +1,4 @@
-"""Timer system for managing multiple timers."""
+"""用于管理多个计时器的计时器系统。"""
 
 import uuid
 from typing import Dict, Optional
@@ -6,25 +6,25 @@ from .timer import Timer
 
 
 class TimerSystem:
-    """System for managing JASS timers."""
+    """用于管理 JASS 计时器的系统。"""
 
     def __init__(self):
         self._timers: Dict[str, Timer] = {}
         self._current_time: float = 0.0
 
     def create_timer(self) -> str:
-        """Create a new timer and return its ID."""
+        """创建一个新计时器并返回其 ID。"""
         timer_id = f"timer_{uuid.uuid4().hex[:8]}"
         timer = Timer(timer_id)
         self._timers[timer_id] = timer
         return timer_id
 
     def get_timer(self, timer_id: str) -> Optional[Timer]:
-        """Get a timer by ID."""
+        """通过 ID 获取计时器。"""
         return self._timers.get(timer_id)
 
     def destroy_timer(self, timer_id: str) -> bool:
-        """Destroy a timer."""
+        """销毁一个计时器。"""
         if timer_id in self._timers:
             timer = self._timers[timer_id]
             timer.destroy()
@@ -33,7 +33,7 @@ class TimerSystem:
         return False
 
     def update(self, delta_time: float):
-        """Update all timers with elapsed time."""
+        """更新所有计时器的经过时间。"""
         self._current_time += delta_time
 
         timers_to_remove = []
@@ -42,19 +42,19 @@ class TimerSystem:
             if fired and not timer.periodic and not timer.running:
                 timers_to_remove.append(timer_id)
 
-        # Remove one-shot timers that have fired
+        # 移除已触发的一次性计时器
         for timer_id in timers_to_remove:
             del self._timers[timer_id]
 
     def get_elapsed_time(self, timer_id: str) -> Optional[float]:
-        """Get elapsed time for a timer."""
+        """获取计时器的经过时间。"""
         timer = self.get_timer(timer_id)
         if timer:
             return timer.elapsed
         return None
 
     def pause_timer(self, timer_id: str) -> bool:
-        """Pause a timer."""
+        """暂停计时器。"""
         timer = self.get_timer(timer_id)
         if timer:
             timer.pause()
@@ -62,7 +62,7 @@ class TimerSystem:
         return False
 
     def resume_timer(self, timer_id: str) -> bool:
-        """Resume a timer."""
+        """恢复计时器。"""
         timer = self.get_timer(timer_id)
         if timer:
             timer.resume()
