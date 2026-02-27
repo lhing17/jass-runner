@@ -5,6 +5,7 @@
 
 from .registry import NativeRegistry
 from .basic import DisplayTextToPlayer, KillUnit, CreateUnit, GetUnitState, CreateItem, RemoveItem
+from .timer_natives import CreateTimer, TimerStart, TimerGetElapsed
 
 
 class NativeFactory:
@@ -13,8 +14,15 @@ class NativeFactory:
     此类负责创建预配置的native函数注册表，简化注册过程。
     """
 
-    @staticmethod
-    def create_default_registry() -> NativeRegistry:
+    def __init__(self, timer_system=None):
+        """初始化工厂。
+
+        参数：
+            timer_system: 可选的计时器系统实例
+        """
+        self._timer_system = timer_system
+
+    def create_default_registry(self) -> NativeRegistry:
         """创建包含默认native函数的注册表。
 
         返回：
@@ -29,5 +37,11 @@ class NativeFactory:
         registry.register(GetUnitState())
         registry.register(CreateItem())
         registry.register(RemoveItem())
+
+        # 如果计时器系统可用，注册计时器原生函数
+        if self._timer_system:
+            registry.register(CreateTimer(self._timer_system))
+            registry.register(TimerStart(self._timer_system))
+            registry.register(TimerGetElapsed(self._timer_system))
 
         return registry

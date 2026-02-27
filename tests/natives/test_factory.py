@@ -48,3 +48,27 @@ def test_create_default_registry():
     # 检查总数
     all_funcs = registry.get_all()
     assert len(all_funcs) == 6
+
+
+def test_factory_with_timer_system():
+    """测试工厂与计时器系统集成。"""
+    from jass_runner.natives.factory import NativeFactory
+    from jass_runner.timer.system import TimerSystem
+
+    timer_system = TimerSystem()
+    factory = NativeFactory(timer_system=timer_system)
+    registry = factory.create_default_registry()
+
+    # 检查计时器原生函数已注册
+    create_timer_func = registry.get("CreateTimer")
+    timer_start_func = registry.get("TimerStart")
+    timer_elapsed_func = registry.get("TimerGetElapsed")
+
+    assert create_timer_func is not None
+    assert create_timer_func.name == "CreateTimer"
+
+    assert timer_start_func is not None
+    assert timer_start_func.name == "TimerStart"
+
+    assert timer_elapsed_func is not None
+    assert timer_elapsed_func.name == "TimerGetElapsed"
