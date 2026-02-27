@@ -4,11 +4,11 @@ A JASS script simulator for Warcraft III map testing and automation.
 
 ## Features
 
-- Execute JASS scripts outside of Warcraft III
-- Simulate native functions with console output (e.g., "XXX unit has been killed")
-- Frame-based timer system for fast simulation of long-term game behavior
-- Extensible plugin architecture for custom native function simulation
-- Simple frame loop with debug support
+- JASS script parsing and interpretation
+- Native function simulation with console output
+- Frame-based timer system for fast simulation
+- Extensible plugin architecture
+- Command-line interface
 
 ## Project Status
 
@@ -26,8 +26,8 @@ A JASS script simulator for Warcraft III map testing and automation.
 - ✅ Project documentation (CLAUDE.md, PROJECT_NOTES.md, docs/natives/README.md)
 
 ### In Progress
-- 🔄 Phase 4: Timer system (to be implemented)
-- 🔄 Phase 5: Virtual machine core (to be implemented)
+- ✅ Phase 4: Timer system (completed)
+- ✅ Phase 5: Virtual machine core (completed)
 
 ## Technical Architecture
 
@@ -179,8 +179,9 @@ More examples in [examples/](examples/) directory.
 
 ### Documentation
 
-- [User Guide](docs/user-guide.md) - Detailed usage instructions
-- [API Documentation](docs/api/README.md) - Complete API reference
+- [User Guide](docs/user_guide.md) - How to use JASS Runner
+- [Timer System](docs/timer/README.md) - Timer system details
+- [Native Functions](docs/natives/README.md) - Extending native functions
 
 ## Examples
 
