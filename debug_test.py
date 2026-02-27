@@ -3,6 +3,7 @@
 import logging
 from jass_runner.parser.parser import Parser
 from jass_runner.natives.factory import NativeFactory
+from jass_runner.natives.state import StateContext
 
 # 启用调试日志
 logging.basicConfig(level=logging.DEBUG)
@@ -45,5 +46,6 @@ print(f"KillUnit 找到: {kill_func is not None}")
 
 if display_func:
     print(f"调用 DisplayTextToPlayer...")
-    result = display_func.execute(0, 0, 0, "Test message")
+    state_context = StateContext()
+    result = display_func.execute(state_context, 0, 0, 0, "Test message")
     print(f"结果: {result}")

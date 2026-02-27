@@ -4,11 +4,17 @@
 """
 
 import logging
-import uuid
 from .base import NativeFunction
+from ..utils import int_to_fourcc
 
 
 logger = logging.getLogger(__name__)
+
+# 单位状态常量
+UNIT_STATE_LIFE = 0
+UNIT_STATE_MAX_LIFE = 1
+UNIT_STATE_MANA = 2
+UNIT_STATE_MAX_MANA = 3
 
 
 class DisplayTextToPlayer(NativeFunction):
@@ -26,10 +32,11 @@ class DisplayTextToPlayer(NativeFunction):
         """
         return "DisplayTextToPlayer"
 
-    def execute(self, player: int, x: float, y: float, message: str):
+    def execute(self, state_context, player: int, x: float, y: float, message: str):
         """执行DisplayTextToPlayer native函数。
 
         参数：
+            state_context: 状态上下文
             player: 玩家ID
             x: X坐标（游戏中未使用，仅保持接口兼容）
             y: Y坐标（游戏中未使用，仅保持接口兼容）
@@ -43,9 +50,9 @@ class DisplayTextToPlayer(NativeFunction):
 
 
 class KillUnit(NativeFunction):
-    """杀死一个单位（通过控制台输出模拟）。
+    """杀死一个单位（通过状态管理系统）。
 
-    此函数模拟JASS中的KillUnit native函数，将单位死亡信息输出到日志。
+    此函数模拟JASS中的KillUnit native函数，通过HandleManager真正销毁单位。
     """
 
     @property
@@ -57,11 +64,12 @@ class KillUnit(NativeFunction):
         """
         return "KillUnit"
 
-    def execute(self, unit_identifier):
+    def execute(self, state_context, unit_identifier: str):
         """执行KillUnit native函数。
 
         参数：
-            unit_identifier: 单位标识符
+            state_context: 状态上下文
+            unit_identifier: 单位handle ID（字符串）
 
         返回：
             bool: 成功杀死单位返回True，否则返回False
@@ -70,14 +78,22 @@ class KillUnit(NativeFunction):
             logger.warning("[KillUnit]尝试击杀None单位")
             return False
 
-        logger.info(f"[KillUnit] 单位{unit_identifier}已被击杀")
-        return True
+        # 通过HandleManager销毁单位
+        handle_manager = state_context.handle_manager
+        success = handle_manager.destroy_handle(unit_identifier)
+
+        if success:
+            logger.info(f"[KillUnit] 单位{unit_identifier}已被击杀")
+        else:
+            logger.warning(f"[KillUnit] 单位{unit_identifier}不存在或已被销毁")
+
+        return success
 
 
 class CreateUnit(NativeFunction):
-    """创建一个单位（模拟）。
+    """创建一个单位（通过状态管理系统）。
 
-    此函数模拟JASS中的CreateUnit native函数，生成唯一的单位标识符并输出日志。
+    此函数模拟JASS中的CreateUnit native函数，通过HandleManager真正创建单位。
     """
 
     @property
@@ -89,28 +105,36 @@ class CreateUnit(NativeFunction):
         """
         return "CreateUnit"
 
-    def execute(self, player: int, unit_type: str, x: float, y: float, facing: float):
+    def execute(self, state_context, player: int, unit_type: int,
+                x: float, y: float, facing: float) -> str:
         """执行CreateUnit native函数。
 
         参数：
+            state_context: 状态上下文
             player: 玩家ID
-            unit_type: 单位类型代码（如'hfoo'代表步兵）
+            unit_type: 单位类型代码（fourcc整数格式，如1213484355代表'hfoo'）
             x: X坐标
             y: Y坐标
             facing: 面向角度
 
         返回：
-            str: 生成的单位标识符
+            str: 生成的单位handle ID
         """
-        unit_id = f"unit_{uuid.uuid4().hex[:8]}"
-        logger.info(f"[CreateUnit] 为玩家{player}在({x}, {y})创建{unit_type}，单位ID: {unit_id}")
+        # 将fourcc整数转换为字符串（如1213484355 -> 'hfoo'）
+        unit_type_str = int_to_fourcc(unit_type)
+
+        # 通过HandleManager创建单位
+        handle_manager = state_context.handle_manager
+        unit_id = handle_manager.create_unit(unit_type_str, player, x, y, facing)
+
+        logger.info(f"[CreateUnit] 为玩家{player}在({x}, {y})创建{unit_type_str}，单位ID: {unit_id}")
         return unit_id
 
 
 class GetUnitState(NativeFunction):
-    """获取单位状态（模拟）。
+    """获取单位状态（通过状态管理系统）。
 
-    此函数模拟JASS中的GetUnitState native函数，返回模拟的单位状态值。
+    此函数模拟JASS中的GetUnitState native函数，从HandleManager查询真实单位状态。
     """
 
     @property
@@ -122,22 +146,32 @@ class GetUnitState(NativeFunction):
         """
         return "GetUnitState"
 
-    def execute(self, unit_identifier, state_type: str):
+    def execute(self, state_context, unit_identifier: str, state_type: int) -> float:
         """执行GetUnitState native函数。
 
         参数：
-            unit_identifier: 单位标识符
-            state_type: 状态类型（如"UNIT_STATE_LIFE"表示生命值）
+            state_context: 状态上下文
+            unit_identifier: 单位handle ID（字符串）
+            state_type: 状态类型常量（如UNIT_STATE_LIFE=0表示生命值）
 
         返回：
             float: 单位状态值
         """
-        if state_type == "UNIT_STATE_LIFE":
-            # 返回模拟生命值
-            return 100.0
-        elif state_type == "UNIT_STATE_MANA":
-            # 返回模拟魔法值
-            return 50.0
-        else:
+        # 将整数状态类型转换为字符串
+        state_map = {
+            UNIT_STATE_LIFE: "UNIT_STATE_LIFE",
+            UNIT_STATE_MAX_LIFE: "UNIT_STATE_MAX_LIFE",
+            UNIT_STATE_MANA: "UNIT_STATE_MANA",
+            UNIT_STATE_MAX_MANA: "UNIT_STATE_MAX_MANA",
+        }
+
+        state_str = state_map.get(state_type)
+        if state_str is None:
             logger.warning(f"[GetUnitState] 未知状态类型: {state_type}")
             return 0.0
+
+        # 通过HandleManager查询单位状态
+        handle_manager = state_context.handle_manager
+        value = handle_manager.get_unit_state(unit_identifier, state_str)
+
+        return value

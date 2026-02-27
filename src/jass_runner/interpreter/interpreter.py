@@ -4,13 +4,15 @@ from typing import Any
 from .context import ExecutionContext
 from .evaluator import Evaluator
 from ..parser.parser import AST, FunctionDecl, LocalDecl, NativeCallNode
+from ..natives.state import StateContext
 
 
 class Interpreter:
     """解释和执行JASS AST。"""
 
     def __init__(self, native_registry=None):
-        self.global_context = ExecutionContext(native_registry=native_registry)
+        self.state_context = StateContext()
+        self.global_context = ExecutionContext(native_registry=native_registry, state_context=self.state_context)
         self.current_context = self.global_context
         self.functions = {}
         self.evaluator = Evaluator(self.current_context)
@@ -27,8 +29,8 @@ class Interpreter:
 
     def execute_function(self, func: FunctionDecl):
         """执行一个函数。"""
-        # 为函数执行创建新上下文
-        func_context = ExecutionContext(self.global_context)
+        # 为函数执行创建新上下文，继承state_context
+        func_context = ExecutionContext(self.global_context, state_context=self.state_context)
         self.current_context = func_context
 
         # 执行函数体

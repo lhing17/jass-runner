@@ -20,8 +20,8 @@ class Evaluator:
         if native_func is None:
             raise RuntimeError(f"Native function not found: {func_name}")
 
-        # 执行原生函数
-        return native_func.execute(*args)
+        # 执行原生函数，传递state_context作为第一个参数
+        return native_func.execute(self.context.state_context, *args)
 
     def evaluate(self, expression: Any) -> Any:
         """求值一个JASS表达式或AST节点。"""

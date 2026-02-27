@@ -23,10 +23,11 @@ class NativeFunction(ABC):
         pass
 
     @abstractmethod
-    def execute(self, *args, **kwargs):
+    def execute(self, state_context, *args, **kwargs):
         """执行native函数。
 
         参数：
+            state_context: 状态上下文，提供对HandleManager等的访问
             *args: 位置参数
             **kwargs: 关键字参数
 

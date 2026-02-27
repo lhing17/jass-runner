@@ -48,7 +48,7 @@ def test_evaluator_can_evaluate_native_call():
     class MockNativeFunction(NativeFunction):
         name = "DisplayTextToPlayer"
 
-        def execute(self, *args):
+        def execute(self, state_context, *args):
             return f"Called {self.name} with args: {args}"
 
     # 设置带有原生函数的上下文
