@@ -581,6 +581,21 @@ class Parser:
                         arg_value = NativeCallNode(func_name=arg_value, args=nested_args)
 
                     args.append(arg_value)
+                elif self.current_token.type == 'KEYWORD' and self.current_token.value in ('true', 'false'):
+                    # 布尔值
+                    arg_value = self.current_token.value
+                    args.append(arg_value)
+                    self.next_token()
+                elif self.current_token.type == 'KEYWORD' and self.current_token.value == 'function':
+                    # 函数引用: function func_name
+                    self.next_token()  # 跳过 'function'
+                    if self.current_token and self.current_token.type == 'IDENTIFIER':
+                        func_ref = self.current_token.value
+                        args.append(f"function:{func_ref}")
+                        self.next_token()
+                    else:
+                        # 函数引用后面必须有函数名
+                        break
                 else:
                     # 不支持的类型
                     break

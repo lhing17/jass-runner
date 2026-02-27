@@ -43,6 +43,25 @@ class Evaluator:
             except ValueError:
                 pass
 
+            # 处理布尔值
+            if expression == 'true':
+                return True
+            if expression == 'false':
+                return False
+
+            # 处理函数引用 (function:func_name)
+            if expression.startswith('function:'):
+                func_name = expression[9:]  # 去掉 'function:' 前缀
+                # 返回一个可调用对象，用于回调
+                interpreter = self.context.interpreter
+                def callback_wrapper():
+                    if interpreter and func_name in interpreter.functions:
+                        from ..parser.parser import FunctionDecl
+                        func = interpreter.functions[func_name]
+                        if isinstance(func, FunctionDecl):
+                            interpreter.execute_function(func)
+                return callback_wrapper
+
             # 处理变量引用
             if self.context.has_variable(expression):
                 return self.context.get_variable(expression)

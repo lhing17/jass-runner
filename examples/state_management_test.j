@@ -14,16 +14,16 @@ function main takes nothing returns nothing
     local real maxLife = GetUnitState(u, "UNIT_STATE_MAX_LIFE")
 
     // 显示信息
-    call DisplayTextToPlayer(player, 0, 0, "创建单位: " + unitType)
-    call DisplayTextToPlayer(player, 0, 0, "单位ID: " + u)
-    call DisplayTextToPlayer(player, 0, 0, "生命值: " + R2S(life) + "/" + R2S(maxLife))
+    call DisplayTextToPlayer(Player(player), 0, 0, "创建单位: " + unitType)
+    call DisplayTextToPlayer(Player(player), 0, 0, "单位ID: " + u)
+    call DisplayTextToPlayer(Player(player), 0, 0, "生命值: " + R2S(life) + "/" + R2S(maxLife))
 
     // 杀死单位
     call KillUnit(u)
 
     // 再次查询（应返回0）
     local real lifeAfterKill = GetUnitState(u, "UNIT_STATE_LIFE")
-    call DisplayTextToPlayer(player, 0, 0, "杀死后生命值: " + R2S(lifeAfterKill))
+    call DisplayTextToPlayer(Player(player), 0, 0, "杀死后生命值: " + R2S(lifeAfterKill))
 
-    call DisplayTextToPlayer(player, 0, 0, "测试完成")
+    call DisplayTextToPlayer(Player(player), 0, 0, "测试完成")
 endfunction

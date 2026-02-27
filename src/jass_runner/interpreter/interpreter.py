@@ -12,7 +12,7 @@ class Interpreter:
 
     def __init__(self, native_registry=None):
         self.state_context = StateContext()
-        self.global_context = ExecutionContext(native_registry=native_registry, state_context=self.state_context)
+        self.global_context = ExecutionContext(native_registry=native_registry, state_context=self.state_context, interpreter=self)
         self.current_context = self.global_context
         self.functions = {}
         self.evaluator = Evaluator(self.current_context)
@@ -33,7 +33,8 @@ class Interpreter:
         func_context = ExecutionContext(
             self.global_context,
             native_registry=self.global_context.native_registry,
-            state_context=self.state_context
+            state_context=self.state_context,
+            interpreter=self
         )
         self.current_context = func_context
 

@@ -2,5 +2,5 @@
 // Simple JASS script for testing
 
 function main takes nothing returns nothing
-    call DisplayTextToPlayer(GetLocalPlayer(), 0, 0, "Hello, World!")
+    call DisplayTextToPlayer(Player(0), 0, 0, "Hello, World!")
 endfunction

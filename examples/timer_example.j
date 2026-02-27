@@ -2,11 +2,11 @@
 // 演示计时器用法的示例 JASS 脚本
 
 function timer_callback takes nothing returns nothing
-    call DisplayTextToPlayer(0, 0, 0, "Timer fired!")
+    call DisplayTextToPlayer(Player(0), 0, 0, "Timer fired!")
 endfunction
 
 function periodic_callback takes nothing returns nothing
-    call DisplayTextToPlayer(0, 0, 0, "Periodic timer fired!")
+    call DisplayTextToPlayer(Player(0), 0, 0, "Periodic timer fired!")
 endfunction
 
 function main takes nothing returns nothing
@@ -21,5 +21,5 @@ function main takes nothing returns nothing
     set p = CreateTimer()
     call TimerStart(p, 1.0, true, function periodic_callback)
 
-    call DisplayTextToPlayer(0, 0, 0, "Timers started!")
+    call DisplayTextToPlayer(Player(0), 0, 0, "Timers started!")
 endfunction
