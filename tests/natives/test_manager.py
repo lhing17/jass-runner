@@ -15,20 +15,20 @@ def test_handle_manager_creation():
 def test_handle_manager_create_unit():
     """测试HandleManager创建单位功能。"""
     from jass_runner.natives.manager import HandleManager
+    from jass_runner.natives.handle import Unit
 
     manager = HandleManager()
 
     # 创建单位
-    unit_id = manager.create_unit("hfoo", 0, 100.0, 200.0, 270.0)
+    unit = manager.create_unit("hfoo", 0, 100.0, 200.0, 270.0)
 
-    # 验证返回的ID格式
-    assert isinstance(unit_id, str)
-    assert unit_id.startswith("unit_")
+    # 验证返回的是Unit对象
+    assert isinstance(unit, Unit)
+    assert unit.id.startswith("unit_")
 
     # 验证单位已注册
-    unit = manager.get_unit(unit_id)
-    assert unit is not None
-    assert unit.id == unit_id
+    retrieved_unit = manager.get_unit(unit.id)
+    assert retrieved_unit is unit
     assert unit.unit_type == "hfoo"
     assert unit.player_id == 0
     assert unit.x == 100.0
@@ -43,12 +43,12 @@ def test_handle_manager_get_handle():
     manager = HandleManager()
 
     # 创建单位
-    unit_id = manager.create_unit("hfoo", 0, 0.0, 0.0, 0.0)
+    unit = manager.create_unit("hfoo", 0, 0.0, 0.0, 0.0)
 
     # 测试获取handle
-    handle = manager.get_handle(unit_id)
+    handle = manager.get_handle(unit.id)
     assert handle is not None
-    assert handle.id == unit_id
+    assert handle.id == unit.id
 
     # 测试获取不存在的handle
     assert manager.get_handle("nonexistent") is None
@@ -61,20 +61,18 @@ def test_handle_manager_destroy_handle():
     manager = HandleManager()
 
     # 创建单位
-    unit_id = manager.create_unit("hfoo", 0, 0.0, 0.0, 0.0)
+    unit = manager.create_unit("hfoo", 0, 0.0, 0.0, 0.0)
 
     # 验证单位存活
-    unit = manager.get_unit(unit_id)
-    assert unit is not None
     assert unit.is_alive() is True
 
     # 销毁单位
-    result = manager.destroy_handle(unit_id)
+    result = manager.destroy_handle(unit.id)
     assert result is True
 
     # 验证单位已销毁
-    unit = manager.get_unit(unit_id)
-    assert unit is None  # 已销毁的单位不应返回
+    retrieved_unit = manager.get_unit(unit.id)
+    assert retrieved_unit is None  # 已销毁的单位不应返回
 
     # 测试销毁不存在的handle
     result = manager.destroy_handle("nonexistent")
@@ -88,13 +86,13 @@ def test_handle_manager_type_index():
     manager = HandleManager()
 
     # 创建多个单位
-    unit_id1 = manager.create_unit("hfoo", 0, 0.0, 0.0, 0.0)
-    unit_id2 = manager.create_unit("hkni", 1, 100.0, 100.0, 90.0)
+    unit1 = manager.create_unit("hfoo", 0, 0.0, 0.0, 0.0)
+    unit2 = manager.create_unit("hkni", 1, 100.0, 100.0, 90.0)
 
-    # 验证类型索引
+    # 验证类型索引（类型索引中存储的是ID字符串）
     assert "unit" in manager._type_index
-    assert unit_id1 in manager._type_index["unit"]
-    assert unit_id2 in manager._type_index["unit"]
+    assert unit1.id in manager._type_index["unit"]
+    assert unit2.id in manager._type_index["unit"]
     assert len(manager._type_index["unit"]) == 2
 
 
@@ -105,26 +103,26 @@ def test_handle_manager_get_unit_state():
     manager = HandleManager()
 
     # 创建单位
-    unit_id = manager.create_unit("hfoo", 0, 0.0, 0.0, 0.0)
+    unit = manager.create_unit("hfoo", 0, 0.0, 0.0, 0.0)
 
     # 测试获取生命值
-    life = manager.get_unit_state(unit_id, "UNIT_STATE_LIFE")
+    life = manager.get_unit_state(unit.id, "UNIT_STATE_LIFE")
     assert life == 100.0
 
     # 测试获取魔法值
-    mana = manager.get_unit_state(unit_id, "UNIT_STATE_MANA")
+    mana = manager.get_unit_state(unit.id, "UNIT_STATE_MANA")
     assert mana == 50.0
 
     # 测试获取最大生命值
-    max_life = manager.get_unit_state(unit_id, "UNIT_STATE_MAX_LIFE")
+    max_life = manager.get_unit_state(unit.id, "UNIT_STATE_MAX_LIFE")
     assert max_life == 100.0
 
     # 测试获取最大魔法值
-    max_mana = manager.get_unit_state(unit_id, "UNIT_STATE_MAX_MANA")
+    max_mana = manager.get_unit_state(unit.id, "UNIT_STATE_MAX_MANA")
     assert max_mana == 50.0
 
     # 测试未知状态类型
-    unknown = manager.get_unit_state(unit_id, "UNKNOWN_STATE")
+    unknown = manager.get_unit_state(unit.id, "UNKNOWN_STATE")
     assert unknown == 0.0
 
     # 测试不存在的单位
@@ -132,8 +130,8 @@ def test_handle_manager_get_unit_state():
     assert nonexistent == 0.0
 
     # 测试已销毁的单位
-    manager.destroy_handle(unit_id)
-    destroyed = manager.get_unit_state(unit_id, "UNIT_STATE_LIFE")
+    manager.destroy_handle(unit.id)
+    destroyed = manager.get_unit_state(unit.id, "UNIT_STATE_LIFE")
     assert destroyed == 0.0
 
 
@@ -144,30 +142,30 @@ def test_handle_manager_set_unit_state():
     manager = HandleManager()
 
     # 创建单位
-    unit_id = manager.create_unit("hfoo", 0, 0.0, 0.0, 0.0)
+    unit = manager.create_unit("hfoo", 0, 0.0, 0.0, 0.0)
 
     # 测试设置生命值
-    result = manager.set_unit_state(unit_id, "UNIT_STATE_LIFE", 75.0)
+    result = manager.set_unit_state(unit.id, "UNIT_STATE_LIFE", 75.0)
     assert result is True
-    assert manager.get_unit_state(unit_id, "UNIT_STATE_LIFE") == 75.0
+    assert manager.get_unit_state(unit.id, "UNIT_STATE_LIFE") == 75.0
 
     # 测试设置魔法值
-    result = manager.set_unit_state(unit_id, "UNIT_STATE_MANA", 30.0)
+    result = manager.set_unit_state(unit.id, "UNIT_STATE_MANA", 30.0)
     assert result is True
-    assert manager.get_unit_state(unit_id, "UNIT_STATE_MANA") == 30.0
+    assert manager.get_unit_state(unit.id, "UNIT_STATE_MANA") == 30.0
 
     # 测试设置最大生命值
-    result = manager.set_unit_state(unit_id, "UNIT_STATE_MAX_LIFE", 150.0)
+    result = manager.set_unit_state(unit.id, "UNIT_STATE_MAX_LIFE", 150.0)
     assert result is True
-    assert manager.get_unit_state(unit_id, "UNIT_STATE_MAX_LIFE") == 150.0
+    assert manager.get_unit_state(unit.id, "UNIT_STATE_MAX_LIFE") == 150.0
 
     # 测试设置最大魔法值
-    result = manager.set_unit_state(unit_id, "UNIT_STATE_MAX_MANA", 75.0)
+    result = manager.set_unit_state(unit.id, "UNIT_STATE_MAX_MANA", 75.0)
     assert result is True
-    assert manager.get_unit_state(unit_id, "UNIT_STATE_MAX_MANA") == 75.0
+    assert manager.get_unit_state(unit.id, "UNIT_STATE_MAX_MANA") == 75.0
 
     # 测试未知状态类型
-    result = manager.set_unit_state(unit_id, "UNKNOWN_STATE", 100.0)
+    result = manager.set_unit_state(unit.id, "UNKNOWN_STATE", 100.0)
     assert result is False
 
     # 测试不存在的单位
@@ -175,8 +173,8 @@ def test_handle_manager_set_unit_state():
     assert result is False
 
     # 测试已销毁的单位
-    manager.destroy_handle(unit_id)
-    result = manager.set_unit_state(unit_id, "UNIT_STATE_LIFE", 100.0)
+    manager.destroy_handle(unit.id)
+    result = manager.set_unit_state(unit.id, "UNIT_STATE_LIFE", 100.0)
     assert result is False
 
 
@@ -193,8 +191,8 @@ def test_handle_manager_statistics():
     assert manager.get_handle_type_count("player") == 16
 
     # 创建单位
-    unit_id1 = manager.create_unit("hfoo", 0, 0.0, 0.0, 0.0)
-    unit_id2 = manager.create_unit("hkni", 1, 100.0, 100.0, 90.0)
+    unit1 = manager.create_unit("hfoo", 0, 0.0, 0.0, 0.0)
+    unit2 = manager.create_unit("hkni", 1, 100.0, 100.0, 90.0)
 
     # 验证统计
     assert manager.get_total_handles() == 18
@@ -203,7 +201,7 @@ def test_handle_manager_statistics():
     assert manager.get_handle_type_count("player") == 16
 
     # 销毁一个单位
-    manager.destroy_handle(unit_id1)
+    manager.destroy_handle(unit1.id)
 
     # 验证统计更新
     assert manager.get_total_handles() == 18  # 总数不变

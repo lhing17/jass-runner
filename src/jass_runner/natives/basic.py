@@ -5,6 +5,7 @@
 
 import logging
 from .base import NativeFunction
+from .handle import Unit
 from ..utils import int_to_fourcc
 
 
@@ -64,28 +65,28 @@ class KillUnit(NativeFunction):
         """
         return "KillUnit"
 
-    def execute(self, state_context, unit_identifier: str):
+    def execute(self, state_context, unit: Unit):
         """执行KillUnit native函数。
 
         参数：
             state_context: 状态上下文
-            unit_identifier: 单位handle ID（字符串）
+            unit: Unit对象（由CreateUnit返回）
 
         返回：
             bool: 成功杀死单位返回True，否则返回False
         """
-        if unit_identifier is None:
+        if unit is None:
             logger.warning("[KillUnit]尝试击杀None单位")
             return False
 
         # 通过HandleManager销毁单位
         handle_manager = state_context.handle_manager
-        success = handle_manager.destroy_handle(unit_identifier)
+        success = handle_manager.destroy_handle(unit.id)
 
         if success:
-            logger.info(f"[KillUnit] 单位{unit_identifier}已被击杀")
+            logger.info(f"[KillUnit] 单位{unit.id}已被击杀")
         else:
-            logger.warning(f"[KillUnit] 单位{unit_identifier}不存在或已被销毁")
+            logger.warning(f"[KillUnit] 单位{unit.id}不存在或已被销毁")
 
         return success
 
@@ -106,7 +107,7 @@ class CreateUnit(NativeFunction):
         return "CreateUnit"
 
     def execute(self, state_context, player: int, unit_type: int,
-                x: float, y: float, facing: float) -> str:
+                x: float, y: float, facing: float) -> Unit:
         """执行CreateUnit native函数。
 
         参数：
@@ -118,17 +119,17 @@ class CreateUnit(NativeFunction):
             facing: 面向角度
 
         返回：
-            str: 生成的单位handle ID
+            Unit: 生成的Unit对象
         """
         # 将fourcc整数转换为字符串（如1213484355 -> 'hfoo'）
         unit_type_str = int_to_fourcc(unit_type)
 
         # 通过HandleManager创建单位
         handle_manager = state_context.handle_manager
-        unit_id = handle_manager.create_unit(unit_type_str, player, x, y, facing)
+        unit = handle_manager.create_unit(unit_type_str, player, x, y, facing)
 
-        logger.info(f"[CreateUnit] 为玩家{player}在({x}, {y})创建{unit_type_str}，单位ID: {unit_id}")
-        return unit_id
+        logger.info(f"[CreateUnit] 为玩家{player}在({x}, {y})创建{unit_type_str}，单位ID: {unit.id}")
+        return unit
 
 
 class GetUnitState(NativeFunction):
@@ -146,17 +147,20 @@ class GetUnitState(NativeFunction):
         """
         return "GetUnitState"
 
-    def execute(self, state_context, unit_identifier: str, state_type: int) -> float:
+    def execute(self, state_context, unit: Unit, state_type: int) -> float:
         """执行GetUnitState native函数。
 
         参数：
             state_context: 状态上下文
-            unit_identifier: 单位handle ID（字符串）
+            unit: Unit对象（由CreateUnit返回）
             state_type: 状态类型常量（如UNIT_STATE_LIFE=0表示生命值）
 
         返回：
             float: 单位状态值
         """
+        if unit is None:
+            return 0.0
+
         # 将整数状态类型转换为字符串
         state_map = {
             UNIT_STATE_LIFE: "UNIT_STATE_LIFE",
@@ -172,6 +176,6 @@ class GetUnitState(NativeFunction):
 
         # 通过HandleManager查询单位状态
         handle_manager = state_context.handle_manager
-        value = handle_manager.get_unit_state(unit_identifier, state_str)
+        value = handle_manager.get_unit_state(unit.id, state_str)
 
         return value

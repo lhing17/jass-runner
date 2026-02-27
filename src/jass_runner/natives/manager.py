@@ -43,12 +43,12 @@ class HandleManager:
         self._type_index[handle.type_name].append(handle.id)
 
     def create_unit(self, unit_type: str, player_id: int,
-                    x: float, y: float, facing: float) -> str:
-        """创建一个单位并返回handle ID。"""
+                    x: float, y: float, facing: float) -> Unit:
+        """创建一个单位并返回Unit对象。"""
         handle_id = f"unit_{self._generate_id()}"
         unit = Unit(handle_id, unit_type, player_id, x, y, facing)
         self._register_handle(unit)
-        return handle_id
+        return unit
 
     def get_handle(self, handle_id: str) -> Optional[Handle]:
         """通过ID获取handle对象。"""

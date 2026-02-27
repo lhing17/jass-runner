@@ -8,11 +8,9 @@ def test_handle_lifecycle_integration():
     manager = HandleManager()
 
     # 创建单位
-    unit_id = manager.create_unit("hfoo", 0, 100.0, 200.0, 270.0)
+    unit = manager.create_unit("hfoo", 0, 100.0, 200.0, 270.0)
 
     # 验证单位创建
-    unit = manager.get_unit(unit_id)
-    assert unit is not None
     assert unit.unit_type == "hfoo"
     assert unit.player_id == 0
     assert unit.x == 100.0
@@ -22,21 +20,21 @@ def test_handle_lifecycle_integration():
     assert unit.is_alive() is True
 
     # 验证状态查询
-    assert manager.get_unit_state(unit_id, "UNIT_STATE_LIFE") == 100.0
-    assert manager.get_unit_state(unit_id, "UNIT_STATE_MANA") == 50.0
+    assert manager.get_unit_state(unit.id, "UNIT_STATE_LIFE") == 100.0
+    assert manager.get_unit_state(unit.id, "UNIT_STATE_MANA") == 50.0
 
     # 修改状态
-    assert manager.set_unit_state(unit_id, "UNIT_STATE_LIFE", 75.0) is True
-    assert manager.get_unit_state(unit_id, "UNIT_STATE_LIFE") == 75.0
+    assert manager.set_unit_state(unit.id, "UNIT_STATE_LIFE", 75.0) is True
+    assert manager.get_unit_state(unit.id, "UNIT_STATE_LIFE") == 75.0
 
     # 销毁单位
-    assert manager.destroy_handle(unit_id) is True
+    assert manager.destroy_handle(unit.id) is True
     assert unit.is_alive() is False
     assert unit.life == 0
 
     # 验证销毁后查询
-    assert manager.get_unit(unit_id) is None
-    assert manager.get_unit_state(unit_id, "UNIT_STATE_LIFE") == 0.0
+    assert manager.get_unit(unit.id) is None
+    assert manager.get_unit_state(unit.id, "UNIT_STATE_LIFE") == 0.0
 
     # 验证统计（包含16个初始玩家）
     assert manager.get_total_handles() == 17  # 16玩家 + 1单位
@@ -51,15 +49,13 @@ def test_multiple_units_integration():
     manager = HandleManager()
 
     # 创建多个单位
-    unit_ids = []
+    units = []
     for i in range(3):
-        unit_id = manager.create_unit(f"unit_type_{i}", i, i * 100.0, i * 100.0, i * 90.0)
-        unit_ids.append(unit_id)
+        unit = manager.create_unit(f"unit_type_{i}", i, i * 100.0, i * 100.0, i * 90.0)
+        units.append(unit)
 
     # 验证所有单位
-    for i, unit_id in enumerate(unit_ids):
-        unit = manager.get_unit(unit_id)
-        assert unit is not None
+    for i, unit in enumerate(units):
         assert unit.unit_type == f"unit_type_{i}"
         assert unit.player_id == i
         assert unit.x == i * 100.0
@@ -73,8 +69,8 @@ def test_multiple_units_integration():
     assert manager.get_handle_type_count("player") == 16
 
     # 销毁部分单位
-    assert manager.destroy_handle(unit_ids[0]) is True
-    assert manager.destroy_handle(unit_ids[1]) is True
+    assert manager.destroy_handle(units[0].id) is True
+    assert manager.destroy_handle(units[1].id) is True
 
     # 验证统计更新
     assert manager.get_total_handles() == 19  # 总数不变

@@ -84,15 +84,13 @@ def test_native_function_with_state_integration():
         interpreter = Interpreter(native_registry=registry)
 
         # 先通过HandleManager创建一个单位
-        unit_id = interpreter.state_context.handle_manager.create_unit("hfoo", 0, 100.0, 200.0, 0.0)
-        assert unit_id is not None
+        unit = interpreter.state_context.handle_manager.create_unit("hfoo", 0, 100.0, 200.0, 0.0)
+        assert unit is not None
 
         # 执行脚本
         interpreter.execute(ast)
 
         # 验证单位存在
-        unit = interpreter.state_context.handle_manager.get_unit(unit_id)
-        assert unit is not None
         assert unit.unit_type == "hfoo"
 
         # 检查日志输出
