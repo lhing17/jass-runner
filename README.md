@@ -237,3 +237,5 @@ MIT
 - [Implementation Plans](docs/plans/)
 - [Project Notes](PROJECT_NOTES.md)
 - [Claude Working Guide](CLAUDE.md)
+- [Timer System Documentation](docs/timer/README.md)
+- [Native Function Documentation](docs/natives/README.md)
