@@ -62,7 +62,7 @@ class JassVM:
             raise RuntimeError("未加载脚本。请先调用 load_script()。")
 
         logger.info("开始脚本执行")
-        self.interpreter.interpret(self.ast)
+        self.interpreter.execute(self.ast)
 
     def run_simulation(self, seconds: float = 10.0):
         """运行指定秒数的计时器模拟。"""
