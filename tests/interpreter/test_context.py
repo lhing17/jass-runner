@@ -66,3 +66,23 @@ def test_execution_context_with_natives():
     display_func = context.get_native_function("DisplayTextToPlayer")
     assert display_func is not None
     assert display_func.name == "DisplayTextToPlayer"
+
+
+def test_execution_context_with_timer_system():
+    """测试带有计时器系统的执行上下文。"""
+    from jass_runner.interpreter.context import ExecutionContext
+    from jass_runner.timer.system import TimerSystem
+    from jass_runner.natives.factory import NativeFactory
+
+    timer_system = TimerSystem()
+    factory = NativeFactory(timer_system=timer_system)
+    registry = factory.create_default_registry()
+
+    context = ExecutionContext(native_registry=registry, timer_system=timer_system)
+
+    # 检查计时器系统已附加
+    assert context.timer_system is timer_system
+
+    # 检查计时器原生函数可用
+    create_timer_func = context.get_native_function("CreateTimer")
+    assert create_timer_func is not None

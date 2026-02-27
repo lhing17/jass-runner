@@ -6,11 +6,12 @@ from typing import Dict, Any, Optional
 class ExecutionContext:
     """表示具有变量作用域的执行上下文。"""
 
-    def __init__(self, parent: Optional['ExecutionContext'] = None, native_registry=None, state_context=None):
+    def __init__(self, parent: Optional['ExecutionContext'] = None, native_registry=None, state_context=None, timer_system=None):
         self.variables: Dict[str, Any] = {}
         self.parent = parent
         self.native_registry = native_registry
         self.state_context = state_context
+        self.timer_system = timer_system
 
     def set_variable(self, name: str, value: Any):
         """在此上下文中设置变量。"""
