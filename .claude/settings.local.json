@@ -19,7 +19,10 @@
       "Bash(git checkout:*)",
       "Bash(git merge:*)",
       "Bash(git branch -d:*)",
-      "Bash(git worktree remove:*)"
+      "Bash(git worktree remove:*)",
+      "Bash(cat:*)",
+      "Bash(python3 -m:*)",
+      "Bash(python3:*)"
     ]
   }
 }
