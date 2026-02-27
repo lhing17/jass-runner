@@ -89,6 +89,13 @@ class NativeCallNode:
     args: List[Any]
 
 
+@dataclass
+class SetStmt:
+    """变量赋值语句节点。"""
+    var_name: str
+    value: Any  # 可以是字面量或函数调用节点
+
+
 class Parser:
     """JASS代码的递归下降解析器。"""
 
@@ -409,6 +416,10 @@ class Parser:
         if self.current_token.type == 'KEYWORD' and self.current_token.value == 'call':
             return self.parse_call_statement()
 
+        # 解析set语句
+        if self.current_token.type == 'KEYWORD' and self.current_token.value == 'set':
+            return self.parse_set_statement()
+
         # 目前跳过其他标记
         self.next_token()
         return None
@@ -509,6 +520,86 @@ class Parser:
                 self.next_token()
 
             return NativeCallNode(func_name=func_name, args=args)
+
+        except Exception:
+            return None
+
+    def parse_set_statement(self) -> Optional[SetStmt]:
+        """解析set赋值语句。"""
+        try:
+            # 跳过'set'关键词
+            self.next_token()
+
+            # 获取变量名
+            if not self.current_token or self.current_token.type != 'IDENTIFIER':
+                return None
+            var_name = self.current_token.value
+            self.next_token()
+
+            # 检查赋值操作符
+            if not self.current_token or self.current_token.value != '=':
+                return None
+            self.next_token()
+
+            # 解析右侧值（可以是字面量或函数调用）
+            value = None
+            if self.current_token and self.current_token.type == 'IDENTIFIER':
+                # 可能是函数调用，如 CreateUnit(...)
+                func_name = self.current_token.value
+                self.next_token()
+
+                if self.current_token and self.current_token.value == '(':
+                    # 这是一个函数调用
+                    self.next_token()  # 跳过 '('
+
+                    # 解析参数列表
+                    args = []
+                    while self.current_token and self.current_token.value != ')':
+                        if self.current_token.type == 'INTEGER':
+                            args.append(str(self.current_token.value))
+                        elif self.current_token.type == 'REAL':
+                            args.append(str(self.current_token.value))
+                        elif self.current_token.type == 'STRING':
+                            args.append(self.current_token.value)
+                        elif self.current_token.type == 'IDENTIFIER':
+                            args.append(self.current_token.value)
+                        elif self.current_token.type == 'FOURCC':
+                            args.append(str(self.current_token.value))
+
+                        self.next_token()
+
+                        # 检查是否有逗号
+                        if self.current_token and self.current_token.value == ',':
+                            self.next_token()
+                            continue
+                        elif self.current_token and self.current_token.value == ')':
+                            break
+
+                    # 跳过右括号
+                    if self.current_token and self.current_token.value == ')':
+                        self.next_token()
+
+                    value = NativeCallNode(func_name=func_name, args=args)
+                else:
+                    # 不是函数调用，回退到变量引用（但赋值中不支持）
+                    return None
+            elif self.current_token:
+                # 字面量
+                if self.current_token.type == 'INTEGER':
+                    value = self.current_token.value
+                    self.next_token()
+                elif self.current_token.type == 'REAL':
+                    value = self.current_token.value
+                    self.next_token()
+                elif self.current_token.type == 'STRING':
+                    value = self.current_token.value[1:-1]
+                    self.next_token()
+
+            # 如果存在分号则跳过
+            if self.current_token and self.current_token.value == ';':
+                self.next_token()
+
+            return SetStmt(var_name=var_name, value=value)
 
         except Exception:
             return None
