@@ -13,7 +13,8 @@ class NativeFactory:
     此类负责创建预配置的native函数注册表，简化注册过程。
     """
 
-    def create_default_registry(self) -> NativeRegistry:
+    @staticmethod
+    def create_default_registry() -> NativeRegistry:
         """创建包含默认native函数的注册表。
 
         返回：
