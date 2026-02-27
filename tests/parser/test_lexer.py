@@ -100,3 +100,92 @@ def test_lexer_all_keywords():
         token = tokens[0]
         assert token.type == 'KEYWORD', f"Expected KEYWORD for '{keyword}', got {token.type}"
         assert token.value == keyword, f"Expected value '{keyword}', got {token.value}"
+
+
+def test_lexer_fourcc_format():
+    """Test that lexer correctly handles FourCC format (single-quoted 4 chars)."""
+    from jass_runner.parser.lexer import Lexer
+    from jass_runner.utils import fourcc_to_int
+
+    # Test basic FourCC
+    code = "'hfoo'"
+    lexer = Lexer(code)
+    tokens = list(lexer.tokenize())
+
+    assert len(tokens) == 1
+    assert tokens[0].type == 'INTEGER'
+    assert tokens[0].value == fourcc_to_int('hfoo')  # Should be 1213484355
+
+    # Test another FourCC
+    code = "'hkni'"
+    lexer = Lexer(code)
+    tokens = list(lexer.tokenize())
+
+    assert len(tokens) == 1
+    assert tokens[0].type == 'INTEGER'
+    assert tokens[0].value == fourcc_to_int('hkni')
+
+
+def test_lexer_fourcc_in_function_call():
+    """Test FourCC in a function call context."""
+    from jass_runner.parser.lexer import Lexer
+    from jass_runner.utils import fourcc_to_int
+
+    # Simulate CreateUnit call with FourCC
+    code = 'call CreateUnit(0, \'hfoo\', 0.0, 0.0, 0.0)'
+    lexer = Lexer(code)
+    tokens = [t for t in lexer.tokenize() if t.type not in ('WHITESPACE',)]
+
+    # Should have: call, CreateUnit, (, 0, ,, INTEGER (hfoo), ,, 0.0, ,, 0.0, ,, 0.0, )
+    token_types = [t.type for t in tokens]
+    assert 'KEYWORD' in token_types  # call
+    assert 'IDENTIFIER' in token_types  # CreateUnit
+    assert 'INTEGER' in token_types  # 0 and 'hfoo'
+    assert 'REAL' in token_types  # 0.0
+
+    # Find the FourCC token (should be the second INTEGER after 0)
+    fourcc_token = None
+    for t in tokens:
+        if t.type == 'INTEGER' and t.value == fourcc_to_int('hfoo'):
+            fourcc_token = t
+            break
+
+    assert fourcc_token is not None, "FourCC token not found"
+    # 'hfoo' = 0x68666F6F in big-endian, but we store as little-endian bytes
+    # little-endian: 0x6F6F6668 = 1869571688
+    assert fourcc_token.value == 1869571688
+
+
+def test_lexer_fourcc_vs_string():
+    """Test that FourCC and string are distinguished correctly."""
+    from jass_runner.parser.lexer import Lexer
+
+    # FourCC should be INTEGER
+    code_fourcc = "'hfoo'"
+    lexer = Lexer(code_fourcc)
+    tokens = list(lexer.tokenize())
+    assert tokens[0].type == 'INTEGER'
+
+    # String should be STRING
+    code_string = '"hfoo"'
+    lexer = Lexer(code_string)
+    tokens = list(lexer.tokenize())
+    assert tokens[0].type == 'STRING'
+    assert tokens[0].value == '"hfoo"'
+
+
+def test_lexer_invalid_fourcc():
+    """Test that invalid FourCC formats are not converted."""
+    from jass_runner.parser.lexer import Lexer
+
+    # Too short (3 chars)
+    code = "'foo'"
+    lexer = Lexer(code)
+    tokens = list(lexer.tokenize())
+    # Should not be recognized as FourCC, will be processed as separate tokens or skipped
+
+    # Too long (5 chars)
+    code = "'foooo'"
+    lexer = Lexer(code)
+    tokens = list(lexer.tokenize())
+    # Should not be recognized as FourCC

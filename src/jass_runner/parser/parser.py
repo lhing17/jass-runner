@@ -437,8 +437,10 @@ class Parser:
                 self.next_token()
                 # 解析表达式（简化）
                 if self.current_token:
-                    if self.current_token.type == 'NUMBER':
-                        value = int(self.current_token.value)
+                    if self.current_token.type == 'INTEGER':
+                        value = self.current_token.value
+                    elif self.current_token.type == 'REAL':
+                        value = self.current_token.value
                     elif self.current_token.type == 'STRING':
                         value = self.current_token.value[1:-1]  # 移除引号
                     self.next_token()
@@ -473,8 +475,11 @@ class Parser:
             args = []
             while self.current_token and self.current_token.value != ')':
                 # 解析参数表达式（简化：字面量或标识符）
-                if self.current_token.type == 'NUMBER':
-                    arg_value = int(self.current_token.value)
+                if self.current_token.type == 'INTEGER':
+                    arg_value = self.current_token.value
+                    args.append(str(arg_value))  # 转换为字符串以便求值器处理
+                elif self.current_token.type == 'REAL':
+                    arg_value = self.current_token.value
                     args.append(str(arg_value))  # 转换为字符串以便求值器处理
                 elif self.current_token.type == 'STRING':
                     arg_value = self.current_token.value  # 保留引号以便求值器识别字符串字面量

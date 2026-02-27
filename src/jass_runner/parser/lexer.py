@@ -3,6 +3,7 @@
 from dataclasses import dataclass
 from typing import List, Iterator
 import re
+from ..utils import fourcc_to_int
 
 @dataclass
 class Token:
@@ -44,10 +45,69 @@ class Lexer:
         self.line = 1
         self.column = 1
 
+    def _try_match_fourcc(self) -> Iterator[Token]:
+        """尝试匹配FourCC格式（单引号包围的4个字符）。
+
+        FourCC格式：'ABCD'，其中ABCD是恰好4个ASCII字符。
+        如果匹配成功，将其作为INTEGER类型的token返回。
+        """
+        if self.code[self.pos] != "'":
+            return
+
+        # 检查是否有足够的字符
+        if self.pos + 6 > len(self.code):
+            return
+
+        # 检查格式：'xxxx'
+        chars = self.code[self.pos + 1:self.pos + 5]
+        end_quote = self.code[self.pos + 5]
+
+        if end_quote != "'":
+            return
+
+        # 验证中间4个字符都是有效的ASCII字符
+        if not all(32 <= ord(c) <= 126 for c in chars):
+            return
+
+        # 转换为整数
+        try:
+            value = fourcc_to_int(chars)
+            yield Token(
+                type='INTEGER',
+                value=value,
+                line=self.line,
+                column=self.column
+            )
+            # 更新位置（跳过 'xxxx' 共6个字符）
+            self._update_position(self.code[self.pos:self.pos + 6])
+            self.pos += 6
+        except ValueError:
+            # 转换失败，不处理
+            pass
+
     def tokenize(self) -> Iterator[Token]:
         """从代码生成标记。"""
         while self.pos < len(self.code):
             matched = False
+
+            # 首先尝试匹配FourCC格式（单引号后跟恰好4个字符再跟单引号）
+            if self.code[self.pos] == "'":
+                fourcc_matched = False
+                for token in self._try_match_fourcc():
+                    yield token
+                    fourcc_matched = True
+                if fourcc_matched:
+                    continue
+                # FourCC匹配失败，将单引号作为普通标点符号处理
+                yield Token(
+                    type='PUNCTUATION',
+                    value="'",
+                    line=self.line,
+                    column=self.column
+                )
+                self._update_position("'")
+                self.pos += 1
+                continue
 
             for token_type, pattern in self.TOKEN_PATTERNS:
                 regex = re.compile(pattern)
@@ -63,14 +123,24 @@ class Lexer:
                         if token_type == 'IDENTIFIER' and value in self.KEYWORDS:
                             actual_type = 'KEYWORD'
 
+                        # 处理数字：区分为INTEGER或REAL
+                        processed_value = value
+                        if token_type == 'NUMBER':
+                            if '.' in value:
+                                actual_type = 'REAL'
+                                processed_value = float(value)
+                            else:
+                                actual_type = 'INTEGER'
+                                processed_value = int(value)
+
                         yield Token(
                             type=actual_type,
-                            value=value,
+                            value=processed_value,
                             line=self.line,
                             column=self.column
                         )
 
-                    # 更新位置和行/列计数器
+                    # 更新位置和行/列计数器（使用原始字符串值）
                     self.pos = match.end()
                     self._update_position(value)
                     matched = True
