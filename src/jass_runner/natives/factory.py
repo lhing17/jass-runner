@@ -4,7 +4,7 @@
 """
 
 from .registry import NativeRegistry
-from .basic import DisplayTextToPlayer, KillUnit, CreateUnit, GetUnitState
+from .basic import DisplayTextToPlayer, KillUnit, CreateUnit, GetUnitState, CreateItem, RemoveItem
 
 
 class NativeFactory:
@@ -27,5 +27,7 @@ class NativeFactory:
         registry.register(KillUnit())
         registry.register(CreateUnit())
         registry.register(GetUnitState())
+        registry.register(CreateItem())
+        registry.register(RemoveItem())
 
         return registry

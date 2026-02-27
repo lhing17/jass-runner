@@ -260,3 +260,92 @@ def test_handle_manager_get_player_by_handle():
     # 测试获取不存在的玩家
     assert manager.get_player_by_handle("player_999") is None
     assert manager.get_player_by_handle("unit_1") is None
+
+
+def test_handle_manager_create_item():
+    """测试HandleManager创建物品功能。"""
+    from jass_runner.natives.manager import HandleManager
+    from jass_runner.natives.handle import Item
+
+    manager = HandleManager()
+
+    # 创建物品
+    item = manager.create_item("ratf", 100.0, 200.0)
+
+    # 验证返回的是Item对象
+    assert isinstance(item, Item)
+    assert item.id.startswith("item_")
+
+    # 验证物品已注册
+    retrieved_item = manager.get_item(item.id)
+    assert retrieved_item is item
+    assert item.item_type == "ratf"
+    assert item.x == 100.0
+    assert item.y == 200.0
+
+
+def test_handle_manager_get_item():
+    """测试HandleManager获取物品功能。"""
+    from jass_runner.natives.manager import HandleManager
+
+    manager = HandleManager()
+
+    # 创建物品
+    item = manager.create_item("ratf", 100.0, 200.0)
+
+    # 测试获取物品
+    retrieved = manager.get_item(item.id)
+    assert retrieved is item
+
+    # 测试获取不存在的物品
+    assert manager.get_item("nonexistent") is None
+
+    # 测试获取已销毁的物品
+    manager.destroy_handle(item.id)
+    assert manager.get_item(item.id) is None
+
+
+def test_handle_manager_item_type_index():
+    """测试HandleManager物品类型索引功能。"""
+    from jass_runner.natives.manager import HandleManager
+
+    manager = HandleManager()
+
+    # 创建多个物品
+    item1 = manager.create_item("ratf", 0.0, 0.0)
+    item2 = manager.create_item("manh", 100.0, 100.0)
+
+    # 验证类型索引
+    assert "item" in manager._type_index
+    assert item1.id in manager._type_index["item"]
+    assert item2.id in manager._type_index["item"]
+    assert len(manager._type_index["item"]) == 2
+
+
+def test_handle_manager_mixed_handles():
+    """测试HandleManager混合管理不同类型的handle。"""
+    from jass_runner.natives.manager import HandleManager
+    from jass_runner.natives.handle import Unit, Item
+
+    manager = HandleManager()
+
+    # 创建单位和物品
+    unit = manager.create_unit("hfoo", 0, 0.0, 0.0, 0.0)
+    item = manager.create_item("ratf", 100.0, 100.0)
+
+    # 验证总数（16个玩家 + 1个单位 + 1个物品）
+    assert manager.get_total_handles() == 18
+    assert manager.get_alive_handles() == 18
+
+    # 验证类型计数
+    assert manager.get_handle_type_count("player") == 16
+    assert manager.get_handle_type_count("unit") == 1
+    assert manager.get_handle_type_count("item") == 1
+
+    # 验证可以通过各自的方法获取
+    assert manager.get_unit(unit.id) is unit
+    assert manager.get_item(item.id) is item
+
+    # 验证通过通用get_handle也能获取
+    assert manager.get_handle(unit.id) is unit
+    assert manager.get_handle(item.id) is item

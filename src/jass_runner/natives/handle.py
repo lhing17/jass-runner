@@ -80,3 +80,18 @@ class Player(Handle):
         self.color = player_id  # 默认颜色等于ID
         self.slot_state = "player" if player_id < 12 else "empty"  # 0-11为玩家，12-15为空
         self.controller = "user" if player_id < 8 else "computer" if player_id < 12 else "neutral"
+
+
+class Item(Handle):
+    """物品handle。
+
+    属性：
+        item_type: 物品类型代码（如'ratf'代表攻击之爪）
+        x, y: 位置坐标
+    """
+
+    def __init__(self, handle_id: str, item_type: str, x: float, y: float):
+        super().__init__(handle_id, "item")
+        self.item_type = item_type
+        self.x = x
+        self.y = y

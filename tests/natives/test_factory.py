@@ -24,6 +24,8 @@ def test_create_default_registry():
     kill_func = registry.get("KillUnit")
     create_unit_func = registry.get("CreateUnit")
     get_unit_state_func = registry.get("GetUnitState")
+    create_item_func = registry.get("CreateItem")
+    remove_item_func = registry.get("RemoveItem")
 
     assert display_func is not None
     assert display_func.name == "DisplayTextToPlayer"
@@ -37,6 +39,12 @@ def test_create_default_registry():
     assert get_unit_state_func is not None
     assert get_unit_state_func.name == "GetUnitState"
 
+    assert create_item_func is not None
+    assert create_item_func.name == "CreateItem"
+
+    assert remove_item_func is not None
+    assert remove_item_func.name == "RemoveItem"
+
     # 检查总数
     all_funcs = registry.get_all()
-    assert len(all_funcs) == 4
+    assert len(all_funcs) == 6

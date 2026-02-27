@@ -5,7 +5,7 @@
 
 import logging
 from .base import NativeFunction
-from .handle import Unit
+from .handle import Unit, Item
 from ..utils import int_to_fourcc
 
 
@@ -179,3 +179,80 @@ class GetUnitState(NativeFunction):
         value = handle_manager.get_unit_state(unit.id, state_str)
 
         return value
+
+
+class CreateItem(NativeFunction):
+    """创建一个物品（通过状态管理系统）。
+
+    此函数模拟JASS中的CreateItem native函数，通过HandleManager真正创建物品。
+    """
+
+    @property
+    def name(self) -> str:
+        """获取函数名称。
+
+        返回：
+            函数名称"CreateItem"
+        """
+        return "CreateItem"
+
+    def execute(self, state_context, item_type: int, x: float, y: float) -> Item:
+        """执行CreateItem native函数。
+
+        参数：
+            state_context: 状态上下文
+            item_type: 物品类型代码（fourcc整数格式）
+            x: X坐标
+            y: Y坐标
+
+        返回：
+            Item: 生成的Item对象
+        """
+        # 将fourcc整数转换为字符串
+        item_type_str = int_to_fourcc(item_type)
+
+        # 通过HandleManager创建物品
+        handle_manager = state_context.handle_manager
+        item = handle_manager.create_item(item_type_str, x, y)
+
+        logger.info(f"[CreateItem] 在({x}, {y})创建{item_type_str}，物品ID: {item.id}")
+        return item
+
+
+class RemoveItem(NativeFunction):
+    """移除一个物品（通过状态管理系统）。
+
+    此函数模拟JASS中的RemoveItem native函数，通过HandleManager真正销毁物品。
+    """
+
+    @property
+    def name(self) -> str:
+        """获取函数名称。
+
+        返回：
+            函数名称"RemoveItem"
+        """
+        return "RemoveItem"
+
+    def execute(self, state_context, item: Item):
+        """执行RemoveItem native函数。
+
+        参数：
+            state_context: 状态上下文
+            item: Item对象（由CreateItem返回）
+
+        返回：
+            None
+        """
+        if item is None:
+            logger.warning("[RemoveItem] 尝试移除None物品")
+            return
+
+        # 通过HandleManager销毁物品
+        handle_manager = state_context.handle_manager
+        success = handle_manager.destroy_handle(item.id)
+
+        if success:
+            logger.info(f"[RemoveItem] 物品{item.id}已被移除")
+        else:
+            logger.warning(f"[RemoveItem] 物品{item.id}不存在或已被移除")

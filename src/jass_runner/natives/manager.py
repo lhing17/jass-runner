@@ -4,7 +4,7 @@
 """
 
 from typing import Dict, List, Optional
-from .handle import Handle, Unit, Player
+from .handle import Handle, Unit, Player, Item
 
 
 class HandleManager:
@@ -61,6 +61,20 @@ class HandleManager:
         """获取单位对象，进行类型检查。"""
         handle = self.get_handle(unit_id)
         if isinstance(handle, Unit):
+            return handle
+        return None
+
+    def create_item(self, item_type: str, x: float, y: float) -> Item:
+        """创建一个物品并返回Item对象。"""
+        handle_id = f"item_{self._generate_id()}"
+        item = Item(handle_id, item_type, x, y)
+        self._register_handle(item)
+        return item
+
+    def get_item(self, item_id: str) -> Optional[Item]:
+        """获取物品对象，进行类型检查。"""
+        handle = self.get_handle(item_id)
+        if isinstance(handle, Item):
             return handle
         return None
 

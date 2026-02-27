@@ -127,3 +127,77 @@ def test_unit_lifecycle_integration(state_context):
 
     # 验证单位已被销毁
     assert state_context.handle_manager.get_unit(unit.id) is None
+
+
+def test_create_item(state_context):
+    """测试CreateItem原生函数。"""
+    from jass_runner.natives.basic import CreateItem
+    from jass_runner.natives.handle import Item
+
+    native = CreateItem()
+    assert native.name == "CreateItem"
+
+    # 使用fourcc整数创建物品（'ratf' = 攻击之爪）
+    item_type_int = fourcc_to_int("ratf")
+    result = native.execute(state_context, item_type_int, 100.0, 200.0)
+
+    # 验证返回的是Item对象
+    assert isinstance(result, Item)
+    assert result.id.startswith("item_")
+    assert result.item_type == "ratf"
+    assert result.x == 100.0
+    assert result.y == 200.0
+
+    # 验证可以通过handle manager获取
+    retrieved_item = state_context.handle_manager.get_item(result.id)
+    assert retrieved_item is result
+
+
+def test_remove_item(state_context):
+    """测试RemoveItem原生函数。"""
+    from jass_runner.natives.basic import CreateItem, RemoveItem
+    from jass_runner.natives.handle import Item
+
+    remove_native = RemoveItem()
+    assert remove_native.name == "RemoveItem"
+
+    # 先创建一个物品
+    item_type_int = fourcc_to_int("ratf")
+    item = state_context.handle_manager.create_item("ratf", 100.0, 200.0)
+
+    # 测试移除存在的物品
+    result = remove_native.execute(state_context, item)
+    assert result is None  # RemoveItem返回nothing
+
+    # 验证物品已被销毁
+    retrieved_item = state_context.handle_manager.get_item(item.id)
+    assert retrieved_item is None or not retrieved_item.is_alive()
+
+    # 测试使用None物品
+    result = remove_native.execute(state_context, None)
+    assert result is None
+
+
+def test_item_lifecycle_integration(state_context):
+    """测试物品完整生命周期集成。"""
+    from jass_runner.natives.basic import CreateItem, RemoveItem
+    from jass_runner.natives.handle import Item
+
+    create_native = CreateItem()
+    remove_native = RemoveItem()
+
+    # 创建物品
+    item_type_int = fourcc_to_int("ratf")  # 攻击之爪
+    item = create_native.execute(state_context, item_type_int, 50.0, 75.0)
+
+    # 验证返回的是Item对象
+    assert isinstance(item, Item)
+
+    # 验证物品存在
+    assert state_context.handle_manager.get_item(item.id) is not None
+
+    # 移除物品
+    remove_native.execute(state_context, item)
+
+    # 验证物品已被销毁
+    assert state_context.handle_manager.get_item(item.id) is None

@@ -105,3 +105,35 @@ def test_player_default_values():
         player = Player(f"player_{i}", i)
         assert player.controller == "neutral"
         assert player.slot_state == "empty"
+
+
+def test_item_class():
+    """测试Item类的创建和属性。"""
+    from jass_runner.natives.handle import Handle, Item
+
+    # 创建Item实例
+    item = Item("item_001", "ratf", 100.0, 200.0)
+
+    # 验证继承自Handle
+    assert isinstance(item, Handle)
+    assert item.id == "item_001"
+    assert item.type_name == "item"
+    assert item.alive is True
+
+    # 验证Item特有属性
+    assert item.item_type == "ratf"
+    assert item.x == 100.0
+    assert item.y == 200.0
+
+
+def test_item_destroy():
+    """测试Item销毁功能。"""
+    from jass_runner.natives.handle import Item
+
+    item = Item("item_002", "ratf", 50.0, 75.0)
+    assert item.is_alive() is True
+
+    # 销毁item
+    item.destroy()
+    assert item.alive is False
+    assert item.is_alive() is False
