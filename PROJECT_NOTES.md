@@ -268,27 +268,73 @@ JASS Runner 是一个用Python实现的JASS脚本模拟运行工具，用于魔�
     - 设计五层架构：Store、Reducer、Middleware、Selector、Integration
     - 参考Redux模式，采用不可变状态更新
     - 设计State、Action、Reducer、Store核心类
-  - 创建Phase 1实施计划：`docs/plans/2026-02-26-jass-simulator-state-management-phase1-implementation.md`
-    - Store和State核心实现
-    - Reducer基础框架
-    - Action定义系统
-    - 完整API设计和使用示例
-  - 创建Phase 2实施计划：`docs/plans/2026-02-26-jass-simulator-state-management-phase2-implementation.md`
-    - Middleware系统设计
-    - LoggerMiddleware实现
-    - 异步Action支持
-  - 创建Phase 3实施计划：`docs/plans/2026-02-26-jass-simulator-state-management-phase3-implementation.md`
-    - Selector系统实现
-    - MemoizedSelector缓存机制
-    - 派生状态计算
-  - 创建Phase 4实施计划：`docs/plans/2026-02-26-jass-simulator-state-management-phase4-implementation.md`
-    - ExecutionContext重构
-    - Interpreter集成Store
-    - Native函数访问状态
-  - 创建Phase 5实施计划：`docs/plans/2026-02-26-jass-simulator-state-management-phase5-implementation.md`
-    - DevTools开发工具
-    - 时间旅行调试
-    - 状态导出/导入
+  - 创建Phase 1-5实施计划文档
+
+#### 23. Handle系统核心实现 (2026-02-26)
+- 创建Handle基础架构 (`src/jass_runner/handles/`)
+  - 实现`Handle`基类：所有游戏对象的抽象基类
+    - 支持唯一ID分配和管理
+    - 提供基础属性和方法
+  - 实现`Unit`类：游戏单位对象
+    - 单位类型（FourCC格式）
+    - 生命值、魔法值状态管理
+    - 单位坐标位置
+  - 实现`Player`类：玩家对象
+    - 自动初始化16个玩家（0-15）
+    - 支持玩家名称和状态
+
+#### 24. 状态上下文和句柄管理器 (2026-02-26)
+- 实现`StateContext`类 (`src/jass_runner/state_context.py`)
+  - 管理HandleManager实例
+  - 提供统一的状态访问接口
+  - 支持扩展其他状态管理器
+- 实现`HandleManager`类 (`src/jass_runner/handle_manager.py`)
+  - 句柄创建和分配
+  - 句柄查询和检索（通过ID或类型）
+  - 句柄销毁和清理
+  - 单位状态修改（设置/增减生命值、魔法值）
+  - 单位状态查询（获取生命值、魔法值、类型、所有者）
+  - 统计方法：获取总句柄数、活跃句柄列表
+
+#### 25. FourCC工具函数实现 (2026-02-26)
+- 创建`src/jass_runner/utils/fourcc.py` - FourCC转换工具
+  - `string_to_fourcc()`：将4字符字符串转换为整数（小端序）
+  - `fourcc_to_string()`：将整数转换回4字符字符串
+  - `int_to_fourcc()`：别名函数，与fourcc_to_string相同
+  - 支持JASS单位类型ID格式（如'Hpal'→1214542384）
+  - 完整测试覆盖 (`tests/utils/test_fourcc.py`)
+
+#### 26. 词法分析器增强 - FourCC字面量支持 (2026-02-26)
+- 扩展`Lexer`类支持FourCC格式字面量
+  - 识别单引号包围的4字符字面量（如`'Hpal'`）
+  - 自动转换为对应的整数值
+  - 添加`FOURCC` token类型
+  - 更新测试验证FourCC解析功能
+
+#### 27. 解析器增强 - 函数调用作为变量初始值 (2026-02-26)
+- 扩展`parse_variable_decl`方法支持函数调用初始化
+  - 变量声明时可以使用函数调用作为初始值
+  - 示例：`local unit u = CreateUnit(...)`
+  - 保持向后兼容性
+  - 更新测试覆盖新功能
+
+#### 28. 解释器增强 - Set语句和函数调用赋值 (2026-02-26)
+- 实现`set`语句执行支持
+  - 支持`set x = expression`语法
+  - 变量赋值和更新
+- 实现函数调用返回值赋值
+  - 支持将函数调用结果赋值给变量
+  - 示例：`set u = CreateUnit(...)`
+  - 正确处理返回值类型
+- 更新测试验证新功能
+
+#### 29. 原生函数状态上下文支持 (2026-02-26)
+- 为原生函数添加`state_context`参数支持
+  - 修改`NativeFunction.execute`签名支持状态访问
+  - 更新`DisplayTextToPlayer`、`KillUnit`等函数
+  - 支持部分函数返回`Unit`类型替代`None`
+  - 更新工厂类和注册表集成
+  - 添加Phase 1集成测试验证完整流程
 
 ### 当前状态
 - ✅ 需求分析和设计完成
@@ -325,6 +371,22 @@ JASS Runner 是一个用Python实现的JASS脚本模拟运行工具，用于魔�
   - 五阶段实施计划已创建（Phase 1-5）
   - 核心架构：Store、Reducer、Middleware、Selector、DevTools
   - 解决ExecutionContext职责过重问题
+- ✅ Handle系统核心实现
+  - Handle基类、Unit类、Player类（16个玩家初始化）
+  - HandleManager句柄管理器
+  - StateContext状态上下文
+  - 单位状态查询和修改功能
+- ✅ FourCC工具函数实现
+  - 字符串与整数互转
+  - 词法分析器支持FourCC字面量
+- ✅ 解析器增强
+  - 支持函数调用作为变量初始值
+- ✅ 解释器增强
+  - 支持set语句
+  - 支持函数调用返回值赋值
+- ✅ 原生函数状态上下文支持
+  - 集成StateContext访问
+  - Phase 1集成测试通过
 
 ### 代码库结构 (更新)
 ```
@@ -343,11 +405,22 @@ jass-runner/
 │   │   ├── context.py    # 执行上下文
 │   │   ├── evaluator.py  # 表达式求值器
 │   │   └── interpreter.py # 解释器核心
-│   └── natives/          # Native函数框架 (Phase 3)
-│       ├── __init__.py   # 模块初始化
-│       ├── base.py       # NativeFunction抽象基类
-│       ├── registry.py   # NativeRegistry注册系统
-│       └── basic.py      # 基础native函数实现
+│   ├── natives/          # Native函数框架 (Phase 3)
+│   │   ├── __init__.py   # 模块初始化
+│   │   ├── base.py       # NativeFunction抽象基类
+│   │   ├── registry.py   # NativeRegistry注册系统
+│   │   ├── factory.py    # Native函数工厂
+│   │   └── basic.py      # 基础native函数实现
+│   ├── handles/          # Handle系统
+│   │   ├── __init__.py   # 模块初始化
+│   │   ├── handle.py     # Handle基类
+│   │   ├── unit.py       # 单位类
+│   │   └── player.py     # 玩家类
+│   ├── handle_manager.py # 句柄管理器
+│   ├── state_context.py  # 状态上下文
+│   └── utils/            # 工具函数
+│       ├── __init__.py
+│       └── fourcc.py     # FourCC转换工具
 ├── tests/
 │   ├── __init__.py       # 测试包
 │   ├── conftest.py       # pytest配置
@@ -381,13 +454,14 @@ jass-runner/
 
 ## 技术架构
 
-### 五层架构设计
+### 六层架构设计
 1. **解析器层** - JASS语法解析，生成AST
 2. **解释器层** - AST执行，变量作用域管理
 3. **Native函数框架** - 插件式native函数模拟
-4. **状态管理层** - Redux-like状态管理（新增）
-5. **计时器系统** - 帧基计时器模拟
-6. **虚拟机核心** - 组件集成和CLI
+4. **Handle系统** - 游戏对象管理（单位、玩家等）
+5. **状态管理层** - 统一状态访问接口（StateContext + HandleManager）
+6. **计时器系统** - 帧基计时器模拟（待实现）
+7. **虚拟机核心** - 组件集成和CLI（待实现）
 
 ### 关键技术栈
 - Python 3.8+
@@ -397,40 +471,32 @@ jass-runner/
 
 ## 下一步行动
 
-### 当前任务 (状态管理系统重构)
-1. **Phase 1**: Store和State核心实现
-   - 创建 `src/jass_runner/state_management/` 包结构
-   - 实现 `State` 类：不可变状态容器
-   - 实现 `Action` 基类和常用Action类型
-   - 实现 `Reducer` 基类和状态更新逻辑
-   - 实现 `Store` 类：状态管理核心
-   - 编写完整测试覆盖
+### 当前任务 (完善Handle系统和状态管理)
+1. **扩展Handle系统**
+   - 添加更多游戏对象类型（Ability、Trigger、Timer等）
+   - 完善单位属性和状态管理
+   - 实现玩家属性和资源管理
 
-2. **Phase 2**: Middleware系统
-   - 实现 `Middleware` 基类
-   - 实现 `LoggerMiddleware` 日志中间件
-   - 支持异步Action处理
-   - 中间件链式执行机制
+2. **扩展原生函数**
+   - 实现更多单位操作函数（移动、攻击、施法等）
+   - 实现玩家相关函数（获取玩家名称、资源等）
+   - 实现更多FourCC相关函数
 
-3. **Phase 3**: Selector系统
-   - 实现基础 `Selector` 类
-   - 实现 `MemoizedSelector` 缓存机制
-   - 支持派生状态计算
+3. **计时器系统** (Phase 4)
+   - 基于帧的事件循环
+   - Timer类管理单个计时器
+   - TimerSystem管理系统中的多个计时器
+   - SimulationLoop帧循环用于快速模拟
 
-4. **Phase 4**: 集成到现有系统
-   - 重构 `ExecutionContext` 使用Store
-   - 更新 `Interpreter` 集成Store
-   - 修改Native函数访问状态的方式
-   - 更新现有测试
-
-5. **Phase 5**: DevTools开发工具
-   - 实现时间旅行调试
-   - 状态快照导出/导入
-   - 开发工具面板支持
+4. **虚拟机核心** (Phase 5)
+   - JassVM类集成所有组件
+   - 脚本加载和执行入口点
+   - 命令行接口实现
 
 ### 后续任务
-- Phase 4: 计时器系统
-- Phase 5: 虚拟机核心
+- 状态管理Redux-like架构（Store、Middleware、Selector）
+- DevTools开发工具（时间旅行调试）
+- 性能优化和大规模脚本测试
 
 ## 开发原则
 
@@ -446,6 +512,9 @@ jass-runner/
 3. **计时器实现**：帧基模拟而非实时，支持快速测试
 4. **Native函数设计**：插件式架构，便于扩展和测试
 5. **状态管理设计**：Redux-like架构，解耦状态管理与执行上下文，支持时间旅行调试
+6. **Handle系统设计**：引入Handle基类和HandleManager，统一管理游戏对象生命周期
+7. **状态上下文设计**：StateContext作为统一状态访问接口，便于原生函数访问游戏状态
+8. **FourCC处理**：使用小端序整数表示JASS单位类型ID，提供转换工具函数
 
 ## 待解决问题
 
@@ -455,4 +524,4 @@ jass-runner/
 4. **测试覆盖率**：确保关键功能的测试覆盖
 
 ---
-*最后更新: 2026-02-26 (完成了状态管理系统架构设计，创建5个阶段实施计划：Store核心、Middleware系统、Selector系统、现有系统集成、DevTools开发工具。Phase 1-3已全面完成，项目进入状态管理系统重构阶段)*
+*最后更新: 2026-02-27 (完成Handle系统核心实现：Handle基类、Unit类、Player类(16玩家初始化)、HandleManager句柄管理器、StateContext状态上下文。FourCC工具函数实现。解析器增强支持函数调用作为变量初始值。解释器增强支持set语句和函数调用返回值赋值。原生函数集成状态上下文支持。)*
