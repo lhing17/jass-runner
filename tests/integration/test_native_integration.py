@@ -23,7 +23,7 @@ def test_native_function_integration():
     # 注意：KillUnit现在需要真实的单位ID，所以这里只测试DisplayTextToPlayer
     jass_code = """
     function main takes nothing returns nothing
-        call DisplayTextToPlayer(0, 0, 0, "Hello from JASS!")
+        call DisplayTextToPlayer(Player(0), 0, 0, "Hello from JASS!")
     endfunction
     """
 
@@ -69,7 +69,7 @@ def test_native_function_with_state_integration():
     # 创建JASS代码，使用CreateUnit和KillUnit
     jass_code = f"""
     function main takes nothing returns nothing
-        call DisplayTextToPlayer(0, 0, 0, "Creating unit...")
+        call DisplayTextToPlayer(Player(0), 0, 0, "Creating unit...")
     endfunction
     """
 

@@ -65,7 +65,7 @@ def test_vm_with_natives():
     # 包含原生调用的脚本
     script = """
     function main takes nothing returns nothing
-        call DisplayTextToPlayer(0, 0, 0, "Hello from VM!")
+        call DisplayTextToPlayer(Player(0), 0, 0, "Hello from VM!")
     endfunction
     """
 

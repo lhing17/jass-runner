@@ -4,7 +4,7 @@
 """
 
 from .registry import NativeRegistry
-from .basic import DisplayTextToPlayer, KillUnit, CreateUnit, GetUnitState, CreateItem, RemoveItem
+from .basic import DisplayTextToPlayer, KillUnit, CreateUnit, GetUnitState, CreateItem, RemoveItem, PlayerNative
 from .timer_natives import CreateTimer, TimerStart, TimerGetElapsed, DestroyTimer, PauseTimer, ResumeTimer
 
 
@@ -37,6 +37,7 @@ class NativeFactory:
         registry.register(GetUnitState())
         registry.register(CreateItem())
         registry.register(RemoveItem())
+        registry.register(PlayerNative())
 
         # 如果计时器系统可用，注册计时器原生函数
         if self._timer_system:

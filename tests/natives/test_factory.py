@@ -45,9 +45,14 @@ def test_create_default_registry():
     assert remove_item_func is not None
     assert remove_item_func.name == "RemoveItem"
 
+    # 检查Player原生函数已注册
+    player_func = registry.get("Player")
+    assert player_func is not None
+    assert player_func.name == "Player"
+
     # 检查总数
     all_funcs = registry.get_all()
-    assert len(all_funcs) == 6
+    assert len(all_funcs) == 7
 
 
 def test_factory_with_timer_system():

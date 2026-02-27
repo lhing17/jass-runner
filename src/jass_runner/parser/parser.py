@@ -528,23 +528,62 @@ class Parser:
             args = []
             while self.current_token and self.current_token.value != ')':
                 # 解析参数表达式（简化：字面量或标识符）
+                arg_value = None
                 if self.current_token.type == 'INTEGER':
                     arg_value = self.current_token.value
                     args.append(str(arg_value))  # 转换为字符串以便求值器处理
+                    self.next_token()
                 elif self.current_token.type == 'REAL':
                     arg_value = self.current_token.value
                     args.append(str(arg_value))  # 转换为字符串以便求值器处理
+                    self.next_token()
                 elif self.current_token.type == 'STRING':
                     arg_value = self.current_token.value  # 保留引号以便求值器识别字符串字面量
                     args.append(arg_value)
+                    self.next_token()
                 elif self.current_token.type == 'IDENTIFIER':
                     arg_value = self.current_token.value
+                    self.next_token()
+
+                    # 检查是否是嵌套函数调用
+                    if self.current_token and self.current_token.value == '(':
+                        # 这是一个嵌套函数调用
+                        self.next_token()  # 跳过 '('
+
+                        # 解析嵌套函数的参数列表
+                        nested_args = []
+                        while self.current_token and self.current_token.value != ')':
+                            if self.current_token.type == 'INTEGER':
+                                nested_args.append(str(self.current_token.value))
+                            elif self.current_token.type == 'REAL':
+                                nested_args.append(str(self.current_token.value))
+                            elif self.current_token.type == 'STRING':
+                                nested_args.append(self.current_token.value)
+                            elif self.current_token.type == 'IDENTIFIER':
+                                nested_args.append(self.current_token.value)
+                            elif self.current_token.type == 'FOURCC':
+                                nested_args.append(str(self.current_token.value))
+
+                            self.next_token()
+
+                            # 检查是否有逗号
+                            if self.current_token and self.current_token.value == ',':
+                                self.next_token()
+                                continue
+                            elif self.current_token and self.current_token.value == ')':
+                                break
+
+                        # 跳过右括号
+                        if self.current_token and self.current_token.value == ')':
+                            self.next_token()
+
+                        # 创建嵌套函数调用节点
+                        arg_value = NativeCallNode(func_name=arg_value, args=nested_args)
+
                     args.append(arg_value)
                 else:
                     # 不支持的类型
                     break
-
-                self.next_token()
 
                 # 检查是否有逗号继续下一个参数
                 if self.current_token and self.current_token.value == ',':

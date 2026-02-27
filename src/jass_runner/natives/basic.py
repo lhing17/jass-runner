@@ -5,7 +5,7 @@
 
 import logging
 from .base import NativeFunction
-from .handle import Unit, Item
+from .handle import Unit, Item, Player
 from ..utils import int_to_fourcc
 
 
@@ -33,12 +33,12 @@ class DisplayTextToPlayer(NativeFunction):
         """
         return "DisplayTextToPlayer"
 
-    def execute(self, state_context, player: int, x: float, y: float, message: str):
+    def execute(self, state_context, player: Player, x: float, y: float, message: str):
         """执行DisplayTextToPlayer native函数。
 
         参数：
             state_context: 状态上下文
-            player: 玩家ID
+            player: Player对象
             x: X坐标（游戏中未使用，仅保持接口兼容）
             y: Y坐标（游戏中未使用，仅保持接口兼容）
             message: 要显示的文本消息
@@ -46,7 +46,8 @@ class DisplayTextToPlayer(NativeFunction):
         返回：
             None
         """
-        logger.info(f"[DisplayTextToPlayer]玩家{player}: {message}")
+        player_id = player.player_id if player else -1
+        logger.info(f"[DisplayTextToPlayer]玩家{player_id}: {message}")
         return None
 
 
@@ -256,3 +257,33 @@ class RemoveItem(NativeFunction):
             logger.info(f"[RemoveItem] 物品{item.id}已被移除")
         else:
             logger.warning(f"[RemoveItem] 物品{item.id}不存在或已被移除")
+
+
+class PlayerNative(NativeFunction):
+    """获取Player对象（通过player_id）。
+
+    此函数模拟JASS中的Player native函数，通过HandleManager获取或创建Player对象。
+    """
+
+    @property
+    def name(self) -> str:
+        """获取函数名称。
+
+        返回：
+            函数名称"Player"
+        """
+        return "Player"
+
+    def execute(self, state_context, player_id: int) -> Player:
+        """执行Player native函数。
+
+        参数：
+            state_context: 状态上下文
+            player_id: 玩家ID（0-15）
+
+        返回：
+            Player: Player对象
+        """
+        handle_manager = state_context.handle_manager
+        player = handle_manager.get_player(player_id)
+        return player

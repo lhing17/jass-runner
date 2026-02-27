@@ -2,7 +2,7 @@
 
 import pytest
 from jass_runner.natives.basic import (
-    DisplayTextToPlayer, KillUnit, CreateUnit, GetUnitState,
+    DisplayTextToPlayer, KillUnit, CreateUnit, GetUnitState, PlayerNative,
     UNIT_STATE_LIFE, UNIT_STATE_MANA
 )
 from jass_runner.natives.state import StateContext
@@ -17,12 +17,35 @@ def state_context():
 
 def test_display_text_to_player(state_context):
     """测试DisplayTextToPlayer原生函数。"""
+    from jass_runner.natives.handle import Player
+
     native = DisplayTextToPlayer()
     assert native.name == "DisplayTextToPlayer"
 
+    # 获取Player对象
+    player = state_context.handle_manager.get_player(0)
+
     # 测试执行
-    result = native.execute(state_context, 0, 0.0, 0.0, "Hello World")
+    result = native.execute(state_context, player, 0.0, 0.0, "Hello World")
     assert result is None
+
+
+def test_player_native(state_context):
+    """测试Player原生函数。"""
+    from jass_runner.natives.handle import Player
+
+    native = PlayerNative()
+    assert native.name == "Player"
+
+    # 测试获取玩家0
+    result = native.execute(state_context, 0)
+    assert isinstance(result, Player)
+    assert result.player_id == 0
+
+    # 测试获取玩家15
+    result = native.execute(state_context, 15)
+    assert isinstance(result, Player)
+    assert result.player_id == 15
 
 
 def test_kill_unit(state_context):
