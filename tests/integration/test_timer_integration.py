@@ -30,8 +30,9 @@ def test_timer_system_integration():
     timer_get_elapsed = registry.get("TimerGetElapsed")
 
     # 创建并启动计时器
-    timer_id = create_timer.execute(None)
-    assert timer_id is not None
+    timer = create_timer.execute(None)
+    assert timer is not None
+    timer_id = timer.timer_id
 
     # 跟踪回调调用
     callback_calls = []
@@ -39,8 +40,8 @@ def test_timer_system_integration():
     def test_callback():
         callback_calls.append("called")
 
-    # 启动计时器（1秒超时，一次性）
-    timer_start.execute(None, timer_id, 1.0, False, test_callback)
+    # 启动计时器（1秒超时，一次性，传递 Timer 对象）
+    timer_start.execute(None, timer, 1.0, False, test_callback)
 
     # 创建模拟循环
     simulation = SimulationLoop(timer_system, frame_duration=0.05)  # 测试用20 FPS
@@ -49,8 +50,8 @@ def test_timer_system_integration():
     simulation.run_seconds(0.5)
     assert len(callback_calls) == 0
 
-    # 检查经过时间
-    elapsed = timer_get_elapsed.execute(None, timer_id)
+    # 检查经过时间（传递 Timer 对象）
+    elapsed = timer_get_elapsed.execute(None, timer)
     assert 0.4 <= elapsed <= 0.6  # 允许一定容差
 
     # 再运行模拟0.6秒（应触发回调）

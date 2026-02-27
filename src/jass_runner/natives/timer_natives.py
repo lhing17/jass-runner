@@ -2,6 +2,7 @@
 
 import logging
 from ..natives.base import NativeFunction
+from ..timer.timer import Timer
 
 
 logger = logging.getLogger(__name__)
@@ -17,11 +18,19 @@ class CreateTimer(NativeFunction):
     def name(self) -> str:
         return "CreateTimer"
 
-    def execute(self, state_context, *args, **kwargs):
-        """执行 CreateTimer 原生函数。"""
+    def execute(self, state_context, *args, **kwargs) -> Timer:
+        """执行 CreateTimer 原生函数。
+
+        参数：
+            state_context: 状态上下文
+
+        返回：
+            Timer: 创建的计时器对象
+        """
         timer_id = self._timer_system.create_timer()
+        timer = self._timer_system.get_timer(timer_id)
         logger.info(f"[CreateTimer] Created timer: {timer_id}")
-        return timer_id
+        return timer
 
 
 class TimerStart(NativeFunction):
@@ -34,12 +43,25 @@ class TimerStart(NativeFunction):
     def name(self) -> str:
         return "TimerStart"
 
-    def execute(self, state_context, timer_id: str, timeout: float, periodic: bool, callback_func, *args):
-        """执行 TimerStart 原生函数。"""
-        timer = self._timer_system.get_timer(timer_id)
-        if not timer:
-            logger.warning(f"[TimerStart] Timer not found: {timer_id}")
+    def execute(self, state_context, timer: Timer, timeout: float, periodic: bool, callback_func, *args):
+        """执行 TimerStart 原生函数。
+
+        参数：
+            state_context: 状态上下文
+            timer: Timer 对象
+            timeout: 超时时间（秒）
+            periodic: 是否周期性触发
+            callback_func: 回调函数
+            *args: 额外参数
+
+        返回：
+            bool: 是否成功启动
+        """
+        if not timer or not isinstance(timer, Timer):
+            logger.warning(f"[TimerStart] Invalid timer: {timer}")
             return False
+
+        timer_id = timer.timer_id
 
         # 在实际实现中，callback_func 将是一个 JASS 函数引用
         # 目前，我们创建一个包装器来调用回调并记录日志
@@ -63,14 +85,22 @@ class TimerGetElapsed(NativeFunction):
     def name(self) -> str:
         return "TimerGetElapsed"
 
-    def execute(self, state_context, timer_id: str):
-        """执行 TimerGetElapsed 原生函数。"""
-        elapsed = self._timer_system.get_elapsed_time(timer_id)
-        if elapsed is None:
-            logger.warning(f"[TimerGetElapsed] Timer not found: {timer_id}")
+    def execute(self, state_context, timer: Timer) -> float:
+        """执行 TimerGetElapsed 原生函数。
+
+        参数：
+            state_context: 状态上下文
+            timer: Timer 对象
+
+        返回：
+            float: 经过的时间，如果计时器无效则返回 0.0
+        """
+        if not timer or not isinstance(timer, Timer):
+            logger.warning(f"[TimerGetElapsed] Invalid timer: {timer}")
             return 0.0
 
-        logger.info(f"[TimerGetElapsed] Timer {timer_id} elapsed: {elapsed}")
+        elapsed = timer.elapsed
+        logger.info(f"[TimerGetElapsed] Timer {timer.timer_id} elapsed: {elapsed}")
         return elapsed
 
 
@@ -84,8 +114,22 @@ class DestroyTimer(NativeFunction):
     def name(self) -> str:
         return "DestroyTimer"
 
-    def execute(self, state_context, timer_id: str):
-        """执行 DestroyTimer 原生函数。"""
+    def execute(self, state_context, timer: Timer):
+        """执行 DestroyTimer 原生函数。
+
+        参数：
+            state_context: 状态上下文
+            timer: Timer 对象
+
+        返回：
+            bool: 是否成功销毁
+        """
+        if not timer or not isinstance(timer, Timer):
+            logger.warning(f"[DestroyTimer] Invalid timer: {timer}")
+            return False
+
+        timer_id = timer.timer_id
+        timer.destroy()
         success = self._timer_system.destroy_timer(timer_id)
         if success:
             logger.info(f"[DestroyTimer] Destroyed timer: {timer_id}")
@@ -104,14 +148,23 @@ class PauseTimer(NativeFunction):
     def name(self) -> str:
         return "PauseTimer"
 
-    def execute(self, state_context, timer_id: str):
-        """执行 PauseTimer 原生函数。"""
-        success = self._timer_system.pause_timer(timer_id)
-        if success:
-            logger.info(f"[PauseTimer] Paused timer: {timer_id}")
-        else:
-            logger.warning(f"[PauseTimer] Timer not found: {timer_id}")
-        return success
+    def execute(self, state_context, timer: Timer):
+        """执行 PauseTimer 原生函数。
+
+        参数：
+            state_context: 状态上下文
+            timer: Timer 对象
+
+        返回：
+            bool: 是否成功暂停
+        """
+        if not timer or not isinstance(timer, Timer):
+            logger.warning(f"[PauseTimer] Invalid timer: {timer}")
+            return False
+
+        timer.pause()
+        logger.info(f"[PauseTimer] Paused timer: {timer.timer_id}")
+        return True
 
 
 class ResumeTimer(NativeFunction):
@@ -124,11 +177,20 @@ class ResumeTimer(NativeFunction):
     def name(self) -> str:
         return "ResumeTimer"
 
-    def execute(self, state_context, timer_id: str):
-        """执行 ResumeTimer 原生函数。"""
-        success = self._timer_system.resume_timer(timer_id)
-        if success:
-            logger.info(f"[ResumeTimer] Resumed timer: {timer_id}")
-        else:
-            logger.warning(f"[ResumeTimer] Timer not found: {timer_id}")
-        return success
+    def execute(self, state_context, timer: Timer):
+        """执行 ResumeTimer 原生函数。
+
+        参数：
+            state_context: 状态上下文
+            timer: Timer 对象
+
+        返回：
+            bool: 是否成功恢复
+        """
+        if not timer or not isinstance(timer, Timer):
+            logger.warning(f"[ResumeTimer] Invalid timer: {timer}")
+            return False
+
+        timer.resume()
+        logger.info(f"[ResumeTimer] Resumed timer: {timer.timer_id}")
+        return True
