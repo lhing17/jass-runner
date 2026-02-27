@@ -23,7 +23,8 @@ def test_state_management_end_to_end():
     assert not parser.errors, f"解析错误: {parser.errors}"
 
     # 创建解释器
-    native_registry = NativeFactory.create_default_registry()
+    factory = NativeFactory()
+    native_registry = factory.create_default_registry()
     interpreter = Interpreter(native_registry=native_registry)
 
     # 执行脚本（不应抛出异常）
