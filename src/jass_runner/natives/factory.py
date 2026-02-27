@@ -5,7 +5,7 @@
 
 from .registry import NativeRegistry
 from .basic import DisplayTextToPlayer, KillUnit, CreateUnit, GetUnitState, CreateItem, RemoveItem
-from .timer_natives import CreateTimer, TimerStart, TimerGetElapsed
+from .timer_natives import CreateTimer, TimerStart, TimerGetElapsed, DestroyTimer, PauseTimer, ResumeTimer
 
 
 class NativeFactory:
@@ -43,5 +43,8 @@ class NativeFactory:
             registry.register(CreateTimer(self._timer_system))
             registry.register(TimerStart(self._timer_system))
             registry.register(TimerGetElapsed(self._timer_system))
+            registry.register(DestroyTimer(self._timer_system))
+            registry.register(PauseTimer(self._timer_system))
+            registry.register(ResumeTimer(self._timer_system))
 
         return registry

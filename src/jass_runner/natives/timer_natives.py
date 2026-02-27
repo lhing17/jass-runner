@@ -70,3 +70,63 @@ class TimerGetElapsed(NativeFunction):
 
         logger.info(f"[TimerGetElapsed] Timer {timer_id} elapsed: {elapsed}")
         return elapsed
+
+
+class DestroyTimer(NativeFunction):
+    """销毁一个计时器。"""
+
+    def __init__(self, timer_system):
+        self._timer_system = timer_system
+
+    @property
+    def name(self) -> str:
+        return "DestroyTimer"
+
+    def execute(self, state_context, timer_id: str):
+        """执行 DestroyTimer 原生函数。"""
+        success = self._timer_system.destroy_timer(timer_id)
+        if success:
+            logger.info(f"[DestroyTimer] Destroyed timer: {timer_id}")
+        else:
+            logger.warning(f"[DestroyTimer] Timer not found: {timer_id}")
+        return success
+
+
+class PauseTimer(NativeFunction):
+    """暂停一个计时器。"""
+
+    def __init__(self, timer_system):
+        self._timer_system = timer_system
+
+    @property
+    def name(self) -> str:
+        return "PauseTimer"
+
+    def execute(self, state_context, timer_id: str):
+        """执行 PauseTimer 原生函数。"""
+        success = self._timer_system.pause_timer(timer_id)
+        if success:
+            logger.info(f"[PauseTimer] Paused timer: {timer_id}")
+        else:
+            logger.warning(f"[PauseTimer] Timer not found: {timer_id}")
+        return success
+
+
+class ResumeTimer(NativeFunction):
+    """恢复一个计时器。"""
+
+    def __init__(self, timer_system):
+        self._timer_system = timer_system
+
+    @property
+    def name(self) -> str:
+        return "ResumeTimer"
+
+    def execute(self, state_context, timer_id: str):
+        """执行 ResumeTimer 原生函数。"""
+        success = self._timer_system.resume_timer(timer_id)
+        if success:
+            logger.info(f"[ResumeTimer] Resumed timer: {timer_id}")
+        else:
+            logger.warning(f"[ResumeTimer] Timer not found: {timer_id}")
+        return success
