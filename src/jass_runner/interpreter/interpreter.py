@@ -60,8 +60,13 @@ class Interpreter:
 
     def execute_local_declaration(self, decl: LocalDecl):
         """执行局部变量声明。"""
-        # 在当前上下文中设置变量
-        self.current_context.set_variable(decl.name, decl.value)
+        # 如果值是函数调用节点，先执行它并获取返回值
+        if isinstance(decl.value, NativeCallNode):
+            result = self.evaluator.evaluate(decl.value)
+            self.current_context.set_variable(decl.name, result)
+        else:
+            # 直接赋值字面量或None
+            self.current_context.set_variable(decl.name, decl.value)
 
     def execute_native_call(self, node: NativeCallNode):
         """执行原生函数调用。"""

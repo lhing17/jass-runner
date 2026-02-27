@@ -446,15 +446,57 @@ class Parser:
             value = None
             if self.current_token and self.current_token.value == '=':
                 self.next_token()
-                # 解析表达式（简化）
+                # 解析表达式
                 if self.current_token:
                     if self.current_token.type == 'INTEGER':
                         value = self.current_token.value
+                        self.next_token()
                     elif self.current_token.type == 'REAL':
                         value = self.current_token.value
+                        self.next_token()
                     elif self.current_token.type == 'STRING':
                         value = self.current_token.value[1:-1]  # 移除引号
-                    self.next_token()
+                        self.next_token()
+                    elif self.current_token.type == 'IDENTIFIER':
+                        # 可能是函数调用，如 CreateUnit(...)
+                        func_name = self.current_token.value
+                        self.next_token()
+
+                        if self.current_token and self.current_token.value == '(':
+                            # 这是一个函数调用
+                            self.next_token()  # 跳过 '('
+
+                            # 解析参数列表
+                            args = []
+                            while self.current_token and self.current_token.value != ')':
+                                if self.current_token.type == 'INTEGER':
+                                    args.append(str(self.current_token.value))
+                                elif self.current_token.type == 'REAL':
+                                    args.append(str(self.current_token.value))
+                                elif self.current_token.type == 'STRING':
+                                    args.append(self.current_token.value)
+                                elif self.current_token.type == 'IDENTIFIER':
+                                    args.append(self.current_token.value)
+                                elif self.current_token.type == 'FOURCC':
+                                    args.append(str(self.current_token.value))
+
+                                self.next_token()
+
+                                # 检查是否有逗号
+                                if self.current_token and self.current_token.value == ',':
+                                    self.next_token()
+                                    continue
+                                elif self.current_token and self.current_token.value == ')':
+                                    break
+
+                            # 跳过右括号
+                            if self.current_token and self.current_token.value == ')':
+                                self.next_token()
+
+                            value = NativeCallNode(func_name=func_name, args=args)
+                        else:
+                            # 不是函数调用，作为变量引用处理（暂不支持）
+                            value = None
 
             # 如果存在分号则跳过
             if self.current_token and self.current_token.value == ';':
