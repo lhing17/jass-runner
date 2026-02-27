@@ -1,9 +1,12 @@
-"""工具函数模块。
+"""JASS Runner工具模块。
 
-此模块包含JASS模拟器中使用的各种工具函数，如FourCC转换等。
+此模块包含各种实用工具，如内存监控、性能分析等。
 """
 
+from .memory import MemoryTracker, HandleMemoryMonitor
+from .performance import PerformanceMonitor, track_performance, get_global_monitor, reset_global_monitor
 
+# FourCC转换函数（从原来的utils.py迁移）
 def fourcc_to_int(fourcc: str) -> int:
     """将FourCC字符串转换为整数。
 
@@ -55,3 +58,16 @@ def is_fourcc(value) -> bool:
     if isinstance(value, int):
         return 0 <= value <= 0xFFFFFFFF
     return False
+
+
+__all__ = [
+    "MemoryTracker",
+    "HandleMemoryMonitor",
+    "PerformanceMonitor",
+    "track_performance",
+    "get_global_monitor",
+    "reset_global_monitor",
+    "fourcc_to_int",
+    "int_to_fourcc",
+    "is_fourcc",
+]

@@ -18,6 +18,11 @@ A JASS script simulator for Warcraft III map testing and automation.
 - ✅ Phase 1: Project setup and core infrastructure (all tasks completed)
 - ✅ Phase 2: Interpreter and execution engine (all tasks completed)
 - ✅ Phase 3: Native function framework (all tasks completed)
+- ✅ State Management System (all 5 phases completed)
+  - Handle class system and HandleManager
+  - Native function state sharing
+  - Integration tests and performance benchmarks
+  - Documentation and utilities
 - ✅ Project documentation (CLAUDE.md, PROJECT_NOTES.md, docs/natives/README.md)
 
 ### In Progress
@@ -139,6 +144,43 @@ The project is implemented in 5 phases, detailed plans are in the `docs/plans/` 
 5. **Phase 5**: Virtual machine core (planned)
 
 See [docs/natives/README.md](docs/natives/README.md) for native function framework documentation.
+
+## State Management System
+
+JASS Runner provides a complete state management system for maintaining JASS handle states in memory.
+
+### Core Components
+
+- **Handle**: Base class for all JASS handles
+- **Unit**: Unit handle with life, mana, and other attributes
+- **HandleManager**: Centralized handle lifecycle management
+- **StateContext**: Global and local state management
+
+### Quick Example
+
+```python
+from jass_runner.natives.manager import HandleManager
+
+# Create manager
+manager = HandleManager()
+
+# Create a unit
+unit = manager.create_unit("hfoo", 0, 100.0, 200.0, 270.0)
+
+# Query state
+life = manager.get_unit_state(unit.id, "UNIT_STATE_LIFE")
+print(f"Life: {life}")
+
+# Destroy unit
+manager.destroy_handle(unit.id)
+```
+
+More examples in [examples/](examples/) directory.
+
+### Documentation
+
+- [User Guide](docs/user-guide.md) - Detailed usage instructions
+- [API Documentation](docs/api/README.md) - Complete API reference
 
 ## Examples
 
