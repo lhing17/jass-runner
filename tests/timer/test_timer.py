@@ -10,3 +10,14 @@ def test_timer_creation():
     assert timer.elapsed == 0.0
     assert timer.periodic is False
     assert timer.running is False
+
+
+def test_timer_system_creation():
+    """Test that TimerSystem can be created."""
+    from jass_runner.timer.system import TimerSystem
+
+    system = TimerSystem()
+    assert system is not None
+    assert hasattr(system, 'create_timer')
+    assert hasattr(system, 'get_timer')
+    assert hasattr(system, 'update')
