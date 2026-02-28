@@ -83,3 +83,22 @@ endfunction
 
     assert len(ast.globals) == 0
     assert len(ast.functions) == 1
+
+
+def test_local_variable_name_conflict_with_global():
+    """测试局部变量与全局变量同名时报错。"""
+    code = """
+globals
+    integer counter = 0
+endglobals
+
+function main takes nothing returns nothing
+    local integer counter = 1
+endfunction
+"""
+    parser = Parser(code)
+    ast = parser.parse()
+
+    # 应该记录错误
+    assert len(parser.errors) > 0
+    assert any("counter" in str(e) and "同名" in str(e) for e in parser.errors)

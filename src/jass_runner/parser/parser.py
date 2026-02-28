@@ -184,6 +184,9 @@ class Parser:
         # 首先解析可选的 globals 块
         globals_list = self.parse_globals_block()
 
+        # 存储全局变量名用于冲突检查
+        self.global_names = {g.name for g in globals_list}
+
         functions: List[FunctionDecl] = []
 
         # 主解析循环：查找函数声明
@@ -248,6 +251,16 @@ class Parser:
             if not self.current_token or self.current_token.type != 'IDENTIFIER':
                 return None
             var_name = self.current_token.value
+
+            # 检查是否与全局变量同名
+            if hasattr(self, 'global_names') and var_name in self.global_names:
+                self.errors.append(ParseError(
+                    message=f"局部变量 '{var_name}' 与全局变量同名",
+                    line=self.current_token.line,
+                    column=self.current_token.column
+                ))
+                return None
+
             self.next_token()
 
             # 检查可选的初始值
@@ -581,6 +594,16 @@ class Parser:
             if not self.current_token or self.current_token.type != 'IDENTIFIER':
                 return None
             var_name = self.current_token.value
+
+            # 检查是否与全局变量同名
+            if hasattr(self, 'global_names') and var_name in self.global_names:
+                self.errors.append(ParseError(
+                    message=f"局部变量 '{var_name}' 与全局变量同名",
+                    line=self.current_token.line,
+                    column=self.current_token.column
+                ))
+                return None
+
             self.next_token()
 
             # 检查赋值
@@ -771,6 +794,16 @@ class Parser:
             if not self.current_token or self.current_token.type != 'IDENTIFIER':
                 return None
             var_name = self.current_token.value
+
+            # 检查是否与全局变量同名
+            if hasattr(self, 'global_names') and var_name in self.global_names:
+                self.errors.append(ParseError(
+                    message=f"局部变量 '{var_name}' 与全局变量同名",
+                    line=self.current_token.line,
+                    column=self.current_token.column
+                ))
+                return None
+
             self.next_token()
 
             # 检查赋值操作符
