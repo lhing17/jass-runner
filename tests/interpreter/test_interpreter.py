@@ -392,3 +392,17 @@ def test_execute_if_with_loop_inside():
     interpreter.execute(ast)
     # 1 + 2 + 3 + 4 + 5 = 15，循环正常结束即表示测试通过
     assert True
+
+
+def test_execute_global_array_declaration():
+    """测试执行全局数组声明。"""
+    from jass_runner.interpreter.interpreter import Interpreter
+    from jass_runner.parser.ast_nodes import ArrayDecl
+
+    interpreter = Interpreter()
+    decl = ArrayDecl(name="counts", element_type="integer",
+                     is_global=True, is_constant=False)
+    interpreter.execute_statement(decl)
+
+    assert "counts" in interpreter.current_context.arrays
+    assert interpreter.current_context.arrays["counts"][0] == 0

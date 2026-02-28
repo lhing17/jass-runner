@@ -4,6 +4,7 @@ from typing import Any
 from .context import ExecutionContext
 from .evaluator import Evaluator
 from ..parser.parser import AST, FunctionDecl, LocalDecl, NativeCallNode, SetStmt, IfStmt, LoopStmt, ExitWhenStmt, ReturnStmt, GlobalDecl
+from ..parser.ast_nodes import ArrayDecl
 from ..natives.state import StateContext
 from .control_flow import ExitLoopSignal, ReturnSignal
 
@@ -81,7 +82,9 @@ class Interpreter:
 
     def execute_statement(self, statement: Any):
         """执行单个语句。"""
-        if isinstance(statement, LocalDecl):
+        if isinstance(statement, ArrayDecl):
+            self.execute_array_declaration(statement)
+        elif isinstance(statement, LocalDecl):
             self.execute_local_declaration(statement)
         elif isinstance(statement, NativeCallNode):
             self.execute_native_call(statement)
@@ -95,6 +98,14 @@ class Interpreter:
             self.execute_exitwhen_statement(statement)
         elif isinstance(statement, ReturnStmt):
             self.execute_return_statement(statement)
+
+    def execute_array_declaration(self, decl: ArrayDecl):
+        """执行数组声明。
+
+        参数：
+            decl: 数组声明节点
+        """
+        self.current_context.declare_array(decl.name, decl.element_type)
 
     def execute_local_declaration(self, decl: LocalDecl):
         """执行局部变量声明。"""
