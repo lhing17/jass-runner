@@ -61,10 +61,14 @@
 - [x] **P0** [Interpreter] 实现控制流语句 (`if`, `loop`, `exitwhen`, `return`)。
 - [x] **P0** [Interpreter] 实现完整的运算符解析与表达式求值。
 - [x] **P0** [Interpreter] 实现 `globals` 全局变量块的解析与访问（基础变量声明）。
-- [ ] **P1** [Interpreter] 扩展 `globals` 支持 `constant` 常量声明。
+- [x] **P1** [Interpreter] 扩展 `globals` 支持 `constant` 常量声明。
 - [ ] **P1** [Interpreter] 扩展 `globals` 支持 `array` 数组声明（如 `integer array counts`）。
 
 **v0.2.0 状态**: ✅ 已完成（2026-02-28）
+- 控制流语句：`if`/`else`/`elseif`/`endif`, `loop`/`endloop`, `exitwhen`, `return`
+- 运算符：`+`, `-`, `*`, `/`, `==`, `!=`, `<`, `>`, `<=`, `>=`, `and`, `or`, `not`
+- `globals` 全局变量块支持（含 `constant` 常量）
+- 测试覆盖：173个测试通过
 
 ### v0.3.0: 运行时与基础 API (Runtime & Basic API)
 > 目标：能够运行简单的魔兽地图逻辑，处理基本的单位操作。

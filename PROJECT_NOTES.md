@@ -693,6 +693,37 @@ jass-runner/
   - 所有 170 个测试通过
   - 核心模块覆盖率：interpreter 98%
 
+#### 37. Constant 常量支持实现完成 (2026-02-28)
+- **AST扩展**：
+  - 修改 `GlobalDecl` 节点添加 `is_constant` 标记 (`src/jass_runner/parser/ast_nodes.py`)
+  - 默认为 `False` 保持向后兼容
+
+- **Parser层实现**：
+  - 扩展 `parse_global_declaration` 方法支持 `constant` 关键字解析
+  - 验证常量声明必须有初始值，否则记录解析错误
+  - 收集常量名称集合用于后续修改检查
+
+- **常量修改保护**：
+  - 在 `parse_set_statement` 中检查是否尝试修改常量
+  - 检测到常量修改时记录详细错误信息（包含行列号）
+  - 错误恢复机制确保解析器继续处理后续代码
+
+- **测试覆盖**：
+  - 创建 `tests/parser/test_constant.py` - 4个解析器测试
+    - `test_parse_constant_declaration` - 常量声明解析（integer）
+    - `test_parse_constant_real_declaration` - real类型常量
+    - `test_parse_constant_without_initial_value_errors` - 无初始值错误检查
+    - `test_parse_set_constant_errors` - 修改常量错误检查
+  - 创建 `tests/interpreter/test_constant_interp.py` - 2个解释器测试
+    - `test_constant_initialization` - 常量初始化验证
+    - `test_constant_access_in_function` - 函数内访问常量
+  - 创建 `tests/integration/test_constant_integration.py` - 1个集成测试
+    - `test_constant_with_globals_integration` - 常量与普通变量混合使用
+
+- **测试统计**：
+  - 所有 173 个测试通过（新增3个）
+  - 常量相关测试全部通过
+
 ### 当前状态
 - ✅ 需求分析和设计完成
 - ✅ 5个阶段实施计划完成
@@ -707,7 +738,8 @@ jass-runner/
 - ✅ **Evaluator 增强（布尔值、函数引用）完成**
 - ✅ **控制流语句扩展完成（if/loop/exitwhen/return + 运算符）**
 - ✅ **Globals 全局变量块实现完成**
-- ✅ 所有 170 个测试通过
+- ✅ **Constant 常量支持实现完成**
+- ✅ 所有 173 个测试通过
 
 ---
 *最后更新: 2026-02-28*
