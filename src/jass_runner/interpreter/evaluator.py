@@ -56,8 +56,8 @@ class Evaluator:
                 i = j + 1
                 continue
 
-            # 处理运算符
-            if expression[i] in '+-*/':
+            # 处理运算符和括号
+            if expression[i] in '+-*/()':
                 tokens.append(expression[i])
                 i += 1
                 continue
@@ -84,15 +84,19 @@ class Evaluator:
 
         return tokens
 
-    def _parse_value(self, token: str) -> Any:
+    def _parse_value(self, token: Any) -> Any:
         """解析单个token为值。
 
         参数：
-            token: 单个token字符串
+            token: 单个token（字符串或已解析的值）
 
         返回：
             解析后的值
         """
+        # 如果token已经是解析后的值（如int、float等），直接返回
+        if not isinstance(token, str):
+            return token
+
         token = token.strip()
 
         # 处理字符串字面量
@@ -171,8 +175,18 @@ class Evaluator:
         while i < len(tokens):
             token = tokens[i]
 
+            # 处理左括号：压入运算符栈
+            if token == '(':
+                operator_stack.append(token)
+            # 处理右括号：弹出直到左括号
+            elif token == ')':
+                while operator_stack and operator_stack[-1] != '(':
+                    output_queue.append(operator_stack.pop())
+                # 弹出左括号
+                if operator_stack and operator_stack[-1] == '(':
+                    operator_stack.pop()
             # 如果是运算符
-            if token in self.OPERATOR_PRECEDENCE:
+            elif token in self.OPERATOR_PRECEDENCE:
                 precedence = self.OPERATOR_PRECEDENCE[token]
 
                 # 弹出优先级更高或相等的运算符

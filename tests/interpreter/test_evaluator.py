@@ -115,3 +115,27 @@ def test_evaluate_arithmetic_all_operators():
     assert evaluator.evaluate("10 - 3") == 7
     assert evaluator.evaluate("4 * 5") == 20
     assert evaluator.evaluate("15 / 3") == 5.0
+
+
+def test_operator_precedence_multiplication_before_addition():
+    """测试乘法优先级高于加法。"""
+    from jass_runner.interpreter.evaluator import Evaluator
+    from jass_runner.interpreter.context import ExecutionContext
+
+    context = ExecutionContext()
+    evaluator = Evaluator(context)
+    # 2 + 3 * 4 应该等于 14，不是 20
+    result = evaluator.evaluate("2 + 3 * 4")
+    assert result == 14
+
+
+def test_operator_precedence_with_parentheses():
+    """测试括号优先级。"""
+    from jass_runner.interpreter.evaluator import Evaluator
+    from jass_runner.interpreter.context import ExecutionContext
+
+    context = ExecutionContext()
+    evaluator = Evaluator(context)
+    # (2 + 3) * 4 应该等于 20
+    result = evaluator.evaluate("(2 + 3) * 4")
+    assert result == 20
