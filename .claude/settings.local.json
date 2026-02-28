@@ -28,7 +28,11 @@
       "Bash(git -C /d/HL/jass-runner add src/jass_runner/parser/parser.py tests/parser/test_globals.py)",
       "Bash(git -C /d/HL/jass-runner status:*)",
       "Bash(git -C /d/HL/jass-runner commit -m \"feat\\(parser\\): 添加局部变量与全局变量同名检查\n\n- 在 parse 中存储全局变量名集合\n- 在 parse_local_declaration 中检查冲突\n- 冲突时记录解析错误\n\nCo-Authored-By: Claude \\(kimi-k2.5\\) <noreply@anthropic.com>\")",
-      "Bash(git mv:*)"
+      "Bash(git mv:*)",
+      "Bash(sed:*)",
+      "Bash(git -C \"D:\\\\HL\\\\jass-runner\" log --oneline -5)",
+      "Bash(git -C \"D:\\\\HL\\\\jass-runner\" show --stat HEAD)",
+      "Bash(wc -l:*)"
     ]
   }
 }

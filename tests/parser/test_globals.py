@@ -117,3 +117,23 @@ def test_global_decl_has_is_constant_attribute():
     assert const_decl.name == 'MAX_SIZE'
     assert const_decl.type == 'integer'
     assert const_decl.value == 100
+
+
+def test_parse_constant_real_declaration():
+    """测试解析 constant real 常量声明。"""
+    code = """
+globals
+    constant real PI = 3.14159
+endglobals
+
+function main takes nothing returns nothing
+endfunction
+"""
+    parser = Parser(code)
+    ast = parser.parse()
+
+    assert len(ast.globals) == 1
+    assert ast.globals[0].name == 'PI'
+    assert ast.globals[0].type == 'real'
+    assert ast.globals[0].value == 3.14159
+    assert ast.globals[0].is_constant is True

@@ -1,146 +1,16 @@
-"""
-JASS解析器实现。
+"""JASS解析器实现。
 
 此模块实现JASS代码的递归下降解析器。
 它将词法分析器的标记流转换为抽象语法树（AST）。
 """
 
-from dataclasses import dataclass
 from typing import List, Optional, Any
 from .lexer import Lexer, Token
-
-
-@dataclass
-class ParseError:
-    """解析器错误的基类。"""
-    message: str
-    line: int
-    column: int
-
-    def __str__(self) -> str:
-        return f"{self.message} at line {self.line}, column {self.column}"
-
-
-@dataclass
-class MissingKeywordError(ParseError):
-    """缺少必需的关键词时的错误。"""
-    keyword: str
-
-    def __str__(self) -> str:
-        return (f"Missing keyword '{self.keyword}' {self.message} "
-                f"at line {self.line}, column {self.column}")
-
-
-@dataclass
-class UnexpectedTokenError(ParseError):
-    """遇到意外标记时的错误。"""
-    expected: str
-    actual: str
-
-    def __str__(self) -> str:
-        return (f"Expected {self.expected}, got '{self.actual}' {self.message} "
-                f"at line {self.line}, column {self.column}")
-
-
-@dataclass
-class ParameterError(ParseError):
-    """参数列表解析中的错误。"""
-    pass
-
-
-@dataclass
-class Parameter:
-    """函数参数节点。"""
-    name: str
-    type: str
-    line: int  # 来自标记的行号
-    column: int  # 来自标记的列号
-
-
-@dataclass
-class GlobalDecl:
-    """全局变量声明节点。"""
-    name: str
-    type: str
-    value: Any  # 初始值，可能为None
-    is_constant: bool = False  # 是否为常量
-
-@dataclass
-class LocalDecl:
-    """表示局部变量声明。"""
-    name: str
-    type: str
-    value: Any
-
-
-@dataclass
-class FunctionDecl:
-    """函数声明节点。"""
-    name: str
-    parameters: List[Parameter]
-    return_type: str
-    line: int
-    column: int
-    body: Optional[List[Any]] = None  # 现在将包含语句
-
-
-@dataclass
-class AST:
-    """抽象语法树根节点。"""
-    functions: List[FunctionDecl]
-    globals: List[GlobalDecl] = None  # 全局变量声明列表
-
-    def __post_init__(self):
-        """初始化默认值。"""
-        if self.globals is None:
-            self.globals = []
-
-@dataclass
-class NativeCallNode:
-    """原生函数调用节点。"""
-    func_name: str
-    args: List[Any]
-
-
-@dataclass
-class SetStmt:
-    """变量赋值语句节点。"""
-    var_name: str
-    value: Any  # 可以是字面量或函数调用节点
-
-
-@dataclass
-class IfStmt:
-    """if语句节点。"""
-    condition: str  # 条件表达式
-    then_body: List[Any]  # then分支的语句列表
-    elseif_branches: List[dict] = None  # elseif分支列表，每个元素是{"condition": str, "body": List[Any]}
-    else_body: List[Any] = None  # else分支的语句列表
-
-    def __post_init__(self):
-        """初始化默认值。"""
-        if self.elseif_branches is None:
-            self.elseif_branches = []
-        if self.else_body is None:
-            self.else_body = []
-
-
-@dataclass
-class LoopStmt:
-    """loop循环语句节点。"""
-    body: List[Any]  # 循环体内的语句列表
-
-
-@dataclass
-class ExitWhenStmt:
-    """exitwhen循环退出语句节点。"""
-    condition: str  # 退出条件表达式
-
-
-@dataclass
-class ReturnStmt:
-    """return返回语句节点。"""
-    value: Optional[Any]  # 返回值，如果是return nothing则为None
+from .errors import ParseError, MissingKeywordError, UnexpectedTokenError, ParameterError
+from .ast_nodes import (
+    Parameter, GlobalDecl, LocalDecl, FunctionDecl, AST,
+    NativeCallNode, SetStmt, IfStmt, LoopStmt, ExitWhenStmt, ReturnStmt
+)
 
 
 class Parser:
@@ -232,7 +102,7 @@ class Parser:
     def parse_global_declaration(self) -> Optional[GlobalDecl]:
         """解析单个全局变量声明。
 
-        格式: <type> <name> [= <initial_value>]
+        格式: [constant] <type> <name> [= <initial_value>]
 
         返回：
             GlobalDecl节点或None（如果解析失败）
@@ -241,6 +111,14 @@ class Parser:
             # 获取变量类型
             if not self.current_token:
                 return None
+
+            # 检查是否是 constant 声明
+            is_constant = False
+            if self.current_token.value == 'constant':
+                is_constant = True
+                self.next_token()
+                if not self.current_token:
+                    return None
 
             var_type = self.current_token.value
             if var_type not in self.TYPE_KEYWORDS:
@@ -272,7 +150,7 @@ class Parser:
                         value = self.current_token.value == 'true'
                         self.next_token()
 
-            return GlobalDecl(name=var_name, type=var_type, value=value)
+            return GlobalDecl(name=var_name, type=var_type, value=value, is_constant=is_constant)
 
         except Exception:
             return None
@@ -436,9 +314,6 @@ class Parser:
                 column=self.current_token.column
             )
             self.add_error(error)
-            # 尝试通过将其解析为另一个参数来恢复
-            # （跳过类型标记并期望一个名称，这很可能会失败）
-            # 目前，只需继续并让解析器处理它
 
         return parameters
 
