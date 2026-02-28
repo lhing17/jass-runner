@@ -93,3 +93,35 @@ endfunction
 
     # 验证全局变量保持状态
     assert interpreter.global_context.get_variable('call_count') == 3
+
+
+def test_execute_constant_access():
+    """测试在函数内访问 constant 常量。"""
+    code = """
+globals
+    constant integer MAX_SIZE = 100
+    constant real PI = 3.14159
+    constant string APP_NAME = "TestApp"
+    constant boolean DEBUG_MODE = true
+endglobals
+
+function main takes nothing returns nothing
+    local integer size = MAX_SIZE
+    local real pi_value = PI
+    local string name = APP_NAME
+    local boolean debug = DEBUG_MODE
+endfunction
+"""
+    parser = Parser(code)
+    ast = parser.parse()
+
+    assert len(parser.errors) == 0, f"解析错误: {parser.errors}"
+
+    interpreter = Interpreter()
+    interpreter.execute(ast)
+
+    # 验证常量已正确初始化
+    assert interpreter.global_context.get_variable('MAX_SIZE') == 100
+    assert interpreter.global_context.get_variable('PI') == 3.14159
+    assert interpreter.global_context.get_variable('APP_NAME') == 'TestApp'
+    assert interpreter.global_context.get_variable('DEBUG_MODE') is True
