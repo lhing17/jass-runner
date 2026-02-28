@@ -34,7 +34,8 @@
       "Bash(git -C \"D:\\\\HL\\\\jass-runner\" show --stat HEAD)",
       "Bash(wc -l:*)",
       "Bash(dir:*)",
-      "Bash(findstr:*)"
+      "Bash(findstr:*)",
+      "Bash(echo \"TEST_EXIT_CODE: $?\")"
     ]
   }
 }
