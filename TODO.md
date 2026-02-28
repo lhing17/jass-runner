@@ -9,7 +9,7 @@
 | **语法解析** | 基础结构 | ✅ 实现 | 支持 `function` 定义、`local` 变量声明、`set` 赋值、函数调用、`if`/`loop`/`return` 控制流。不支持 `globals` 块、`type` 定义、`native` 声明。 |
 | | 复杂表达式 | ✅ 实现 | 支持完整数学和逻辑表达式解析（如 `(a + b) * c`，`a > 0 and b < 10`）。 |
 | **类型系统** | 基础类型 | ✅ 实现 | 支持 `integer`, `real`, `string`, `boolean`, `code`, `handle` 及其子类型。 |
-| | 数组类型 | ❌ 缺失 | 不支持 `array` 关键字及数组索引访问（`a[i]`）。 |
+| | 数组类型 | ✅ 实现 | 已支持 `array` 关键字及数组索引访问（`a[i]`），支持全局和局部数组声明。 |
 | | 类型检查 | ❌ 缺失 | 无静态或运行时类型检查，赋值时未验证类型兼容性。 |
 | **作用域规则** | 局部作用域 | ⚠️ 部分 | 支持函数级 `local` 变量，但赋值逻辑存在遮蔽父级变量的缺陷。 |
 | | 全局作用域 | ✅ 实现 | 支持 `globals`/`endglobals` 块解析，支持基础变量声明和可选初始值。 |
@@ -62,13 +62,14 @@
 - [x] **P0** [Interpreter] 实现完整的运算符解析与表达式求值。
 - [x] **P0** [Interpreter] 实现 `globals` 全局变量块的解析与访问（基础变量声明）。
 - [x] **P1** [Interpreter] 扩展 `globals` 支持 `constant` 常量声明。
-- [ ] **P1** [Interpreter] 扩展 `globals` 支持 `array` 数组声明（如 `integer array counts`）。
+- [x] **P1** [Interpreter] 扩展 `globals` 支持 `array` 数组声明（如 `integer array counts`）。
 
 **v0.2.0 状态**: ✅ 已完成（2026-02-28）
 - 控制流语句：`if`/`else`/`elseif`/`endif`, `loop`/`endloop`, `exitwhen`, `return`
 - 运算符：`+`, `-`, `*`, `/`, `==`, `!=`, `<`, `>`, `<=`, `>=`, `and`, `or`, `not`
 - `globals` 全局变量块支持（含 `constant` 常量）
-- 测试覆盖：173个测试通过
+- `array` 数组支持：声明、访问、赋值（全局/局部数组，8192元素标准）
+- 测试覆盖：190个测试通过
 
 ### v0.3.0: 运行时与基础 API (Runtime & Basic API)
 > 目标：能够运行简单的魔兽地图逻辑，处理基本的单位操作。
