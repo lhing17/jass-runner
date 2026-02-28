@@ -118,3 +118,15 @@ class ArrayDecl:
     element_type: str
     is_global: bool
     is_constant: bool = False
+
+
+@dataclass
+class ArrayAccess:
+    """数组访问节点（作为表达式值）。
+
+    属性：
+        array_name: 数组名称
+        index: 索引表达式（支持任意复杂表达式）
+    """
+    array_name: str
+    index: Any
