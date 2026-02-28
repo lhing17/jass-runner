@@ -174,3 +174,45 @@ endfunction
     # 应该记录错误
     assert len(parser.errors) > 0
     assert any('MAX_SIZE' in str(e) and '不能修改常量' in str(e) for e in parser.errors)
+
+
+def test_parse_global_integer_array():
+    """测试解析全局整数数组声明。"""
+    from jass_runner.parser.ast_nodes import ArrayDecl
+    code = """
+globals
+    integer array counts
+endglobals
+
+function main takes nothing returns nothing
+endfunction
+"""
+    parser = Parser(code)
+    ast = parser.parse()
+
+    assert len(ast.globals) == 1
+    assert ast.globals[0].name == "counts"
+    assert ast.globals[0].element_type == "integer"
+    assert ast.globals[0].is_global is True
+    assert isinstance(ast.globals[0], ArrayDecl)
+
+
+def test_parse_global_constant_unit_array():
+    """测试解析constant handle数组声明。"""
+    from jass_runner.parser.ast_nodes import ArrayDecl
+    code = """
+globals
+    constant handle array heroes
+endglobals
+
+function main takes nothing returns nothing
+endfunction
+"""
+    parser = Parser(code)
+    ast = parser.parse()
+
+    assert len(ast.globals) == 1
+    assert ast.globals[0].name == "heroes"
+    assert ast.globals[0].element_type == "handle"
+    assert ast.globals[0].is_constant is True
+    assert isinstance(ast.globals[0], ArrayDecl)
