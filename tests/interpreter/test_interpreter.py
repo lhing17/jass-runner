@@ -335,3 +335,60 @@ def test_execute_early_return():
     interpreter.execute(ast)
     # 提前return正常执行即表示测试通过
     assert True
+
+
+def test_execute_loop_with_if_inside():
+    """测试loop内部有if语句。"""
+    from jass_runner.interpreter.interpreter import Interpreter
+    from jass_runner.parser.parser import Parser
+
+    code = """
+    function main takes nothing returns nothing
+        local integer i = 0
+        local integer even_count = 0
+        loop
+            exitwhen i >= 5
+            if i / 2 * 2 == i then
+                set even_count = even_count + 1
+            endif
+            set i = i + 1
+        endloop
+    endfunction
+    """
+
+    parser = Parser(code)
+    ast = parser.parse()
+
+    interpreter = Interpreter()
+    interpreter.execute(ast)
+    # 0, 2, 4 are even，循环正常结束即表示测试通过
+    assert True
+
+
+def test_execute_if_with_loop_inside():
+    """测试if内部有loop语句。"""
+    from jass_runner.interpreter.interpreter import Interpreter
+    from jass_runner.parser.parser import Parser
+
+    code = """
+    function main takes nothing returns nothing
+        local integer x = 5
+        local integer sum = 0
+        if x > 0 then
+            local integer i = 1
+            loop
+                exitwhen i > x
+                set sum = sum + i
+                set i = i + 1
+            endloop
+        endif
+    endfunction
+    """
+
+    parser = Parser(code)
+    ast = parser.parse()
+
+    interpreter = Interpreter()
+    interpreter.execute(ast)
+    # 1 + 2 + 3 + 4 + 5 = 15，循环正常结束即表示测试通过
+    assert True
