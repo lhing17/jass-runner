@@ -77,3 +77,35 @@ endfunction
 
     # 验证最终分数（game_active=false后不应再加分）
     assert vm.interpreter.global_context.get_variable('game_score') == 30
+
+
+def test_mixed_globals_and_constants():
+    """测试普通全局变量和 constant 混合使用。"""
+    from jass_runner.parser.parser import Parser
+    from jass_runner.interpreter.interpreter import Interpreter
+
+    code = """
+globals
+    constant integer MAX_HP = 100
+    integer current_hp = 50
+endglobals
+
+function heal takes nothing returns nothing
+    set current_hp = MAX_HP
+endfunction
+
+function main takes nothing returns nothing
+    call heal()
+endfunction
+"""
+    parser = Parser(code)
+    ast = parser.parse()
+
+    assert len(parser.errors) == 0, f"解析错误: {parser.errors}"
+
+    interpreter = Interpreter()
+    interpreter.execute(ast)
+
+    # 验证普通全局变量被修改为常量值
+    assert interpreter.global_context.get_variable('current_hp') == 100
+    assert interpreter.global_context.get_variable('MAX_HP') == 100
