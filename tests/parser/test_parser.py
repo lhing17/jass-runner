@@ -408,3 +408,37 @@ def test_parse_if_elseif_else_statement():
     else_call = if_stmt.else_body[0]
     assert isinstance(else_call, NativeCallNode)
     assert else_call.func_name == "C"
+
+
+def test_parse_nested_if_statement():
+    """测试解析嵌套if语句"""
+    from jass_runner.parser.parser import Parser, IfStmt, NativeCallNode
+
+    code = """
+    function main takes nothing returns nothing
+        if x > 0 then
+            if y > 0 then
+                call A()
+            endif
+        endif
+    endfunction
+    """
+
+    parser = Parser(code)
+    ast = parser.parse()
+
+    func = ast.functions[0]
+    outer_if = func.body[0]
+    assert isinstance(outer_if, IfStmt)
+    assert outer_if.condition == "x > 0"
+
+    # 验证内层if语句
+    inner_if = outer_if.then_body[0]
+    assert isinstance(inner_if, IfStmt)
+    assert inner_if.condition == "y > 0"
+    assert len(inner_if.then_body) == 1
+
+    # 验证内层if中的调用
+    inner_call = inner_if.then_body[0]
+    assert isinstance(inner_call, NativeCallNode)
+    assert inner_call.func_name == "A"
