@@ -658,6 +658,41 @@ jass-runner/
   - 所有 158 个测试通过
   - 核心模块覆盖率：interpreter 95%+
 
+#### 36. Globals 全局变量块实现完成 (2026-02-28)
+- **Parser层实现**：
+  - 创建 `GlobalDecl` AST节点 (`src/jass_runner/parser/parser.py`)
+  - 扩展 `AST` 根节点添加 `globals` 列表
+  - 实现 `parse_globals_block` 方法解析 `globals`/`endglobals` 块
+  - 实现 `parse_global_declaration` 方法解析单个全局变量声明
+  - 支持可选初始值（integer, real, string, boolean）
+  - 添加变量名冲突检查（局部变量与全局变量同名时报错）
+
+- **Interpreter层实现**：
+  - 修改 `execute` 方法初始化全局变量到 `global_context`
+  - 支持初始值表达式求值
+  - 全局变量在函数间共享状态
+
+- **测试覆盖**：
+  - 创建 `tests/parser/test_globals.py` - 5个解析器测试
+    - 带初始值的全局变量解析
+    - 无初始值的全局变量解析
+    - 空的 globals 块
+    - 没有 globals 块的代码
+    - 局部变量与全局变量同名检查
+  - 创建 `tests/interpreter/test_globals_interp.py` - 4个解释器测试
+    - 全局变量初始化
+    - 函数内访问全局变量
+    - 函数内修改全局变量
+    - 全局变量状态持久化
+  - 创建 `tests/integration/test_globals_integration.py` - 3个集成测试
+    - 全局变量在控制流中使用
+    - 全局变量在函数间共享状态
+    - 完整示例脚本（游戏积分系统）
+
+- **测试统计**：
+  - 所有 170 个测试通过
+  - 核心模块覆盖率：interpreter 98%
+
 ### 当前状态
 - ✅ 需求分析和设计完成
 - ✅ 5个阶段实施计划完成
@@ -671,7 +706,8 @@ jass-runner/
 - ✅ **Parser 增强（嵌套函数调用、布尔值、函数引用）完成**
 - ✅ **Evaluator 增强（布尔值、函数引用）完成**
 - ✅ **控制流语句扩展完成（if/loop/exitwhen/return + 运算符）**
-- ✅ 所有 158 个测试通过
+- ✅ **Globals 全局变量块实现完成**
+- ✅ 所有 170 个测试通过
 
 ---
-*最后更新: 2026-02-27*
+*最后更新: 2026-02-28*
