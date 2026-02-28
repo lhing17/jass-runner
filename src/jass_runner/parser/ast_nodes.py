@@ -143,6 +143,16 @@ class IntegerExpr:
 
 
 @dataclass
+class VariableExpr:
+    """变量引用表达式节点。
+
+    属性：
+        name: 变量名称
+    """
+    name: str
+
+
+@dataclass
 class SetArrayStmt:
     """数组元素赋值语句节点。
 

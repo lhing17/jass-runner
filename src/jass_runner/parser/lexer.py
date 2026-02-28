@@ -35,7 +35,7 @@ class Lexer:
         ('STRING', r'"[^"]*"'),
         ('NUMBER', r'\d+(\.\d+)?'),
         ('OPERATOR', r'[+\-*/=<>!&|^%~]+'),
-        ('PUNCTUATION', r'[(),;.:{}]'),
+        ('PUNCTUATION', r'[(),;.:{}\[\]]'),
         ('IDENTIFIER', r'[a-zA-Z_][a-zA-Z0-9_]*'),
     ]
 

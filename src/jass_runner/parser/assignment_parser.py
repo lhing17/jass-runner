@@ -243,6 +243,44 @@ class AssignmentParserMixin:
         except Exception:
             return None
 
+    def _parse_array_access_expression(self: 'BaseParser', array_name: str) -> Optional[Any]:
+        """解析数组访问表达式 [index]。
+
+        参数：
+            array_name: 数组名称
+
+        返回：
+            ArrayAccess节点或None（如果解析失败）
+        """
+        from .ast_nodes import ArrayAccess
+
+        # 当前token是'['
+        self.next_token()  # 跳过 '['
+
+        # 解析索引表达式（简化：支持字面量和变量）
+        index = None
+        if self.current_token:
+            if self.current_token.type == 'INTEGER':
+                from .ast_nodes import IntegerExpr
+                index = IntegerExpr(value=self.current_token.value)
+                self.next_token()
+            elif self.current_token.type == 'IDENTIFIER':
+                from .ast_nodes import VariableExpr
+                index = VariableExpr(name=self.current_token.value)
+                self.next_token()
+
+        # 期望 ']'
+        if not self.current_token or self.current_token.value != ']':
+            self.errors.append(ParseError(
+                message="期望']'结束数组索引",
+                line=self.current_token.line if self.current_token else 0,
+                column=self.current_token.column if self.current_token else 0
+            ))
+            return None
+        self.next_token()  # 跳过 ']'
+
+        return ArrayAccess(array_name=array_name, index=index)
+
     def parse_set_statement(self: 'BaseParser') -> Optional[SetStmt]:
         """解析set赋值语句。"""
         try:
@@ -281,14 +319,17 @@ class AssignmentParserMixin:
                 return None
             self.next_token()
 
-            # 解析右侧值（可以是字面量、函数调用或表达式）
+            # 解析右侧值（可以是字面量、函数调用、数组访问或表达式）
             value = None
             if self.current_token and self.current_token.type == 'IDENTIFIER':
-                # 可能是函数调用，如 CreateUnit(...)，或表达式如 i + 1
-                func_name = self.current_token.value
+                # 可能是函数调用，如 CreateUnit(...)，数组访问如 arr[0]，或表达式如 i + 1
+                expr_name = self.current_token.value
                 self.next_token()
 
-                if self.current_token and self.current_token.value == '(':
+                # 检查是否是数组访问 arr[...]
+                if self.current_token and self.current_token.value == '[':
+                    value = self._parse_array_access_expression(expr_name)
+                elif self.current_token and self.current_token.value == '(':
                     # 这是一个函数调用
                     self.next_token()  # 跳过 '('
 
@@ -319,11 +360,11 @@ class AssignmentParserMixin:
                     if self.current_token and self.current_token.value == ')':
                         self.next_token()
 
-                    value = NativeCallNode(func_name=func_name, args=args)
+                    value = NativeCallNode(func_name=expr_name, args=args)
                 elif self.current_token and self.current_token.type == 'OPERATOR':
                     # 不是函数调用，但是表达式开始（如 i + 1）
                     # 将标识符和后续token组合成表达式字符串
-                    expr_parts = [func_name]
+                    expr_parts = [expr_name]
                     # 继续读取直到语句结束
                     # 停止条件：遇到语句结束符; 或下一个语句开始关键词
                     statement_keywords = ('endloop', 'endif', 'else', 'elseif', 'endfunction',
@@ -339,8 +380,7 @@ class AssignmentParserMixin:
                     value = ' '.join(expr_parts)
                 else:
                     # 不是函数调用也不是表达式，只是变量引用
-                    # 这种情况在JASS set语句中不常见，但保留处理
-                    value = func_name
+                    value = expr_name
             elif self.current_token:
                 # 字面量或表达式
                 if self.current_token.type == 'INTEGER':
