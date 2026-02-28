@@ -167,7 +167,7 @@ class Parser:
         """解析JASS代码并返回AST。
 
         返回：
-            包含所有已解析函数声明的AST
+            包含全局变量声明和函数声明的AST
         """
         # 从词法分析器获取所有标记，过滤掉空白和注释
         self.tokens = [
@@ -176,10 +176,13 @@ class Parser:
         ]
 
         if not self.tokens:
-            return AST(functions=[])
+            return AST(globals=[], functions=[])
 
         self.token_index = 0
         self.current_token = self.tokens[0] if self.tokens else None
+
+        # 首先解析可选的 globals 块
+        globals_list = self.parse_globals_block()
 
         functions: List[FunctionDecl] = []
 
@@ -193,8 +196,7 @@ class Parser:
             else:
                 self.next_token()
 
-        return AST(functions=functions)
-
+        return AST(globals=globals_list, functions=functions)
 
     def parse_globals_block(self) -> List[GlobalDecl]:
         """解析可选的globals块。
