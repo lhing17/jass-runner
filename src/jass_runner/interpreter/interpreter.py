@@ -3,7 +3,7 @@
 from typing import Any
 from .context import ExecutionContext
 from .evaluator import Evaluator
-from ..parser.parser import AST, FunctionDecl, LocalDecl, NativeCallNode, SetStmt, IfStmt, LoopStmt, ExitWhenStmt, ReturnStmt
+from ..parser.parser import AST, FunctionDecl, LocalDecl, NativeCallNode, SetStmt, IfStmt, LoopStmt, ExitWhenStmt, ReturnStmt, GlobalDecl
 from ..natives.state import StateContext
 from .control_flow import ExitLoopSignal, ReturnSignal
 
@@ -20,6 +20,11 @@ class Interpreter:
 
     def execute(self, ast: AST):
         """执行AST。"""
+        # 初始化全局变量
+        if ast.globals:
+            for global_decl in ast.globals:
+                self.execute_global_declaration(global_decl)
+
         # 注册所有函数
         for func in ast.functions:
             self.functions[func.name] = func
@@ -27,6 +32,20 @@ class Interpreter:
         # 查找并执行main函数
         if 'main' in self.functions:
             self.execute_function(self.functions['main'])
+
+    def execute_global_declaration(self, decl: GlobalDecl):
+        """执行全局变量声明。
+
+        参数：
+            decl: GlobalDecl节点，包含变量名、类型和初始值
+        """
+        # 如果值是函数调用节点，先执行它并获取返回值
+        if isinstance(decl.value, NativeCallNode):
+            result = self.evaluator.evaluate(decl.value)
+            self.global_context.set_variable(decl.name, result)
+        else:
+            # 直接赋值字面量或None
+            self.global_context.set_variable(decl.name, decl.value)
 
     def execute_function(self, func: FunctionDecl):
         """执行一个函数。"""
