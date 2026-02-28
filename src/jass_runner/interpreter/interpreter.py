@@ -4,7 +4,7 @@ from typing import Any
 from .context import ExecutionContext
 from .evaluator import Evaluator
 from ..parser.parser import AST, FunctionDecl, LocalDecl, NativeCallNode, SetStmt, IfStmt, LoopStmt, ExitWhenStmt, ReturnStmt, GlobalDecl
-from ..parser.ast_nodes import ArrayDecl, SetArrayStmt
+from ..parser.ast_nodes import ArrayDecl, SetArrayStmt, SetArrayStmt
 from ..natives.state import StateContext
 from .control_flow import ExitLoopSignal, ReturnSignal
 
@@ -34,13 +34,18 @@ class Interpreter:
         if 'main' in self.functions:
             self.execute_function(self.functions['main'])
 
-    def execute_global_declaration(self, decl: GlobalDecl):
+    def execute_global_declaration(self, decl):
         """执行全局变量声明。
 
         参数：
-            decl: GlobalDecl节点，包含变量名、类型和初始值
+            decl: GlobalDecl或ArrayDecl节点
         """
-        # 如果值是函数调用节点，先执行它并获取返回值
+        # 处理数组声明
+        if isinstance(decl, ArrayDecl):
+            self.global_context.declare_array(decl.name, decl.element_type)
+            return
+
+        # 处理普通变量声明
         if isinstance(decl.value, NativeCallNode):
             result = self.evaluator.evaluate(decl.value)
             self.global_context.set_variable(decl.name, result)
