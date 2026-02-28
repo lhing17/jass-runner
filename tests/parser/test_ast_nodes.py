@@ -21,3 +21,14 @@ def test_array_access_node_exists():
     node = ArrayAccess(array_name="counts", index=0)
     assert node.array_name == "counts"
     assert node.index == 0
+
+
+def test_set_array_stmt_node_exists():
+    """测试SetArrayStmt节点存在并可正确创建。"""
+    from jass_runner.parser.ast_nodes import SetArrayStmt, IntegerExpr
+    index = IntegerExpr(value=5)
+    value = IntegerExpr(value=10)
+    node = SetArrayStmt(array_name="counts", index=index, value=value)
+    assert node.array_name == "counts"
+    assert node.index == index
+    assert node.value == value

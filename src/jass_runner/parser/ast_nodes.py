@@ -130,3 +130,27 @@ class ArrayAccess:
     """
     array_name: str
     index: Any
+
+
+@dataclass
+class IntegerExpr:
+    """整数字面量表达式节点。
+
+    属性：
+        value: 整数值
+    """
+    value: int
+
+
+@dataclass
+class SetArrayStmt:
+    """数组元素赋值语句节点。
+
+    属性：
+        array_name: 数组名称
+        index: 索引表达式
+        value: 右侧值表达式
+    """
+    array_name: str
+    index: Any
+    value: Any
