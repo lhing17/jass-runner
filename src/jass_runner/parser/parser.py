@@ -726,20 +726,27 @@ class Parser:
                         self.next_token()
 
                     value = NativeCallNode(func_name=func_name, args=args)
-                else:
-                    # 不是函数调用，可能是表达式开始（如 i + 1）
+                elif self.current_token and self.current_token.type == 'OPERATOR':
+                    # 不是函数调用，但是表达式开始（如 i + 1）
                     # 将标识符和后续token组合成表达式字符串
                     expr_parts = [func_name]
-                    # 继续读取直到语句结束（遇到KEYWORD如endloop/endif/else等）
+                    # 继续读取直到语句结束
+                    # 停止条件：遇到语句结束符; 或下一个语句开始关键词
+                    statement_keywords = ('endloop', 'endif', 'else', 'elseif', 'endfunction',
+                                         'set', 'call', 'local', 'return', 'exitwhen', 'loop', 'if', 'elseif')
                     while (self.current_token and
                            not (self.current_token.type == 'KEYWORD' and
-                                self.current_token.value in ('endloop', 'endif', 'else', 'elseif', 'endfunction'))):
+                                self.current_token.value in statement_keywords)):
                         if self.current_token.value == ';':
                             self.next_token()
                             break
                         expr_parts.append(str(self.current_token.value))
                         self.next_token()
                     value = ' '.join(expr_parts)
+                else:
+                    # 不是函数调用也不是表达式，只是变量引用
+                    # 这种情况在JASS set语句中不常见，但保留处理
+                    value = func_name
             elif self.current_token:
                 # 字面量或表达式
                 if self.current_token.type == 'INTEGER':

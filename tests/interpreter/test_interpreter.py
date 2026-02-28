@@ -229,3 +229,35 @@ def test_execute_simple_loop():
     interpreter.execute(ast)
     # 循环正常结束即表示测试通过（没有进入无限循环）
     assert True
+
+
+def test_execute_nested_loop():
+    """测试执行嵌套循环。"""
+    from jass_runner.interpreter.interpreter import Interpreter
+    from jass_runner.parser.parser import Parser
+
+    code = """
+    function main takes nothing returns nothing
+        local integer i = 0
+        local integer j = 0
+        local integer count = 0
+        loop
+            exitwhen i >= 2
+            set j = 0
+            loop
+                exitwhen j >= 3
+                set count = count + 1
+                set j = j + 1
+            endloop
+            set i = i + 1
+        endloop
+    endfunction
+    """
+
+    parser = Parser(code)
+    ast = parser.parse()
+
+    interpreter = Interpreter()
+    interpreter.execute(ast)
+    # 2 * 3 = 6，循环正常结束即表示测试通过
+    assert True
