@@ -32,7 +32,9 @@
       "Bash(sed:*)",
       "Bash(git -C \"D:\\\\HL\\\\jass-runner\" log --oneline -5)",
       "Bash(git -C \"D:\\\\HL\\\\jass-runner\" show --stat HEAD)",
-      "Bash(wc -l:*)"
+      "Bash(wc -l:*)",
+      "Bash(dir:*)",
+      "Bash(findstr:*)"
     ]
   }
 }
