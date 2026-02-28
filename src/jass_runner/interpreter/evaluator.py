@@ -304,11 +304,20 @@ class Evaluator:
 
         # 从上下文中获取原生函数
         native_func = self.context.get_native_function(func_name)
-        if native_func is None:
-            raise RuntimeError(f"Native function not found: {func_name}")
+        if native_func is not None:
+            # 执行原生函数，传递state_context作为第一个参数
+            return native_func.execute(self.context.state_context, *args)
 
-        # 执行原生函数，传递state_context作为第一个参数
-        return native_func.execute(self.context.state_context, *args)
+        # 如果不是原生函数，检查是否是用户定义的函数
+        interpreter = self.context.interpreter
+        if interpreter and func_name in interpreter.functions:
+            from ..parser.parser import FunctionDecl
+            func = interpreter.functions[func_name]
+            if isinstance(func, FunctionDecl):
+                # 调用用户定义的函数
+                return interpreter._call_function_with_args(func, args)
+
+        raise RuntimeError(f"Native function not found: {func_name}")
 
     def evaluate_condition(self, condition: Any) -> bool:
         """求值条件表达式，返回布尔结果。

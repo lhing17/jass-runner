@@ -3,9 +3,9 @@
 from typing import Any
 from .context import ExecutionContext
 from .evaluator import Evaluator
-from ..parser.parser import AST, FunctionDecl, LocalDecl, NativeCallNode, SetStmt, IfStmt, LoopStmt, ExitWhenStmt
+from ..parser.parser import AST, FunctionDecl, LocalDecl, NativeCallNode, SetStmt, IfStmt, LoopStmt, ExitWhenStmt, ReturnStmt
 from ..natives.state import StateContext
-from .control_flow import ExitLoopSignal
+from .control_flow import ExitLoopSignal, ReturnSignal
 
 
 class Interpreter:
@@ -43,13 +43,19 @@ class Interpreter:
         self.evaluator.context = func_context
 
         # 执行函数体
-        if func.body:
-            for statement in func.body:
-                self.execute_statement(statement)
+        return_value = None
+        try:
+            if func.body:
+                for statement in func.body:
+                    self.execute_statement(statement)
+        except ReturnSignal as signal:
+            return_value = signal.value
 
         # 恢复之前的上下文
         self.current_context = self.global_context
         self.evaluator.context = self.global_context
+
+        return return_value
 
     def execute_statement(self, statement: Any):
         """执行单个语句。"""
@@ -65,6 +71,8 @@ class Interpreter:
             self.execute_loop_statement(statement)
         elif isinstance(statement, ExitWhenStmt):
             self.execute_exitwhen_statement(statement)
+        elif isinstance(statement, ReturnStmt):
+            self.execute_return_statement(statement)
 
     def execute_local_declaration(self, decl: LocalDecl):
         """执行局部变量声明。"""
@@ -151,3 +159,57 @@ class Interpreter:
         # 如果条件为真，抛出ExitLoopSignal退出循环
         if condition_result:
             raise ExitLoopSignal()
+
+    def execute_return_statement(self, stmt: ReturnStmt):
+        """执行return语句。
+
+        参数：
+            stmt: ReturnStmt节点，包含返回值表达式（可为None）
+        """
+        # 求值返回值（如果有）
+        value = None
+        if stmt.value:
+            value = self.evaluator.evaluate(stmt.value)
+
+        # 抛出ReturnSignal，携带返回值
+        raise ReturnSignal(value)
+
+    def _call_function_with_args(self, func: FunctionDecl, args: list):
+        """使用指定参数调用函数。
+
+        参数：
+            func: 函数定义节点
+            args: 参数值列表
+
+        返回：
+            函数返回值
+        """
+        # 创建新上下文
+        func_context = ExecutionContext(
+            self.global_context,
+            native_registry=self.global_context.native_registry,
+            state_context=self.state_context,
+            interpreter=self
+        )
+
+        # 设置参数值
+        for param, arg_value in zip(func.parameters, args):
+            func_context.set_variable(param.name, arg_value)
+
+        self.current_context = func_context
+        self.evaluator.context = func_context
+
+        # 执行函数体
+        return_value = None
+        try:
+            if func.body:
+                for statement in func.body:
+                    self.execute_statement(statement)
+        except ReturnSignal as signal:
+            return_value = signal.value
+
+        # 恢复上下文
+        self.current_context = self.global_context
+        self.evaluator.context = self.global_context
+
+        return return_value

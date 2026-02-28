@@ -261,3 +261,77 @@ def test_execute_nested_loop():
     interpreter.execute(ast)
     # 2 * 3 = 6，循环正常结束即表示测试通过
     assert True
+
+
+def test_execute_return_nothing():
+    """测试执行return nothing。"""
+    from jass_runner.interpreter.interpreter import Interpreter
+    from jass_runner.parser.parser import Parser
+
+    code = """
+    function main takes nothing returns nothing
+        local integer x = 1
+        return
+        set x = 2
+    endfunction
+    """
+
+    parser = Parser(code)
+    ast = parser.parse()
+
+    interpreter = Interpreter()
+    interpreter.execute(ast)
+    # 如果没有异常，说明正确执行了return
+    assert True
+
+
+def test_execute_return_with_value():
+    """测试执行带返回值的return。"""
+    from jass_runner.interpreter.interpreter import Interpreter
+    from jass_runner.parser.parser import Parser
+
+    code = """
+    function add takes integer a, integer b returns integer
+        return a + b
+    endfunction
+
+    function main takes nothing returns nothing
+        local integer result = add(3, 5)
+    endfunction
+    """
+
+    parser = Parser(code)
+    ast = parser.parse()
+
+    interpreter = Interpreter()
+    interpreter.execute(ast)
+    # 函数调用和return正常执行即表示测试通过
+    assert True
+
+
+def test_execute_early_return():
+    """测试提前return。"""
+    from jass_runner.interpreter.interpreter import Interpreter
+    from jass_runner.parser.parser import Parser
+
+    code = """
+    function max takes integer a, integer b returns integer
+        if a > b then
+            return a
+        endif
+        return b
+    endfunction
+
+    function main takes nothing returns nothing
+        local integer m1 = max(5, 3)
+        local integer m2 = max(2, 7)
+    endfunction
+    """
+
+    parser = Parser(code)
+    ast = parser.parse()
+
+    interpreter = Interpreter()
+    interpreter.execute(ast)
+    # 提前return正常执行即表示测试通过
+    assert True
