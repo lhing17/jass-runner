@@ -58,6 +58,14 @@ class Parameter:
 
 
 @dataclass
+class GlobalDecl:
+    """全局变量声明节点。"""
+    name: str
+    type: str
+    value: Any  # 初始值，可能为None
+
+
+@dataclass
 class LocalDecl:
     """表示局部变量声明。"""
     name: str
@@ -80,7 +88,12 @@ class FunctionDecl:
 class AST:
     """抽象语法树根节点。"""
     functions: List[FunctionDecl]
+    globals: List[GlobalDecl] = None  # 全局变量声明列表
 
+    def __post_init__(self):
+        """初始化默认值。"""
+        if self.globals is None:
+            self.globals = []
 
 @dataclass
 class NativeCallNode:
