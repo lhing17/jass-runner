@@ -184,3 +184,29 @@ def test_evaluate_complex_logical_expression():
     # (5 > 3) and (2 < 4)
     result = evaluator.evaluate("5 > 3 and 2 < 4")
     assert result is True
+
+
+def test_evaluate_condition_simple():
+    """测试条件求值"""
+    from jass_runner.interpreter.evaluator import Evaluator
+    from jass_runner.interpreter.context import ExecutionContext
+
+    context = ExecutionContext()
+    evaluator = Evaluator(context)
+
+    assert evaluator.evaluate_condition("5 > 3") is True
+    assert evaluator.evaluate_condition("5 < 3") is False
+    assert evaluator.evaluate_condition("true") is True
+    assert evaluator.evaluate_condition("false") is False
+
+
+def test_evaluate_condition_complex():
+    """测试复杂条件求值"""
+    from jass_runner.interpreter.evaluator import Evaluator
+    from jass_runner.interpreter.context import ExecutionContext
+
+    context = ExecutionContext()
+    evaluator = Evaluator(context)
+
+    assert evaluator.evaluate_condition("5 > 3 and 2 < 4") is True
+    assert evaluator.evaluate_condition("not false") is True

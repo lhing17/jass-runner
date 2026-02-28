@@ -310,6 +310,29 @@ class Evaluator:
         # 执行原生函数，传递state_context作为第一个参数
         return native_func.execute(self.context.state_context, *args)
 
+    def evaluate_condition(self, condition: Any) -> bool:
+        """求值条件表达式，返回布尔结果。
+
+        参数：
+            condition: 条件表达式字符串或已求值的结果
+
+        返回：
+            布尔结果
+        """
+        if isinstance(condition, str):
+            result = self.evaluate(condition)
+        else:
+            result = condition
+
+        # 转换结果为布尔值
+        if isinstance(result, bool):
+            return result
+        elif isinstance(result, (int, float)):
+            return result != 0
+        elif isinstance(result, str):
+            return result.lower() == "true"
+        return bool(result)
+
     def evaluate(self, expression: Any) -> Any:
         """求值一个JASS表达式或AST节点。"""
         # 如果是字符串，按原逻辑处理
