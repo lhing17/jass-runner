@@ -86,3 +86,24 @@ def test_execution_context_with_timer_system():
     # 检查计时器原生函数可用
     create_timer_func = context.get_native_function("CreateTimer")
     assert create_timer_func is not None
+
+
+def test_declare_array():
+    """测试声明数组。"""
+    from jass_runner.interpreter.context import ExecutionContext
+
+    context = ExecutionContext()
+    context.declare_array("counts", "integer")
+    assert "counts" in context.arrays
+    assert len(context.arrays["counts"]) == 8192
+    assert context.arrays["counts"][0] == 0
+
+
+def test_get_set_array_element():
+    """测试获取和设置数组元素。"""
+    from jass_runner.interpreter.context import ExecutionContext
+
+    context = ExecutionContext()
+    context.declare_array("counts", "integer")
+    context.set_array_element("counts", 5, 100)
+    assert context.get_array_element("counts", 5) == 100
