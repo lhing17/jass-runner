@@ -332,3 +332,79 @@ def test_parse_simple_if_statement():
     assert isinstance(if_stmt, IfStmt)
     assert if_stmt.condition == "true"
     assert len(if_stmt.then_body) == 1
+
+
+def test_parse_if_else_statement():
+    """测试解析if/else语句"""
+    from jass_runner.parser.parser import Parser, IfStmt, NativeCallNode
+
+    code = """
+    function main takes nothing returns nothing
+        if true then
+            call A()
+        else
+            call B()
+        endif
+    endfunction
+    """
+
+    parser = Parser(code)
+    ast = parser.parse()
+
+    func = ast.functions[0]
+    if_stmt = func.body[0]
+    assert isinstance(if_stmt, IfStmt)
+    assert if_stmt.condition == "true"
+    assert len(if_stmt.then_body) == 1
+    assert len(if_stmt.else_body) == 1
+
+    # 验证then分支的调用
+    then_call = if_stmt.then_body[0]
+    assert isinstance(then_call, NativeCallNode)
+    assert then_call.func_name == "A"
+
+    # 验证else分支的调用
+    else_call = if_stmt.else_body[0]
+    assert isinstance(else_call, NativeCallNode)
+    assert else_call.func_name == "B"
+
+
+def test_parse_if_elseif_else_statement():
+    """测试解析if/elseif/else语句"""
+    from jass_runner.parser.parser import Parser, IfStmt, NativeCallNode
+
+    code = """
+    function main takes nothing returns nothing
+        if x > 0 then
+            call A()
+        elseif x < 0 then
+            call B()
+        else
+            call C()
+        endif
+    endfunction
+    """
+
+    parser = Parser(code)
+    ast = parser.parse()
+
+    func = ast.functions[0]
+    if_stmt = func.body[0]
+    assert isinstance(if_stmt, IfStmt)
+    assert if_stmt.condition == "x > 0"
+    assert len(if_stmt.then_body) == 1
+    assert len(if_stmt.elseif_branches) == 1
+    assert len(if_stmt.else_body) == 1
+
+    # 验证elseif分支
+    elseif_branch = if_stmt.elseif_branches[0]
+    assert elseif_branch["condition"] == "x < 0"
+    assert len(elseif_branch["body"]) == 1
+    elseif_call = elseif_branch["body"][0]
+    assert isinstance(elseif_call, NativeCallNode)
+    assert elseif_call.func_name == "B"
+
+    # 验证else分支的调用
+    else_call = if_stmt.else_body[0]
+    assert isinstance(else_call, NativeCallNode)
+    assert else_call.func_name == "C"

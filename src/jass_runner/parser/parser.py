@@ -101,6 +101,15 @@ class IfStmt:
     """if语句节点。"""
     condition: str  # 条件表达式
     then_body: List[Any]  # then分支的语句列表
+    elseif_branches: List[dict] = None  # elseif分支列表，每个元素是{"condition": str, "body": List[Any]}
+    else_body: List[Any] = None  # else分支的语句列表
+
+    def __post_init__(self):
+        """初始化默认值。"""
+        if self.elseif_branches is None:
+            self.elseif_branches = []
+        if self.else_body is None:
+            self.else_body = []
 
 
 class Parser:
@@ -739,17 +748,68 @@ class Parser:
                 if statement:
                     then_body.append(statement)
 
+            # 解析elseif分支和else分支
+            elseif_branches = []
+            else_body = []
+
+            # 处理elseif分支
+            while (self.current_token and
+                   self.current_token.type == 'KEYWORD' and
+                   self.current_token.value == 'elseif'):
+                # 跳过'elseif'关键词
+                self.next_token()
+
+                # 解析elseif条件
+                elseif_condition = self.parse_condition()
+                if elseif_condition is None:
+                    return None
+
+                # 匹配'then'关键词
+                if not self.match_keyword('then'):
+                    return None
+
+                # 解析elseif分支的语句列表
+                elseif_body = []
+                while (self.current_token and
+                       not (self.current_token.type == 'KEYWORD' and
+                            self.current_token.value in ('else', 'elseif', 'endif'))):
+                    statement = self.parse_statement()
+                    if statement:
+                        elseif_body.append(statement)
+
+                elseif_branches.append({"condition": elseif_condition, "body": elseif_body})
+
+            # 处理else分支
+            if (self.current_token and
+                self.current_token.type == 'KEYWORD' and
+                self.current_token.value == 'else'):
+                # 跳过'else'关键词
+                self.next_token()
+
+                # 解析else分支的语句列表
+                while (self.current_token and
+                       not (self.current_token.type == 'KEYWORD' and
+                            self.current_token.value == 'endif')):
+                    statement = self.parse_statement()
+                    if statement:
+                        else_body.append(statement)
+
             # 匹配'endif'关键词
             if self.current_token and self.current_token.type == 'KEYWORD' and self.current_token.value == 'endif':
                 self.next_token()
 
-            return IfStmt(condition=condition, then_body=then_body)
+            return IfStmt(
+                condition=condition,
+                then_body=then_body,
+                elseif_branches=elseif_branches,
+                else_body=else_body
+            )
 
         except Exception:
             return None
 
     def parse_condition(self) -> Optional[str]:
-        """解析条件表达式（简化版）。
+        """解析条件表达式（支持比较操作符）。
 
         返回：
             条件表达式字符串，如果解析失败返回None
@@ -782,12 +842,44 @@ class Parser:
 
                 condition += "()"
 
+            # 检查是否有比较操作符（如 >, <, ==, !=, >=, <=）
+            if self.current_token and self.current_token.type == 'OPERATOR':
+                op = self.current_token.value
+                self.next_token()
+
+                # 解析操作符右侧的操作数
+                if self.current_token:
+                    if self.current_token.type in ('INTEGER', 'REAL'):
+                        condition += f" {op} {self.current_token.value}"
+                        self.next_token()
+                    elif self.current_token.type == 'IDENTIFIER':
+                        condition += f" {op} {self.current_token.value}"
+                        self.next_token()
+                    elif self.current_token.type == 'STRING':
+                        condition += f" {op} {self.current_token.value}"
+                        self.next_token()
+
             return condition
 
         # 处理整数和实数字面量
         if self.current_token.type in ('INTEGER', 'REAL'):
             condition = str(self.current_token.value)
             self.next_token()
+
+            # 检查是否有比较操作符
+            if self.current_token and self.current_token.type == 'OPERATOR':
+                op = self.current_token.value
+                self.next_token()
+
+                # 解析操作符右侧的操作数
+                if self.current_token:
+                    if self.current_token.type in ('INTEGER', 'REAL'):
+                        condition += f" {op} {self.current_token.value}"
+                        self.next_token()
+                    elif self.current_token.type == 'IDENTIFIER':
+                        condition += f" {op} {self.current_token.value}"
+                        self.next_token()
+
             return condition
 
         # 处理字符串字面量
