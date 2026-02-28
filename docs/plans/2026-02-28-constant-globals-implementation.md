@@ -29,7 +29,7 @@ Expected: 所有现有测试通过
 ## Task 1: 扩展 GlobalDecl AST 节点
 
 **Files:**
-- Modify: `src/jass_runner/parser/parser.py:60-66`
+- Modify: `src/jass_runner/parser/ast_nodes.py:20-26`
 - Test: `tests/parser/test_globals.py`
 
 **Step 1: 编写失败测试**
@@ -67,7 +67,7 @@ Expected: FAIL with `AttributeError: 'GlobalDecl' object has no attribute 'is_co
 
 **Step 3: 实现 AST 扩展**
 
-修改 `src/jass_runner/parser/parser.py` 第60-66行：
+修改 `src/jass_runner/parser/ast_nodes.py` 第20-26行：
 
 ```python
 @dataclass
@@ -75,8 +75,8 @@ class GlobalDecl:
     """全局变量声明节点。"""
     name: str
     type: str
-    value: Any
-    is_constant: bool = False  # 新增：是否为常量
+    value: Any  # 初始值，可能为None
+    is_constant: bool = False  # 是否为常量
 ```
 
 **Step 4: 运行测试验证通过**
@@ -90,7 +90,7 @@ Expected: PASS
 **Step 5: 提交**
 
 ```bash
-git add tests/parser/test_globals.py src/jass_runner/parser/parser.py
+git add tests/parser/test_globals.py src/jass_runner/parser/ast_nodes.py
 git commit -m "feat(ast): 为 GlobalDecl 添加 is_constant 标记
 
 - 支持 constant 常量声明的 AST 表示
@@ -104,7 +104,7 @@ Co-Authored-By: Claude (kimi-k2.5) <noreply@anthropic.com>"
 ## Task 2: 解析 constant 关键字
 
 **Files:**
-- Modify: `src/jass_runner/parser/parser.py:232-278`
+- Modify: `src/jass_runner/parser/global_parser.py:38-92`
 - Test: `tests/parser/test_globals.py`
 
 **Step 1: 编写失败测试**
@@ -142,10 +142,10 @@ Expected: FAIL - 解析器无法识别 `constant` 关键字，返回空 globals 
 
 **Step 3: 修改 parse_global_declaration**
 
-修改 `src/jass_runner/parser/parser.py` 第232-278行的 `parse_global_declaration` 方法：
+修改 `src/jass_runner/parser/global_parser.py` 第38-92行的 `parse_global_declaration` 方法：
 
 ```python
-def parse_global_declaration(self) -> Optional[GlobalDecl]:
+def parse_global_declaration(self: 'BaseParser') -> Optional[GlobalDecl]:
     """解析单个全局变量声明。
 
     格式: [constant] <type> <name> [= <initial_value>]
@@ -154,18 +154,17 @@ def parse_global_declaration(self) -> Optional[GlobalDecl]:
         GlobalDecl节点或None（如果解析失败）
     """
     try:
-        is_constant = False
-
-        # 检查是否为 constant 关键字
-        if (self.current_token and
-                self.current_token.type == 'KEYWORD' and
-                self.current_token.value == 'constant'):
-            is_constant = True
-            self.next_token()
-
         # 获取变量类型
         if not self.current_token:
             return None
+
+        # 检查是否是 constant 声明
+        is_constant = False
+        if self.current_token.value == 'constant':
+            is_constant = True
+            self.next_token()
+            if not self.current_token:
+                return None
 
         var_type = self.current_token.value
         if var_type not in self.TYPE_KEYWORDS:
@@ -176,6 +175,7 @@ def parse_global_declaration(self) -> Optional[GlobalDecl]:
         if not self.current_token or self.current_token.type != 'IDENTIFIER':
             return None
         var_name = self.current_token.value
+
         self.next_token()
 
         # 检查可选的初始值
@@ -190,19 +190,13 @@ def parse_global_declaration(self) -> Optional[GlobalDecl]:
                     value = self.current_token.value
                     self.next_token()
                 elif self.current_token.type == 'STRING':
-                    value = self.current_token.value[1:-1]
+                    value = self.current_token.value[1:-1]  # 移除引号
                     self.next_token()
-                elif (self.current_token.type == 'KEYWORD' and
-                      self.current_token.value in ('true', 'false')):
+                elif self.current_token.type == 'KEYWORD' and self.current_token.value in ('true', 'false'):
                     value = self.current_token.value == 'true'
                     self.next_token()
 
-        return GlobalDecl(
-            name=var_name,
-            type=var_type,
-            value=value,
-            is_constant=is_constant
-        )
+        return GlobalDecl(name=var_name, type=var_type, value=value, is_constant=is_constant)
 
     except Exception:
         return None
@@ -219,7 +213,7 @@ Expected: PASS
 **Step 5: 提交**
 
 ```bash
-git add tests/parser/test_globals.py src/jass_runner/parser/parser.py
+git add tests/parser/test_globals.py src/jass_runner/parser/global_parser.py
 git commit -m "feat(parser): 支持解析 constant 关键字
 
 - 在 parse_global_declaration 中检测 constant 关键字
@@ -234,7 +228,7 @@ Co-Authored-By: Claude (kimi-k2.5) <noreply@anthropic.com>"
 ## Task 3: 验证 constant 必须有初始值
 
 **Files:**
-- Modify: `src/jass_runner/parser/parser.py:232-278`
+- Modify: `src/jass_runner/parser/global_parser.py:38-92`
 - Test: `tests/parser/test_globals.py`
 
 **Step 1: 编写失败测试**
@@ -270,7 +264,7 @@ Expected: FAIL - 当前代码允许 constant 没有初始值
 
 **Step 3: 添加初始值验证**
 
-在 `parse_global_declaration` 方法中，解析完初始值后添加验证：
+在 `src/jass_runner/parser/global_parser.py` 的 `parse_global_declaration` 方法中，解析完初始值后添加验证：
 
 ```python
 # 检查可选的初始值
@@ -298,7 +292,7 @@ Expected: PASS
 **Step 5: 提交**
 
 ```bash
-git add tests/parser/test_globals.py src/jass_runner/parser/parser.py
+git add tests/parser/test_globals.py src/jass_runner/parser/global_parser.py
 git commit -m "feat(parser): constant 必须有初始值
 
 - 在解析阶段验证 constant 是否指定初始值
@@ -312,7 +306,8 @@ Co-Authored-By: Claude (kimi-k2.5) <noreply@anthropic.com>"
 ## Task 4: 阻止修改 constant 常量
 
 **Files:**
-- Modify: `src/jass_runner/parser/parser.py:166-202`, `src/jass_runner/parser/parser.py:778-876`
+- Modify: `src/jass_runner/parser/parser.py:43-47`
+- Modify: `src/jass_runner/parser/assignment_parser.py:217-313`
 - Test: `tests/parser/test_globals.py`
 
 **Step 1: 编写失败测试**
@@ -349,7 +344,7 @@ Expected: FAIL - 当前代码允许修改 constant
 
 **Step 3: 在 parse 方法中收集常量名**
 
-修改 `src/jass_runner/parser/parser.py` 第166-202行的 `parse` 方法，在解析完 globals 后添加：
+修改 `src/jass_runner/parser/parser.py` 第43-47行的 `parse` 方法，在解析完 globals 后添加：
 
 ```python
 # 首先解析可选的 globals 块
@@ -362,10 +357,10 @@ self.constant_names = {g.name for g in globals_list if g.is_constant}
 
 **Step 4: 在 parse_set_statement 中检查常量修改**
 
-修改 `src/jass_runner/parser/parser.py` 第778-876行的 `parse_set_statement` 方法，在获取变量名后添加检查：
+修改 `src/jass_runner/parser/assignment_parser.py` 第217-313行的 `parse_set_statement` 方法，在获取变量名后添加检查：
 
 ```python
-def parse_set_statement(self) -> Optional[SetStmt]:
+def parse_set_statement(self: 'BaseParser') -> Optional[SetStmt]:
     """解析set赋值语句。"""
     try:
         # 跳过'set'关键词
@@ -410,7 +405,7 @@ Expected: PASS
 **Step 6: 提交**
 
 ```bash
-git add tests/parser/test_globals.py src/jass_runner/parser/parser.py
+git add tests/parser/test_globals.py src/jass_runner/parser/parser.py src/jass_runner/parser/assignment_parser.py
 git commit -m "feat(parser): 阻止修改 constant 常量
 
 - 在 parse 方法中收集 constant_names 集合
