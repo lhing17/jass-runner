@@ -612,6 +612,52 @@ jass-runner/
   - `JassInterpreter` → `Interpreter`
   - 更新方法调用以匹配新类签名
 
+#### 35. 控制流语句扩展完成 (2026-02-28)
+- **Phase 1 - Parser层控制流解析**：
+  - 创建 `IfStmt`, `LoopStmt`, `ExitWhenStmt`, `ReturnStmt` AST节点
+  - 实现 `parse_if_statement` 方法支持 if/elseif/else/endif
+  - 实现 `parse_loop_statement` 方法支持 loop/endloop
+  - 实现 `parse_exitwhen_statement` 方法支持 exitwhen
+  - 实现 `parse_return_statement` 方法支持 return
+  - 创建完整测试覆盖：`tests/parser/test_parser.py` 新增控制流测试
+
+- **Phase 2 - Evaluator层运算符支持**：
+  - 添加 `evaluate_condition` 方法用于条件求值
+  - 实现完整运算符支持：`+`, `-`, `*`, `/`, `==`, `!=`, `<`, `>`, `<=`, `>=`, `and`, `or`, `not`
+  - 使用调度场算法处理运算符优先级
+  - 支持逻辑运算符短路求值
+  - 创建完整测试覆盖：`tests/interpreter/test_evaluator.py` 新增运算符测试
+
+- **Phase 3 - Interpreter层控制流执行**：
+  - 添加 `ReturnSignal` 和 `ExitLoopSignal` 控制流异常类
+  - 实现 `execute_if_statement` 方法支持 if/elseif/else 执行
+  - 实现 `execute_loop_statement` 方法支持 loop 执行
+  - 实现 `execute_exitwhen_statement` 方法支持 exitwhen
+  - 实现 `execute_return_statement` 方法支持 return
+  - 修改 `execute_function` 处理 `ReturnSignal`
+  - 添加 `_call_function_with_args` 支持函数调用获取返回值
+  - 修复函数调用后上下文恢复问题
+  - 创建完整测试覆盖：15个解释器测试全部通过
+
+- **Phase 4 - 集成测试和示例脚本**：
+  - 创建 `tests/integration/test_control_flow_integration.py`
+    - 斐波那契数列测试（递归+条件）
+    - 累加和测试（loop）
+    - 素数判断测试（嵌套控制流）
+    - 最大公约数测试（loop）
+    - 嵌套循环矩阵测试
+    - 复杂控制流组合测试（阶乘）
+  - 创建 `examples/control_flow_demo.j` 演示脚本
+    - 累加和计算
+    - 嵌套循环乘法表
+    - 查找值示例
+    - 简单条件判断示例
+  - 修复 `parse_set_statement` 支持表达式赋值（如 `i + 1`）
+
+- **测试统计**：
+  - 所有 158 个测试通过
+  - 核心模块覆盖率：interpreter 95%+
+
 ### 当前状态
 - ✅ 需求分析和设计完成
 - ✅ 5个阶段实施计划完成
@@ -624,7 +670,8 @@ jass-runner/
 - ✅ **Timer 原生函数签名修复完成**
 - ✅ **Parser 增强（嵌套函数调用、布尔值、函数引用）完成**
 - ✅ **Evaluator 增强（布尔值、函数引用）完成**
-- ✅ 所有 120 个测试通过
+- ✅ **控制流语句扩展完成（if/loop/exitwhen/return + 运算符）**
+- ✅ 所有 158 个测试通过
 
 ---
 *最后更新: 2026-02-27*
