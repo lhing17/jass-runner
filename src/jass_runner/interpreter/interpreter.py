@@ -30,6 +30,9 @@ class Interpreter:
 
     def execute_function(self, func: FunctionDecl):
         """执行一个函数。"""
+        # 保存当前上下文以便后续恢复
+        previous_context = self.current_context
+
         # 为函数执行创建新上下文，继承global_context的native_registry和state_context
         func_context = ExecutionContext(
             self.global_context,
@@ -52,8 +55,8 @@ class Interpreter:
             return_value = signal.value
 
         # 恢复之前的上下文
-        self.current_context = self.global_context
-        self.evaluator.context = self.global_context
+        self.current_context = previous_context
+        self.evaluator.context = previous_context
 
         return return_value
 
@@ -184,6 +187,9 @@ class Interpreter:
         返回：
             函数返回值
         """
+        # 保存当前上下文以便后续恢复
+        previous_context = self.current_context
+
         # 创建新上下文
         func_context = ExecutionContext(
             self.global_context,
@@ -209,7 +215,7 @@ class Interpreter:
             return_value = signal.value
 
         # 恢复上下文
-        self.current_context = self.global_context
-        self.evaluator.context = self.global_context
+        self.current_context = previous_context
+        self.evaluator.context = previous_context
 
         return return_value
