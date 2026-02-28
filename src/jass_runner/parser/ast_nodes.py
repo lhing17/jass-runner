@@ -102,3 +102,19 @@ class ExitWhenStmt:
 class ReturnStmt:
     """return返回语句节点。"""
     value: Optional[Any]  # 返回值，如果是return nothing则为None
+
+
+@dataclass
+class ArrayDecl:
+    """数组声明节点（全局或局部）。
+
+    属性：
+        name: 数组名称
+        element_type: 元素类型（integer, real, string, boolean, handle等）
+        is_global: True表示全局数组，False表示局部数组
+        is_constant: 是否常量（仅全局数组可标记为constant）
+    """
+    name: str
+    element_type: str
+    is_global: bool
+    is_constant: bool = False
