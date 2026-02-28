@@ -20,3 +20,20 @@ endfunction
     assert local_decls[0].name == "temp"
     assert local_decls[0].element_type == "integer"
     assert local_decls[0].is_global is False
+
+
+def test_parse_set_array_statement():
+    """测试解析数组赋值语句。"""
+    from jass_runner.parser.ast_nodes import SetArrayStmt
+    code = """
+function Test takes nothing returns nothing
+    local integer array arr
+    set arr[0] = 10
+endfunction
+"""
+    parser = Parser(code)
+    result = parser.parse()
+    func = result.functions[0]
+    set_stmts = [stmt for stmt in func.body if isinstance(stmt, SetArrayStmt)]
+    assert len(set_stmts) == 1
+    assert set_stmts[0].array_name == "arr"

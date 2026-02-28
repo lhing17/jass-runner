@@ -1,5 +1,5 @@
 from typing import Optional, TYPE_CHECKING, Any
-from .ast_nodes import LocalDecl, NativeCallNode, SetStmt, ArrayDecl
+from .ast_nodes import LocalDecl, NativeCallNode, SetStmt, ArrayDecl, SetArrayStmt
 from .errors import ParseError
 
 if TYPE_CHECKING:
@@ -281,6 +281,70 @@ class AssignmentParserMixin:
 
         return ArrayAccess(array_name=array_name, index=index)
 
+    def _parse_set_array_statement(self: 'BaseParser', array_name: str) -> Optional[SetArrayStmt]:
+        """解析数组元素赋值语句。
+
+        参数：
+            array_name: 数组名称
+
+        返回：
+            SetArrayStmt节点或None（如果解析失败）
+        """
+        from .ast_nodes import SetArrayStmt, IntegerExpr, VariableExpr
+
+        # 当前token是'['
+        self.next_token()  # 跳过 '['
+
+        # 解析索引表达式
+        index = None
+        if self.current_token:
+            if self.current_token.type == 'INTEGER':
+                index = IntegerExpr(value=self.current_token.value)
+                self.next_token()
+            elif self.current_token.type == 'IDENTIFIER':
+                index = VariableExpr(name=self.current_token.value)
+                self.next_token()
+
+        # 期望']'
+        if not self.current_token or self.current_token.value != ']':
+            self.errors.append(ParseError(
+                message="数组赋值期望']'",
+                line=self.current_token.line if self.current_token else 0,
+                column=self.current_token.column if self.current_token else 0
+            ))
+            return None
+        self.next_token()  # 跳过 ']'
+
+        # 期望'='
+        if not self.current_token or self.current_token.value != '=':
+            self.errors.append(ParseError(
+                message="数组赋值期望'='",
+                line=self.current_token.line if self.current_token else 0,
+                column=self.current_token.column if self.current_token else 0
+            ))
+            return None
+        self.next_token()  # 跳过 '='
+
+        # 解析右侧值
+        value = None
+        if self.current_token:
+            if self.current_token.type == 'INTEGER':
+                value = IntegerExpr(value=self.current_token.value)
+                self.next_token()
+            elif self.current_token.type == 'IDENTIFIER':
+                value = VariableExpr(name=self.current_token.value)
+                self.next_token()
+
+        # 如果存在分号则跳过
+        if self.current_token and self.current_token.value == ';':
+            self.next_token()
+
+        return SetArrayStmt(
+            array_name=array_name,
+            index=index,
+            value=value
+        )
+
     def parse_set_statement(self: 'BaseParser') -> Optional[SetStmt]:
         """解析set赋值语句。"""
         try:
@@ -291,16 +355,20 @@ class AssignmentParserMixin:
             if not self.current_token or self.current_token.type != 'IDENTIFIER':
                 return None
             var_name = self.current_token.value
+            self.next_token()
 
-            # 检查是否尝试修改常量
+            # 检查是否是数组赋值 arr[...] = ...
+            if self.current_token and self.current_token.value == '[':
+                return self._parse_set_array_statement(var_name)
+
+            # 检查是否尝试修改常量（普通变量）
             if hasattr(self, 'constant_names') and var_name in self.constant_names:
                 self.errors.append(ParseError(
                     message=f"不能修改常量 '{var_name}'",
-                    line=self.current_token.line,
-                    column=self.current_token.column
+                    line=self.current_token.line if self.current_token else 0,
+                    column=self.current_token.column if self.current_token else 0
                 ))
                 # 继续消耗token以同步，但返回None表示解析失败
-                self.next_token()
                 if self.current_token and self.current_token.value == '=':
                     self.next_token()
                     # 跳过右侧值
@@ -311,8 +379,6 @@ class AssignmentParserMixin:
                                                              'else', 'endif', 'endloop', 'endfunction'))):
                         self.next_token()
                 return None
-
-            self.next_token()
 
             # 检查赋值操作符
             if not self.current_token or self.current_token.value != '=':
