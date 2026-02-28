@@ -80,3 +80,38 @@ def test_evaluator_can_evaluate_native_call():
     # 测试原生调用求值
     result = evaluator.evaluate(node)
     assert result == "Called DisplayTextToPlayer with args: ('player', 'message')"
+
+
+def test_evaluate_arithmetic_addition():
+    """测试加法运算。"""
+    from jass_runner.interpreter.evaluator import Evaluator
+    from jass_runner.interpreter.context import ExecutionContext
+
+    context = ExecutionContext()
+    evaluator = Evaluator(context)
+    result = evaluator.evaluate("5 + 3")
+    assert result == 8
+
+
+def test_evaluate_arithmetic_mixed_types():
+    """测试混合类型运算。"""
+    from jass_runner.interpreter.evaluator import Evaluator
+    from jass_runner.interpreter.context import ExecutionContext
+
+    context = ExecutionContext()
+    evaluator = Evaluator(context)
+    result = evaluator.evaluate("5 + 3.5")
+    assert result == 8.5
+    assert isinstance(result, float)
+
+
+def test_evaluate_arithmetic_all_operators():
+    """测试所有算术运算符。"""
+    from jass_runner.interpreter.evaluator import Evaluator
+    from jass_runner.interpreter.context import ExecutionContext
+
+    context = ExecutionContext()
+    evaluator = Evaluator(context)
+    assert evaluator.evaluate("10 - 3") == 7
+    assert evaluator.evaluate("4 * 5") == 20
+    assert evaluator.evaluate("15 / 3") == 5.0

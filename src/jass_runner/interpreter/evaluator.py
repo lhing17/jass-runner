@@ -1,6 +1,7 @@
 """JASS表达式求值器。"""
 
-from typing import Any
+import re
+from typing import Any, List, Tuple
 from .context import ExecutionContext
 
 
@@ -18,8 +19,192 @@ class OperatorPrecedence:
 class Evaluator:
     """求值JASS表达式。"""
 
+    # 运算符优先级映射
+    OPERATOR_PRECEDENCE = {
+        '+': OperatorPrecedence.ADDITIVE,
+        '-': OperatorPrecedence.ADDITIVE,
+        '*': OperatorPrecedence.MULTIPLICATIVE,
+        '/': OperatorPrecedence.MULTIPLICATIVE,
+    }
+
     def __init__(self, context: ExecutionContext):
         self.context = context
+
+    def _tokenize_expression(self, expression: str) -> List[str]:
+        """将表达式分词为token列表。
+
+        参数：
+            expression: JASS表达式字符串
+
+        返回：
+            token列表
+        """
+        tokens = []
+        i = 0
+        while i < len(expression):
+            # 跳过空白字符
+            if expression[i].isspace():
+                i += 1
+                continue
+
+            # 处理字符串字面量
+            if expression[i] == '"':
+                j = i + 1
+                while j < len(expression) and expression[j] != '"':
+                    j += 1
+                tokens.append(expression[i:j+1])
+                i = j + 1
+                continue
+
+            # 处理运算符
+            if expression[i] in '+-*/':
+                tokens.append(expression[i])
+                i += 1
+                continue
+
+            # 处理数字（包括浮点数）
+            if expression[i].isdigit() or expression[i] == '.':
+                j = i
+                while j < len(expression) and (expression[j].isdigit() or expression[j] == '.'):
+                    j += 1
+                tokens.append(expression[i:j])
+                i = j
+                continue
+
+            # 处理标识符（变量名等）
+            if expression[i].isalpha() or expression[i] == '_':
+                j = i
+                while j < len(expression) and (expression[j].isalnum() or expression[j] == '_'):
+                    j += 1
+                tokens.append(expression[i:j])
+                i = j
+                continue
+
+            i += 1
+
+        return tokens
+
+    def _parse_value(self, token: str) -> Any:
+        """解析单个token为值。
+
+        参数：
+            token: 单个token字符串
+
+        返回：
+            解析后的值
+        """
+        token = token.strip()
+
+        # 处理字符串字面量
+        if token.startswith('"') and token.endswith('"'):
+            return token[1:-1]
+
+        # 处理整数字面量
+        if token.isdigit():
+            return int(token)
+
+        # 处理浮点数字面量
+        try:
+            return float(token)
+        except ValueError:
+            pass
+
+        # 处理布尔值
+        if token == 'true':
+            return True
+        if token == 'false':
+            return False
+
+        # 处理变量引用
+        if self.context.has_variable(token):
+            return self.context.get_variable(token)
+
+        # 默认：作为字符串返回
+        return token
+
+    def _apply_operator(self, left: Any, operator: str, right: Any) -> Any:
+        """应用二元运算符。
+
+        参数：
+            left: 左操作数
+            operator: 运算符（+、-、*、/）
+            right: 右操作数
+
+        返回：
+            运算结果
+        """
+        if operator == '+':
+            return left + right
+        elif operator == '-':
+            return left - right
+        elif operator == '*':
+            return left * right
+        elif operator == '/':
+            # JASS中除法返回实数
+            return left / right
+        else:
+            raise ValueError(f"不支持的运算符: {operator}")
+
+    def _parse_and_evaluate(self, tokens: List[str]) -> Any:
+        """解析并求值token列表（支持运算符优先级）。
+
+        使用调度场算法处理运算符优先级。
+
+        参数：
+            tokens: token列表
+
+        返回：
+            求值结果
+        """
+        if not tokens:
+            return None
+
+        # 如果只有一个token，直接解析
+        if len(tokens) == 1:
+            return self._parse_value(tokens[0])
+
+        # 转换为输出队列和运算符栈
+        output_queue = []
+        operator_stack = []
+
+        i = 0
+        while i < len(tokens):
+            token = tokens[i]
+
+            # 如果是运算符
+            if token in self.OPERATOR_PRECEDENCE:
+                precedence = self.OPERATOR_PRECEDENCE[token]
+
+                # 弹出优先级更高或相等的运算符
+                while (operator_stack and
+                       operator_stack[-1] in self.OPERATOR_PRECEDENCE and
+                       self.OPERATOR_PRECEDENCE[operator_stack[-1]] >= precedence):
+                    output_queue.append(operator_stack.pop())
+
+                operator_stack.append(token)
+            else:
+                # 操作数直接入输出队列
+                output_queue.append(token)
+
+            i += 1
+
+        # 弹出剩余的运算符
+        while operator_stack:
+            output_queue.append(operator_stack.pop())
+
+        # 使用栈求值逆波兰表达式
+        eval_stack = []
+        for token in output_queue:
+            if token in self.OPERATOR_PRECEDENCE:
+                # 运算符：弹出两个操作数，计算结果
+                right = self._parse_value(eval_stack.pop())
+                left = self._parse_value(eval_stack.pop())
+                result = self._apply_operator(left, token, right)
+                eval_stack.append(result)
+            else:
+                eval_stack.append(token)
+
+        return eval_stack[0] if eval_stack else None
 
     def evaluate_native_call(self, node):
         """求值原生函数调用。"""
@@ -39,6 +224,15 @@ class Evaluator:
         # 如果是字符串，按原逻辑处理
         if isinstance(expression, str):
             expression = expression.strip()
+
+            # 检查是否包含算术运算符
+            if any(op in expression for op in '+-*/'):
+                # 确保不是字符串字面量或函数引用
+                if not (expression.startswith('"') and expression.endswith('"')) and \
+                   not expression.startswith('function:'):
+                    tokens = self._tokenize_expression(expression)
+                    if len(tokens) >= 3:  # 至少需要 操作数 运算符 操作数
+                        return self._parse_and_evaluate(tokens)
 
             # 处理字符串字面量
             if expression.startswith('"') and expression.endswith('"'):
