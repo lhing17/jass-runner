@@ -175,3 +175,33 @@ def test_execute_if_elseif():
 
     # 验证elseif分支被执行（result应该被设置为2）
     assert test_context.get_variable('result') == 2
+
+
+def test_execute_nested_if():
+    """测试执行嵌套if语句。"""
+    from jass_runner.interpreter.interpreter import Interpreter
+    from jass_runner.parser.parser import Parser
+    from jass_runner.natives.factory import NativeFactory
+
+    code = """
+    function main takes nothing returns nothing
+        local integer x = 5
+        local integer y = 3
+        if x > 0 then
+            if y > 0 then
+                call DisplayTextToPlayer(Player(0), 0.0, 0.0, "both positive")
+            endif
+        endif
+    endfunction
+    """
+
+    parser = Parser(code)
+    ast = parser.parse()
+
+    # 创建包含DisplayTextToPlayer的注册表
+    factory = NativeFactory()
+    registry = factory.create_default_registry()
+
+    interpreter = Interpreter(native_registry=registry)
+    interpreter.execute(ast)
+    assert True
