@@ -139,3 +139,19 @@ def test_operator_precedence_with_parentheses():
     # (2 + 3) * 4 应该等于 20
     result = evaluator.evaluate("(2 + 3) * 4")
     assert result == 20
+
+
+def test_evaluate_comparison_operators():
+    """测试比较运算符。"""
+    from jass_runner.interpreter.evaluator import Evaluator
+    from jass_runner.interpreter.context import ExecutionContext
+
+    context = ExecutionContext()
+    evaluator = Evaluator(context)
+
+    assert evaluator.evaluate("5 == 5") is True
+    assert evaluator.evaluate("5 != 3") is True
+    assert evaluator.evaluate("5 > 3") is True
+    assert evaluator.evaluate("3 < 5") is True
+    assert evaluator.evaluate("5 >= 5") is True
+    assert evaluator.evaluate("3 <= 5") is True

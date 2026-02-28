@@ -21,6 +21,14 @@ class Evaluator:
 
     # 运算符优先级映射
     OPERATOR_PRECEDENCE = {
+        '||': OperatorPrecedence.OR,
+        '&&': OperatorPrecedence.AND,
+        '==': OperatorPrecedence.EQUALITY,
+        '!=': OperatorPrecedence.EQUALITY,
+        '>': OperatorPrecedence.RELATIONAL,
+        '<': OperatorPrecedence.RELATIONAL,
+        '>=': OperatorPrecedence.RELATIONAL,
+        '<=': OperatorPrecedence.RELATIONAL,
         '+': OperatorPrecedence.ADDITIVE,
         '-': OperatorPrecedence.ADDITIVE,
         '*': OperatorPrecedence.MULTIPLICATIVE,
@@ -60,6 +68,17 @@ class Evaluator:
             if expression[i] in '+-*/()':
                 tokens.append(expression[i])
                 i += 1
+                continue
+
+            # 处理比较运算符 (==, !=, >=, <=, >, <)
+            if expression[i] in '=!><':
+                # 检查双字符运算符
+                if i + 1 < len(expression) and expression[i + 1] == '=':
+                    tokens.append(expression[i:i+2])
+                    i += 2
+                else:
+                    tokens.append(expression[i])
+                    i += 1
                 continue
 
             # 处理数字（包括浮点数）
@@ -131,12 +150,13 @@ class Evaluator:
 
         参数：
             left: 左操作数
-            operator: 运算符（+、-、*、/）
+            operator: 运算符（+、-、*、/、==、!=、>、<、>=、<=）
             right: 右操作数
 
         返回：
             运算结果
         """
+        # 算术运算符
         if operator == '+':
             return left + right
         elif operator == '-':
@@ -146,6 +166,19 @@ class Evaluator:
         elif operator == '/':
             # JASS中除法返回实数
             return left / right
+        # 比较运算符
+        elif operator == '==':
+            return left == right
+        elif operator == '!=':
+            return left != right
+        elif operator == '>':
+            return left > right
+        elif operator == '<':
+            return left < right
+        elif operator == '>=':
+            return left >= right
+        elif operator == '<=':
+            return left <= right
         else:
             raise ValueError(f"不支持的运算符: {operator}")
 
@@ -239,8 +272,9 @@ class Evaluator:
         if isinstance(expression, str):
             expression = expression.strip()
 
-            # 检查是否包含算术运算符
-            if any(op in expression for op in '+-*/'):
+            # 检查是否包含算术运算符或比较运算符
+            operators = ['+', '-', '*', '/', '==', '!=', '>', '<', '>=', '<=']
+            if any(op in expression for op in operators):
                 # 确保不是字符串字面量或函数引用
                 if not (expression.startswith('"') and expression.endswith('"')) and \
                    not expression.startswith('function:'):
