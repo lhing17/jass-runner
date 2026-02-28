@@ -112,6 +112,12 @@ class IfStmt:
             self.else_body = []
 
 
+@dataclass
+class LoopStmt:
+    """loop循环语句节点。"""
+    body: List[Any]  # 循环体内的语句列表
+
+
 class Parser:
     """JASS代码的递归下降解析器。"""
 
@@ -439,6 +445,10 @@ class Parser:
         # 解析if语句
         if self.current_token.type == 'KEYWORD' and self.current_token.value == 'if':
             return self.parse_if_statement()
+
+        # 解析loop语句
+        if self.current_token.type == 'KEYWORD' and self.current_token.value == 'loop':
+            return self.parse_loop_statement()
 
         # 目前跳过其他标记
         self.next_token()
@@ -804,6 +814,34 @@ class Parser:
                 elseif_branches=elseif_branches,
                 else_body=else_body
             )
+
+        except Exception:
+            return None
+
+    def parse_loop_statement(self) -> Optional[LoopStmt]:
+        """解析loop循环语句。
+
+        返回：
+            如果成功返回LoopStmt，如果解析失败返回None
+        """
+        try:
+            # 跳过'loop'关键词
+            self.next_token()
+
+            # 解析循环体内的语句列表
+            body = []
+            while (self.current_token and
+                   not (self.current_token.type == 'KEYWORD' and
+                        self.current_token.value == 'endloop')):
+                statement = self.parse_statement()
+                if statement:
+                    body.append(statement)
+
+            # 匹配'endloop'关键词
+            if self.current_token and self.current_token.type == 'KEYWORD' and self.current_token.value == 'endloop':
+                self.next_token()
+
+            return LoopStmt(body=body)
 
         except Exception:
             return None

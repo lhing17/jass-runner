@@ -442,3 +442,92 @@ def test_parse_nested_if_statement():
     inner_call = inner_if.then_body[0]
     assert isinstance(inner_call, NativeCallNode)
     assert inner_call.func_name == "A"
+
+
+def test_parse_loop_statement():
+    """测试解析loop语句"""
+    from jass_runner.parser.parser import Parser, LoopStmt, NativeCallNode
+
+    code = """
+    function main takes nothing returns nothing
+        loop
+            call A()
+        endloop
+    endfunction
+    """
+
+    parser = Parser(code)
+    ast = parser.parse()
+
+    func = ast.functions[0]
+    loop_stmt = func.body[0]
+    assert isinstance(loop_stmt, LoopStmt)
+    assert len(loop_stmt.body) == 1
+
+    # 验证循环体内的调用
+    call_stmt = loop_stmt.body[0]
+    assert isinstance(call_stmt, NativeCallNode)
+    assert call_stmt.func_name == "A"
+
+
+def test_parse_loop_with_multiple_statements():
+    """测试解析包含多个语句的loop"""
+    from jass_runner.parser.parser import Parser, LoopStmt, NativeCallNode, SetStmt
+
+    code = """
+    function main takes nothing returns nothing
+        loop
+            call A()
+            call B()
+            set x = 1
+        endloop
+    endfunction
+    """
+
+    parser = Parser(code)
+    ast = parser.parse()
+
+    func = ast.functions[0]
+    loop_stmt = func.body[0]
+    assert isinstance(loop_stmt, LoopStmt)
+    assert len(loop_stmt.body) == 3
+
+    # 验证语句类型
+    assert isinstance(loop_stmt.body[0], NativeCallNode)
+    assert loop_stmt.body[0].func_name == "A"
+    assert isinstance(loop_stmt.body[1], NativeCallNode)
+    assert loop_stmt.body[1].func_name == "B"
+    assert isinstance(loop_stmt.body[2], SetStmt)
+
+
+def test_parse_nested_loop():
+    """测试解析嵌套loop语句"""
+    from jass_runner.parser.parser import Parser, LoopStmt, NativeCallNode
+
+    code = """
+    function main takes nothing returns nothing
+        loop
+            loop
+                call A()
+            endloop
+        endloop
+    endfunction
+    """
+
+    parser = Parser(code)
+    ast = parser.parse()
+
+    func = ast.functions[0]
+    outer_loop = func.body[0]
+    assert isinstance(outer_loop, LoopStmt)
+    assert len(outer_loop.body) == 1
+
+    # 验证内层loop
+    inner_loop = outer_loop.body[0]
+    assert isinstance(inner_loop, LoopStmt)
+    assert len(inner_loop.body) == 1
+
+    # 验证内层loop中的调用
+    inner_call = inner_loop.body[0]
+    assert isinstance(inner_call, NativeCallNode)
+    assert inner_call.func_name == "A"
