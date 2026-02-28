@@ -3,8 +3,9 @@
 from typing import Any
 from .context import ExecutionContext
 from .evaluator import Evaluator
-from ..parser.parser import AST, FunctionDecl, LocalDecl, NativeCallNode, SetStmt, IfStmt
+from ..parser.parser import AST, FunctionDecl, LocalDecl, NativeCallNode, SetStmt, IfStmt, LoopStmt, ExitWhenStmt
 from ..natives.state import StateContext
+from .control_flow import ExitLoopSignal
 
 
 class Interpreter:
@@ -60,6 +61,10 @@ class Interpreter:
             self.execute_set_statement(statement)
         elif isinstance(statement, IfStmt):
             self.execute_if_statement(statement)
+        elif isinstance(statement, LoopStmt):
+            self.execute_loop_statement(statement)
+        elif isinstance(statement, ExitWhenStmt):
+            self.execute_exitwhen_statement(statement)
 
     def execute_local_declaration(self, decl: LocalDecl):
         """执行局部变量声明。"""
@@ -80,6 +85,10 @@ class Interpreter:
         """执行变量赋值语句。"""
         # 如果值是函数调用节点，先执行它并获取返回值
         if isinstance(stmt.value, NativeCallNode):
+            result = self.evaluator.evaluate(stmt.value)
+            self.current_context.set_variable(stmt.var_name, result)
+        elif isinstance(stmt.value, str):
+            # 如果是字符串，可能是表达式，需要求值
             result = self.evaluator.evaluate(stmt.value)
             self.current_context.set_variable(stmt.var_name, result)
         else:
@@ -114,3 +123,31 @@ class Interpreter:
             if not executed and stmt.else_body:
                 for statement in stmt.else_body:
                     self.execute_statement(statement)
+
+    def execute_loop_statement(self, stmt: LoopStmt):
+        """执行loop循环语句。
+
+        参数：
+            stmt: LoopStmt节点，包含循环体内的语句列表
+        """
+        while True:
+            try:
+                # 执行循环体内的所有语句
+                for statement in stmt.body:
+                    self.execute_statement(statement)
+            except ExitLoopSignal:
+                # 当exitwhen条件满足时，退出循环
+                break
+
+    def execute_exitwhen_statement(self, stmt: ExitWhenStmt):
+        """执行exitwhen退出循环语句。
+
+        参数：
+            stmt: ExitWhenStmt节点，包含退出条件表达式
+        """
+        # 求值条件表达式
+        condition_result = self.evaluator.evaluate_condition(stmt.condition)
+
+        # 如果条件为真，抛出ExitLoopSignal退出循环
+        if condition_result:
+            raise ExitLoopSignal()

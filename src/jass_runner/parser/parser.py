@@ -687,10 +687,10 @@ class Parser:
                 return None
             self.next_token()
 
-            # 解析右侧值（可以是字面量或函数调用）
+            # 解析右侧值（可以是字面量、函数调用或表达式）
             value = None
             if self.current_token and self.current_token.type == 'IDENTIFIER':
-                # 可能是函数调用，如 CreateUnit(...)
+                # 可能是函数调用，如 CreateUnit(...)，或表达式如 i + 1
                 func_name = self.current_token.value
                 self.next_token()
 
@@ -727,10 +727,21 @@ class Parser:
 
                     value = NativeCallNode(func_name=func_name, args=args)
                 else:
-                    # 不是函数调用，回退到变量引用（但赋值中不支持）
-                    return None
+                    # 不是函数调用，可能是表达式开始（如 i + 1）
+                    # 将标识符和后续token组合成表达式字符串
+                    expr_parts = [func_name]
+                    # 继续读取直到语句结束（遇到KEYWORD如endloop/endif/else等）
+                    while (self.current_token and
+                           not (self.current_token.type == 'KEYWORD' and
+                                self.current_token.value in ('endloop', 'endif', 'else', 'elseif', 'endfunction'))):
+                        if self.current_token.value == ';':
+                            self.next_token()
+                            break
+                        expr_parts.append(str(self.current_token.value))
+                        self.next_token()
+                    value = ' '.join(expr_parts)
             elif self.current_token:
-                # 字面量
+                # 字面量或表达式
                 if self.current_token.type == 'INTEGER':
                     value = self.current_token.value
                     self.next_token()

@@ -205,3 +205,27 @@ def test_execute_nested_if():
     interpreter = Interpreter(native_registry=registry)
     interpreter.execute(ast)
     assert True
+
+
+def test_execute_simple_loop():
+    """测试执行简单loop循环。"""
+    from jass_runner.interpreter.interpreter import Interpreter
+    from jass_runner.parser.parser import Parser
+
+    code = """
+    function main takes nothing returns nothing
+        local integer i = 0
+        loop
+            exitwhen i >= 3
+            set i = i + 1
+        endloop
+    endfunction
+    """
+
+    parser = Parser(code)
+    ast = parser.parse()
+
+    interpreter = Interpreter()
+    interpreter.execute(ast)
+    # 循环正常结束即表示测试通过（没有进入无限循环）
+    assert True
