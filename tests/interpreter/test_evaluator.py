@@ -1,4 +1,17 @@
-"""Test expression evaluator."""
+"""测试表达式求值器。"""
+
+def test_operator_precedence_constants():
+    """测试运算符优先级常量定义。"""
+    from jass_runner.interpreter.evaluator import Evaluator, OperatorPrecedence
+
+    assert OperatorPrecedence.UNARY == 7
+    assert OperatorPrecedence.MULTIPLICATIVE == 6
+    assert OperatorPrecedence.ADDITIVE == 5
+    assert OperatorPrecedence.RELATIONAL == 4
+    assert OperatorPrecedence.EQUALITY == 3
+    assert OperatorPrecedence.AND == 2
+    assert OperatorPrecedence.OR == 1
+
 
 def test_evaluator_can_evaluate_literal():
     """Test that evaluator can evaluate literal values."""

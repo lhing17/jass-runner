@@ -4,6 +4,17 @@ from typing import Any
 from .context import ExecutionContext
 
 
+class OperatorPrecedence:
+    """运算符优先级（数字越大优先级越高）。"""
+    OR = 1
+    AND = 2
+    EQUALITY = 3
+    RELATIONAL = 4
+    ADDITIVE = 5
+    MULTIPLICATIVE = 6
+    UNARY = 7
+
+
 class Evaluator:
     """求值JASS表达式。"""
 
