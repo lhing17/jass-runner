@@ -155,3 +155,32 @@ def test_evaluate_comparison_operators():
     assert evaluator.evaluate("3 < 5") is True
     assert evaluator.evaluate("5 >= 5") is True
     assert evaluator.evaluate("3 <= 5") is True
+
+
+def test_evaluate_logical_operators():
+    """测试逻辑运算符"""
+    from jass_runner.interpreter.evaluator import Evaluator
+    from jass_runner.interpreter.context import ExecutionContext
+
+    context = ExecutionContext()
+    evaluator = Evaluator(context)
+
+    assert evaluator.evaluate("true and true") is True
+    assert evaluator.evaluate("true and false") is False
+    assert evaluator.evaluate("true or false") is True
+    assert evaluator.evaluate("false or false") is False
+    assert evaluator.evaluate("not true") is False
+    assert evaluator.evaluate("not false") is True
+
+
+def test_evaluate_complex_logical_expression():
+    """测试复杂逻辑表达式"""
+    from jass_runner.interpreter.evaluator import Evaluator
+    from jass_runner.interpreter.context import ExecutionContext
+
+    context = ExecutionContext()
+    evaluator = Evaluator(context)
+
+    # (5 > 3) and (2 < 4)
+    result = evaluator.evaluate("5 > 3 and 2 < 4")
+    assert result is True

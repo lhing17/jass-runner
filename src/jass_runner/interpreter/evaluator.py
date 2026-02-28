@@ -21,8 +21,8 @@ class Evaluator:
 
     # 运算符优先级映射
     OPERATOR_PRECEDENCE = {
-        '||': OperatorPrecedence.OR,
-        '&&': OperatorPrecedence.AND,
+        'or': OperatorPrecedence.OR,
+        'and': OperatorPrecedence.AND,
         '==': OperatorPrecedence.EQUALITY,
         '!=': OperatorPrecedence.EQUALITY,
         '>': OperatorPrecedence.RELATIONAL,
@@ -34,6 +34,9 @@ class Evaluator:
         '*': OperatorPrecedence.MULTIPLICATIVE,
         '/': OperatorPrecedence.MULTIPLICATIVE,
     }
+
+    # 一元运算符集合（带优先级）
+    UNARY_OPERATORS = {'not': OperatorPrecedence.UNARY}
 
     def __init__(self, context: ExecutionContext):
         self.context = context
@@ -90,12 +93,13 @@ class Evaluator:
                 i = j
                 continue
 
-            # 处理标识符（变量名等）
+            # 处理标识符（变量名、关键字如and/or/not等）
             if expression[i].isalpha() or expression[i] == '_':
                 j = i
                 while j < len(expression) and (expression[j].isalnum() or expression[j] == '_'):
                     j += 1
-                tokens.append(expression[i:j])
+                word = expression[i:j]
+                tokens.append(word)
                 i = j
                 continue
 
@@ -179,8 +183,28 @@ class Evaluator:
             return left >= right
         elif operator == '<=':
             return left <= right
+        # 逻辑运算符
+        elif operator == 'and':
+            return left and right
+        elif operator == 'or':
+            return left or right
         else:
             raise ValueError(f"不支持的运算符: {operator}")
+
+    def _apply_unary_operator(self, operator: str, operand: Any) -> Any:
+        """应用一元运算符。
+
+        参数：
+            operator: 运算符（not）
+            operand: 操作数
+
+        返回：
+            运算结果
+        """
+        if operator == 'not':
+            return not operand
+        else:
+            raise ValueError(f"不支持的一元运算符: {operator}")
 
     def _parse_and_evaluate(self, tokens: List[str]) -> Any:
         """解析并求值token列表（支持运算符优先级）。
@@ -218,14 +242,29 @@ class Evaluator:
                 # 弹出左括号
                 if operator_stack and operator_stack[-1] == '(':
                     operator_stack.pop()
-            # 如果是运算符
+            # 如果是一元运算符
+            elif token in self.UNARY_OPERATORS:
+                precedence = self.UNARY_OPERATORS[token]
+                # 弹出优先级更高或相等的运算符
+                while (operator_stack and
+                       operator_stack[-1] != '(' and
+                       ((operator_stack[-1] in self.OPERATOR_PRECEDENCE and
+                         self.OPERATOR_PRECEDENCE[operator_stack[-1]] >= precedence) or
+                        (operator_stack[-1] in self.UNARY_OPERATORS and
+                         self.UNARY_OPERATORS[operator_stack[-1]] >= precedence))):
+                    output_queue.append(operator_stack.pop())
+                operator_stack.append(token)
+            # 如果是二元运算符
             elif token in self.OPERATOR_PRECEDENCE:
                 precedence = self.OPERATOR_PRECEDENCE[token]
 
                 # 弹出优先级更高或相等的运算符
                 while (operator_stack and
-                       operator_stack[-1] in self.OPERATOR_PRECEDENCE and
-                       self.OPERATOR_PRECEDENCE[operator_stack[-1]] >= precedence):
+                       operator_stack[-1] != '(' and
+                       ((operator_stack[-1] in self.OPERATOR_PRECEDENCE and
+                         self.OPERATOR_PRECEDENCE[operator_stack[-1]] >= precedence) or
+                        (operator_stack[-1] in self.UNARY_OPERATORS and
+                         self.UNARY_OPERATORS[operator_stack[-1]] >= precedence))):
                     output_queue.append(operator_stack.pop())
 
                 operator_stack.append(token)
@@ -242,8 +281,13 @@ class Evaluator:
         # 使用栈求值逆波兰表达式
         eval_stack = []
         for token in output_queue:
-            if token in self.OPERATOR_PRECEDENCE:
-                # 运算符：弹出两个操作数，计算结果
+            if token in self.UNARY_OPERATORS:
+                # 一元运算符：弹出一个操作数
+                operand = self._parse_value(eval_stack.pop())
+                result = self._apply_unary_operator(token, operand)
+                eval_stack.append(result)
+            elif token in self.OPERATOR_PRECEDENCE:
+                # 二元运算符：弹出两个操作数，计算结果
                 right = self._parse_value(eval_stack.pop())
                 left = self._parse_value(eval_stack.pop())
                 result = self._apply_operator(left, token, right)
@@ -272,14 +316,16 @@ class Evaluator:
         if isinstance(expression, str):
             expression = expression.strip()
 
-            # 检查是否包含算术运算符或比较运算符
-            operators = ['+', '-', '*', '/', '==', '!=', '>', '<', '>=', '<=']
+            # 检查是否包含算术运算符、比较运算符或逻辑运算符
+            operators = ['+', '-', '*', '/', '==', '!=', '>', '<', '>=', '<=', 'and', 'or', 'not']
             if any(op in expression for op in operators):
                 # 确保不是字符串字面量或函数引用
                 if not (expression.startswith('"') and expression.endswith('"')) and \
                    not expression.startswith('function:'):
                     tokens = self._tokenize_expression(expression)
-                    if len(tokens) >= 3:  # 至少需要 操作数 运算符 操作数
+                    # 检查是否包含一元运算符（如not true只有2个token）
+                    has_unary = any(t in self.UNARY_OPERATORS for t in tokens)
+                    if len(tokens) >= 3 or (len(tokens) == 2 and has_unary):
                         return self._parse_and_evaluate(tokens)
 
             # 处理字符串字面量
