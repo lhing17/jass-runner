@@ -43,8 +43,9 @@ class Parser(BaseParser, GlobalParserMixin, FunctionParserMixin, StatementParser
         # 首先解析可选的 globals 块
         globals_list = self.parse_globals_block()
 
-        # 存储全局变量名用于冲突检查
+        # 存储全局变量名和常量名用于冲突检查
         self.global_names = {g.name for g in globals_list}
+        self.constant_names = {g.name for g in globals_list if g.is_constant}
 
         functions: List[FunctionDecl] = []
 

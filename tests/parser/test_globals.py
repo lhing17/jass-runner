@@ -155,3 +155,22 @@ endfunction
     # 应该记录错误
     assert len(parser.errors) > 0
     assert any('MAX_SIZE' in str(e) and '必须指定初始值' in str(e) for e in parser.errors)
+
+
+def test_parse_set_constant_errors():
+    """测试尝试修改 constant 时报错。"""
+    code = """
+globals
+    constant integer MAX_SIZE = 100
+endglobals
+
+function test takes nothing returns nothing
+    set MAX_SIZE = 200
+endfunction
+"""
+    parser = Parser(code)
+    ast = parser.parse()
+
+    # 应该记录错误
+    assert len(parser.errors) > 0
+    assert any('MAX_SIZE' in str(e) and '不能修改常量' in str(e) for e in parser.errors)

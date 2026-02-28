@@ -224,6 +224,27 @@ class AssignmentParserMixin:
             if not self.current_token or self.current_token.type != 'IDENTIFIER':
                 return None
             var_name = self.current_token.value
+
+            # 检查是否尝试修改常量
+            if hasattr(self, 'constant_names') and var_name in self.constant_names:
+                self.errors.append(ParseError(
+                    message=f"不能修改常量 '{var_name}'",
+                    line=self.current_token.line,
+                    column=self.current_token.column
+                ))
+                # 继续消耗token以同步，但返回None表示解析失败
+                self.next_token()
+                if self.current_token and self.current_token.value == '=':
+                    self.next_token()
+                    # 跳过右侧值
+                    while (self.current_token and
+                           not (self.current_token.type == 'KEYWORD' and
+                                self.current_token.value in ('set', 'call', 'local', 'return',
+                                                             'exitwhen', 'loop', 'if', 'elseif',
+                                                             'else', 'endif', 'endloop', 'endfunction'))):
+                        self.next_token()
+                return None
+
             self.next_token()
 
             # 检查赋值操作符
