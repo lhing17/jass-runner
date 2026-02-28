@@ -137,3 +137,21 @@ endfunction
     assert ast.globals[0].type == 'real'
     assert ast.globals[0].value == 3.14159
     assert ast.globals[0].is_constant is True
+
+
+def test_parse_constant_without_initial_value_errors():
+    """测试 constant 没有初始值时报错。"""
+    code = """
+globals
+    constant integer MAX_SIZE
+endglobals
+
+function main takes nothing returns nothing
+endfunction
+"""
+    parser = Parser(code)
+    ast = parser.parse()
+
+    # 应该记录错误
+    assert len(parser.errors) > 0
+    assert any('MAX_SIZE' in str(e) and '必须指定初始值' in str(e) for e in parser.errors)

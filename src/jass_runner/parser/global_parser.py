@@ -1,5 +1,6 @@
 from typing import List, Optional, TYPE_CHECKING
 from .ast_nodes import GlobalDecl
+from .errors import ParseError
 
 if TYPE_CHECKING:
     from .base_parser import BaseParser
@@ -85,6 +86,14 @@ class GlobalParserMixin:
                     elif self.current_token.type == 'KEYWORD' and self.current_token.value in ('true', 'false'):
                         value = self.current_token.value == 'true'
                         self.next_token()
+            elif is_constant:
+                # constant 必须有初始值
+                self.errors.append(ParseError(
+                    message=f"常量 '{var_name}' 必须指定初始值",
+                    line=self.current_token.line if self.current_token else 0,
+                    column=self.current_token.column if self.current_token else 0
+                ))
+                return None
 
             return GlobalDecl(name=var_name, type=var_type, value=value, is_constant=is_constant)
 
