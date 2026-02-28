@@ -63,7 +63,7 @@ class GlobalDecl:
     name: str
     type: str
     value: Any  # 初始值，可能为None
-
+    is_constant: bool = False  # 是否为常量
 
 @dataclass
 class LocalDecl:

@@ -102,3 +102,18 @@ endfunction
     # 应该记录错误
     assert len(parser.errors) > 0
     assert any("counter" in str(e) and "同名" in str(e) for e in parser.errors)
+
+
+def test_global_decl_has_is_constant_attribute():
+    """测试 GlobalDecl 节点具有 is_constant 属性。"""
+    # 测试默认值
+    decl = GlobalDecl(name='test_var', type='integer', value=100)
+    assert hasattr(decl, 'is_constant')
+    assert decl.is_constant is False
+
+    # 测试显式设置为 True
+    const_decl = GlobalDecl(name='MAX_SIZE', type='integer', value=100, is_constant=True)
+    assert const_decl.is_constant is True
+    assert const_decl.name == 'MAX_SIZE'
+    assert const_decl.type == 'integer'
+    assert const_decl.value == 100
