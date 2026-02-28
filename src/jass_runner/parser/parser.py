@@ -252,15 +252,6 @@ class Parser:
                 return None
             var_name = self.current_token.value
 
-            # 检查是否与全局变量同名
-            if hasattr(self, 'global_names') and var_name in self.global_names:
-                self.errors.append(ParseError(
-                    message=f"局部变量 '{var_name}' 与全局变量同名",
-                    line=self.current_token.line,
-                    column=self.current_token.column
-                ))
-                return None
-
             self.next_token()
 
             # 检查可选的初始值
@@ -595,7 +586,7 @@ class Parser:
                 return None
             var_name = self.current_token.value
 
-            # 检查是否与全局变量同名
+            # 检查是否与全局变量同名（局部变量不能与全局变量同名）
             if hasattr(self, 'global_names') and var_name in self.global_names:
                 self.errors.append(ParseError(
                     message=f"局部变量 '{var_name}' 与全局变量同名",
@@ -794,15 +785,6 @@ class Parser:
             if not self.current_token or self.current_token.type != 'IDENTIFIER':
                 return None
             var_name = self.current_token.value
-
-            # 检查是否与全局变量同名
-            if hasattr(self, 'global_names') and var_name in self.global_names:
-                self.errors.append(ParseError(
-                    message=f"局部变量 '{var_name}' 与全局变量同名",
-                    line=self.current_token.line,
-                    column=self.current_token.column
-                ))
-                return None
 
             self.next_token()
 

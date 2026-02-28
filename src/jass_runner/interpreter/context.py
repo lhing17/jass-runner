@@ -36,6 +36,23 @@ class ExecutionContext:
         else:
             return False
 
+    def set_variable_recursive(self, name: str, value: Any):
+        """递归设置变量，如果变量存在于父上下文中则更新父上下文，否则在当前上下文创建。
+
+        参数：
+            name: 变量名
+            value: 变量值
+        """
+        if name in self.variables:
+            # 变量在当前上下文中，更新它
+            self.variables[name] = value
+        elif self.parent and self.parent.has_variable(name):
+            # 变量在父上下文中，递归更新父上下文
+            self.parent.set_variable_recursive(name, value)
+        else:
+            # 变量不存在于任何上下文中，在当前上下文创建
+            self.variables[name] = value
+
     def get_native_function(self, name: str):
         """通过名称获取native函数。
 

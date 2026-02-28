@@ -116,14 +116,14 @@ class Interpreter:
         # 如果值是函数调用节点，先执行它并获取返回值
         if isinstance(stmt.value, NativeCallNode):
             result = self.evaluator.evaluate(stmt.value)
-            self.current_context.set_variable(stmt.var_name, result)
+            self.current_context.set_variable_recursive(stmt.var_name, result)
         elif isinstance(stmt.value, str):
             # 如果是字符串，可能是表达式，需要求值
             result = self.evaluator.evaluate(stmt.value)
-            self.current_context.set_variable(stmt.var_name, result)
+            self.current_context.set_variable_recursive(stmt.var_name, result)
         else:
             # 直接赋值字面量
-            self.current_context.set_variable(stmt.var_name, stmt.value)
+            self.current_context.set_variable_recursive(stmt.var_name, stmt.value)
 
     def execute_if_statement(self, stmt: IfStmt):
         """执行if语句。
