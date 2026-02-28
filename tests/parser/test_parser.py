@@ -531,3 +531,67 @@ def test_parse_nested_loop():
     inner_call = inner_loop.body[0]
     assert isinstance(inner_call, NativeCallNode)
     assert inner_call.func_name == "A"
+
+
+def test_parse_exitwhen_statement():
+    """测试解析exitwhen语句"""
+    from jass_runner.parser.parser import Parser, ExitWhenStmt
+
+    code = """
+    function main takes nothing returns nothing
+        loop
+            exitwhen i >= 10
+        endloop
+    endfunction
+    """
+
+    parser = Parser(code)
+    ast = parser.parse()
+
+    func = ast.functions[0]
+    loop_stmt = func.body[0]
+    exit_stmt = loop_stmt.body[0]
+    assert isinstance(exit_stmt, ExitWhenStmt)
+    assert exit_stmt.condition == "i >= 10"
+
+
+def test_parse_return_statement():
+    """测试解析return语句"""
+    from jass_runner.parser.parser import Parser, ReturnStmt, IfStmt
+
+    code = """
+    function test takes integer x returns integer
+        if x > 0 then
+            return 1
+        endif
+        return 0
+    endfunction
+    """
+
+    parser = Parser(code)
+    ast = parser.parse()
+
+    func = ast.functions[0]
+    if_stmt = func.body[0]
+    return_stmt = if_stmt.then_body[0]
+    assert isinstance(return_stmt, ReturnStmt)
+    assert return_stmt.value == "1"
+
+
+def test_parse_return_nothing():
+    """测试解析return nothing"""
+    from jass_runner.parser.parser import Parser, ReturnStmt
+
+    code = """
+    function main takes nothing returns nothing
+        return
+    endfunction
+    """
+
+    parser = Parser(code)
+    ast = parser.parse()
+
+    func = ast.functions[0]
+    return_stmt = func.body[0]
+    assert isinstance(return_stmt, ReturnStmt)
+    assert return_stmt.value is None

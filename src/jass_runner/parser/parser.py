@@ -118,6 +118,18 @@ class LoopStmt:
     body: List[Any]  # 循环体内的语句列表
 
 
+@dataclass
+class ExitWhenStmt:
+    """exitwhen循环退出语句节点。"""
+    condition: str  # 退出条件表达式
+
+
+@dataclass
+class ReturnStmt:
+    """return返回语句节点。"""
+    value: Optional[Any]  # 返回值，如果是return nothing则为None
+
+
 class Parser:
     """JASS代码的递归下降解析器。"""
 
@@ -449,6 +461,14 @@ class Parser:
         # 解析loop语句
         if self.current_token.type == 'KEYWORD' and self.current_token.value == 'loop':
             return self.parse_loop_statement()
+
+        # 解析exitwhen语句
+        if self.current_token.type == 'KEYWORD' and self.current_token.value == 'exitwhen':
+            return self.parse_exitwhen_statement()
+
+        # 解析return语句
+        if self.current_token.type == 'KEYWORD' and self.current_token.value == 'return':
+            return self.parse_return_statement()
 
         # 目前跳过其他标记
         self.next_token()
@@ -842,6 +862,63 @@ class Parser:
                 self.next_token()
 
             return LoopStmt(body=body)
+
+        except Exception:
+            return None
+
+    def parse_exitwhen_statement(self) -> Optional[ExitWhenStmt]:
+        """解析exitwhen退出循环语句。
+
+        返回：
+            如果成功返回ExitWhenStmt，如果解析失败返回None
+        """
+        try:
+            # 跳过'exitwhen'关键词
+            self.next_token()
+
+            # 解析条件表达式
+            condition = self.parse_condition()
+            if condition is None:
+                return None
+
+            return ExitWhenStmt(condition=condition)
+
+        except Exception:
+            return None
+
+    def parse_return_statement(self) -> Optional[ReturnStmt]:
+        """解析return返回语句。
+
+        返回：
+            如果成功返回ReturnStmt，如果解析失败返回None
+        """
+        try:
+            # 跳过'return'关键词
+            self.next_token()
+
+            # 检查是否有返回值
+            value = None
+            if (self.current_token and
+                not (self.current_token.type == 'KEYWORD' and
+                     self.current_token.value == 'endfunction')):
+                # 解析返回值表达式
+                if self.current_token.type == 'INTEGER':
+                    value = str(self.current_token.value)
+                    self.next_token()
+                elif self.current_token.type == 'REAL':
+                    value = str(self.current_token.value)
+                    self.next_token()
+                elif self.current_token.type == 'STRING':
+                    value = self.current_token.value
+                    self.next_token()
+                elif self.current_token.type == 'IDENTIFIER':
+                    value = self.current_token.value
+                    self.next_token()
+                elif self.current_token.type == 'KEYWORD' and self.current_token.value in ('true', 'false'):
+                    value = self.current_token.value
+                    self.next_token()
+
+            return ReturnStmt(value=value)
 
         except Exception:
             return None
