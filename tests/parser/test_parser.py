@@ -310,3 +310,25 @@ def test_parser_can_parse_local_declaration():
     assert stmt2.name == 'name'
     assert stmt2.type == 'string'
     assert stmt2.value == 'hello'
+
+
+def test_parse_simple_if_statement():
+    """测试解析简单if语句"""
+    from jass_runner.parser.parser import Parser, IfStmt
+
+    code = """
+    function main takes nothing returns nothing
+        if true then
+            call DisplayTextToPlayer("hello")
+        endif
+    endfunction
+    """
+
+    parser = Parser(code)
+    ast = parser.parse()
+
+    func = ast.functions[0]
+    if_stmt = func.body[0]
+    assert isinstance(if_stmt, IfStmt)
+    assert if_stmt.condition == "true"
+    assert len(if_stmt.then_body) == 1

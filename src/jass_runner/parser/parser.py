@@ -96,6 +96,13 @@ class SetStmt:
     value: Any  # 可以是字面量或函数调用节点
 
 
+@dataclass
+class IfStmt:
+    """if语句节点。"""
+    condition: str  # 条件表达式
+    then_body: List[Any]  # then分支的语句列表
+
+
 class Parser:
     """JASS代码的递归下降解析器。"""
 
@@ -420,6 +427,10 @@ class Parser:
         if self.current_token.type == 'KEYWORD' and self.current_token.value == 'set':
             return self.parse_set_statement()
 
+        # 解析if语句
+        if self.current_token.type == 'KEYWORD' and self.current_token.value == 'if':
+            return self.parse_if_statement()
+
         # 目前跳过其他标记
         self.next_token()
         return None
@@ -699,3 +710,90 @@ class Parser:
 
         except Exception:
             return None
+
+    def parse_if_statement(self) -> Optional[IfStmt]:
+        """解析if语句。
+
+        返回：
+            如果成功返回IfStmt，如果解析失败返回None
+        """
+        try:
+            # 跳过'if'关键词
+            self.next_token()
+
+            # 解析条件表达式
+            condition = self.parse_condition()
+            if condition is None:
+                return None
+
+            # 匹配'then'关键词
+            if not self.match_keyword('then'):
+                return None
+
+            # 解析then分支的语句列表
+            then_body = []
+            while (self.current_token and
+                   not (self.current_token.type == 'KEYWORD' and
+                        self.current_token.value in ('else', 'elseif', 'endif'))):
+                statement = self.parse_statement()
+                if statement:
+                    then_body.append(statement)
+
+            # 匹配'endif'关键词
+            if self.current_token and self.current_token.type == 'KEYWORD' and self.current_token.value == 'endif':
+                self.next_token()
+
+            return IfStmt(condition=condition, then_body=then_body)
+
+        except Exception:
+            return None
+
+    def parse_condition(self) -> Optional[str]:
+        """解析条件表达式（简化版）。
+
+        返回：
+            条件表达式字符串，如果解析失败返回None
+        """
+        if not self.current_token:
+            return None
+
+        # 处理布尔值true/false
+        if self.current_token.type == 'KEYWORD' and self.current_token.value in ('true', 'false'):
+            condition = self.current_token.value
+            self.next_token()
+            return condition
+
+        # 处理标识符（变量或函数调用）
+        if self.current_token.type == 'IDENTIFIER':
+            condition = self.current_token.value
+            self.next_token()
+
+            # 检查是否是函数调用，如 SomeFunction()
+            if self.current_token and self.current_token.value == '(':
+                self.next_token()  # 跳过 '('
+
+                # 解析参数列表（简化处理）
+                while self.current_token and self.current_token.value != ')':
+                    self.next_token()
+
+                # 跳过右括号
+                if self.current_token and self.current_token.value == ')':
+                    self.next_token()
+
+                condition += "()"
+
+            return condition
+
+        # 处理整数和实数字面量
+        if self.current_token.type in ('INTEGER', 'REAL'):
+            condition = str(self.current_token.value)
+            self.next_token()
+            return condition
+
+        # 处理字符串字面量
+        if self.current_token.type == 'STRING':
+            condition = self.current_token.value
+            self.next_token()
+            return condition
+
+        return None
