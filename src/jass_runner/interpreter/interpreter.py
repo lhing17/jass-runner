@@ -4,7 +4,7 @@ from typing import Any
 from .context import ExecutionContext
 from .evaluator import Evaluator
 from ..parser.parser import AST, FunctionDecl, LocalDecl, NativeCallNode, SetStmt, IfStmt, LoopStmt, ExitWhenStmt, ReturnStmt, GlobalDecl
-from ..parser.ast_nodes import ArrayDecl
+from ..parser.ast_nodes import ArrayDecl, SetArrayStmt
 from ..natives.state import StateContext
 from .control_flow import ExitLoopSignal, ReturnSignal
 
@@ -90,6 +90,8 @@ class Interpreter:
             self.execute_native_call(statement)
         elif isinstance(statement, SetStmt):
             self.execute_set_statement(statement)
+        elif isinstance(statement, SetArrayStmt):
+            self.execute_set_array_statement(statement)
         elif isinstance(statement, IfStmt):
             self.execute_if_statement(statement)
         elif isinstance(statement, LoopStmt):
@@ -135,6 +137,19 @@ class Interpreter:
         else:
             # 直接赋值字面量
             self.current_context.set_variable_recursive(stmt.var_name, stmt.value)
+
+    def execute_set_array_statement(self, stmt: SetArrayStmt):
+        """执行数组元素赋值。
+
+        参数：
+            stmt: 数组赋值语句节点
+        """
+        # 求值索引表达式
+        index = self.evaluator.evaluate(stmt.index)
+        # 求值右侧值
+        value = self.evaluator.evaluate(stmt.value)
+        # 设置数组元素
+        self.current_context.set_array_element(stmt.array_name, int(index), value)
 
     def execute_if_statement(self, stmt: IfStmt):
         """执行if语句。

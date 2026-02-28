@@ -3,6 +3,7 @@
 import re
 from typing import Any, List, Tuple
 from .context import ExecutionContext
+from ..parser.ast_nodes import ArrayAccess, IntegerExpr, VariableExpr
 
 
 class OperatorPrecedence:
@@ -405,6 +406,17 @@ class Evaluator:
 
         if node_type == 'NativeCallNode':
             return self.evaluate_native_call(expression)
+
+        if node_type == 'IntegerExpr':
+            return expression.value
+
+        if node_type == 'VariableExpr':
+            return self.context.get_variable(expression.name)
+
+        if node_type == 'ArrayAccess':
+            # 递归求值索引表达式
+            index = self.evaluate(expression.index)
+            return self.context.get_array_element(expression.array_name, int(index))
 
         # 其他节点类型将在后续添加
         raise NotImplementedError(f"Unsupported node type: {node_type}")

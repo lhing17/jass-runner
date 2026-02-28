@@ -406,3 +406,26 @@ def test_execute_global_array_declaration():
 
     assert "counts" in interpreter.current_context.arrays
     assert interpreter.current_context.arrays["counts"][0] == 0
+
+
+def test_execute_set_array_statement():
+    """测试执行数组赋值语句。"""
+    from jass_runner.interpreter.interpreter import Interpreter
+    from jass_runner.parser.ast_nodes import ArrayDecl, SetArrayStmt, IntegerExpr
+
+    interpreter = Interpreter()
+
+    # 先声明数组
+    decl = ArrayDecl(name="counts", element_type="integer",
+                     is_global=True, is_constant=False)
+    interpreter.execute_statement(decl)
+
+    # 执行赋值
+    set_stmt = SetArrayStmt(
+        array_name="counts",
+        index=IntegerExpr(value=5),
+        value=IntegerExpr(value=100)
+    )
+    interpreter.execute_statement(set_stmt)
+
+    assert interpreter.current_context.get_array_element("counts", 5) == 100
