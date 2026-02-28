@@ -1,5 +1,5 @@
-from typing import Optional, TYPE_CHECKING
-from .ast_nodes import LocalDecl, NativeCallNode, SetStmt
+from typing import Optional, TYPE_CHECKING, Any
+from .ast_nodes import LocalDecl, NativeCallNode, SetStmt, ArrayDecl
 from .errors import ParseError
 
 if TYPE_CHECKING:
@@ -8,8 +8,12 @@ if TYPE_CHECKING:
 class AssignmentParserMixin:
     """提供赋值和调用语句解析功能。"""
 
-    def parse_local_declaration(self: 'BaseParser') -> Optional[LocalDecl]:
-        """解析局部变量声明。"""
+    def parse_local_declaration(self: 'BaseParser') -> Optional[Any]:
+        """解析局部变量声明。
+
+        格式: local <type> [array] <name> [= <value>]
+        注意: array声明不支持初始化
+        """
         try:
             # 跳过'local'关键词
             self.next_token()
@@ -19,6 +23,13 @@ class AssignmentParserMixin:
                 return None
             var_type = self.current_token.value
             self.next_token()
+
+            # 检查是否是数组声明
+            is_array = False
+            if self.current_token and self.current_token.type == 'KEYWORD' and \
+               self.current_token.value == 'array':
+                is_array = True
+                self.next_token()
 
             # 获取变量名
             if not self.current_token or self.current_token.type != 'IDENTIFIER':
@@ -36,7 +47,25 @@ class AssignmentParserMixin:
 
             self.next_token()
 
-            # 检查赋值
+            # 数组声明不支持初始化
+            if is_array:
+                if self.current_token and self.current_token.value == '=':
+                    self.errors.append(ParseError(
+                        message="数组声明不支持初始化",
+                        line=self.current_token.line if self.current_token else 0,
+                        column=self.current_token.column if self.current_token else 0
+                    ))
+                    return None
+                # 如果存在分号则跳过
+                if self.current_token and self.current_token.value == ';':
+                    self.next_token()
+                return ArrayDecl(
+                    name=var_name,
+                    element_type=var_type,
+                    is_global=False
+                )
+
+            # 检查赋值（普通变量）
             value = None
             if self.current_token and self.current_token.value == '=':
                 self.next_token()
