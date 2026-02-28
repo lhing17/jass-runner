@@ -3,7 +3,7 @@
 from typing import Any
 from .context import ExecutionContext
 from .evaluator import Evaluator
-from ..parser.parser import AST, FunctionDecl, LocalDecl, NativeCallNode, SetStmt
+from ..parser.parser import AST, FunctionDecl, LocalDecl, NativeCallNode, SetStmt, IfStmt
 from ..natives.state import StateContext
 
 
@@ -58,6 +58,8 @@ class Interpreter:
             self.execute_native_call(statement)
         elif isinstance(statement, SetStmt):
             self.execute_set_statement(statement)
+        elif isinstance(statement, IfStmt):
+            self.execute_if_statement(statement)
 
     def execute_local_declaration(self, decl: LocalDecl):
         """执行局部变量声明。"""
@@ -83,3 +85,32 @@ class Interpreter:
         else:
             # 直接赋值字面量
             self.current_context.set_variable(stmt.var_name, stmt.value)
+
+    def execute_if_statement(self, stmt: IfStmt):
+        """执行if语句。
+
+        参数：
+            stmt: IfStmt节点，包含condition、then_body、elseif_branches和else_body
+        """
+        # 求值条件表达式
+        condition_result = self.evaluator.evaluate_condition(stmt.condition)
+
+        if condition_result:
+            # 执行then分支
+            for statement in stmt.then_body:
+                self.execute_statement(statement)
+        else:
+            # 检查elseif分支
+            executed = False
+            for elseif in stmt.elseif_branches:
+                elseif_condition = self.evaluator.evaluate_condition(elseif['condition'])
+                if elseif_condition:
+                    for statement in elseif['body']:
+                        self.execute_statement(statement)
+                    executed = True
+                    break
+
+            # 如果没有执行任何elseif分支，执行else分支
+            if not executed and stmt.else_body:
+                for statement in stmt.else_body:
+                    self.execute_statement(statement)
