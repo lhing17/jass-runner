@@ -124,9 +124,57 @@ def test_create_default_registry():
     assert player_func is not None
     assert player_func.name == "Player"
 
-    # 检查基础函数数量（7个基础函数 + 19个触发器函数）
+    # 检查基础函数数量（7个基础 + 19个触发器 + 15个数学 = 41）
     all_funcs = registry.get_all()
-    assert len(all_funcs) == 26
+    assert len(all_funcs) == 41
+
+
+def test_all_math_natives_registered():
+    """测试所有数学Native函数已注册。"""
+    from jass_runner.natives.factory import NativeFactory
+    from jass_runner.natives.math_core import (
+        SquareRoot, Pow, Cos, Sin, R2I, I2R,
+    )
+    from jass_runner.natives.math_extended import (
+        Tan, ModuloInteger, ModuloReal, R2S, S2R, I2S, S2I, GetRandomInt, GetRandomReal,
+    )
+
+    factory = NativeFactory()
+    registry = factory.create_default_registry()
+
+    # 数学函数名称列表（15个）
+    math_names = [
+        "SquareRoot", "Pow", "Cos", "Sin", "R2I", "I2R",
+        "Tan", "ModuloInteger", "ModuloReal", "R2S", "S2R", "I2S", "S2I",
+        "GetRandomInt", "GetRandomReal",
+    ]
+
+    # 预期的类映射
+    expected_classes = {
+        "SquareRoot": SquareRoot,
+        "Pow": Pow,
+        "Cos": Cos,
+        "Sin": Sin,
+        "R2I": R2I,
+        "I2R": I2R,
+        "Tan": Tan,
+        "ModuloInteger": ModuloInteger,
+        "ModuloReal": ModuloReal,
+        "R2S": R2S,
+        "S2R": S2R,
+        "I2S": I2S,
+        "S2I": S2I,
+        "GetRandomInt": GetRandomInt,
+        "GetRandomReal": GetRandomReal,
+    }
+
+    # 验证所有函数已注册
+    for name in math_names:
+        func = registry.get(name)
+        assert func is not None, f"数学函数 {name} 未注册"
+        assert func.name == name, f"函数名称不匹配: {func.name} != {name}"
+        assert isinstance(func, expected_classes[name]), \
+            f"函数 {name} 类型错误: 期望 {expected_classes[name]}, 实际 {type(func)}"
 
 
 def test_factory_with_timer_system():

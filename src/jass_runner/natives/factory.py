@@ -5,6 +5,8 @@
 
 from .registry import NativeRegistry
 from .basic import DisplayTextToPlayer, KillUnit, CreateUnit, GetUnitState, CreateItem, RemoveItem, PlayerNative
+from .math_core import SquareRoot, Pow, Cos, Sin, R2I, I2R
+from .math_extended import Tan, ModuloInteger, ModuloReal, R2S, S2R, I2S, S2I, GetRandomInt, GetRandomReal
 from .timer_natives import CreateTimer, TimerStart, TimerGetElapsed, DestroyTimer, PauseTimer, ResumeTimer
 from .trigger_natives import (
     CreateTrigger,
@@ -90,6 +92,25 @@ class NativeFactory:
         registry.register(TriggerRegisterUnitEvent())
         registry.register(TriggerRegisterPlayerEvent())
         registry.register(TriggerRegisterGameEvent())
+
+        # 注册数学core native函数
+        registry.register(SquareRoot())
+        registry.register(Pow())
+        registry.register(Cos())
+        registry.register(Sin())
+        registry.register(R2I())
+        registry.register(I2R())
+
+        # 注册数学extended native函数
+        registry.register(Tan())
+        registry.register(ModuloInteger())
+        registry.register(ModuloReal())
+        registry.register(R2S())
+        registry.register(S2R())
+        registry.register(I2S())
+        registry.register(S2I())
+        registry.register(GetRandomInt())
+        registry.register(GetRandomReal())
 
         # 如果计时器系统可用，注册计时器原生函数
         if self._timer_system:
