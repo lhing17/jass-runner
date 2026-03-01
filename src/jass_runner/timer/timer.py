@@ -1,6 +1,6 @@
 """用于 JASS 计时器模拟的 Timer 类。"""
 
-from typing import Callable, Optional
+from typing import Callable, Optional, Any
 
 
 class Timer:
@@ -14,6 +14,15 @@ class Timer:
         self.running: bool = False
         self.callback: Optional[Callable] = None
         self.callback_args = ()
+        self._trigger_manager: Optional[Any] = None
+
+    def set_trigger_manager(self, trigger_manager: Any):
+        """设置触发器管理器。
+
+        参数：
+            trigger_manager: TriggerManager 实例
+        """
+        self._trigger_manager = trigger_manager
 
     def start(self, timeout: float, periodic: bool, callback: Callable, *args):
         """启动计时器。"""
@@ -34,6 +43,13 @@ class Timer:
         if self.elapsed >= self.timeout:
             if self.callback:
                 self.callback(*self.callback_args)
+
+            # 触发计时器到期事件
+            if self._trigger_manager:
+                from ..trigger.event_types import EVENT_GAME_TIMER_EXPIRED
+                self._trigger_manager.fire_event(EVENT_GAME_TIMER_EXPIRED, {
+                    "timer_id": self.timer_id
+                })
 
             if self.periodic:
                 self.elapsed = 0.0

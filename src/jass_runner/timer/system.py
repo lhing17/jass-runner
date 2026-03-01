@@ -1,7 +1,7 @@
 """用于管理多个计时器的计时器系统。"""
 
 import uuid
-from typing import Dict, Optional
+from typing import Any, Dict, Optional
 from .timer import Timer
 
 
@@ -11,11 +11,23 @@ class TimerSystem:
     def __init__(self):
         self._timers: Dict[str, Timer] = {}
         self._current_time: float = 0.0
+        self._trigger_manager: Optional[Any] = None
+
+    def set_trigger_manager(self, trigger_manager: Any):
+        """设置触发器管理器。
+
+        参数：
+            trigger_manager: TriggerManager 实例
+        """
+        self._trigger_manager = trigger_manager
 
     def create_timer(self) -> str:
         """创建一个新计时器并返回其 ID。"""
         timer_id = f"timer_{uuid.uuid4().hex[:8]}"
         timer = Timer(timer_id)
+        # 如果已设置 trigger_manager，传递给新创建的计时器
+        if self._trigger_manager:
+            timer.set_trigger_manager(self._trigger_manager)
         self._timers[timer_id] = timer
         return timer_id
 
