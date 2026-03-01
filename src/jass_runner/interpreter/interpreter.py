@@ -34,6 +34,31 @@ class Interpreter:
         if 'main' in self.functions:
             self.execute_function(self.functions['main'])
 
+    def create_main_coroutine(self, ast: AST):
+        """创建主协程。
+
+        参数：
+            ast: AST 根节点
+
+        返回：
+            JassCoroutine 实例，如果没有 main 函数则返回 None
+        """
+        # 初始化全局变量
+        if ast.globals:
+            for global_decl in ast.globals:
+                self.execute_global_declaration(global_decl)
+
+        # 注册所有函数
+        for func in ast.functions:
+            self.functions[func.name] = func
+
+        # 查找 main 函数并创建协程
+        main_func = self.functions.get('main')
+        if main_func:
+            from .coroutine import JassCoroutine
+            return JassCoroutine(self, main_func)
+        return None
+
     def execute_global_declaration(self, decl):
         """执行全局变量声明。
 
