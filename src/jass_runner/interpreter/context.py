@@ -123,3 +123,17 @@ class ExecutionContext:
         if self.native_registry:
             return self.native_registry.get(name)
         return None
+
+    @property
+    def trigger_manager(self):
+        """获取触发器管理器。
+
+        如果state_context已设置，返回其中的trigger_manager，
+        否则返回None。
+
+        返回：
+            TriggerManager实例或None
+        """
+        if self.state_context:
+            return self.state_context.trigger_manager
+        return None

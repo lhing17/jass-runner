@@ -107,3 +107,32 @@ def test_get_set_array_element():
     context.declare_array("counts", "integer")
     context.set_array_element("counts", 5, 100)
     assert context.get_array_element("counts", 5) == 100
+
+
+def test_execution_context_with_trigger_manager():
+    """测试ExecutionContext可以访问TriggerManager。"""
+    from jass_runner.interpreter.context import ExecutionContext
+    from jass_runner.natives.state import StateContext
+
+    state_context = StateContext()
+    context = ExecutionContext(state_context=state_context)
+
+    # 检查触发器管理器属性可访问
+    assert context.trigger_manager is not None
+    assert context.trigger_manager is state_context.trigger_manager
+
+    # 测试通过ExecutionContext创建触发器
+    trigger_id = context.trigger_manager.create_trigger()
+    assert trigger_id is not None
+    assert trigger_id.startswith("trigger_")
+
+    # 测试触发事件
+    context.trigger_manager.fire_event("UNIT_DEATH", {"unit": "test_unit"})
+
+
+def test_execution_context_without_state_context():
+    """测试没有StateContext时trigger_manager返回None。"""
+    from jass_runner.interpreter.context import ExecutionContext
+
+    context = ExecutionContext()
+    assert context.trigger_manager is None
