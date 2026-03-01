@@ -23,6 +23,9 @@ class StateContext:
         self.global_vars = {}  # 全局变量存储
         self.local_stores = {}  # 上下文局部存储
 
+        # 连接HandleManager和TriggerManager
+        self.handle_manager.set_trigger_manager(self.trigger_manager)
+
     def get_context_store(self, context_id: str) -> Dict:
         """获取指定上下文的局部存储。"""
         if context_id not in self.local_stores:
