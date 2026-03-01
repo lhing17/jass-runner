@@ -5,7 +5,7 @@
 
 import pytest
 import math
-from jass_runner.natives.math_core import SquareRoot
+from jass_runner.natives.math_core import SquareRoot, Pow
 from jass_runner.natives.state import StateContext
 
 
@@ -65,3 +65,64 @@ class TestSquareRoot:
         native = SquareRoot()
         result = native.execute(state_context, 10000.0)
         assert result == 100.0
+
+
+class TestPow:
+    """测试Pow类的功能。"""
+
+    def test_name_returns_pow(self):
+        """测试name属性返回正确的函数名。"""
+        native = Pow()
+        assert native.name == "Pow"
+
+    def test_positive_base_positive_exponent(self, state_context):
+        """测试正底数正指数（如2.0^3.0 = 8.0）。"""
+        native = Pow()
+        result = native.execute(state_context, 2.0, 3.0)
+        assert result == 8.0
+        assert isinstance(result, float)
+
+    def test_zero_exponent_returns_one(self, state_context):
+        """测试0指数（如5.0^0.0 = 1.0）。"""
+        native = Pow()
+        result = native.execute(state_context, 5.0, 0.0)
+        assert result == 1.0
+
+    def test_negative_exponent(self, state_context):
+        """测试负指数（如2.0^-1.0 = 0.5）。"""
+        native = Pow()
+        result = native.execute(state_context, 2.0, -1.0)
+        assert result == 0.5
+
+    def test_fractional_exponent(self, state_context):
+        """测试分数指数（如4.0^0.5 = 2.0）。"""
+        native = Pow()
+        result = native.execute(state_context, 4.0, 0.5)
+        assert result == 2.0
+
+    def test_common_cases(self, state_context):
+        """测试常见幂运算场景。"""
+        native = Pow()
+        # 平方
+        result = native.execute(state_context, 3.0, 2.0)
+        assert result == 9.0
+        # 立方
+        result = native.execute(state_context, 2.0, 3.0)
+        assert result == 8.0
+        # 开平方
+        result = native.execute(state_context, 16.0, 0.5)
+        assert result == 4.0
+
+    def test_base_one_returns_one(self, state_context):
+        """测试底数为1时总是返回1。"""
+        native = Pow()
+        result = native.execute(state_context, 1.0, 100.0)
+        assert result == 1.0
+        result = native.execute(state_context, 1.0, -5.0)
+        assert result == 1.0
+
+    def test_base_zero_positive_exponent(self, state_context):
+        """测试底数为0时正指数返回0。"""
+        native = Pow()
+        result = native.execute(state_context, 0.0, 5.0)
+        assert result == 0.0

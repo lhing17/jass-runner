@@ -36,3 +36,33 @@ class SquareRoot(NativeFunction):
         if r < 0:
             return 0.0
         return math.sqrt(r)
+
+
+class Pow(NativeFunction):
+    """计算幂运算。
+
+    此函数模拟JASS中的Pow native函数，计算x的power次方。
+    支持正指数、负指数、零指数和分数指数。
+    """
+
+    @property
+    def name(self) -> str:
+        """获取函数名称。
+
+        返回：
+            函数名称"Pow"
+        """
+        return "Pow"
+
+    def execute(self, state_context, x: float, power: float) -> float:
+        """执行Pow native函数。
+
+        参数：
+            state_context: 状态上下文
+            x: 底数
+            power: 指数
+
+        返回：
+            float: x的power次方
+        """
+        return math.pow(x, power)
