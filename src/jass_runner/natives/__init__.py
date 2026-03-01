@@ -20,6 +20,12 @@ from .trigger_register_event_natives import (
     TriggerRegisterPlayerUnitEvent, TriggerRegisterUnitEvent,
     TriggerRegisterPlayerEvent, TriggerRegisterGameEvent,
 )
+from .math_core import (
+    SquareRoot, Pow, Cos, Sin, R2I, I2R,
+)
+from .math_extended import (
+    Tan, ModuloInteger, ModuloReal, R2S, S2R, I2S, S2I, GetRandomInt, GetRandomReal,
+)
 
 __all__ = [
     "NativeFunction",
@@ -54,4 +60,21 @@ __all__ = [
     "TriggerRegisterUnitEvent",
     "TriggerRegisterPlayerEvent",
     "TriggerRegisterGameEvent",
+    # 核心数学函数
+    "SquareRoot",
+    "Pow",
+    "Cos",
+    "Sin",
+    "R2I",
+    "I2R",
+    # 扩展数学函数
+    "Tan",
+    "ModuloInteger",
+    "ModuloReal",
+    "R2S",
+    "S2R",
+    "I2S",
+    "S2I",
+    "GetRandomInt",
+    "GetRandomReal",
 ]
