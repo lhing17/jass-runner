@@ -497,3 +497,4 @@ class TestTriggerEvaluate:
         result = native.execute(mock_state_context, "trigger_0")
 
         assert result is False
+
