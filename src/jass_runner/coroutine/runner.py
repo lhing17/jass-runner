@@ -84,3 +84,15 @@ class CoroutineRunner:
                 still_active.append(coroutine)
 
         self._active = still_active
+
+    def is_finished(self) -> bool:
+        """
+        检查所有协程是否完成。
+
+        返回：
+            True 如果所有协程都已完成
+        """
+        return (len(self._active) == 0 and
+                self._scheduler.is_empty() and
+                self._main_coroutine is not None and
+                self._main_coroutine.status == CoroutineStatus.FINISHED)

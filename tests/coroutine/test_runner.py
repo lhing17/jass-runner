@@ -64,3 +64,25 @@ class TestCoroutineRunner:
         assert runner._frame_count == 1
         # 协程已完成，应从活跃列表移除
         assert len(runner._active) == 0
+
+    def test_runner_is_finished(self):
+        """测试 CoroutineRunner 的 is_finished 方法。"""
+        from unittest.mock import Mock
+        from jass_runner.coroutine.runner import CoroutineRunner
+        from jass_runner.coroutine import CoroutineStatus
+
+        runner = CoroutineRunner()
+
+        # 初始状态：未开始，不算完成
+        assert not runner.is_finished()
+
+        # 设置主协程
+        mock_main = Mock()
+        mock_main.status = CoroutineStatus.PENDING
+        runner._main_coroutine = mock_main
+
+        assert not runner.is_finished()
+
+        # 主协程完成
+        mock_main.status = CoroutineStatus.FINISHED
+        assert runner.is_finished()
