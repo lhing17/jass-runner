@@ -1,6 +1,6 @@
 """协程系统模块。
 
-此模块包含协程执行引擎和信号系统，用于支持JASS脚本的异步执行。
+提供 JASS 异步执行支持，包括 TriggerSleepAction 和 ExecuteFunc。
 """
 
 from enum import Enum
@@ -12,3 +12,22 @@ class CoroutineStatus(Enum):
     RUNNING = "running"      # 正在执行
     SLEEPING = "sleeping"    # 调用 TriggerSleepAction 后暂停
     FINISHED = "finished"    # 执行完成
+
+
+from .signals import SleepSignal
+from .exceptions import SleepInterrupt
+from .coroutine import Coroutine
+from .scheduler import SleepScheduler
+from .runner import CoroutineRunner
+from .errors import CoroutineError, CoroutineStackOverflow
+
+__all__ = [
+    'CoroutineStatus',
+    'SleepSignal',
+    'SleepInterrupt',
+    'Coroutine',
+    'SleepScheduler',
+    'CoroutineRunner',
+    'CoroutineError',
+    'CoroutineStackOverflow',
+]
