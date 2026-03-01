@@ -36,7 +36,8 @@
       "Bash(dir:*)",
       "Bash(findstr:*)",
       "Bash(echo \"TEST_EXIT_CODE: $?\")",
-      "Bash(git -C D:HLjass-runner log --oneline -10)"
+      "Bash(git -C D:HLjass-runner log --oneline -10)",
+      "Bash(git log -1 --oneline --show-signature)"
     ]
   }
 }
