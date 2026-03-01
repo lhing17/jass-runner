@@ -4,6 +4,7 @@
 """
 
 import math
+import random
 from .base import NativeFunction
 
 
@@ -219,3 +220,67 @@ class S2I(NativeFunction):
             return int(float(s))
         except (ValueError, TypeError):
             return 0
+
+
+class GetRandomInt(NativeFunction):
+    """获取随机整数。
+
+    此函数模拟JASS中的GetRandomInt native函数，在[low, high]范围内返回随机整数。
+    如果high < low，返回low。
+    """
+
+    @property
+    def name(self) -> str:
+        """获取函数名称。
+
+        返回：
+            函数名称"GetRandomInt"
+        """
+        return "GetRandomInt"
+
+    def execute(self, state_context, low: int, high: int) -> int:
+        """执行GetRandomInt native函数。
+
+        参数：
+            state_context: 状态上下文
+            low: 最小值
+            high: 最大值
+
+        返回：
+            int: [low, high]范围内的随机整数，如果high<low则返回low
+        """
+        if high < low:
+            return low
+        return random.randint(low, high)
+
+
+class GetRandomReal(NativeFunction):
+    """获取随机实数。
+
+    此函数模拟JASS中的GetRandomReal native函数，在[low, high]范围内返回随机实数。
+    如果high < low，返回low。
+    """
+
+    @property
+    def name(self) -> str:
+        """获取函数名称。
+
+        返回：
+            函数名称"GetRandomReal"
+        """
+        return "GetRandomReal"
+
+    def execute(self, state_context, low: float, high: float) -> float:
+        """执行GetRandomReal native函数。
+
+        参数：
+            state_context: 状态上下文
+            low: 最小值
+            high: 最大值
+
+        返回：
+            float: [low, high]范围内的随机实数，如果high<low则返回low
+        """
+        if high < low:
+            return low
+        return random.uniform(low, high)

@@ -5,7 +5,7 @@
 
 import math
 import pytest
-from jass_runner.natives.math_extended import Tan, ModuloInteger, ModuloReal, R2S, S2R, I2S, S2I
+from jass_runner.natives.math_extended import Tan, ModuloInteger, ModuloReal, R2S, S2R, I2S, S2I, GetRandomInt, GetRandomReal
 
 
 class TestTan:
@@ -384,3 +384,116 @@ class TestS2I:
 
         # 验证
         assert s2i.name == "S2I"
+
+
+class TestGetRandomInt:
+    """测试GetRandomInt native函数（获取随机整数）。"""
+
+    def test_result_in_range(self):
+        """测试返回值在[low, high]范围内。"""
+        # 准备
+        rand = GetRandomInt()
+        state_context = None
+        low, high = 1, 100
+
+        # 执行多次以验证随机性
+        for _ in range(100):
+            result = rand.execute(state_context, low, high)
+            # 验证
+            assert low <= result <= high
+            assert isinstance(result, int)
+
+    def test_same_min_max_returns_that_value(self):
+        """测试相同min/max时返回该值：GetRandomInt(5, 5) -> 5。"""
+        # 准备
+        rand = GetRandomInt()
+        state_context = None
+
+        # 执行
+        result = rand.execute(state_context, 5, 5)
+
+        # 验证
+        assert result == 5
+
+    def test_negative_range(self):
+        """测试负数范围：GetRandomInt(-100, -50) 在范围内。"""
+        # 准备
+        rand = GetRandomInt()
+        state_context = None
+        low, high = -100, -50
+
+        # 执行多次以验证
+        for _ in range(50):
+            result = rand.execute(state_context, low, high)
+            # 验证
+            assert low <= result <= high
+
+    def test_reversed_range_returns_low(self):
+        """测试反转范围时返回low：GetRandomInt(100, 1) -> 100。"""
+        # 准备
+        rand = GetRandomInt()
+        state_context = None
+
+        # 执行
+        result = rand.execute(state_context, 100, 1)
+
+        # 验证
+        assert result == 100
+
+    def test_name_is_correct(self):
+        """测试GetRandomInt函数名称正确。"""
+        # 准备
+        rand = GetRandomInt()
+
+        # 验证
+        assert rand.name == "GetRandomInt"
+
+
+class TestGetRandomReal:
+    """测试GetRandomReal native函数（获取随机实数）。"""
+
+    def test_result_in_range(self):
+        """测试返回值在[low, high]范围内。"""
+        # 准备
+        rand = GetRandomReal()
+        state_context = None
+        low, high = 0.0, 1.0
+
+        # 执行多次以验证随机性
+        for _ in range(100):
+            result = rand.execute(state_context, low, high)
+            # 验证
+            assert low <= result <= high
+            assert isinstance(result, float)
+
+    def test_same_min_max_returns_that_value(self):
+        """测试相同min/max时返回该值：GetRandomReal(3.14, 3.14) -> 3.14。"""
+        # 准备
+        rand = GetRandomReal()
+        state_context = None
+
+        # 执行
+        result = rand.execute(state_context, 3.14, 3.14)
+
+        # 验证
+        assert result == pytest.approx(3.14, abs=1e-10)
+
+    def test_reversed_range_returns_low(self):
+        """测试反转范围时返回low：GetRandomReal(10.0, 1.0) -> 10.0。"""
+        # 准备
+        rand = GetRandomReal()
+        state_context = None
+
+        # 执行
+        result = rand.execute(state_context, 10.0, 1.0)
+
+        # 验证
+        assert result == 10.0
+
+    def test_name_is_correct(self):
+        """测试GetRandomReal函数名称正确。"""
+        # 准备
+        rand = GetRandomReal()
+
+        # 验证
+        assert rand.name == "GetRandomReal"
