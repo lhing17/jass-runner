@@ -5,7 +5,7 @@
 
 import pytest
 import math
-from jass_runner.natives.math_core import SquareRoot, Pow, Cos, Sin
+from jass_runner.natives.math_core import SquareRoot, Pow, Cos, Sin, R2I, I2R
 from jass_runner.natives.state import StateContext
 
 
@@ -191,4 +191,71 @@ class TestSin:
         """测试返回类型为float。"""
         native = Sin()
         result = native.execute(state_context, 0.0)
+        assert isinstance(result, float)
+
+
+class TestR2I:
+    """测试R2I类的功能。"""
+
+    def test_name_returns_r2i(self):
+        """测试name属性返回正确的函数名。"""
+        native = R2I()
+        assert native.name == "R2I"
+
+    def test_positive_real_truncates_toward_zero(self, state_context):
+        """测试正实数向零截断（如3.7 -> 3）。"""
+        native = R2I()
+        result = native.execute(state_context, 3.7)
+        assert result == 3
+        assert isinstance(result, int)
+
+    def test_negative_real_truncates_toward_zero(self, state_context):
+        """测试负实数向零截断（如-3.7 -> -3）。"""
+        native = R2I()
+        result = native.execute(state_context, -3.7)
+        assert result == -3
+        assert isinstance(result, int)
+
+    def test_integer_real_returns_same(self, state_context):
+        """测试整数实数保持原值（如5.0 -> 5）。"""
+        native = R2I()
+        result = native.execute(state_context, 5.0)
+        assert result == 5
+        assert isinstance(result, int)
+
+    def test_zero_returns_zero(self, state_context):
+        """测试0.0转换为0。"""
+        native = R2I()
+        result = native.execute(state_context, 0.0)
+        assert result == 0
+        assert isinstance(result, int)
+
+
+class TestI2R:
+    """测试I2R类的功能。"""
+
+    def test_name_returns_i2r(self):
+        """测试name属性返回正确的函数名。"""
+        native = I2R()
+        assert native.name == "I2R"
+
+    def test_positive_integer_converts_to_real(self, state_context):
+        """测试正整数转换为实数（如42 -> 42.0）。"""
+        native = I2R()
+        result = native.execute(state_context, 42)
+        assert result == 42.0
+        assert isinstance(result, float)
+
+    def test_negative_integer_converts_to_real(self, state_context):
+        """测试负整数转换为实数（如-10 -> -10.0）。"""
+        native = I2R()
+        result = native.execute(state_context, -10)
+        assert result == -10.0
+        assert isinstance(result, float)
+
+    def test_zero_converts_to_real(self, state_context):
+        """测试0转换为0.0。"""
+        native = I2R()
+        result = native.execute(state_context, 0)
+        assert result == 0.0
         assert isinstance(result, float)

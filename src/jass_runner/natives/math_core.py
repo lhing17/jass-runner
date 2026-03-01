@@ -124,3 +124,60 @@ class Sin(NativeFunction):
             float: r的正弦值
         """
         return math.sin(r)
+
+
+class R2I(NativeFunction):
+    """实数转整数。
+
+    此函数模拟JASS中的R2I native函数，将实数转换为整数。
+    转换时向零截断，与Python int()函数行为一致。
+    """
+
+    @property
+    def name(self) -> str:
+        """获取函数名称。
+
+        返回：
+            函数名称"R2I"
+        """
+        return "R2I"
+
+    def execute(self, state_context, r: float) -> int:
+        """执行R2I native函数。
+
+        参数：
+            state_context: 状态上下文
+            r: 要转换的实数
+
+        返回：
+            int: 转换后的整数（向零截断）
+        """
+        return int(r)
+
+
+class I2R(NativeFunction):
+    """整数转实数。
+
+    此函数模拟JASS中的I2R native函数，将整数转换为实数。
+    """
+
+    @property
+    def name(self) -> str:
+        """获取函数名称。
+
+        返回：
+            函数名称"I2R"
+        """
+        return "I2R"
+
+    def execute(self, state_context, i: int) -> float:
+        """执行I2R native函数。
+
+        参数：
+            state_context: 状态上下文
+            i: 要转换的整数
+
+        返回：
+            float: 转换后的实数
+        """
+        return float(i)
