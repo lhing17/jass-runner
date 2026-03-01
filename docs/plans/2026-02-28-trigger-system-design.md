@@ -118,11 +118,12 @@ src/jass_runner/natives/trigger_natives.py  # 触发器相关native函数
 # 玩家-单位事件 (EVENT_PLAYER_UNIT_*)
 EVENT_PLAYER_UNIT_DEATH = "EVENT_PLAYER_UNIT_DEATH"
 EVENT_PLAYER_UNIT_ATTACKED = "EVENT_PLAYER_UNIT_ATTACKED"
-EVENT_PLAYER_UNIT_RESCUED = "EVENT_PLAYER_UNIT_RESCUED"
+EVENT_PLAYER_UNIT_SPELL_EFFECT = "EVENT_PLAYER_UNIT_SPELL_EFFECT"
 EVENT_PLAYER_UNIT_DAMAGED = "EVENT_PLAYER_UNIT_DAMAGED"
 EVENT_PLAYER_UNIT_PICKUP_ITEM = "EVENT_PLAYER_UNIT_PICKUP_ITEM"
 EVENT_PLAYER_UNIT_DROP_ITEM = "EVENT_PLAYER_UNIT_DROP_ITEM"
 EVENT_PLAYER_UNIT_USE_ITEM = "EVENT_PLAYER_UNIT_USE_ITEM"
+EVENT_PLAYER_UNIT_ISSUED_ORDER = "EVENT_PLAYER_UNIT_ISSUED_ORDER"
 
 # 通用单位事件 (EVENT_UNIT_*)
 EVENT_UNIT_DEATH = "EVENT_UNIT_DEATH"
@@ -132,13 +133,7 @@ EVENT_UNIT_DAMAGED = "EVENT_UNIT_DAMAGED"
 EVENT_PLAYER_DEFEAT = "EVENT_PLAYER_DEFEAT"
 EVENT_PLAYER_VICTORY = "EVENT_PLAYER_VICTORY"
 EVENT_PLAYER_LEAVE = "EVENT_PLAYER_LEAVE"
-
-# 游戏事件 (EVENT_GAME_*)
-EVENT_GAME_START = "EVENT_GAME_START"
-EVENT_GAME_END = "EVENT_GAME_END"
-
-# 计时器事件
-EVENT_TIMER_EXPIRED = "EVENT_TIMER_EXPIRED"
+EVENT_PLAYER_CHAT = "EVENT_PLAYER_CHAT"
 ```
 
 ---
@@ -294,7 +289,8 @@ def test_condition_filtering():
 
 ```jass
 function actionOnUnitDeath takes nothing returns nothing
-    call DisplayTextToPlayer(0, 0, 0, "A unit has died!")
+    local unit u = GetTriggerUnit()
+    call DisplayTextToPlayer(0, 0, 0, "A unit has died: " + GetUnitName(u))
 endfunction
 
 function main takes nothing returns nothing
@@ -388,19 +384,13 @@ endfunction
 - `GetTriggerUnit()` - 获取触发事件的单位
 - `GetTriggerPlayer()` - 获取触发事件的玩家
 - `GetEventDamage()` - 获取伤害值（用于受伤事件）
-- `GetEventUnit()` - 通用单位获取
 
 ### 10.2 高级事件过滤
 
 - `TriggerRegisterPlayerUnitEvent`的filter参数支持
 - 按单位类型、区域等过滤
 
-### 10.3 触发器变量
 
-- `SetTriggerVariable` / `GetTriggerVariable`
-- 支持在触发器内存储临时数据
-
----
 
 ## 11. 参考资料
 
