@@ -85,11 +85,18 @@
 - 数学API：15个数学Native函数（SquareRoot, Pow, Cos, Sin, R2I, I2R, Tan, Modulo, R2S, S2R, I2S, S2I, GetRandomInt, GetRandomReal）
 - 测试覆盖：421个测试通过
 
-### v0.4.0: 高级特性与并发 (Advanced Features)
+### v0.4.0: 高级特性与并发 (Advanced Features) ✅ 已完成
 > 目标：支持复杂的异步逻辑和过场动画脚本。
 
-- [ ] **P1** [Simulator] 实现异步等待 (`TriggerSleepAction` / `Wait`)。
-- [ ] **P2** [Simulator] 实现并发执行 (`ExecuteFunc`)。
+- [x] **P1** [Simulator] 实现异步等待 (`TriggerSleepAction` / `Wait`)。
+- [x] **P2** [Simulator] 实现并发执行 (`ExecuteFunc`)。
+
+**v0.4.0 状态**: ✅ 已完成（2026-03-01）
+- 协程核心组件：Coroutine、SleepScheduler、CoroutineRunner
+- 解释器改造：JassCoroutine、create_main_coroutine
+- SimulationLoop 集成：run 方法、_update_frame
+- 异步Native函数：TriggerSleepAction、ExecuteFunc
+- 测试覆盖：460个测试通过
 
 ### v0.5.0: 健壮性与完整性 (Robustness)
 > 目标：接近真实的 JASS 运行环境，具备良好的错误提示。

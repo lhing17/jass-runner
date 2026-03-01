@@ -429,6 +429,14 @@ jass-runner/
 │   │   └── player.py     # 玩家类
 │   ├── handle_manager.py # 句柄管理器
 │   ├── state_context.py  # 状态上下文
+│   ├── coroutine/        # 协程系统 (v0.4.0)
+│   │   ├── __init__.py   # 模块初始化
+│   │   ├── signals.py    # SleepSignal信号
+│   │   ├── exceptions.py # SleepInterrupt异常
+│   │   ├── coroutine.py  # Coroutine协程基类
+│   │   ├── scheduler.py # SleepScheduler调度器
+│   │   ├── runner.py     # CoroutineRunner运行器
+│   │   └── errors.py     # CoroutineError错误类
 │   ├── timer/            # 计时器系统
 │   │   ├── __init__.py
 │   │   ├── timer.py      # Timer类
@@ -447,6 +455,11 @@ jass-runner/
 │   ├── test_project_structure.py
 │   ├── parser/          # 解析器测试
 │   ├── interpreter/     # 解释器测试
+│   │   ├── test_context.py    # 执行上下文测试
+│   │   ├── test_evaluator.py  # 表达式求值器测试
+│   │   ├── test_interpreter.py # 解释器核心测试
+│   │   ├── test_jass_coroutine.py # 协程支持测试 (v0.4.0)
+│   │   └── test_interpreter_coroutine.py # 解释器协程集成测试 (v0.4.0)
 │   ├── natives/         # native函数测试 (Phase 3)
 │   │   ├── test_base.py       # 基础类测试
 │   │   ├── test_registry.py   # 注册系统测试
@@ -456,6 +469,7 @@ jass-runner/
 │   │   ├── test_timer_natives.py # Timer原生函数测试
 │   │   ├── test_trigger_natives_unit.py # 触发器native函数测试
 │   │   └── test_trigger_register_event_natives_unit.py # 触发器事件注册测试
+│   │   └── test_async_natives.py # 异步native函数测试 (v0.4.0)
 │   ├── trigger/         # 触发器测试
 │   │   ├── test_event_types.py    # 事件类型测试
 │   │   ├── test_trigger.py        # Trigger类测试
@@ -464,6 +478,14 @@ jass-runner/
 │   ├── timer/           # 计时器测试
 │   │   ├── test_timer.py
 │   │   └── test_simulation.py
+│   ├── coroutine/       # 协程测试 (v0.4.0)
+│   │   ├── test_signals.py
+│   │   ├── test_status.py
+│   │   ├── test_exceptions.py
+│   │   ├── test_coroutine.py
+│   │   ├── test_scheduler.py
+│   │   ├── test_runner.py
+│   │   └── test_coroutine_imports.py
 │   ├── vm/              # 虚拟机测试
 │   │   ├── test_jass_vm.py
 │   │   └── test_integration.py
@@ -824,6 +846,47 @@ jass-runner/
   - 所有421个测试通过（原有345个 + 新增76个）
   - 数学函数模块覆盖率：100%
 
+#### 41. v0.4.0 异步等待功能实现完成 (2026-03-01)
+- **Phase 1 - 核心协程组件**：
+  - 创建 `src/jass_runner/coroutine/` 模块
+  - 实现 `SleepSignal` 类：协程挂起信号
+  - 实现 `CoroutineStatus` 枚举：PENDING, RUNNING, SLEEPING, FINISHED
+  - 实现 `SleepInterrupt` 异常：用于从深层调用栈传递睡眠信号
+  - 实现 `Coroutine` 基类：包装 JASS 函数执行的协程
+  - 实现 `SleepScheduler` 类：管理所有睡眠中的协程
+  - 实现 `CoroutineRunner` 类：主调度器，与 SimulationLoop 集成
+  - 实现 `CoroutineError`, `CoroutineStackOverflow` 错误类
+
+- **Phase 2 - 解释器改造**：
+  - 创建 `JassCoroutine` 类，继承自 `Coroutine`
+  - 实现程序计数器 (`_pc`) 跟踪执行位置
+  - 支持 `SleepInterrupt` 和 `ReturnSignal` 异常处理
+  - 实现上下文管理（设置/清理 ExecutionContext）
+  - 在 `Interpreter` 类添加 `create_main_coroutine()` 方法
+
+- **Phase 3 - SimulationLoop 集成**：
+  - 改造 `SimulationLoop` 集成 `CoroutineRunner`
+  - 实现 `run()` 方法：协程调度主入口
+  - 实现 `_update_frame()` 方法：每帧更新协程和计时器
+  - 实现 `start_main()` 方法：启动 main 函数协程
+
+- **Phase 4 - Native 函数实现**：
+  - 创建 `src/jass_runner/natives/async_natives.py`
+  - 实现 `TriggerSleepAction`：暂停当前协程指定时间
+  - 实现 `ExecuteFunc`：创建新协程执行指定函数
+  - 在 `NativeFactory` 注册异步 native 函数
+
+- **测试覆盖**：
+  - 协程模块：18个测试（signals, status, exceptions, coroutine, scheduler, runner）
+  - 解释器协程：8个测试（JassCoroutine 创建、上下文管理、语句执行、异常处理）
+  - 解释器集成：6个测试（create_main_coroutine, SleepInterrupt 传播）
+  - SimulationLoop：7个测试（集成、run方法、帧更新）
+  - 异步 native：3个测试（TriggerSleepAction, ExecuteFunc, 工厂注册）
+
+- **测试统计**：
+  - 所有460个测试通过（原有421个 + 新增39个）
+  - 协程系统覆盖率：95%+
+
 ### 当前状态
 - ✅ 需求分析和设计完成
 - ✅ 5个阶段实施计划完成
@@ -842,7 +905,12 @@ jass-runner/
 - ✅ **Array 数组语法支持实现完成**
 - ✅ **JASS触发器系统实现完成**
 - ✅ **JASS数学Native函数实现完成**
-- ✅ 所有 421 个测试通过
+- ✅ **v0.4.0 协程系统实现完成**
+  - Phase 1: 协程核心组件 (Coroutine, SleepScheduler, CoroutineRunner)
+  - Phase 2: 解释器改造 (JassCoroutine, create_main_coroutine)
+  - Phase 3: SimulationLoop 集成 (run, _update_frame)
+  - Phase 4: 异步Native函数 (TriggerSleepAction, ExecuteFunc)
+- ✅ 所有 460 个测试通过
 
 ---
 *最后更新: 2026-03-01*
