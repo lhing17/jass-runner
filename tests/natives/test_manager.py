@@ -1,5 +1,7 @@
 """HandleManager测试。"""
 
+from unittest.mock import Mock
+
 
 def test_handle_manager_creation():
     """测试HandleManager创建和基本属性。"""
@@ -349,3 +351,100 @@ def test_handle_manager_mixed_handles():
     # 验证通过通用get_handle也能获取
     assert manager.get_handle(unit.id) is unit
     assert manager.get_handle(item.id) is item
+
+
+def test_handle_manager_kill_unit_triggers_death_event():
+    """测试kill_unit方法触发单位死亡事件。"""
+    from jass_runner.natives.manager import HandleManager
+    from jass_runner.trigger.event_types import EVENT_UNIT_DEATH
+
+    manager = HandleManager()
+
+    # 创建模拟的trigger_manager
+    mock_trigger_manager = Mock()
+    manager.set_trigger_manager(mock_trigger_manager)
+
+    # 创建单位
+    unit = manager.create_unit("hfoo", 0, 100.0, 200.0, 270.0)
+    unit_id = unit.id
+
+    # 验证单位存活
+    assert unit.is_alive() is True
+
+    # 杀死单位
+    result = manager.kill_unit(unit_id)
+
+    # 验证返回True
+    assert result is True
+
+    # 验证单位已销毁
+    assert unit.is_alive() is False
+    assert manager.get_unit(unit_id) is None
+
+    # 验证触发了死亡事件
+    mock_trigger_manager.fire_event.assert_called_once()
+    call_args = mock_trigger_manager.fire_event.call_args
+    assert call_args[0][0] == EVENT_UNIT_DEATH
+    assert call_args[0][1]["unit_id"] == unit_id
+    assert call_args[0][1]["unit_type"] == "hfoo"
+
+
+def test_handle_manager_kill_unit_without_trigger_manager():
+    """测试kill_unit方法在没有trigger_manager时不报错。"""
+    from jass_runner.natives.manager import HandleManager
+
+    manager = HandleManager()
+
+    # 不设置trigger_manager
+    assert manager._trigger_manager is None
+
+    # 创建单位
+    unit = manager.create_unit("hfoo", 0, 100.0, 200.0, 270.0)
+    unit_id = unit.id
+
+    # 杀死单位（不应抛出异常）
+    result = manager.kill_unit(unit_id)
+
+    # 验证返回True
+    assert result is True
+
+    # 验证单位已销毁
+    assert unit.is_alive() is False
+    assert manager.get_unit(unit_id) is None
+
+
+def test_handle_manager_kill_unit_nonexistent():
+    """测试kill_unit方法处理不存在的单位。"""
+    from jass_runner.natives.manager import HandleManager
+
+    manager = HandleManager()
+
+    # 创建模拟的trigger_manager
+    mock_trigger_manager = Mock()
+    manager.set_trigger_manager(mock_trigger_manager)
+
+    # 尝试杀死不存在的单位
+    result = manager.kill_unit("nonexistent_unit")
+
+    # 验证返回False
+    assert result is False
+
+    # 验证没有触发事件
+    mock_trigger_manager.fire_event.assert_not_called()
+
+
+def test_handle_manager_set_trigger_manager():
+    """测试set_trigger_manager方法。"""
+    from jass_runner.natives.manager import HandleManager
+
+    manager = HandleManager()
+
+    # 初始状态为None
+    assert manager._trigger_manager is None
+
+    # 设置trigger_manager
+    mock_trigger_manager = Mock()
+    manager.set_trigger_manager(mock_trigger_manager)
+
+    # 验证已设置
+    assert manager._trigger_manager is mock_trigger_manager

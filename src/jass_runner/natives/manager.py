@@ -17,6 +17,7 @@ class HandleManager:
         self._handles: Dict[str, Handle] = {}  # id -> handle对象
         self._type_index: Dict[str, List[str]] = {}  # 类型索引
         self._next_id = 1
+        self._trigger_manager = None  # 触发器管理器引用
         # 初始化16个玩家（ID 0-15）
         self._init_players()
 
@@ -165,3 +166,41 @@ class HandleManager:
         if type_name not in self._type_index:
             return 0
         return len(self._type_index[type_name])
+
+    def set_trigger_manager(self, trigger_manager):
+        """设置触发器管理器。
+
+        参数：
+            trigger_manager: TriggerManager实例
+        """
+        self._trigger_manager = trigger_manager
+
+    def kill_unit(self, unit_id: str) -> bool:
+        """杀死单位并触发死亡事件。
+
+        参数：
+            unit_id: 单位ID
+
+        返回：
+            成功杀死返回True，单位不存在返回False
+        """
+        # 获取单位
+        unit = self.get_unit(unit_id)
+        if not unit:
+            return False
+
+        # 保存单位类型
+        unit_type = unit.unit_type
+
+        # 销毁单位
+        unit.destroy()
+
+        # 触发单位死亡事件
+        if self._trigger_manager:
+            from ..trigger.event_types import EVENT_UNIT_DEATH
+            self._trigger_manager.fire_event(EVENT_UNIT_DEATH, {
+                "unit_id": unit_id,
+                "unit_type": unit_type
+            })
+
+        return True
