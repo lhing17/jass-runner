@@ -98,3 +98,124 @@ class ModuloReal(NativeFunction):
         if b == 0:
             return 0.0
         return a % b
+
+
+class R2S(NativeFunction):
+    """实数转字符串。
+
+    此函数模拟JASS中的R2S native函数，将实数转换为字符串，
+    格式化为3位小数。
+    """
+
+    @property
+    def name(self) -> str:
+        """获取函数名称。
+
+        返回：
+            函数名称"R2S"
+        """
+        return "R2S"
+
+    def execute(self, state_context, r: float) -> str:
+        """执行R2S native函数。
+
+        参数：
+            state_context: 状态上下文
+            r: 要转换的实数
+
+        返回：
+            str: 格式化为3位小数的字符串
+        """
+        return f"{r:.3f}"
+
+
+class S2R(NativeFunction):
+    """字符串转实数。
+
+    此函数模拟JASS中的S2R native函数，将字符串转换为实数。
+    转换失败时返回0.0。
+    """
+
+    @property
+    def name(self) -> str:
+        """获取函数名称。
+
+        返回：
+            函数名称"S2R"
+        """
+        return "S2R"
+
+    def execute(self, state_context, s: str) -> float:
+        """执行S2R native函数。
+
+        参数：
+            state_context: 状态上下文
+            s: 要转换的字符串
+
+        返回：
+            float: 转换后的实数，失败时返回0.0
+        """
+        try:
+            return float(s)
+        except (ValueError, TypeError):
+            return 0.0
+
+
+class I2S(NativeFunction):
+    """整数转字符串。
+
+    此函数模拟JASS中的I2S native函数，将整数转换为字符串。
+    """
+
+    @property
+    def name(self) -> str:
+        """获取函数名称。
+
+        返回：
+            函数名称"I2S"
+        """
+        return "I2S"
+
+    def execute(self, state_context, i: int) -> str:
+        """执行I2S native函数。
+
+        参数：
+            state_context: 状态上下文
+            i: 要转换的整数
+
+        返回：
+            str: 转换后的字符串
+        """
+        return str(i)
+
+
+class S2I(NativeFunction):
+    """字符串转整数。
+
+    此函数模拟JASS中的S2I native函数，将字符串转换为整数。
+    转换失败时返回0。
+    """
+
+    @property
+    def name(self) -> str:
+        """获取函数名称。
+
+        返回：
+            函数名称"S2I"
+        """
+        return "S2I"
+
+    def execute(self, state_context, s: str) -> int:
+        """执行S2I native函数。
+
+        参数：
+            state_context: 状态上下文
+            s: 要转换的字符串
+
+        返回：
+            int: 转换后的整数，失败时返回0
+        """
+        try:
+            return int(float(s))
+        except (ValueError, TypeError):
+            return 0
