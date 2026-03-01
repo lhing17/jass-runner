@@ -6,6 +6,29 @@
 from .registry import NativeRegistry
 from .basic import DisplayTextToPlayer, KillUnit, CreateUnit, GetUnitState, CreateItem, RemoveItem, PlayerNative
 from .timer_natives import CreateTimer, TimerStart, TimerGetElapsed, DestroyTimer, PauseTimer, ResumeTimer
+from .trigger_natives import (
+    CreateTrigger,
+    DestroyTrigger,
+    EnableTrigger,
+    DisableTrigger,
+    IsTriggerEnabled,
+    TriggerAddAction,
+    TriggerRemoveAction,
+    TriggerClearActions,
+    TriggerAddCondition,
+    TriggerRemoveCondition,
+    TriggerClearConditions,
+    TriggerEvaluate,
+    TriggerClearEvents,
+)
+from .trigger_register_event_natives import (
+    TriggerRegisterTimerEvent,
+    TriggerRegisterTimerExpireEvent,
+    TriggerRegisterPlayerUnitEvent,
+    TriggerRegisterUnitEvent,
+    TriggerRegisterPlayerEvent,
+    TriggerRegisterGameEvent,
+)
 
 
 class NativeFactory:
@@ -38,6 +61,35 @@ class NativeFactory:
         registry.register(CreateItem())
         registry.register(RemoveItem())
         registry.register(PlayerNative())
+
+        # 注册触发器生命周期native函数
+        registry.register(CreateTrigger())
+        registry.register(DestroyTrigger())
+        registry.register(EnableTrigger())
+        registry.register(DisableTrigger())
+        registry.register(IsTriggerEnabled())
+
+        # 注册触发器动作管理native函数
+        registry.register(TriggerAddAction())
+        registry.register(TriggerRemoveAction())
+        registry.register(TriggerClearActions())
+
+        # 注册触发器条件管理native函数
+        registry.register(TriggerAddCondition())
+        registry.register(TriggerRemoveCondition())
+        registry.register(TriggerClearConditions())
+        registry.register(TriggerEvaluate())
+
+        # 注册触发器事件管理native函数
+        registry.register(TriggerClearEvents())
+
+        # 注册触发器事件注册native函数
+        registry.register(TriggerRegisterTimerEvent())
+        registry.register(TriggerRegisterTimerExpireEvent())
+        registry.register(TriggerRegisterPlayerUnitEvent())
+        registry.register(TriggerRegisterUnitEvent())
+        registry.register(TriggerRegisterPlayerEvent())
+        registry.register(TriggerRegisterGameEvent())
 
         # 如果计时器系统可用，注册计时器原生函数
         if self._timer_system:

@@ -1,5 +1,79 @@
 """Native函数工厂测试。"""
 
+
+def test_all_trigger_natives_registered():
+    """测试所有触发器Native函数已注册。"""
+    from jass_runner.natives.factory import NativeFactory
+    from jass_runner.natives.trigger_natives import (
+        CreateTrigger, DestroyTrigger, EnableTrigger, DisableTrigger,
+        IsTriggerEnabled,
+        TriggerAddAction, TriggerRemoveAction, TriggerClearActions,
+        TriggerAddCondition, TriggerRemoveCondition, TriggerClearConditions,
+        TriggerEvaluate, TriggerClearEvents,
+    )
+    from jass_runner.natives.trigger_register_event_natives import (
+        TriggerRegisterTimerEvent, TriggerRegisterTimerExpireEvent,
+        TriggerRegisterPlayerUnitEvent, TriggerRegisterUnitEvent,
+        TriggerRegisterPlayerEvent, TriggerRegisterGameEvent,
+    )
+
+    factory = NativeFactory()
+    registry = factory.create_default_registry()
+
+    # 定义所有触发器函数名称
+    trigger_natives = [
+        "CreateTrigger",
+        "DestroyTrigger",
+        "EnableTrigger",
+        "DisableTrigger",
+        "IsTriggerEnabled",
+        "TriggerAddAction",
+        "TriggerRemoveAction",
+        "TriggerClearActions",
+        "TriggerAddCondition",
+        "TriggerRemoveCondition",
+        "TriggerClearConditions",
+        "TriggerEvaluate",
+        "TriggerClearEvents",
+        "TriggerRegisterTimerEvent",
+        "TriggerRegisterTimerExpireEvent",
+        "TriggerRegisterPlayerUnitEvent",
+        "TriggerRegisterUnitEvent",
+        "TriggerRegisterPlayerEvent",
+        "TriggerRegisterGameEvent",
+    ]
+
+    # 验证所有函数已注册且类型正确
+    expected_classes = {
+        "CreateTrigger": CreateTrigger,
+        "DestroyTrigger": DestroyTrigger,
+        "EnableTrigger": EnableTrigger,
+        "DisableTrigger": DisableTrigger,
+        "IsTriggerEnabled": IsTriggerEnabled,
+        "TriggerAddAction": TriggerAddAction,
+        "TriggerRemoveAction": TriggerRemoveAction,
+        "TriggerClearActions": TriggerClearActions,
+        "TriggerAddCondition": TriggerAddCondition,
+        "TriggerRemoveCondition": TriggerRemoveCondition,
+        "TriggerClearConditions": TriggerClearConditions,
+        "TriggerEvaluate": TriggerEvaluate,
+        "TriggerClearEvents": TriggerClearEvents,
+        "TriggerRegisterTimerEvent": TriggerRegisterTimerEvent,
+        "TriggerRegisterTimerExpireEvent": TriggerRegisterTimerExpireEvent,
+        "TriggerRegisterPlayerUnitEvent": TriggerRegisterPlayerUnitEvent,
+        "TriggerRegisterUnitEvent": TriggerRegisterUnitEvent,
+        "TriggerRegisterPlayerEvent": TriggerRegisterPlayerEvent,
+        "TriggerRegisterGameEvent": TriggerRegisterGameEvent,
+    }
+
+    for func_name in trigger_natives:
+        func = registry.get(func_name)
+        assert func is not None, f"触发器函数 {func_name} 未注册"
+        assert func.name == func_name, f"函数名称不匹配: {func.name} != {func_name}"
+        assert isinstance(func, expected_classes[func_name]), \
+            f"函数 {func_name} 类型错误: 期望 {expected_classes[func_name]}, 实际 {type(func)}"
+
+
 def test_native_factory_creation():
     """测试NativeFactory可以被创建。"""
     from jass_runner.natives.factory import NativeFactory
@@ -50,9 +124,9 @@ def test_create_default_registry():
     assert player_func is not None
     assert player_func.name == "Player"
 
-    # 检查总数
+    # 检查基础函数数量（7个基础函数 + 19个触发器函数）
     all_funcs = registry.get_all()
-    assert len(all_funcs) == 7
+    assert len(all_funcs) == 26
 
 
 def test_factory_with_timer_system():
