@@ -29,17 +29,31 @@ class Coroutine:
         self.status = CoroutineStatus.RUNNING
 
     def _run(self):
-        """实际的生成器函数（子类实现）。"""
-        raise NotImplementedError()
+        """实际的生成器函数（可在子类中重写）。"""
+        # 基础实现，直接返回None
+        yield None
+        return None
 
     def resume(self):
         """恢复执行。"""
         raise NotImplementedError()
 
     def wake(self, current_time: float):
-        """从睡眠中唤醒。"""
-        raise NotImplementedError()
+        """从睡眠中唤醒。
+
+        参数：
+            current_time: 当前时间
+        """
+        if (self.status == CoroutineStatus.SLEEPING and
+            current_time >= self.wake_time):
+            self.status = CoroutineStatus.RUNNING
 
     def sleep(self, duration: float, current_time: float):
-        """设置睡眠状态。"""
-        raise NotImplementedError()
+        """设置睡眠状态。
+
+        参数：
+            duration: 睡眠时间长度
+            current_time: 当前时间
+        """
+        self.wake_time = current_time + duration
+        self.status = CoroutineStatus.SLEEPING
