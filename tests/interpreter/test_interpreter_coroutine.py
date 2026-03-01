@@ -92,3 +92,24 @@ def test_interpreter_create_main_coroutine_with_params():
 
     assert isinstance(coroutine, JassCoroutine)
     assert coroutine.args == []  # main 函数调用不需要参数
+
+
+def test_interpreter_propagates_sleep_interrupt():
+    """测试解释器让 SleepInterrupt 向上传播。
+
+    解释器不需要特殊处理 SleepInterrupt，
+    它只需要让异常向上传递到协程级别即可。
+    """
+    from unittest.mock import patch
+
+    interpreter = Interpreter()
+    mock_stmt = Mock()
+
+    # 使用 patch 让 execute_statement 抛出 SleepInterrupt
+    with patch.object(interpreter, 'execute_statement',
+                      side_effect=SleepInterrupt(2.0)):
+        try:
+            interpreter.execute_statement(mock_stmt)
+            assert False, "应该抛出 SleepInterrupt"
+        except SleepInterrupt as e:
+            assert e.duration == 2.0
