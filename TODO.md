@@ -76,13 +76,14 @@
 
 - [x] **P0** [Simulator] 实现基础触发器系统（事件注册、动作执行）。
 - [x] **P1** [Language] 实现数组 (`array`) 支持。
-- [ ] **P1** [Simulator] 补全常用数学 (`Math`) 和基础单位 (`Unit`) API。
+- [x] **P1** [Simulator] 补全常用数学 (`Math`) API。
 
 **v0.3.0 状态**: ✅ 已完成（2026-03-01）
 - 触发器系统：Trigger类、TriggerManager类、20个Native函数
 - 事件系统集成：单位死亡事件、计时器事件
 - 数组支持：已完成于v0.2.0
-- 测试覆盖：345个测试通过
+- 数学API：15个数学Native函数（SquareRoot, Pow, Cos, Sin, R2I, I2R, Tan, Modulo, R2S, S2R, I2S, S2I, GetRandomInt, GetRandomReal）
+- 测试覆盖：421个测试通过
 
 ### v0.4.0: 高级特性与并发 (Advanced Features)
 > 目标：支持复杂的异步逻辑和过场动画脚本。

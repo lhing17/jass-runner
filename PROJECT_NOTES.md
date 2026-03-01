@@ -559,7 +559,11 @@ jass-runner/
    - 更符合JASS语义，提供更好的类型安全
 10. **触发器系统设计**：采用混合架构，Trigger类管理单个触发器状态，TriggerManager集中管理生命周期和事件分发
 11. **事件系统集成**：HandleManager和TimerSystem直接触发事件到TriggerManager，保持架构简洁
-10. **Parser设计**：支持嵌套函数调用、布尔值字面量、函数引用等高级语法
+12. **Parser设计**：支持嵌套函数调用、布尔值字面量、函数引用等高级语法
+13. **数学Native函数设计**：
+    - 从common.j标准提取，分为核心函数（6个）和扩展函数（9个）
+    - 使用Python标准库math和random模块，弧度制保持一致
+    - 错误处理返回默认值，不中断执行（符合JASS行为）
 
 ## 待解决问题
 
@@ -784,6 +788,42 @@ jass-runner/
   - 所有345个测试通过
   - 触发器系统核心模块覆盖率：95%-100%
 
+#### 40. JASS数学Native函数实现完成 (2026-03-01)
+- **核心数学函数实现** (`src/jass_runner/natives/math_core.py`)：
+  - `SquareRoot` - 平方根计算（负数返回0）
+  - `Pow` - 幂运算（支持正/负/分数指数）
+  - `Cos` - 余弦函数（弧度制）
+  - `Sin` - 正弦函数（弧度制）
+  - `R2I` - 实数转整数（向零截断）
+  - `I2R` - 整数转实数
+- **扩展数学函数实现** (`src/jass_runner/natives/math_extended.py`)：
+  - `Tan` - 正切函数（弧度制）
+  - `ModuloInteger` - 整数取模（除数0返回0）
+  - `ModuloReal` - 实数取模（除数0返回0）
+  - `R2S` - 实数转字符串（格式化为3位小数）
+  - `S2R` - 字符串转实数（无效返回0）
+  - `I2S` - 整数转字符串
+  - `S2I` - 字符串转整数（无效返回0）
+  - `GetRandomInt` - 随机整数（范围[low, high]）
+  - `GetRandomReal` - 随机实数（范围[low, high]）
+- **模块导出更新**：
+  - `src/jass_runner/natives/__init__.py` - 导出所有15个数学函数类
+  - `src/jass_runner/natives/factory.py` - 注册所有函数到NativeFactory
+- **测试覆盖**：
+  - `tests/natives/test_math_core.py` - 35个测试（6个核心函数）
+  - `tests/natives/test_math_extended.py` - 40个测试（9个扩展函数）
+  - 使用Python标准库math和random模块实现
+  - 浮点数比较使用容差匹配（pytest.approx）
+- **技术细节**：
+  - 严格遵循common.j函数签名
+  - 参数异常时返回默认值（不中断执行）
+  - 角度单位：弧度制（与Python math模块一致）
+  - R2I向零截断（与Python int()行为一致）
+  - 无效字符串转换返回0
+- **测试统计**：
+  - 所有421个测试通过（原有345个 + 新增76个）
+  - 数学函数模块覆盖率：100%
+
 ### 当前状态
 - ✅ 需求分析和设计完成
 - ✅ 5个阶段实施计划完成
@@ -801,7 +841,8 @@ jass-runner/
 - ✅ **Constant 常量支持实现完成**
 - ✅ **Array 数组语法支持实现完成**
 - ✅ **JASS触发器系统实现完成**
-- ✅ 所有 345 个测试通过
+- ✅ **JASS数学Native函数实现完成**
+- ✅ 所有 421 个测试通过
 
 ---
 *最后更新: 2026-03-01*
