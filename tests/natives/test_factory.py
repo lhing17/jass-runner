@@ -124,9 +124,9 @@ def test_create_default_registry():
     assert player_func is not None
     assert player_func.name == "Player"
 
-    # 检查基础函数数量（7个基础 + 19个触发器 + 15个数学 = 41）
+    # 检查基础函数数量（7个基础 + 19个触发器 + 15个数学 + 2个异步 = 43）
     all_funcs = registry.get_all()
-    assert len(all_funcs) == 41
+    assert len(all_funcs) == 43
 
 
 def test_all_math_natives_registered():
@@ -199,3 +199,24 @@ def test_factory_with_timer_system():
 
     assert timer_elapsed_func is not None
     assert timer_elapsed_func.name == "TimerGetElapsed"
+
+
+def test_factory_registers_async_natives():
+    """测试工厂注册异步 native 函数。"""
+    from jass_runner.natives.factory import NativeFactory
+    from jass_runner.natives.async_natives import TriggerSleepAction, ExecuteFunc
+
+    factory = NativeFactory()
+    registry = factory.create_default_registry()
+
+    # 检查异步原生函数已注册
+    sleep_action = registry.get("TriggerSleepAction")
+    execute_func = registry.get("ExecuteFunc")
+
+    assert sleep_action is not None
+    assert sleep_action.name == "TriggerSleepAction"
+    assert isinstance(sleep_action, TriggerSleepAction)
+
+    assert execute_func is not None
+    assert execute_func.name == "ExecuteFunc"
+    assert isinstance(execute_func, ExecuteFunc)

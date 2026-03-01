@@ -31,6 +31,7 @@ from .trigger_register_event_natives import (
     TriggerRegisterPlayerEvent,
     TriggerRegisterGameEvent,
 )
+from .async_natives import TriggerSleepAction, ExecuteFunc
 
 
 class NativeFactory:
@@ -120,5 +121,9 @@ class NativeFactory:
             registry.register(DestroyTimer(self._timer_system))
             registry.register(PauseTimer(self._timer_system))
             registry.register(ResumeTimer(self._timer_system))
+
+        # 注册异步原生函数
+        registry.register(TriggerSleepAction())
+        registry.register(ExecuteFunc())
 
         return registry
