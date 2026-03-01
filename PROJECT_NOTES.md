@@ -414,7 +414,14 @@ jass-runner/
 │   │   ├── handle.py     # Handle类定义（Player、Unit、Item）
 │   │   ├── manager.py    # HandleManager句柄管理器
 │   │   ├── state.py      # StateContext状态上下文
-│   │   └── timer_natives.py # 计时器相关原生函数
+│   │   ├── timer_natives.py # 计时器相关原生函数
+│   │   ├── trigger_natives.py # 触发器生命周期/动作/条件管理
+│   │   └── trigger_register_event_natives.py # 触发器事件注册
+│   ├── trigger/          # 触发器系统
+│   │   ├── __init__.py   # 模块初始化
+│   │   ├── trigger.py    # Trigger类
+│   │   ├── manager.py    # TriggerManager类
+│   │   └── event_types.py # 事件类型定义
 │   ├── handles/          # Handle系统
 │   │   ├── __init__.py   # 模块初始化
 │   │   ├── handle.py     # Handle基类
@@ -446,14 +453,24 @@ jass-runner/
 │   │   ├── test_basic.py      # 基础native函数测试
 │   │   ├── test_handle.py     # Handle类测试
 │   │   ├── test_manager.py    # HandleManager测试
-│   │   └── test_timer_natives.py # Timer原生函数测试
+│   │   ├── test_timer_natives.py # Timer原生函数测试
+│   │   ├── test_trigger_natives_unit.py # 触发器native函数测试
+│   │   └── test_trigger_register_event_natives_unit.py # 触发器事件注册测试
+│   ├── trigger/         # 触发器测试
+│   │   ├── test_event_types.py    # 事件类型测试
+│   │   ├── test_trigger.py        # Trigger类测试
+│   │   ├── test_trigger_manager.py # TriggerManager测试
+│   │   └── test_trigger_imports.py # 模块导入测试
 │   ├── timer/           # 计时器测试
 │   │   ├── test_timer.py
 │   │   └── test_simulation.py
 │   ├── vm/              # 虚拟机测试
 │   │   ├── test_jass_vm.py
 │   │   └── test_integration.py
-│   └── integration/     # 集成测试
+│   ├── integration/     # 集成测试
+│   │   ├── test_trigger_system.py      # 触发器系统基础集成测试
+│   │   ├── test_trigger_natives.py     # 触发器Native函数集成测试
+│   │   └── test_trigger_timer.py       # 计时器事件集成测试
 ├── examples/hello_world.j # 示例脚本
 ├── docs/plans/         # 实施计划文档
 │   ├── 2026-02-24-jass-simulator-design.md
@@ -540,6 +557,8 @@ jass-runner/
 9. **Native函数参数类型设计**：
    - `DisplayTextToPlayer` 等函数使用对象类型（Player、Unit、Timer）而非原始ID
    - 更符合JASS语义，提供更好的类型安全
+10. **触发器系统设计**：采用混合架构，Trigger类管理单个触发器状态，TriggerManager集中管理生命周期和事件分发
+11. **事件系统集成**：HandleManager和TimerSystem直接触发事件到TriggerManager，保持架构简洁
 10. **Parser设计**：支持嵌套函数调用、布尔值字面量、函数引用等高级语法
 
 ## 待解决问题
@@ -735,6 +754,36 @@ jass-runner/
 - **测试**：190个测试全部通过（新增17个数组测试）
 - **限制**：不支持多维数组，不进行运行时边界检查
 
+#### 39. JASS触发器系统实现完成 (2026-03-01)
+- **核心组件实现**：
+  - 创建 `src/jass_runner/trigger/event_types.py` - 16个事件类型常量定义
+  - 创建 `src/jass_runner/trigger/trigger.py` - Trigger类（事件/条件/动作管理）
+  - 创建 `src/jass_runner/trigger/manager.py` - TriggerManager类（生命周期管理和事件分发）
+  - 创建 `src/jass_runner/trigger/__init__.py` - 模块导出所有公共API
+- **Native函数实现（20个）**：
+  - 生命周期管理：`CreateTrigger`, `DestroyTrigger`, `EnableTrigger`, `DisableTrigger`, `IsTriggerEnabled`
+  - 动作管理：`TriggerAddAction`, `TriggerRemoveAction`, `TriggerClearActions`
+  - 条件管理：`TriggerAddCondition`, `TriggerRemoveCondition`, `TriggerClearConditions`, `TriggerEvaluate`
+  - 事件注册：`TriggerRegisterTimerEvent`, `TriggerRegisterTimerExpireEvent`, `TriggerRegisterPlayerUnitEvent`, `TriggerRegisterUnitEvent`, `TriggerRegisterPlayerEvent`, `TriggerRegisterGameEvent`
+  - 事件清理：`TriggerClearEvents`
+- **系统集成**：
+  - StateContext集成TriggerManager
+  - HandleManager集成（kill_unit触发EVENT_UNIT_DEATH事件）
+  - Timer/TimerSystem集成（计时器到期触发EVENT_GAME_TIMER_EXPIRED事件）
+  - ExecutionContext暴露TriggerManager
+- **集成测试**：
+  - 基础集成测试（5个测试）
+  - Native函数集成测试（6个测试）
+  - 计时器事件集成测试（5个测试）
+- **示例脚本**：
+  - `examples/trigger_basic.j` - 基础触发器示例
+  - `examples/trigger_unit_death.j` - 单位死亡事件处理示例
+  - `examples/trigger_timer.j` - 计时器触发器示例
+  - `examples/run_trigger_examples.py` - 示例运行脚本
+- **测试统计**：
+  - 所有345个测试通过
+  - 触发器系统核心模块覆盖率：95%-100%
+
 ### 当前状态
 - ✅ 需求分析和设计完成
 - ✅ 5个阶段实施计划完成
@@ -751,7 +800,8 @@ jass-runner/
 - ✅ **Globals 全局变量块实现完成**
 - ✅ **Constant 常量支持实现完成**
 - ✅ **Array 数组语法支持实现完成**
-- ✅ 所有 190 个测试通过
+- ✅ **JASS触发器系统实现完成**
+- ✅ 所有 345 个测试通过
 
 ---
-*最后更新: 2026-02-28*
+*最后更新: 2026-03-01*

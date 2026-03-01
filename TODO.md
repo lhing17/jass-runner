@@ -39,15 +39,15 @@
 ## 3. 运行模拟器模块 (Runtime Simulator) 深度分析
 
 ### 3.1 Warcraft III 原生 API (Native API)
-- [ ] **触发器 API**: 实现 `TriggerRegister...`, `TriggerAddAction`, `TriggerEvaluate` 等。
+- [x] **触发器 API**: 实现 `TriggerRegister...`, `TriggerAddAction`, `TriggerEvaluate` 等。 ✅ 已完成（2026-03-01）
 - [ ] **技能/Buff API**: 实现 `UnitAddAbility`, `GetUnitAbilityLevel` 等。
 - [ ] **物品交互 API**: 实现 `UnitAddItem`, `UnitUseItem` 等。
 - [ ] **命令系统 API**: 实现 `IssueOrder`, `IssueTargetOrder` 等。
 - [ ] **数学/几何 API**: 实现 `Cos`, `Sin`, `Pow`, `SquareRoot` 等。
 
-### 3.2 触发器事件系统
-- [ ] **事件分发中心**: 实现核心事件系统，能够监听游戏事件（如单位死亡、进入区域）并分发给注册触发器。
-- [ ] **条件求值**: 实现 `TriggerAddCondition` 注册的布尔表达式求值。
+### 3.2 触发器事件系统 ✅ 已完成（2026-03-01）
+- [x] **事件分发中心**: 实现核心事件系统，能够监听游戏事件（如单位死亡、进入区域）并分发给注册触发器。
+- [x] **条件求值**: 实现 `TriggerAddCondition` 注册的布尔表达式求值。
 
 ### 3.3 并发与异步模型
 - [ ] **多线程模拟**: 实现 `StartThread` 或 `ExecuteFunc`（开启新的伪线程）。
@@ -71,12 +71,18 @@
 - `array` 数组支持：声明、访问、赋值（全局/局部数组，8192元素标准）
 - 测试覆盖：190个测试通过
 
-### v0.3.0: 运行时与基础 API (Runtime & Basic API)
+### v0.3.0: 运行时与基础 API (Runtime & Basic API) ✅ 已完成
 > 目标：能够运行简单的魔兽地图逻辑，处理基本的单位操作。
 
-- [ ] **P0** [Simulator] 实现基础触发器系统（事件注册、动作执行）。
-- [ ] **P1** [Language] 实现数组 (`array`) 支持。
+- [x] **P0** [Simulator] 实现基础触发器系统（事件注册、动作执行）。
+- [x] **P1** [Language] 实现数组 (`array`) 支持。
 - [ ] **P1** [Simulator] 补全常用数学 (`Math`) 和基础单位 (`Unit`) API。
+
+**v0.3.0 状态**: ✅ 已完成（2026-03-01）
+- 触发器系统：Trigger类、TriggerManager类、20个Native函数
+- 事件系统集成：单位死亡事件、计时器事件
+- 数组支持：已完成于v0.2.0
+- 测试覆盖：345个测试通过
 
 ### v0.4.0: 高级特性与并发 (Advanced Features)
 > 目标：支持复杂的异步逻辑和过场动画脚本。
