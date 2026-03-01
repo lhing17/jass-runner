@@ -3,6 +3,7 @@
 from typing import Any, List, Optional
 from .coroutine import Coroutine
 from .scheduler import SleepScheduler
+from .errors import CoroutineStackOverflow
 
 
 class CoroutineRunner:
@@ -21,3 +22,34 @@ class CoroutineRunner:
         self._frame_count = 0
         self.max_coroutines = max_coroutines or self.DEFAULT_MAX_COROUTINES
         self._main_coroutine: Optional[Coroutine] = None
+
+    def execute_func(self, interpreter: Any, func: Any,
+                     args: list = None) -> Coroutine:
+        """
+        ExecuteFunc - 创建新协程（简单顺序执行）。
+
+        参数：
+            interpreter: 解释器实例
+            func: 函数定义
+            args: 函数参数
+
+        返回：
+            新创建的协程
+
+        异常：
+            CoroutineStackOverflow: 如果协程数超过限制
+        """
+        args = args or []
+
+        # 限制并发协程数
+        total = len(self._active) + len(self._scheduler._sleeping)
+        if total >= self.max_coroutines:
+            raise CoroutineStackOverflow(
+                f"协程数超过限制({self.max_coroutines})"
+            )
+
+        # 创建新协程
+        coroutine = Coroutine(interpreter, func, args)
+        coroutine.start()
+        self._active.append(coroutine)
+        return coroutine

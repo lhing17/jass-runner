@@ -17,3 +17,20 @@ class TestCoroutineRunner:
         assert runner._frame_count == 0
         assert runner.max_coroutines == 100
         assert runner._main_coroutine is None
+
+    def test_runner_execute_func(self):
+        """测试 ExecuteFunc 创建新协程。"""
+        from unittest.mock import Mock
+        from jass_runner.coroutine.runner import CoroutineRunner
+        from jass_runner.coroutine import CoroutineStatus
+
+        runner = CoroutineRunner()
+        interpreter = Mock()
+        func = Mock()
+        func.body = []  # 空函数体
+
+        coroutine = runner.execute_func(interpreter, func)
+
+        assert coroutine is not None
+        assert coroutine.status == CoroutineStatus.RUNNING
+        assert len(runner._active) == 1
