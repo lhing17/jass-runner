@@ -31,6 +31,8 @@ from jass_runner.trigger.event_types import (
     GAME_EVENTS,
     ALL_EVENTS,
 )
+from jass_runner.trigger.manager import TriggerManager
+from jass_runner.trigger.trigger import Trigger
 
 __all__ = [
     # 玩家-单位事件
@@ -58,4 +60,7 @@ __all__ = [
     "PLAYER_EVENTS",
     "GAME_EVENTS",
     "ALL_EVENTS",
+    # 触发器类
+    "Trigger",
+    "TriggerManager",
 ]
