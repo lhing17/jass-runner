@@ -4,6 +4,8 @@ from typing import Any, List, Optional
 from .coroutine import Coroutine
 from .scheduler import SleepScheduler
 from .errors import CoroutineStackOverflow
+from . import CoroutineStatus
+from .signals import SleepSignal
 
 
 class CoroutineRunner:
@@ -53,3 +55,32 @@ class CoroutineRunner:
         coroutine.start()
         self._active.append(coroutine)
         return coroutine
+
+    def update(self, delta_time: float):
+        """
+        每帧调用，更新协程状态。
+
+        参数：
+            delta_time: 时间增量（秒）
+        """
+        self._current_time += delta_time
+        self._frame_count += 1
+
+        # 1. 唤醒到期的协程
+        ready = self._scheduler.wake_ready(self._current_time)
+        self._active.extend(ready)
+
+        # 2. 执行活跃协程
+        still_active = []
+        for coroutine in self._active:
+            signal = coroutine.resume()
+
+            if signal:  # 遇到 SleepSignal
+                coroutine.sleep(signal.duration, self._current_time)
+                self._scheduler.add(coroutine)
+            elif coroutine.status == CoroutineStatus.FINISHED:
+                pass  # 协程完成，不加入活跃列表
+            else:
+                still_active.append(coroutine)
+
+        self._active = still_active
