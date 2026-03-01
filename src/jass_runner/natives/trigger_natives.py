@@ -539,3 +539,46 @@ class TriggerEvaluate(NativeFunction):
         result = trigger.evaluate_conditions()
         logger.info(f"[TriggerEvaluate] Trigger {trigger_id} evaluation result: {result}")
         return result
+
+
+class TriggerClearEvents(NativeFunction):
+    """清空触发器所有事件的原生函数。
+
+    调用TriggerManager的clear_trigger_events方法清空指定触发器的所有事件。
+    """
+
+    @property
+    def name(self) -> str:
+        """获取native函数的名称。
+
+        返回：
+            "TriggerClearEvents"
+        """
+        return "TriggerClearEvents"
+
+    def execute(self, state_context, trigger_id: str, *args, **kwargs):
+        """执行 TriggerClearEvents 原生函数。
+
+        参数：
+            state_context: 状态上下文，必须包含trigger_manager
+            trigger_id: 要清空事件的触发器ID
+            *args: 额外位置参数
+            **kwargs: 关键字参数
+
+        返回：
+            None（对应JASS的nothing返回类型）
+        """
+        # 检查state_context和trigger_manager存在性
+        if state_context is None or not hasattr(state_context, 'trigger_manager'):
+            logger.error("[TriggerClearEvents] state_context or trigger_manager not found")
+            return None
+
+        # 清空触发器事件
+        success = state_context.trigger_manager.clear_trigger_events(trigger_id)
+        if success:
+            logger.info(f"[TriggerClearEvents] Cleared all events from trigger {trigger_id}")
+        else:
+            logger.warning(f"[TriggerClearEvents] Trigger not found: {trigger_id}")
+
+        # 始终返回None（nothing）
+        return None
