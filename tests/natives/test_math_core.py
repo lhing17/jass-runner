@@ -5,7 +5,7 @@
 
 import pytest
 import math
-from jass_runner.natives.math_core import SquareRoot, Pow
+from jass_runner.natives.math_core import SquareRoot, Pow, Cos, Sin
 from jass_runner.natives.state import StateContext
 
 
@@ -126,3 +126,69 @@ class TestPow:
         native = Pow()
         result = native.execute(state_context, 0.0, 5.0)
         assert result == 0.0
+
+
+class TestCos:
+    """测试Cos类的功能。"""
+
+    def test_name_returns_cos(self):
+        """测试name属性返回正确的函数名。"""
+        native = Cos()
+        assert native.name == "Cos"
+
+    def test_cos_zero_returns_one(self, state_context):
+        """测试cos(0) = 1。"""
+        native = Cos()
+        result = native.execute(state_context, 0.0)
+        assert abs(result - 1.0) < 0.0001
+
+    def test_cos_pi_returns_minus_one(self, state_context):
+        """测试cos(π) = -1。"""
+        native = Cos()
+        result = native.execute(state_context, math.pi)
+        assert abs(result - (-1.0)) < 0.0001
+
+    def test_cos_half_pi_returns_zero(self, state_context):
+        """测试cos(π/2) = 0。"""
+        native = Cos()
+        result = native.execute(state_context, math.pi / 2)
+        assert abs(result - 0.0) < 0.0001
+
+    def test_returns_float(self, state_context):
+        """测试返回类型为float。"""
+        native = Cos()
+        result = native.execute(state_context, 0.0)
+        assert isinstance(result, float)
+
+
+class TestSin:
+    """测试Sin类的功能。"""
+
+    def test_name_returns_sin(self):
+        """测试name属性返回正确的函数名。"""
+        native = Sin()
+        assert native.name == "Sin"
+
+    def test_sin_zero_returns_zero(self, state_context):
+        """测试sin(0) = 0。"""
+        native = Sin()
+        result = native.execute(state_context, 0.0)
+        assert abs(result - 0.0) < 0.0001
+
+    def test_sin_half_pi_returns_one(self, state_context):
+        """测试sin(π/2) = 1。"""
+        native = Sin()
+        result = native.execute(state_context, math.pi / 2)
+        assert abs(result - 1.0) < 0.0001
+
+    def test_sin_pi_returns_zero(self, state_context):
+        """测试sin(π) = 0。"""
+        native = Sin()
+        result = native.execute(state_context, math.pi)
+        assert abs(result - 0.0) < 0.0001
+
+    def test_returns_float(self, state_context):
+        """测试返回类型为float。"""
+        native = Sin()
+        result = native.execute(state_context, 0.0)
+        assert isinstance(result, float)

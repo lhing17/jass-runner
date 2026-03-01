@@ -66,3 +66,61 @@ class Pow(NativeFunction):
             float: x的power次方
         """
         return math.pow(x, power)
+
+
+class Cos(NativeFunction):
+    """计算余弦值。
+
+    此函数模拟JASS中的Cos native函数，计算一个实数的余弦值。
+    JASS使用弧度制，与Python math.cos一致。
+    """
+
+    @property
+    def name(self) -> str:
+        """获取函数名称。
+
+        返回：
+            函数名称"Cos"
+        """
+        return "Cos"
+
+    def execute(self, state_context, r: float) -> float:
+        """执行Cos native函数。
+
+        参数：
+            state_context: 状态上下文
+            r: 弧度值
+
+        返回：
+            float: r的余弦值
+        """
+        return math.cos(r)
+
+
+class Sin(NativeFunction):
+    """计算正弦值。
+
+    此函数模拟JASS中的Sin native函数，计算一个实数的正弦值。
+    JASS使用弧度制，与Python math.sin一致。
+    """
+
+    @property
+    def name(self) -> str:
+        """获取函数名称。
+
+        返回：
+            函数名称"Sin"
+        """
+        return "Sin"
+
+    def execute(self, state_context, r: float) -> float:
+        """执行Sin native函数。
+
+        参数：
+            state_context: 状态上下文
+            r: 弧度值
+
+        返回：
+            float: r的正弦值
+        """
+        return math.sin(r)
