@@ -356,3 +356,186 @@ class TriggerClearActions(NativeFunction):
 
         # 始终返回None（nothing）
         return None
+
+
+class TriggerAddCondition(NativeFunction):
+    """为触发器添加条件的原生函数。
+
+    获取触发器并调用其add_condition方法添加条件函数，返回条件handle。
+    """
+
+    @property
+    def name(self) -> str:
+        """获取native函数的名称。
+
+        返回：
+            "TriggerAddCondition"
+        """
+        return "TriggerAddCondition"
+
+    def execute(self, state_context, trigger_id: str, condition_func, *args, **kwargs):
+        """执行 TriggerAddCondition 原生函数。
+
+        参数：
+            state_context: 状态上下文，必须包含trigger_manager
+            trigger_id: 要添加条件的触发器ID
+            condition_func: 条件函数（可调用对象，返回bool）
+            *args: 额外位置参数
+            **kwargs: 关键字参数
+
+        返回：
+            条件handle字符串，如果触发器不存在则返回None
+        """
+        # 检查state_context和trigger_manager存在性
+        if state_context is None or not hasattr(state_context, 'trigger_manager'):
+            logger.error("[TriggerAddCondition] state_context or trigger_manager not found")
+            return None
+
+        # 获取触发器
+        trigger = state_context.trigger_manager.get_trigger(trigger_id)
+        if trigger is None:
+            logger.warning(f"[TriggerAddCondition] Trigger not found: {trigger_id}")
+            return None
+
+        # 添加条件
+        condition_handle = trigger.add_condition(condition_func)
+        logger.info(f"[TriggerAddCondition] Added condition {condition_handle} to trigger {trigger_id}")
+        return condition_handle
+
+
+class TriggerRemoveCondition(NativeFunction):
+    """从触发器移除条件的原生函数。
+
+    获取触发器并调用其remove_condition方法移除指定条件。
+    """
+
+    @property
+    def name(self) -> str:
+        """获取native函数的名称。
+
+        返回：
+            "TriggerRemoveCondition"
+        """
+        return "TriggerRemoveCondition"
+
+    def execute(self, state_context, trigger_id: str, condition_handle: str, *args, **kwargs) -> bool:
+        """执行 TriggerRemoveCondition 原生函数。
+
+        参数：
+            state_context: 状态上下文，必须包含trigger_manager
+            trigger_id: 要移除条件的触发器ID
+            condition_handle: 要移除的条件handle
+            *args: 额外位置参数
+            **kwargs: 关键字参数
+
+        返回：
+            bool: 成功移除返回True，触发器或条件不存在返回False
+        """
+        # 检查state_context和trigger_manager存在性
+        if state_context is None or not hasattr(state_context, 'trigger_manager'):
+            logger.error("[TriggerRemoveCondition] state_context or trigger_manager not found")
+            return False
+
+        # 获取触发器
+        trigger = state_context.trigger_manager.get_trigger(trigger_id)
+        if trigger is None:
+            logger.warning(f"[TriggerRemoveCondition] Trigger not found: {trigger_id}")
+            return False
+
+        # 移除条件
+        success = trigger.remove_condition(condition_handle)
+        if success:
+            logger.info(f"[TriggerRemoveCondition] Removed condition {condition_handle} from trigger {trigger_id}")
+        else:
+            logger.warning(f"[TriggerRemoveCondition] Condition not found: {condition_handle}")
+
+        return success
+
+
+class TriggerClearConditions(NativeFunction):
+    """清空触发器所有条件的原生函数。
+
+    获取触发器并调用其clear_conditions方法清空所有条件。
+    """
+
+    @property
+    def name(self) -> str:
+        """获取native函数的名称。
+
+        返回：
+            "TriggerClearConditions"
+        """
+        return "TriggerClearConditions"
+
+    def execute(self, state_context, trigger_id: str, *args, **kwargs):
+        """执行 TriggerClearConditions 原生函数。
+
+        参数：
+            state_context: 状态上下文，必须包含trigger_manager
+            trigger_id: 要清空条件的触发器ID
+            *args: 额外位置参数
+            **kwargs: 关键字参数
+
+        返回：
+            None（对应JASS的nothing返回类型）
+        """
+        # 检查state_context和trigger_manager存在性
+        if state_context is None or not hasattr(state_context, 'trigger_manager'):
+            logger.error("[TriggerClearConditions] state_context or trigger_manager not found")
+            return None
+
+        # 获取触发器
+        trigger = state_context.trigger_manager.get_trigger(trigger_id)
+        if trigger is not None:
+            # 清空条件
+            trigger.clear_conditions()
+            logger.info(f"[TriggerClearConditions] Cleared all conditions from trigger {trigger_id}")
+        else:
+            logger.warning(f"[TriggerClearConditions] Trigger not found: {trigger_id}")
+
+        # 始终返回None（nothing）
+        return None
+
+
+class TriggerEvaluate(NativeFunction):
+    """手动评估触发器条件的原生函数。
+
+    获取触发器并调用其evaluate_conditions方法评估所有条件。
+    """
+
+    @property
+    def name(self) -> str:
+        """获取native函数的名称。
+
+        返回：
+            "TriggerEvaluate"
+        """
+        return "TriggerEvaluate"
+
+    def execute(self, state_context, trigger_id: str, *args, **kwargs) -> bool:
+        """执行 TriggerEvaluate 原生函数。
+
+        参数：
+            state_context: 状态上下文，必须包含trigger_manager
+            trigger_id: 要评估的触发器ID
+            *args: 额外位置参数
+            **kwargs: 关键字参数
+
+        返回：
+            bool: 所有条件都通过返回True，否则返回False；触发器不存在也返回False
+        """
+        # 检查state_context和trigger_manager存在性
+        if state_context is None or not hasattr(state_context, 'trigger_manager'):
+            logger.error("[TriggerEvaluate] state_context or trigger_manager not found")
+            return False
+
+        # 获取触发器
+        trigger = state_context.trigger_manager.get_trigger(trigger_id)
+        if trigger is None:
+            logger.warning(f"[TriggerEvaluate] Trigger not found: {trigger_id}")
+            return False
+
+        # 评估条件
+        result = trigger.evaluate_conditions()
+        logger.info(f"[TriggerEvaluate] Trigger {trigger_id} evaluation result: {result}")
+        return result

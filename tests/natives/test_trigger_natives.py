@@ -307,3 +307,193 @@ class TestTriggerClearActions:
         result = native.execute(mock_state_context, "trigger_0")
 
         assert result is None
+
+
+class TestTriggerAddCondition:
+    """测试 TriggerAddCondition 原生函数。"""
+
+    def test_add_condition_returns_handle(self, mock_state_context):
+        """测试 TriggerAddCondition 返回条件handle。"""
+        from jass_runner.natives.trigger_natives import TriggerAddCondition
+
+        # 模拟触发器和trigger_manager
+        mock_trigger = MagicMock()
+        mock_trigger.add_condition.return_value = "condition_abc123"
+        mock_state_context.trigger_manager.get_trigger.return_value = mock_trigger
+
+        native = TriggerAddCondition()
+        assert native.name == "TriggerAddCondition"
+
+        condition_func = lambda ctx: True
+        result = native.execute(mock_state_context, "trigger_0", condition_func)
+
+        assert result == "condition_abc123"
+        mock_state_context.trigger_manager.get_trigger.assert_called_once_with("trigger_0")
+        mock_trigger.add_condition.assert_called_once_with(condition_func)
+
+    def test_add_condition_invalid_trigger(self, mock_state_context):
+        """测试对不存在的触发器添加条件返回None。"""
+        from jass_runner.natives.trigger_natives import TriggerAddCondition
+
+        mock_state_context.trigger_manager.get_trigger.return_value = None
+
+        native = TriggerAddCondition()
+        condition_func = lambda ctx: True
+        result = native.execute(mock_state_context, "trigger_invalid", condition_func)
+
+        assert result is None
+
+    def test_add_condition_without_trigger_manager(self, mock_state_context):
+        """测试没有trigger_manager时添加条件返回None。"""
+        from jass_runner.natives.trigger_natives import TriggerAddCondition
+
+        delattr(mock_state_context, 'trigger_manager')
+
+        native = TriggerAddCondition()
+        condition_func = lambda ctx: True
+        result = native.execute(mock_state_context, "trigger_0", condition_func)
+
+        assert result is None
+
+
+class TestTriggerRemoveCondition:
+    """测试 TriggerRemoveCondition 原生函数。"""
+
+    def test_remove_condition_returns_true(self, mock_state_context):
+        """测试 TriggerRemoveCondition 成功时返回True。"""
+        from jass_runner.natives.trigger_natives import TriggerRemoveCondition
+
+        mock_trigger = MagicMock()
+        mock_trigger.remove_condition.return_value = True
+        mock_state_context.trigger_manager.get_trigger.return_value = mock_trigger
+
+        native = TriggerRemoveCondition()
+        assert native.name == "TriggerRemoveCondition"
+
+        result = native.execute(mock_state_context, "trigger_0", "condition_abc123")
+
+        assert result is True
+        mock_state_context.trigger_manager.get_trigger.assert_called_once_with("trigger_0")
+        mock_trigger.remove_condition.assert_called_once_with("condition_abc123")
+
+    def test_remove_condition_invalid_condition(self, mock_state_context):
+        """测试移除不存在的条件返回False。"""
+        from jass_runner.natives.trigger_natives import TriggerRemoveCondition
+
+        mock_trigger = MagicMock()
+        mock_trigger.remove_condition.return_value = False
+        mock_state_context.trigger_manager.get_trigger.return_value = mock_trigger
+
+        native = TriggerRemoveCondition()
+        result = native.execute(mock_state_context, "trigger_0", "condition_invalid")
+
+        assert result is False
+
+    def test_remove_condition_invalid_trigger(self, mock_state_context):
+        """测试对不存在的触发器移除条件返回False。"""
+        from jass_runner.natives.trigger_natives import TriggerRemoveCondition
+
+        mock_state_context.trigger_manager.get_trigger.return_value = None
+
+        native = TriggerRemoveCondition()
+        result = native.execute(mock_state_context, "trigger_invalid", "condition_abc123")
+
+        assert result is False
+
+
+class TestTriggerClearConditions:
+    """测试 TriggerClearConditions 原生函数。"""
+
+    def test_clear_conditions_returns_none(self, mock_state_context):
+        """测试 TriggerClearConditions 成功时返回None。"""
+        from jass_runner.natives.trigger_natives import TriggerClearConditions
+
+        mock_trigger = MagicMock()
+        mock_state_context.trigger_manager.get_trigger.return_value = mock_trigger
+
+        native = TriggerClearConditions()
+        assert native.name == "TriggerClearConditions"
+
+        result = native.execute(mock_state_context, "trigger_0")
+
+        assert result is None
+        mock_state_context.trigger_manager.get_trigger.assert_called_once_with("trigger_0")
+        mock_trigger.clear_conditions.assert_called_once()
+
+    def test_clear_conditions_invalid_trigger(self, mock_state_context):
+        """测试清空不存在的触发器的条件返回None。"""
+        from jass_runner.natives.trigger_natives import TriggerClearConditions
+
+        mock_state_context.trigger_manager.get_trigger.return_value = None
+
+        native = TriggerClearConditions()
+        result = native.execute(mock_state_context, "trigger_invalid")
+
+        assert result is None
+
+    def test_clear_conditions_without_trigger_manager(self, mock_state_context):
+        """测试没有trigger_manager时清空条件返回None。"""
+        from jass_runner.natives.trigger_natives import TriggerClearConditions
+
+        delattr(mock_state_context, 'trigger_manager')
+
+        native = TriggerClearConditions()
+        result = native.execute(mock_state_context, "trigger_0")
+
+        assert result is None
+
+
+class TestTriggerEvaluate:
+    """测试 TriggerEvaluate 原生函数。"""
+
+    def test_evaluate_returns_true_when_all_conditions_pass(self, mock_state_context):
+        """测试 TriggerEvaluate 当所有条件通过时返回True。"""
+        from jass_runner.natives.trigger_natives import TriggerEvaluate
+
+        mock_trigger = MagicMock()
+        mock_trigger.evaluate_conditions.return_value = True
+        mock_state_context.trigger_manager.get_trigger.return_value = mock_trigger
+
+        native = TriggerEvaluate()
+        assert native.name == "TriggerEvaluate"
+
+        result = native.execute(mock_state_context, "trigger_0")
+
+        assert result is True
+        mock_state_context.trigger_manager.get_trigger.assert_called_once_with("trigger_0")
+        mock_trigger.evaluate_conditions.assert_called_once()
+
+    def test_evaluate_returns_false_when_conditions_fail(self, mock_state_context):
+        """测试 TriggerEvaluate 当条件失败时返回False。"""
+        from jass_runner.natives.trigger_natives import TriggerEvaluate
+
+        mock_trigger = MagicMock()
+        mock_trigger.evaluate_conditions.return_value = False
+        mock_state_context.trigger_manager.get_trigger.return_value = mock_trigger
+
+        native = TriggerEvaluate()
+        result = native.execute(mock_state_context, "trigger_0")
+
+        assert result is False
+
+    def test_evaluate_invalid_trigger(self, mock_state_context):
+        """测试评估不存在的触发器返回False。"""
+        from jass_runner.natives.trigger_natives import TriggerEvaluate
+
+        mock_state_context.trigger_manager.get_trigger.return_value = None
+
+        native = TriggerEvaluate()
+        result = native.execute(mock_state_context, "trigger_invalid")
+
+        assert result is False
+
+    def test_evaluate_without_trigger_manager(self, mock_state_context):
+        """测试没有trigger_manager时评估触发器返回False。"""
+        from jass_runner.natives.trigger_natives import TriggerEvaluate
+
+        delattr(mock_state_context, 'trigger_manager')
+
+        native = TriggerEvaluate()
+        result = native.execute(mock_state_context, "trigger_0")
+
+        assert result is False
