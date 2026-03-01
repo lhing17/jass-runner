@@ -5,15 +5,10 @@
 """
 
 import logging
-from typing import Any, Dict, Optional
+from typing import Any
 
 from ..natives.base import NativeFunction
-from jass_runner.trigger.event_types import (
-    EVENT_GAME_TIMER_EXPIRED,
-    EVENT_PLAYER_UNIT_DEATH,
-    EVENT_UNIT_DEATH,
-    EVENT_PLAYER_DEFEAT,
-)
+from jass_runner.trigger.event_types import EVENT_GAME_TIMER_EXPIRED
 
 
 logger = logging.getLogger(__name__)
@@ -60,11 +55,15 @@ class TriggerRegisterTimerEvent(NativeFunction):
         )
 
         if result:
-            logger.info(f"[TriggerRegisterTimerEvent] Registered timer event "
-                       f"{result} on trigger {trigger_id}")
+            logger.info(
+                f"[TriggerRegisterTimerEvent] Registered timer event "
+                f"{result} on trigger {trigger_id}"
+            )
         else:
-            logger.warning(f"[TriggerRegisterTimerEvent] Failed to register timer event "
-                        f"on trigger {trigger_id}")
+            logger.warning(
+                f"[TriggerRegisterTimerEvent] Failed to register timer "
+                f"event on trigger {trigger_id}"
+            )
 
         return result
 
