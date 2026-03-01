@@ -5,7 +5,7 @@
 
 import math
 import pytest
-from jass_runner.natives.math_extended import Tan
+from jass_runner.natives.math_extended import Tan, ModuloInteger, ModuloReal
 
 
 class TestTan:
@@ -66,3 +66,101 @@ class TestTan:
 
         # 验证
         assert tan.name == "Tan"
+
+
+class TestModuloInteger:
+    """测试ModuloInteger native函数。"""
+
+    def test_positive_numbers(self):
+        """测试正数取模：10 % 3 = 1。"""
+        # 准备
+        mod = ModuloInteger()
+        state_context = None
+
+        # 执行
+        result = mod.execute(state_context, 10, 3)
+
+        # 验证
+        assert result == 1
+        assert isinstance(result, int)
+
+    def test_exact_division(self):
+        """测试整除：12 % 3 = 0。"""
+        # 准备
+        mod = ModuloInteger()
+        state_context = None
+
+        # 执行
+        result = mod.execute(state_context, 12, 3)
+
+        # 验证
+        assert result == 0
+
+    def test_negative_dividend(self):
+        """测试负被除数：-10 % 3 = 2（Python行为）。"""
+        # 准备
+        mod = ModuloInteger()
+        state_context = None
+
+        # 执行
+        result = mod.execute(state_context, -10, 3)
+
+        # 验证
+        assert result == 2
+
+    def test_divisor_zero(self):
+        """测试除数为0时返回0。"""
+        # 准备
+        mod = ModuloInteger()
+        state_context = None
+
+        # 执行
+        result = mod.execute(state_context, 10, 0)
+
+        # 验证
+        assert result == 0
+
+    def test_name_is_correct(self):
+        """测试ModuloInteger函数名称正确。"""
+        # 准备
+        mod = ModuloInteger()
+
+        # 验证
+        assert mod.name == "ModuloInteger"
+
+
+class TestModuloReal:
+    """测试ModuloReal native函数。"""
+
+    def test_positive_numbers(self):
+        """测试正实数：10.5 % 3.0 = 1.5。"""
+        # 准备
+        mod = ModuloReal()
+        state_context = None
+
+        # 执行
+        result = mod.execute(state_context, 10.5, 3.0)
+
+        # 验证
+        assert result == pytest.approx(1.5, abs=1e-10)
+        assert isinstance(result, float)
+
+    def test_divisor_zero(self):
+        """测试除数为0时返回0.0。"""
+        # 准备
+        mod = ModuloReal()
+        state_context = None
+
+        # 执行
+        result = mod.execute(state_context, 10.5, 0.0)
+
+        # 验证
+        assert result == 0.0
+
+    def test_name_is_correct(self):
+        """测试ModuloReal函数名称正确。"""
+        # 准备
+        mod = ModuloReal()
+
+        # 验证
+        assert mod.name == "ModuloReal"
