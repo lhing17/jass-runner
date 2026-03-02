@@ -8,6 +8,70 @@ if TYPE_CHECKING:
 class AssignmentParserMixin:
     """提供赋值和调用语句解析功能。"""
 
+    def _parse_call_args(self: 'BaseParser') -> list:
+        """解析函数调用参数列表，支持嵌套调用。
+
+        前置条件：当前 token 是 '(' 后的第一个参数token
+        后置条件：当前 token 是 ')'
+
+        返回：
+            参数列表，支持嵌套 NativeCallNode
+        """
+        from .ast_nodes import NativeCallNode
+
+        args = []
+
+        while self.current_token and self.current_token.value != ')':
+            arg_value = None
+
+            if self.current_token.type == 'INTEGER':
+                arg_value = str(self.current_token.value)
+                self.next_token()
+            elif self.current_token.type == 'REAL':
+                arg_value = str(self.current_token.value)
+                self.next_token()
+            elif self.current_token.type == 'STRING':
+                arg_value = self.current_token.value
+                self.next_token()
+            elif self.current_token.type == 'FOURCC':
+                arg_value = str(self.current_token.value)
+                self.next_token()
+            elif self.current_token.type == 'IDENTIFIER':
+                arg_name = self.current_token.value
+                self.next_token()
+
+                # 检查是否是嵌套函数调用
+                if self.current_token and self.current_token.value == '(':
+                    # 嵌套函数调用
+                    self.next_token()  # 跳过 '('
+                    nested_args = self._parse_call_args()
+                    # 跳过右括号
+                    if self.current_token and self.current_token.value == ')':
+                        self.next_token()
+                    arg_value = NativeCallNode(func_name=arg_name, args=nested_args)
+                else:
+                    # 普通标识符（变量名）
+                    arg_value = arg_name
+            elif self.current_token.type == 'KEYWORD' and self.current_token.value in ('true', 'false'):
+                # 布尔值
+                arg_value = self.current_token.value
+                self.next_token()
+            else:
+                # 不支持的类型，跳过
+                self.next_token()
+
+            if arg_value is not None:
+                args.append(arg_value)
+
+            # 检查是否有逗号继续下一个参数
+            if self.current_token and self.current_token.value == ',':
+                self.next_token()
+                continue
+            elif self.current_token and self.current_token.value == ')':
+                break
+
+        return args
+
     def parse_local_declaration(self: 'BaseParser') -> Optional[Any]:
         """解析局部变量声明。
 
@@ -399,28 +463,8 @@ class AssignmentParserMixin:
                     # 这是一个函数调用
                     self.next_token()  # 跳过 '('
 
-                    # 解析参数列表
-                    args = []
-                    while self.current_token and self.current_token.value != ')':
-                        if self.current_token.type == 'INTEGER':
-                            args.append(str(self.current_token.value))
-                        elif self.current_token.type == 'REAL':
-                            args.append(str(self.current_token.value))
-                        elif self.current_token.type == 'STRING':
-                            args.append(self.current_token.value)
-                        elif self.current_token.type == 'IDENTIFIER':
-                            args.append(self.current_token.value)
-                        elif self.current_token.type == 'FOURCC':
-                            args.append(str(self.current_token.value))
-
-                        self.next_token()
-
-                        # 检查是否有逗号
-                        if self.current_token and self.current_token.value == ',':
-                            self.next_token()
-                            continue
-                        elif self.current_token and self.current_token.value == ')':
-                            break
+                    # 使用 _parse_call_args 解析参数列表
+                    args = self._parse_call_args()
 
                     # 跳过右括号
                     if self.current_token and self.current_token.value == ')':
