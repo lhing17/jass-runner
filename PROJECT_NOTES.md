@@ -954,5 +954,16 @@ jass-runner/
   - 单元测试: Location, Unit handle, 每个 native 函数
   - 集成测试: 完整单位生命周期工作流
 
+#### 44. 解析器嵌套函数调用修复完成 (2026-03-02)
+- **问题**: 解析器无法正确处理嵌套函数调用（如 `CreateUnit(Player(0), ...)`）
+- **解决方案**: 提取公共方法 `_parse_call_args` 统一处理参数解析
+- **修改文件**: `src/jass_runner/parser/assignment_parser.py`
+- **新增方法**: `_parse_call_args` - 支持嵌套调用的参数解析
+- **重构**: `parse_call_statement`, `parse_set_statement`, `parse_local_declaration`
+- **测试覆盖**:
+  - 单元测试: 嵌套调用、空参数、混合参数
+  - 集成测试: 完整的单位生命周期工作流
+- **影响**: 所有 520 个测试通过，集成测试可以运行完整 JASS 代码
+
 ---
 *最后更新: 2026-03-02*
