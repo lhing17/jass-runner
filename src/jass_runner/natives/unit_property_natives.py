@@ -7,6 +7,7 @@ import logging
 from .base import NativeFunction
 from .handle import Unit
 from .location import Location
+from ..utils import fourcc_to_int
 
 logger = logging.getLogger(__name__)
 
@@ -121,3 +122,47 @@ class GetUnitLoc(NativeFunction):
         if unit is None:
             return Location(0.0, 0.0, 0.0)
         return Location(unit.x, unit.y, unit.z)
+
+
+class GetUnitTypeId(NativeFunction):
+    """获取单位类型 ID。"""
+
+    @property
+    def name(self) -> str:
+        return "GetUnitTypeId"
+
+    def execute(self, state_context, unit: Unit) -> int:
+        """执行 GetUnitTypeId native 函数。
+
+        参数：
+            state_context: 状态上下文
+            unit: 单位对象
+
+        返回：
+            int: 单位类型 ID（fourcc 整数格式）
+        """
+        if unit is None:
+            return 0
+        return fourcc_to_int(unit.unit_type)
+
+
+class GetUnitName(NativeFunction):
+    """获取单位名称。"""
+
+    @property
+    def name(self) -> str:
+        return "GetUnitName"
+
+    def execute(self, state_context, unit: Unit) -> str:
+        """执行 GetUnitName native 函数。
+
+        参数：
+            state_context: 状态上下文
+            unit: 单位对象
+
+        返回：
+            str: 单位名称
+        """
+        if unit is None:
+            return ""
+        return unit.name

@@ -39,10 +39,11 @@ class Unit(Handle):
         max_life: 最大生命值
         mana: 当前魔法值
         max_mana: 最大魔法值
+        name: 单位名称，默认为unit_type
     """
 
     def __init__(self, handle_id: str, unit_type: str, player_id: int,
-                 x: float, y: float, facing: float):
+                 x: float, y: float, facing: float, name: str = None):
         super().__init__(handle_id, "unit")
         self.unit_type = unit_type
         self.player_id = player_id
@@ -54,6 +55,7 @@ class Unit(Handle):
         self.max_life = 100.0
         self.mana = 50.0
         self.max_mana = 50.0
+        self.name = name or unit_type  # 如果没有提供名称，使用单位类型
 
     def destroy(self):
         """销毁单位，将生命值设为0。"""

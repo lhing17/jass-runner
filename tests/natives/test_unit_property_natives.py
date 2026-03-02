@@ -4,7 +4,7 @@
 """
 
 import pytest
-from jass_runner.natives.unit_property_natives import SetUnitState, GetUnitX, GetUnitY, GetUnitLoc
+from jass_runner.natives.unit_property_natives import SetUnitState, GetUnitX, GetUnitY, GetUnitLoc, GetUnitTypeId, GetUnitName
 from jass_runner.natives.manager import HandleManager
 from jass_runner.natives.handle import Unit
 from jass_runner.natives.location import Location
@@ -174,3 +174,64 @@ class TestGetUnitLoc:
         assert result.x == 0.0
         assert result.y == 0.0
         assert result.z == 0.0
+
+
+class TestGetUnitTypeId:
+    """测试 GetUnitTypeId native 函数。"""
+
+    def test_get_unit_type_id(self):
+        """测试 GetUnitTypeId native 函数。"""
+        from jass_runner.utils import fourcc_to_int
+
+        manager = HandleManager()
+        unit = manager.create_unit("hfoo", 0, 100.0, 200.0, 0.0)
+
+        get_unit_type_id = GetUnitTypeId()
+
+        class MockStateContext:
+            def __init__(self):
+                self.handle_manager = manager
+
+        result = get_unit_type_id.execute(MockStateContext(), unit)
+
+        # "hfoo" 转换为整数
+        expected = fourcc_to_int("hfoo")
+        assert result == expected
+
+    def test_get_unit_type_id_none_unit(self):
+        """测试获取 None 单位的类型 ID。"""
+        get_unit_type_id = GetUnitTypeId()
+
+        class MockStateContext:
+            pass
+
+        result = get_unit_type_id.execute(MockStateContext(), None)
+        assert result == 0
+
+
+class TestGetUnitName:
+    """测试 GetUnitName native 函数。"""
+
+    def test_get_unit_name(self):
+        """测试 GetUnitName native 函数。"""
+        manager = HandleManager()
+        unit = manager.create_unit("hfoo", 0, 100.0, 200.0, 0.0)
+
+        get_unit_name = GetUnitName()
+
+        class MockStateContext:
+            def __init__(self):
+                self.handle_manager = manager
+
+        result = get_unit_name.execute(MockStateContext(), unit)
+        assert result == "hfoo"  # 默认使用 unit_type 作为名称
+
+    def test_get_unit_name_none_unit(self):
+        """测试获取 None 单位的名称。"""
+        get_unit_name = GetUnitName()
+
+        class MockStateContext:
+            pass
+
+        result = get_unit_name.execute(MockStateContext(), None)
+        assert result == ""

@@ -32,7 +32,7 @@ from .trigger_register_event_natives import (
     TriggerRegisterGameEvent,
 )
 from .async_natives import TriggerSleepAction, ExecuteFunc
-from .unit_property_natives import SetUnitState, GetUnitX, GetUnitY, GetUnitLoc
+from .unit_property_natives import SetUnitState, GetUnitX, GetUnitY, GetUnitLoc, GetUnitTypeId, GetUnitName
 from .unit_position_natives import SetUnitPosition, SetUnitPositionLoc, CreateUnitAtLoc, GetUnitFacing, SetUnitFacing
 
 
@@ -133,6 +133,8 @@ class NativeFactory:
         registry.register(GetUnitX())
         registry.register(GetUnitY())
         registry.register(GetUnitLoc())
+        registry.register(GetUnitTypeId())
+        registry.register(GetUnitName())
 
         # 注册单位位置native函数
         registry.register(SetUnitPosition())
