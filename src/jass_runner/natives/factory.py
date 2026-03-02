@@ -32,6 +32,7 @@ from .trigger_register_event_natives import (
     TriggerRegisterGameEvent,
 )
 from .async_natives import TriggerSleepAction, ExecuteFunc
+from .unit_property_natives import SetUnitState
 
 
 class NativeFactory:
@@ -125,5 +126,8 @@ class NativeFactory:
         # 注册异步原生函数
         registry.register(TriggerSleepAction())
         registry.register(ExecuteFunc())
+
+        # 注册单位属性native函数
+        registry.register(SetUnitState())
 
         return registry
