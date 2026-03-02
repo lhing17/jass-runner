@@ -3,7 +3,7 @@
 此模块包含所有JASS handle的基类和具体实现。
 """
 
-from typing import Set, Optional
+from typing import Set, Optional, Dict
 
 
 class Handle:
@@ -58,11 +58,144 @@ class Unit(Handle):
         self.mana = 50.0
         self.max_mana = 50.0
         self.name = name or unit_type  # 如果没有提供名称，使用单位类型
+        self._abilities: Dict[int, int] = {}  # 技能ID -> 技能等级
+        self._permanent_abilities: Set[int] = set()  # 永久技能ID集合
 
     def destroy(self):
         """销毁单位，将生命值设为0。"""
         self.life = 0
+        self._abilities.clear()
+        self._permanent_abilities.clear()
         super().destroy()
+
+    def add_ability(self, ability_id: int) -> bool:
+        """给单位添加技能。
+
+        参数：
+            ability_id: 技能ID（fourcc整数格式）
+
+        返回：
+            添加成功返回True，技能已存在返回False
+        """
+        if ability_id in self._abilities:
+            return False
+        self._abilities[ability_id] = 1  # 默认等级1
+        return True
+
+    def remove_ability(self, ability_id: int) -> bool:
+        """从单位移除技能。
+
+        参数：
+            ability_id: 技能ID
+
+        返回：
+            移除成功返回True，技能不存在返回False
+        """
+        if ability_id not in self._abilities:
+            return False
+        del self._abilities[ability_id]
+        self._permanent_abilities.discard(ability_id)  # 移除永久标记
+        return True
+
+    def has_ability(self, ability_id: int) -> bool:
+        """检查单位是否拥有指定技能。
+
+        参数：
+            ability_id: 技能ID
+
+        返回：
+            拥有技能返回True，否则返回False
+        """
+        return ability_id in self._abilities
+
+    def get_ability_level(self, ability_id: int) -> int:
+        """获取技能等级。
+
+        参数：
+            ability_id: 技能ID
+
+        返回：
+            技能等级，技能不存在返回0
+        """
+        return self._abilities.get(ability_id, 0)
+
+    def set_ability_level(self, ability_id: int, level: int) -> bool:
+        """设置技能等级。
+
+        参数：
+            ability_id: 技能ID
+            level: 新等级（必须>0）
+
+        返回：
+            设置成功返回True，技能不存在或等级无效返回False
+        """
+        if ability_id not in self._abilities:
+            return False
+        if level <= 0:
+            return False
+        self._abilities[ability_id] = level
+        return True
+
+    def inc_ability_level(self, ability_id: int) -> bool:
+        """增加技能等级。
+
+        参数：
+            ability_id: 技能ID
+
+        返回：
+            增加成功返回True，技能不存在返回False
+        """
+        if ability_id not in self._abilities:
+            return False
+        self._abilities[ability_id] += 1
+        return True
+
+    def dec_ability_level(self, ability_id: int) -> bool:
+        """降低技能等级。
+
+        参数：
+            ability_id: 技能ID
+
+        返回：
+            降低成功返回True，技能不存在或等级已为1返回False
+        """
+        if ability_id not in self._abilities:
+            return False
+        if self._abilities[ability_id] <= 1:
+            return False
+        self._abilities[ability_id] -= 1
+        return True
+
+    def make_ability_permanent(self, ability_id: int, permanent: bool) -> bool:
+        """设置技能是否为永久技能。
+
+        参数：
+            ability_id: 技能ID
+            permanent: True表示设为永久，False表示取消永久
+
+        返回：
+            设置成功返回True，技能不存在返回False
+        """
+        if ability_id not in self._abilities:
+            return False
+
+        if permanent:
+            self._permanent_abilities.add(ability_id)
+        else:
+            self._permanent_abilities.discard(ability_id)
+
+        return True
+
+    def is_ability_permanent(self, ability_id: int) -> bool:
+        """检查技能是否为永久技能。
+
+        参数：
+            ability_id: 技能ID
+
+        返回：
+            是永久技能返回True，否则返回False
+        """
+        return ability_id in self._permanent_abilities
 
 
 class Player(Handle):
