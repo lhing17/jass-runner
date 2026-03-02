@@ -4,7 +4,7 @@
 """
 
 import logging
-from typing import Optional
+from typing import Optional, Callable
 from .base import NativeFunction
 from .handle import Group, Unit
 
@@ -239,3 +239,47 @@ class IsUnitInGroup(NativeFunction):
             return False
 
         return group.contains(unit)
+
+
+class ForGroup(NativeFunction):
+    """遍历单位组中的每个单位并执行回调函数。
+
+    对应JASS native函数: void ForGroup(group whichGroup, code callback)
+
+    注意: 在真实JASS中，callback是code类型（函数引用）。
+    这里我们使用Python的Callable来模拟。
+    """
+
+    @property
+    def name(self) -> str:
+        """获取函数名称。"""
+        return "ForGroup"
+
+    def execute(self, state_context, group: Group, callback: Callable[[Unit], None]):
+        """执行ForGroup native函数。
+
+        参数：
+            state_context: 状态上下文
+            group: 要遍历的单位组
+            callback: 对每个单位执行的回调函数，接收unit参数
+        """
+        if group is None:
+            logger.warning("[ForGroup] 组为None")
+            return
+
+        if callback is None:
+            logger.warning("[ForGroup] 回调为None")
+            return
+
+        handle_manager = state_context.handle_manager
+        unit_ids = group.get_units()
+
+        for unit_id in unit_ids:
+            unit = handle_manager.get_unit(unit_id)
+            if unit and unit.is_alive():
+                try:
+                    callback(unit)
+                except Exception as e:
+                    logger.error(f"[ForGroup] 回调执行错误: {e}")
+
+        logger.debug(f"[ForGroup] 遍历组{group.id}完成，处理了{len(unit_ids)}个单位")

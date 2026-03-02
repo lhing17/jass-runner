@@ -1,8 +1,10 @@
 """单位组Native函数测试。"""
 
+from typing import Callable
+
 import pytest
 from jass_runner.natives.state import StateContext
-from jass_runner.natives.group_natives import CreateGroup, DestroyGroup, GroupAddUnit, GroupRemoveUnit, GroupClear, FirstOfGroup, IsUnitInGroup
+from jass_runner.natives.group_natives import CreateGroup, DestroyGroup, GroupAddUnit, GroupRemoveUnit, GroupClear, FirstOfGroup, IsUnitInGroup, ForGroup
 
 
 class TestCreateGroup:
@@ -211,3 +213,52 @@ class TestIsUnitInGroup:
         result = is_unit_in_group.execute(state, unit, group)
 
         assert result is False
+
+
+class TestForGroup:
+    """测试ForGroup native函数。"""
+
+    def test_for_group_calls_callback_for_each_unit(self):
+        """测试ForGroup为每个单位调用回调。"""
+        state = StateContext()
+        from jass_runner.natives.group_natives import CreateGroup, GroupAddUnit, ForGroup
+
+        create_group = CreateGroup()
+        add_unit = GroupAddUnit()
+        for_group = ForGroup()
+
+        group = create_group.execute(state)
+        unit1 = state.handle_manager.create_unit("hfoo", 0, 100.0, 200.0, 0.0)
+        unit2 = state.handle_manager.create_unit("hfoo", 0, 150.0, 250.0, 0.0)
+        add_unit.execute(state, group, unit1)
+        add_unit.execute(state, group, unit2)
+
+        # 记录被调用的单位
+        called_units = []
+        def callback(u):
+            called_units.append(u)
+
+        for_group.execute(state, group, callback)
+
+        assert len(called_units) == 2
+        assert unit1 in called_units
+        assert unit2 in called_units
+
+    def test_for_group_with_empty_group(self):
+        """测试ForGroup处理空组。"""
+        state = StateContext()
+        from jass_runner.natives.group_natives import CreateGroup, ForGroup
+
+        create_group = CreateGroup()
+        for_group = ForGroup()
+
+        group = create_group.execute(state)
+
+        called = False
+        def callback(u):
+            nonlocal called
+            called = True
+
+        for_group.execute(state, group, callback)
+
+        assert called is False
