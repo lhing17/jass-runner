@@ -57,7 +57,13 @@ class AssignmentParserMixin:
                 arg_value = self.current_token.value
                 self.next_token()
             else:
-                # 不支持的类型，跳过
+                # 不支持的参数类型，记录错误并跳过
+                if hasattr(self, 'errors'):
+                    self.errors.append(ParseError(
+                        message=f"不支持的参数类型: {self.current_token.type}",
+                        line=getattr(self.current_token, 'line', 0),
+                        column=getattr(self.current_token, 'column', 0)
+                    ))
                 self.next_token()
 
             if arg_value is not None:
@@ -153,28 +159,8 @@ class AssignmentParserMixin:
                             # 这是一个函数调用
                             self.next_token()  # 跳过 '('
 
-                            # 解析参数列表
-                            args = []
-                            while self.current_token and self.current_token.value != ')':
-                                if self.current_token.type == 'INTEGER':
-                                    args.append(str(self.current_token.value))
-                                elif self.current_token.type == 'REAL':
-                                    args.append(str(self.current_token.value))
-                                elif self.current_token.type == 'STRING':
-                                    args.append(self.current_token.value)
-                                elif self.current_token.type == 'IDENTIFIER':
-                                    args.append(self.current_token.value)
-                                elif self.current_token.type == 'FOURCC':
-                                    args.append(str(self.current_token.value))
-
-                                self.next_token()
-
-                                # 检查是否有逗号
-                                if self.current_token and self.current_token.value == ',':
-                                    self.next_token()
-                                    continue
-                                elif self.current_token and self.current_token.value == ')':
-                                    break
+                            # 使用 _parse_call_args 解析参数列表，支持嵌套调用
+                            args = self._parse_call_args()
 
                             # 跳过右括号
                             if self.current_token and self.current_token.value == ')':
