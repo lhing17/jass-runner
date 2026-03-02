@@ -984,5 +984,23 @@ jass-runner/
   - 集成测试: 完整单位组工作流
 - **测试统计**: 538个测试通过
 
+#### 46. 技能系统Native函数实现完成 (2026-03-02)
+- **新增组件**:
+  - Unit类技能支持 - 存储技能等级和永久状态
+  - `ability_natives.py` - 7个技能系统Native函数
+- **新增Native函数**:
+  - 技能管理: UnitAddAbility, UnitRemoveAbility
+  - 等级查询: GetUnitAbilityLevel, SetUnitAbilityLevel
+  - 等级调整: IncUnitAbilityLevel, DecUnitAbilityLevel
+  - 永久技能: UnitMakeAbilityPermanent
+- **修改文件**:
+  - `src/jass_runner/natives/handle.py` - 添加技能存储和管理方法
+  - `src/jass_runner/natives/ability_natives.py` - 新建，实现7个函数
+  - `src/jass_runner/natives/factory.py` - 注册新函数
+- **测试覆盖**:
+  - 单元测试: Unit技能方法、7个native函数
+  - 集成测试: 完整技能系统工作流
+- **测试统计**: 572个测试通过
+
 ---
 *最后更新: 2026-03-02*

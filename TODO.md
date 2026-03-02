@@ -118,7 +118,7 @@
   - 类型不匹配时抛出JassTypeError
 - [ ] **P2** [Simulator] 持续补充 `common.j` 中的 Native 函数 Mock。
   - [x] 第一批：单位组核心（CreateGroup, DestroyGroup, GroupAddUnit, GroupRemoveUnit, GroupClear, FirstOfGroup, IsUnitInGroup, ForGroup）✅ 已完成
-  - [ ] 第二批：技能系统核心（UnitAddAbility, UnitRemoveAbility, GetUnitAbilityLevel, SetUnitAbilityLevel, IncUnitAbilityLevel, DecUnitAbilityLevel, UnitMakeAbilityPermanent）
+  - [x] 第二批：技能系统核心（UnitAddAbility, UnitRemoveAbility, GetUnitAbilityLevel, SetUnitAbilityLevel, IncUnitAbilityLevel, DecUnitAbilityLevel, UnitMakeAbilityPermanent）✅ 已完成
   - [ ] 第三批：单位组枚举（GroupEnumUnitsOfPlayer, GroupEnumUnitsInRange, GroupEnumUnitsInRangeOfLoc, GroupEnumUnitsInRect, BlzGroupGetSize, BlzGroupUnitAt）
   - [ ] 第四批：单位状态扩展（GetWidgetLife, SetWidgetLife, UnitDamageTarget, GetUnitLevel, IsUnitType, IsUnitAlive, IsUnitDead）
   - [ ] 第五批：单位所有权和关系（SetUnitOwner, IsUnitOwnedByPlayer, IsUnitAlly, IsUnitEnemy, IsUnitInRange系列）
