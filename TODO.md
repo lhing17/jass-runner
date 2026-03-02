@@ -38,6 +38,16 @@
 
 ## 3. 运行模拟器模块 (Runtime Simulator) 深度分析
 
+### Native API 实现状态
+
+- [x] **基础单位操作**: CreateUnit, KillUnit, GetUnitState, SetUnitState
+- [x] **位置操作**: GetUnitX/Y/Loc, SetUnitPosition, CreateUnitAtLoc
+- [x] **朝向控制**: GetUnitFacing, SetUnitFacing
+- [x] **单位信息**: GetUnitTypeId, GetUnitName
+- [x] **Location 操作**: Location, RemoveLocation
+- [ ] **单位组操作**: CreateGroup, GroupAddUnit, ForGroup（未来版本）
+- [ ] **技能系统**: UnitAddAbility, GetUnitAbilityLevel（未来版本）
+
 ### 3.1 Warcraft III 原生 API (Native API)
 - [x] **触发器 API**: 实现 `TriggerRegister...`, `TriggerAddAction`, `TriggerEvaluate` 等。 ✅ 已完成（2026-03-01）
 - [ ] **技能/Buff API**: 实现 `UnitAddAbility`, `GetUnitAbilityLevel` 等。

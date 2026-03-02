@@ -933,5 +933,26 @@ jass-runner/
 - **测试统计**:
   - 所有 479 个测试通过
 
+#### 43. 单位操作 Native API 扩展完成 (2026-03-02)
+- **新增组件**:
+  - `Location` 类 - 位置管理（x, y, z 坐标）
+  - `unit_property_natives.py` - 单位属性操作
+  - `unit_position_natives.py` - 单位位置操作
+- **新增 Native 函数**（13 个）:
+  - 状态管理: SetUnitState
+  - 位置查询: GetUnitX, GetUnitY, GetUnitLoc
+  - 位置设置: SetUnitPosition, SetUnitPositionLoc, CreateUnitAtLoc
+  - 朝向控制: GetUnitFacing, SetUnitFacing
+  - 单位信息: GetUnitTypeId, GetUnitName, CreateUnitAtLocByName
+  - Location 操作: Location, RemoveLocation
+- **Unit 类扩展**:
+  - 添加 z 坐标属性（默认为 0）
+  - 添加 name 属性
+- **HandleManager 扩展**:
+  - 添加 set_unit_state 方法
+- **测试覆盖**:
+  - 单元测试: Location, Unit handle, 每个 native 函数
+  - 集成测试: 完整单位生命周期工作流
+
 ---
 *最后更新: 2026-03-02*
