@@ -3,7 +3,7 @@
 此模块包含所有JASS handle的基类和具体实现。
 """
 
-from typing import Set, Optional, Dict
+from typing import Set, Optional, Dict, List
 
 
 class Handle:
@@ -326,6 +326,34 @@ class Group(Handle):
             单位数量
         """
         return len(self._units)
+
+    def get_size(self) -> int:
+        """获取组内单位数量。
+
+        返回：
+            单位数量
+        """
+        return len(self._units)
+
+    def unit_at(self, index: int) -> Optional[str]:
+        """获取指定索引位置的单位ID。
+
+        注意: 由于set是无序的，索引位置不保证稳定。
+        这个方法主要用于BlzGroupUnitAt的兼容性实现。
+
+        参数：
+            index: 索引位置（从0开始）
+
+        返回：
+            单位ID，如果索引无效返回None
+        """
+        if index < 0 or index >= len(self._units):
+            return None
+
+        # 将set转换为list进行索引访问
+        # 注意: 顺序不保证稳定
+        units_list = list(self._units)
+        return units_list[index]
 
     def destroy(self):
         """销毁单位组，清理所有单位引用。"""
