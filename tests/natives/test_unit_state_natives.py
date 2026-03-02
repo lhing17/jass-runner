@@ -5,7 +5,7 @@
 
 import pytest
 from jass_runner.natives.state import StateContext
-from jass_runner.natives.unit_state_natives import GetWidgetLife, SetWidgetLife
+from jass_runner.natives.unit_state_natives import GetWidgetLife, SetWidgetLife, UnitDamageTarget
 
 
 class TestGetWidgetLife:
@@ -66,3 +66,43 @@ class TestSetWidgetLife:
 
         # 应该不报错
         set_life.execute(state, None, 50.0)
+
+
+class TestUnitDamageTarget:
+    """测试UnitDamageTarget native函数。"""
+
+    def test_damage_target_reduces_life(self):
+        """测试对目标造成伤害减少生命值。"""
+        state = StateContext()
+        damage_target = UnitDamageTarget()
+        get_life = GetWidgetLife()
+
+        attacker = state.handle_manager.create_unit("hfoo", 0, 100.0, 200.0, 0.0)
+        target = state.handle_manager.create_unit("hfoo", 1, 150.0, 200.0, 0.0)
+
+        # 造成25点伤害
+        damage_target.execute(state, attacker, target, 25.0, True, False, 0, 0, 0)
+
+        result = get_life.execute(state, target)
+        assert result == 75.0  # 100 - 25 = 75
+
+    def test_damage_target_can_kill(self):
+        """测试伤害可以杀死目标。"""
+        state = StateContext()
+        damage_target = UnitDamageTarget()
+
+        attacker = state.handle_manager.create_unit("hfoo", 0, 100.0, 200.0, 0.0)
+        target = state.handle_manager.create_unit("hfoo", 1, 150.0, 200.0, 0.0)
+
+        # 造成100点伤害（致命）
+        damage_target.execute(state, attacker, target, 100.0, True, False, 0, 0, 0)
+
+        assert not target.is_alive()
+
+    def test_damage_target_with_none_params(self):
+        """测试None参数不报错。"""
+        state = StateContext()
+        damage_target = UnitDamageTarget()
+
+        # 应该不报错
+        damage_target.execute(state, None, None, 25.0, True, False, 0, 0, 0)

@@ -82,3 +82,57 @@ class SetWidgetLife(NativeFunction):
             logger.debug(f"[SetWidgetLife] widget {widget.id} 已被杀死")
 
         logger.debug(f"[SetWidgetLife] widget {widget.id} 生命值设置为 {new_life}")
+
+
+class UnitDamageTarget(NativeFunction):
+    """让单位对目标造成伤害。
+
+    对应JASS native函数: boolean UnitDamageTarget(unit whichUnit, widget target, real amount, boolean attack, boolean ranged, attacktype attackType, damagetype damageType, weapontype weaponType)
+
+    注意: 这是一个简化实现，忽略攻击类型参数。
+    """
+
+    @property
+    def name(self) -> str:
+        """获取函数名称。"""
+        return "UnitDamageTarget"
+
+    def execute(self, state_context, attacker, target, amount: float,
+                attack: bool = True, ranged: bool = False,
+                attack_type: int = 0, damage_type: int = 0,
+                weapon_type: int = 0) -> bool:
+        """执行UnitDamageTarget native函数。
+
+        参数：
+            state_context: 状态上下文
+            attacker: 攻击单位
+            target: 目标widget
+            amount: 伤害数值
+            attack: 是否为攻击伤害
+            ranged: 是否为远程伤害
+            attack_type: 攻击类型（简化实现中忽略）
+            damage_type: 伤害类型（简化实现中忽略）
+            weapon_type: 武器类型（简化实现中忽略）
+
+        返回：
+            伤害成功返回True
+        """
+        if attacker is None or target is None:
+            logger.warning("[UnitDamageTarget] 攻击者或目标为None")
+            return False
+
+        if not hasattr(target, 'life'):
+            logger.warning("[UnitDamageTarget] 目标没有life属性")
+            return False
+
+        # 应用伤害
+        target.life -= amount
+
+        # 如果生命值<=0，杀死目标
+        if target.life <= 0:
+            target.destroy()
+            logger.info(f"[UnitDamageTarget] 目标 {target.id} 被 {attacker.id} 杀死")
+        else:
+            logger.debug(f"[UnitDamageTarget] {attacker.id} 对 {target.id} 造成 {amount} 点伤害")
+
+        return True
