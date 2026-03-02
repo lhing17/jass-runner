@@ -9,6 +9,8 @@ class ExecutionContext:
     def __init__(self, parent: Optional['ExecutionContext'] = None, native_registry=None, state_context=None, timer_system=None, interpreter=None):
         self.variables: Dict[str, Any] = {}
         self.arrays: Dict[str, List[Any]] = {}  # 数组变量存储
+        self.variable_types: Dict[str, str] = {}      # 变量类型存储
+        self.array_types: Dict[str, str] = {}         # 数组元素类型存储
         self.parent = parent
         self.native_registry = native_registry
         self.state_context = state_context
@@ -34,6 +36,86 @@ class ExecutionContext:
         """
         default_value = self._default_values.get(element_type, None)
         self.arrays[name] = [default_value] * self._array_size
+        self.array_types[name] = element_type
+
+    def get_array_type(self, name: str) -> Optional[str]:
+        """获取数组元素类型。
+
+        参数：
+            name: 数组名
+
+        返回：
+            元素类型，如果未找到返回None
+        """
+        if name in self.array_types:
+            return self.array_types[name]
+        if self.parent:
+            return self.parent.get_array_type(name)
+        return None
+        self.array_types[name] = element_type
+
+    def get_array_type(self, name: str) -> Optional[str]:
+        """获取数组元素类型。
+
+        参数：
+            name: 数组名
+
+        返回：
+            元素类型，如果未找到返回None
+        """
+        if name in self.array_types:
+            return self.array_types[name]
+        if self.parent:
+            return self.parent.get_array_type(name)
+        return None
+        self.array_types[name] = element_type
+
+    def get_array_type(self, name: str) -> Optional[str]:
+        """获取数组元素类型。
+
+        参数：
+            name: 数组名
+
+        返回：
+            元素类型，如果未找到返回None
+        """
+        if name in self.array_types:
+            return self.array_types[name]
+        if self.parent:
+            return self.parent.get_array_type(name)
+        return None
+        self.array_types[name] = element_type
+
+    def get_array_type(self, name: str) -> Optional[str]:
+        """获取数组元素类型。
+
+        参数：
+            name: 数组名
+
+        返回：
+            元素类型，如果未找到返回None
+        """
+        if name in self.array_types:
+            return self.array_types[name]
+        if self.parent:
+            return self.parent.get_array_type(name)
+        return None
+        self.array_types[name] = element_type
+
+    def get_array_type(self, name: str) -> Optional[str]:
+        """获取数组元素类型。
+
+        参数：
+            name: 数组名
+
+        返回：
+            元素类型，如果未找到返回None
+        """
+        if name in self.array_types:
+            return self.array_types[name]
+        if self.parent:
+            return self.parent.get_array_type(name)
+        return None
 
     def get_array_element(self, name: str, index: int) -> Any:
         """获取数组元素（不做边界检查）。
@@ -72,9 +154,32 @@ class ExecutionContext:
             raise NameError(f"数组'{name}'未声明")
         self.arrays[name][index] = value
 
-    def set_variable(self, name: str, value: Any):
-        """在此上下文中设置变量。"""
+    def set_variable(self, name: str, value: Any, var_type: str = None):
+        """在此上下文中设置变量。
+
+        参数：
+            name: 变量名
+            value: 变量值
+            var_type: 变量类型（可选）
+        """
         self.variables[name] = value
+        if var_type is not None:
+            self.variable_types[name] = var_type
+
+    def get_variable_type(self, name: str) -> Optional[str]:
+        """获取变量声明类型。
+
+        参数：
+            name: 变量名
+
+        返回：
+            变量类型，如果未找到返回None
+        """
+        if name in self.variable_types:
+            return self.variable_types[name]
+        if self.parent:
+            return self.parent.get_variable_type(name)
+        return None
 
     def get_variable(self, name: str) -> Any:
         """从此上下文或父上下文获取变量。"""
