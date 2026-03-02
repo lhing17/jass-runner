@@ -2,7 +2,7 @@
 
 import pytest
 from jass_runner.natives.state import StateContext
-from jass_runner.natives.group_natives import CreateGroup, DestroyGroup
+from jass_runner.natives.group_natives import CreateGroup, DestroyGroup, GroupAddUnit, GroupRemoveUnit, GroupClear
 
 
 class TestCreateGroup:
@@ -57,3 +57,85 @@ class TestDestroyGroup:
         result = destroy_group.execute(state, group)
 
         assert result is False
+
+
+class TestGroupAddUnit:
+    """测试GroupAddUnit native函数。"""
+
+    def test_add_unit_to_group(self):
+        """测试添加单位到组。"""
+        state = StateContext()
+        from jass_runner.natives.group_natives import CreateGroup, GroupAddUnit
+
+        create_group = CreateGroup()
+        add_unit = GroupAddUnit()
+
+        group = create_group.execute(state)
+        unit = state.handle_manager.create_unit("hfoo", 0, 100.0, 200.0, 0.0)
+
+        result = add_unit.execute(state, group, unit)
+
+        assert result is True
+        assert group.contains(unit) is True
+
+    def test_add_same_unit_twice_returns_false(self):
+        """测试重复添加同一单位返回False。"""
+        state = StateContext()
+        from jass_runner.natives.group_natives import CreateGroup, GroupAddUnit
+
+        create_group = CreateGroup()
+        add_unit = GroupAddUnit()
+
+        group = create_group.execute(state)
+        unit = state.handle_manager.create_unit("hfoo", 0, 100.0, 200.0, 0.0)
+
+        add_unit.execute(state, group, unit)
+        result = add_unit.execute(state, group, unit)
+
+        assert result is False
+
+
+class TestGroupRemoveUnit:
+    """测试GroupRemoveUnit native函数。"""
+
+    def test_remove_unit_from_group(self):
+        """测试从组移除单位。"""
+        state = StateContext()
+        from jass_runner.natives.group_natives import CreateGroup, GroupAddUnit, GroupRemoveUnit
+
+        create_group = CreateGroup()
+        add_unit = GroupAddUnit()
+        remove_unit = GroupRemoveUnit()
+
+        group = create_group.execute(state)
+        unit = state.handle_manager.create_unit("hfoo", 0, 100.0, 200.0, 0.0)
+        add_unit.execute(state, group, unit)
+
+        result = remove_unit.execute(state, group, unit)
+
+        assert result is True
+        assert group.contains(unit) is False
+
+
+class TestGroupClear:
+    """测试GroupClear native函数。"""
+
+    def test_clear_group_removes_all_units(self):
+        """测试清空组移除所有单位。"""
+        state = StateContext()
+        from jass_runner.natives.group_natives import CreateGroup, GroupAddUnit, GroupClear
+
+        create_group = CreateGroup()
+        add_unit = GroupAddUnit()
+        clear_group = GroupClear()
+
+        group = create_group.execute(state)
+        unit1 = state.handle_manager.create_unit("hfoo", 0, 100.0, 200.0, 0.0)
+        unit2 = state.handle_manager.create_unit("hfoo", 0, 150.0, 250.0, 0.0)
+        add_unit.execute(state, group, unit1)
+        add_unit.execute(state, group, unit2)
+
+        result = clear_group.execute(state, group)
+
+        assert result is True
+        assert group.size() == 0
