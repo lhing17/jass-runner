@@ -5,7 +5,7 @@
 
 import pytest
 from jass_runner.natives.state import StateContext
-from jass_runner.natives.unit_state_natives import GetWidgetLife, SetWidgetLife, UnitDamageTarget, GetUnitLevel, IsUnitType
+from jass_runner.natives.unit_state_natives import GetWidgetLife, SetWidgetLife, UnitDamageTarget, GetUnitLevel, IsUnitType, IsUnitAlive, IsUnitDead
 
 
 class TestGetWidgetLife:
@@ -178,3 +178,79 @@ class TestIsUnitType:
         result = is_unit_type.execute(state, None, 1869571688)
 
         assert result is False
+
+
+class TestIsUnitAlive:
+    """测试IsUnitAlive native函数。"""
+
+    def test_is_unit_alive_true(self):
+        """测试存活单位返回True。"""
+        state = StateContext()
+        is_alive = IsUnitAlive()
+
+        unit = state.handle_manager.create_unit("hfoo", 0, 100.0, 200.0, 0.0)
+
+        result = is_alive.execute(state, unit)
+
+        assert result is True
+
+    def test_is_unit_alive_false(self):
+        """测试死亡单位返回False。"""
+        state = StateContext()
+        is_alive = IsUnitAlive()
+        set_life = SetWidgetLife()
+
+        unit = state.handle_manager.create_unit("hfoo", 0, 100.0, 200.0, 0.0)
+        # 杀死单位
+        set_life.execute(state, unit, 0.0)
+
+        result = is_alive.execute(state, unit)
+
+        assert result is False
+
+    def test_is_unit_alive_with_none(self):
+        """测试None返回False。"""
+        state = StateContext()
+        is_alive = IsUnitAlive()
+
+        result = is_alive.execute(state, None)
+
+        assert result is False
+
+
+class TestIsUnitDead:
+    """测试IsUnitDead native函数。"""
+
+    def test_is_unit_dead_false(self):
+        """测试存活单位返回False。"""
+        state = StateContext()
+        is_dead = IsUnitDead()
+
+        unit = state.handle_manager.create_unit("hfoo", 0, 100.0, 200.0, 0.0)
+
+        result = is_dead.execute(state, unit)
+
+        assert result is False
+
+    def test_is_unit_dead_true(self):
+        """测试死亡单位返回True。"""
+        state = StateContext()
+        is_dead = IsUnitDead()
+        set_life = SetWidgetLife()
+
+        unit = state.handle_manager.create_unit("hfoo", 0, 100.0, 200.0, 0.0)
+        # 杀死单位
+        set_life.execute(state, unit, 0.0)
+
+        result = is_dead.execute(state, unit)
+
+        assert result is True
+
+    def test_is_unit_dead_with_none(self):
+        """测试None返回True（None被认为是死亡的）。"""
+        state = StateContext()
+        is_dead = IsUnitDead()
+
+        result = is_dead.execute(state, None)
+
+        assert result is True

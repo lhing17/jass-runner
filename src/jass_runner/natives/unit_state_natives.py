@@ -220,3 +220,57 @@ class IsUnitType(NativeFunction):
         for i, char in enumerate(s):
             result |= ord(char) << (i * 8)
         return result
+
+
+class IsUnitAlive(NativeFunction):
+    """检查单位是否存活。
+
+    对应JASS native函数: boolean IsUnitAlive(unit whichUnit)
+    """
+
+    @property
+    def name(self) -> str:
+        """获取函数名称。"""
+        return "IsUnitAlive"
+
+    def execute(self, state_context, unit) -> bool:
+        """执行IsUnitAlive native函数。
+
+        参数：
+            state_context: 状态上下文
+            unit: 单位对象
+
+        返回：
+            单位存活返回True，否则返回False
+        """
+        if unit is None:
+            return False
+
+        return unit.is_alive()
+
+
+class IsUnitDead(NativeFunction):
+    """检查单位是否死亡。
+
+    对应JASS native函数: boolean IsUnitDead(unit whichUnit)
+    """
+
+    @property
+    def name(self) -> str:
+        """获取函数名称。"""
+        return "IsUnitDead"
+
+    def execute(self, state_context, unit) -> bool:
+        """执行IsUnitDead native函数。
+
+        参数：
+            state_context: 状态上下文
+            unit: 单位对象
+
+        返回：
+            单位死亡返回True，否则返回False
+        """
+        if unit is None:
+            return True  # None被认为是死亡的
+
+        return not unit.is_alive()
