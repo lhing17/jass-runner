@@ -36,7 +36,7 @@ from .unit_property_natives import SetUnitState, GetUnitX, GetUnitY, GetUnitLoc,
 from .unit_position_natives import SetUnitPosition, SetUnitPositionLoc, CreateUnitAtLoc, GetUnitFacing, SetUnitFacing, CreateUnitAtLocByName
 from .location import LocationConstructor, RemoveLocation
 from .group_natives import CreateGroup, DestroyGroup, GroupAddUnit, GroupRemoveUnit, GroupClear, FirstOfGroup, IsUnitInGroup, ForGroup
-from .ability_natives import UnitAddAbility, UnitRemoveAbility
+from .ability_natives import UnitAddAbility, UnitRemoveAbility, GetUnitAbilityLevel, SetUnitAbilityLevel
 
 
 class NativeFactory:
@@ -164,5 +164,7 @@ class NativeFactory:
         # 注册技能系统native函数
         registry.register(UnitAddAbility())
         registry.register(UnitRemoveAbility())
+        registry.register(GetUnitAbilityLevel())
+        registry.register(SetUnitAbilityLevel())
 
         return registry
