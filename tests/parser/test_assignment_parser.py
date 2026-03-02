@@ -2,6 +2,7 @@
 
 import pytest
 from jass_runner.parser.parser import Parser
+from jass_runner.parser.ast_nodes import NativeCallNode
 
 
 class TestParseCallArgs:
@@ -25,7 +26,6 @@ class TestParseCallArgs:
         assert len(set_stmt.value.args) == 5
 
         # 验证第一个参数是嵌套调用
-        from jass_runner.parser.ast_nodes import NativeCallNode
         assert isinstance(set_stmt.value.args[0], NativeCallNode)
         assert set_stmt.value.args[0].func_name == 'Player'
         assert set_stmt.value.args[0].args == ['0']
@@ -54,6 +54,55 @@ class TestParseCallArgs:
         assert len(local_decl.value.args) == 5
 
         # 验证第一个参数是嵌套调用
-        from jass_runner.parser.ast_nodes import NativeCallNode
         assert isinstance(local_decl.value.args[0], NativeCallNode)
         assert local_decl.value.args[0].func_name == 'Player'
+
+    def test_parse_empty_args(self):
+        """测试空参数列表。"""
+        code = '''
+        function main takes nothing returns nothing
+            call SomeFunc()
+        endfunction
+        '''
+        parser = Parser(code)
+        ast = parser.parse()
+
+        func = ast.functions[0]
+        call_stmt = func.body[0]
+
+        assert len(call_stmt.args) == 0
+
+    def test_parse_multiple_nested_calls(self):
+        """测试多个嵌套调用。"""
+        code = '''
+        function main takes nothing returns nothing
+            call FuncA(FuncB(1), FuncC(2))
+        endfunction
+        '''
+        parser = Parser(code)
+        ast = parser.parse()
+
+        func = ast.functions[0]
+        call_stmt = func.body[0]
+
+        assert len(call_stmt.args) == 2
+        assert isinstance(call_stmt.args[0], NativeCallNode)
+        assert isinstance(call_stmt.args[1], NativeCallNode)
+
+    def test_parse_mixed_args(self):
+        """测试混合参数类型。"""
+        code = '''
+        function main takes nothing returns nothing
+            call Func(1, Player(0), "string", 3.14)
+        endfunction
+        '''
+        parser = Parser(code)
+        ast = parser.parse()
+
+        func = ast.functions[0]
+        call_stmt = func.body[0]
+
+        assert len(call_stmt.args) == 4
+        assert call_stmt.args[0] == '1'
+        assert call_stmt.args[2] == '"string"'
+        assert call_stmt.args[3] == '3.14'
