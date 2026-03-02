@@ -101,3 +101,48 @@ class TestSetUnitPositionLoc:
         # 单位位置不应改变
         assert unit.x == 100.0
         assert unit.y == 200.0
+
+
+class TestCreateUnitAtLoc:
+    """测试 CreateUnitAtLoc native 函数。"""
+
+    def test_create_unit_at_loc(self):
+        """测试 CreateUnitAtLoc native 函数。"""
+        from jass_runner.natives.unit_position_natives import CreateUnitAtLoc
+        from jass_runner.natives.location import Location
+        from jass_runner.natives.manager import HandleManager
+
+        manager = HandleManager()
+
+        create_unit_at_loc = CreateUnitAtLoc()
+        loc = Location(300.0, 400.0, 25.0)
+
+        class MockStateContext:
+            def __init__(self):
+                self.handle_manager = manager
+
+        # 创建单位（unit_type 使用 fourcc 整数）
+        unit = create_unit_at_loc.execute(MockStateContext(), 0, 1213484355, loc, 90.0)
+
+        assert unit is not None
+        assert unit.x == 300.0
+        assert unit.y == 400.0
+        assert unit.z == 25.0
+        assert unit.facing == 90.0
+
+    def test_create_unit_at_loc_with_none_location(self):
+        """测试 CreateUnitAtLoc 处理 None Location。"""
+        from jass_runner.natives.unit_position_natives import CreateUnitAtLoc
+        from jass_runner.natives.manager import HandleManager
+
+        manager = HandleManager()
+
+        create_unit_at_loc = CreateUnitAtLoc()
+
+        class MockStateContext:
+            def __init__(self):
+                self.handle_manager = manager
+
+        # 应该返回 None
+        unit = create_unit_at_loc.execute(MockStateContext(), 0, 1213484355, None, 90.0)
+        assert unit is None

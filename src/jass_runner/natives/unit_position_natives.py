@@ -7,6 +7,7 @@ import logging
 from .base import NativeFunction
 from .handle import Unit
 from .location import Location
+from ..utils import int_to_fourcc
 
 logger = logging.getLogger(__name__)
 
@@ -65,3 +66,43 @@ class SetUnitPositionLoc(NativeFunction):
         unit.z = loc.z
 
         logger.debug(f"[SetUnitPositionLoc] 单位 {unit.id} 位置设置为 ({loc.x}, {loc.y}, {loc.z})")
+
+
+class CreateUnitAtLoc(NativeFunction):
+    """在指定位置创建单位（使用 Location）。"""
+
+    @property
+    def name(self) -> str:
+        return "CreateUnitAtLoc"
+
+    def execute(self, state_context, player_id: int, unit_type: int,
+                loc: Location, facing: float):
+        """执行 CreateUnitAtLoc native 函数。
+
+        参数：
+            state_context: 状态上下文
+            player_id: 玩家 ID
+            unit_type: 单位类型代码（fourcc 整数格式）
+            loc: Location 位置对象
+            facing: 面向角度
+
+        返回：
+            Unit: 创建的单位对象
+        """
+        if loc is None:
+            logger.warning("[CreateUnitAtLoc] Location 为 None")
+            return None
+
+        # 将 fourcc 整数转换为字符串
+        unit_type_str = int_to_fourcc(unit_type)
+
+        # 通过 HandleManager 创建单位
+        handle_manager = state_context.handle_manager
+        unit = handle_manager.create_unit(unit_type_str, player_id,
+                                          loc.x, loc.y, facing)
+
+        # 设置 z 坐标
+        unit.z = loc.z
+
+        logger.info(f"[CreateUnitAtLoc] 为玩家 {player_id} 在 {loc} 创建 {unit_type_str}，单位 ID: {unit.id}")
+        return unit
