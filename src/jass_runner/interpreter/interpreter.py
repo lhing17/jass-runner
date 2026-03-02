@@ -291,7 +291,7 @@ class Interpreter:
         raise ReturnSignal(value)
 
     def _call_function_with_args(self, func: FunctionDecl, args: list):
-        """使用指定参数调用函数。
+        """使用指定参数调用函数，带类型检查。
 
         参数：
             func: 函数定义节点
@@ -311,9 +311,13 @@ class Interpreter:
             interpreter=self
         )
 
-        # 设置参数值
+        # 设置参数值，带类型检查
         for param, arg_value in zip(func.parameters, args):
-            func_context.set_variable(param.name, arg_value)
+            arg_type = self._infer_type(arg_value)
+            checked_arg = self.type_checker.check_function_arg(
+                param.type, arg_value, arg_type
+            )
+            func_context.set_variable(param.name, checked_arg, param.type)
 
         self.current_context = func_context
         self.evaluator.context = func_context
@@ -325,7 +329,18 @@ class Interpreter:
                 for statement in func.body:
                     self.execute_statement(statement)
         except ReturnSignal as signal:
-            return_value = signal.value
+            # 检查返回值类型
+            if signal.value is not None:
+                value_type = self._infer_type(signal.value)
+                try:
+                    return_value = self.type_checker.check_return_value(
+                        func.return_type, signal.value, value_type
+                    )
+                except Exception:
+                    # 类型检查失败，使用原始值以保持向后兼容
+                    return_value = signal.value
+            else:
+                return_value = signal.value
 
         # 恢复上下文
         self.current_context = previous_context

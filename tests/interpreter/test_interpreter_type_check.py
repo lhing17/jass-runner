@@ -50,3 +50,53 @@ def test_integer_to_real_implicit_conversion():
 
     assert interpreter.current_context.get_variable('r') == 10.0
     assert isinstance(interpreter.current_context.get_variable('r'), float)
+
+
+def test_function_call_with_type_check():
+    """测试函数调用时的参数类型检查。"""
+    from jass_runner.interpreter.interpreter import Interpreter
+    from jass_runner.parser.ast_nodes import FunctionDecl, Parameter, ReturnStmt
+
+    interpreter = Interpreter()
+
+    # 定义函数: function add takes integer a, integer b returns integer
+    func = FunctionDecl(
+        name='add',
+        parameters=[
+            Parameter(name='a', type='integer', line=1, column=1),
+            Parameter(name='b', type='integer', line=1, column=1)
+        ],
+        return_type='integer',
+        line=1,
+        column=1,
+        body=[ReturnStmt(value='a + b')]
+    )
+
+    interpreter.functions['add'] = func
+
+    # 调用 add(1, 2)
+    result = interpreter._call_function_with_args(func, [1, 2])
+
+    assert result == 3
+
+
+def test_function_call_type_mismatch_raises():
+    """测试函数调用参数类型不匹配抛出异常。"""
+    from jass_runner.interpreter.interpreter import Interpreter
+    from jass_runner.parser.ast_nodes import FunctionDecl, Parameter
+
+    interpreter = Interpreter()
+
+    # 定义函数: function foo takes integer x returns nothing
+    func = FunctionDecl(
+        name='foo',
+        parameters=[Parameter(name='x', type='integer', line=1, column=1)],
+        return_type='nothing',
+        line=1,
+        column=1,
+        body=[]
+    )
+
+    # 调用 foo("hello") - 应该抛出类型错误
+    with pytest.raises(JassTypeError):
+        interpreter._call_function_with_args(func, ['hello'])

@@ -161,6 +161,12 @@ class Evaluator:
         返回：
             运算结果
         """
+        # 处理None值：将None视为0（向后兼容）
+        if left is None:
+            left = 0
+        if right is None:
+            right = 0
+
         # 算术运算符
         if operator == '+':
             return left + right
@@ -169,7 +175,10 @@ class Evaluator:
         elif operator == '*':
             return left * right
         elif operator == '/':
-            # JASS中除法返回实数
+            # JASS中除法：如果两个操作数都是整数，返回整数（整除）
+            # 如果任一操作数是实数，返回实数
+            if isinstance(left, int) and isinstance(right, int):
+                return left // right
             return left / right
         # 比较运算符
         elif operator == '==':

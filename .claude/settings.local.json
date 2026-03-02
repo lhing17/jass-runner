@@ -21,6 +21,7 @@
       "Bash(git branch -d:*)",
       "Bash(git worktree remove:*)",
       "Bash(cat:*)",
+      "Bash(* > *)",
       "Bash(python3 -m:*)",
       "Bash(python3:*)",
       "Bash(grep -l:*)",
@@ -39,7 +40,8 @@
       "Bash(git -C D:HLjass-runner log --oneline -10)",
       "Bash(git log -1 --oneline --show-signature)",
       "Bash(move testscoroutinetest_imports.py testscoroutinetest_coroutine_imports.py)",
-      "Bash(move:*)"
+      "Bash(move:*)",
+      "Bash(git stash:*)"
     ]
   }
 }

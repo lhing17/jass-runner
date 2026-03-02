@@ -27,6 +27,7 @@ class TypeChecker:
         1. 类型完全相同：允许
         2. 目标类型在转换规则中且源类型在允许列表中：允许
         3. handle子类型可赋值给handle父类型：允许
+        4. nothing类型（None）可以赋值给任何类型（未初始化）
 
         参数：
             source_type: 源类型名称
@@ -37,6 +38,10 @@ class TypeChecker:
         """
         # 类型完全相同
         if source_type == target_type:
+            return True
+
+        # nothing类型（None）可以赋值给任何类型
+        if source_type == 'nothing':
             return True
 
         # 检查handle子类型协变
