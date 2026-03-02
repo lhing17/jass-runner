@@ -6,7 +6,7 @@
 import logging
 from typing import Optional, Callable
 from .base import NativeFunction
-from .handle import Group, Unit
+from .handle import Group, Unit, Player
 
 logger = logging.getLogger(__name__)
 
@@ -351,3 +351,55 @@ class BlzGroupUnitAt(NativeFunction):
         unit = handle_manager.get_unit(unit_id)
 
         return unit
+
+
+class GroupEnumUnitsOfPlayer(NativeFunction):
+    """枚举指定玩家的所有单位并添加到组。
+
+    对应JASS native函数: void GroupEnumUnitsOfPlayer(group whichGroup, player whichPlayer, boolexpr filter)
+
+    注意: 在真实JASS中，filter是boolexpr类型（条件表达式）。
+    这里我们使用Python的Callable来模拟。
+    """
+
+    @property
+    def name(self) -> str:
+        """获取函数名称。"""
+        return "GroupEnumUnitsOfPlayer"
+
+    def execute(self, state_context, group: Group, player: Player,
+                filter_func: Optional[Callable[['Unit'], bool]] = None):
+        """执行GroupEnumUnitsOfPlayer native函数。
+
+        参数：
+            state_context: 状态上下文
+            group: 目标单位组
+            player: 要枚举的玩家
+            filter_func: 可选的过滤函数，接收unit参数返回bool
+        """
+        if group is None:
+            logger.warning("[GroupEnumUnitsOfPlayer] 组为None")
+            return
+
+        if player is None:
+            logger.warning("[GroupEnumUnitsOfPlayer] 玩家为None")
+            return
+
+        handle_manager = state_context.handle_manager
+
+        # 先清空组
+        group.clear()
+
+        # 获取该玩家的所有单位
+        unit_ids = handle_manager.enum_units_of_player(player.player_id)
+
+        added_count = 0
+        for unit_id in unit_ids:
+            unit = handle_manager.get_unit(unit_id)
+            if unit and unit.is_alive():
+                # 应用过滤器（如果有）
+                if filter_func is None or filter_func(unit):
+                    group.add_unit(unit)
+                    added_count += 1
+
+        logger.debug(f"[GroupEnumUnitsOfPlayer] 玩家{player.player_id}的{added_count}个单位添加到组{group.id}")
