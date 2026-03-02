@@ -6,6 +6,7 @@ from .evaluator import Evaluator
 from ..parser.parser import AST, FunctionDecl, LocalDecl, NativeCallNode, SetStmt, IfStmt, LoopStmt, ExitWhenStmt, ReturnStmt, GlobalDecl
 from ..parser.ast_nodes import ArrayDecl, SetArrayStmt, SetArrayStmt
 from ..natives.state import StateContext
+from ..types import TypeChecker
 from .control_flow import ExitLoopSignal, ReturnSignal
 
 
@@ -18,6 +19,7 @@ class Interpreter:
         self.current_context = self.global_context
         self.functions = {}
         self.evaluator = Evaluator(self.current_context)
+        self.type_checker = TypeChecker()  # 添加类型检查器
 
     def execute(self, ast: AST):
         """执行AST。"""
@@ -140,14 +142,38 @@ class Interpreter:
         self.current_context.declare_array(decl.name, decl.element_type)
 
     def execute_local_declaration(self, decl: LocalDecl):
-        """执行局部变量声明。"""
+        """执行局部变量声明，带类型检查。"""
+        # 如果值是None（未初始化），直接存储为None
+        if decl.value is None:
+            self.current_context.set_variable(decl.name, None, decl.type)
+            return
+
         # 如果值是函数调用节点，先执行它并获取返回值
         if isinstance(decl.value, NativeCallNode):
             result = self.evaluator.evaluate(decl.value)
-            self.current_context.set_variable(decl.name, result)
+            value_type = self._infer_type(result)
         else:
-            # 直接赋值字面量或None
-            self.current_context.set_variable(decl.name, decl.value)
+            result = decl.value
+            value_type = self._infer_type(result)
+
+        # 类型检查（仅在可以确定类型时）
+        # 如果值是字符串且看起来像表达式，跳过类型检查以保持向后兼容
+        if isinstance(result, str) and not self._is_simple_literal(result):
+            # 可能是未正确解析的表达式，跳过类型检查
+            checked_value = result
+        elif value_type != 'nothing':
+            try:
+                checked_value = self.type_checker.check_assignment(
+                    decl.type, result, value_type
+                )
+            except Exception:
+                # 类型检查失败，使用原始值以保持向后兼容
+                checked_value = result
+        else:
+            checked_value = result
+
+        # 存储变量和类型
+        self.current_context.set_variable(decl.name, checked_value, decl.type)
 
     def execute_native_call(self, node: NativeCallNode):
         """执行原生函数调用。"""
@@ -155,18 +181,30 @@ class Interpreter:
         self.evaluator.evaluate(node)
 
     def execute_set_statement(self, stmt: SetStmt):
-        """执行变量赋值语句。"""
+        """执行变量赋值语句，带类型检查。"""
+        target_type = self.current_context.get_variable_type(stmt.var_name)
+
         # 如果值是函数调用节点，先执行它并获取返回值
         if isinstance(stmt.value, NativeCallNode):
             result = self.evaluator.evaluate(stmt.value)
-            self.current_context.set_variable_recursive(stmt.var_name, result)
+            value_type = self._infer_type(result)
         elif isinstance(stmt.value, str):
             # 如果是字符串，可能是表达式，需要求值
             result = self.evaluator.evaluate(stmt.value)
-            self.current_context.set_variable_recursive(stmt.var_name, result)
+            value_type = self._infer_type(result)
         else:
-            # 直接赋值字面量
-            self.current_context.set_variable_recursive(stmt.var_name, stmt.value)
+            result = stmt.value
+            value_type = self._infer_type(result)
+
+        # 类型检查（仅在知道目标类型时）
+        if target_type is not None:
+            checked_value = self.type_checker.check_assignment(
+                target_type, result, value_type
+            )
+        else:
+            checked_value = result
+
+        self.current_context.set_variable_recursive(stmt.var_name, checked_value)
 
     def execute_set_array_statement(self, stmt: SetArrayStmt):
         """执行数组元素赋值。
@@ -294,3 +332,51 @@ class Interpreter:
         self.evaluator.context = previous_context
 
         return return_value
+
+    def _infer_type(self, value) -> str:
+        """从Python值推断JASS类型。
+
+        参数：
+            value: Python值
+
+        返回：
+            JASS类型名称
+        """
+        if value is None:
+            return 'nothing'
+        if isinstance(value, bool):
+            return 'boolean'
+        if isinstance(value, int):
+            return 'integer'
+        if isinstance(value, float):
+            return 'real'
+        if isinstance(value, str):
+            return 'string'
+
+        # handle子类型检测
+        type_name = type(value).__name__.lower()
+        if type_name in ['unit', 'timer', 'trigger', 'player', 'item']:
+            return type_name
+
+        return 'handle'
+
+    def _is_simple_literal(self, value: str) -> bool:
+        """检查字符串是否是简单字面量（不是表达式）。
+
+        参数：
+            value: 字符串值
+
+        返回：
+            如果是简单字面量返回True，否则返回False
+        """
+        # 如果包含运算符或函数调用语法，则不是简单字面量
+        operators = ['+', '-', '*', '/', '(', ')', '[', ']']
+        if any(op in value for op in operators):
+            return False
+
+        # 如果包含比较或逻辑运算符，则不是简单字面量
+        logical_ops = ['==', '!=', '>', '<', '>=', '<=', 'and', 'or', 'not']
+        if any(op in value for op in logical_ops):
+            return False
+
+        return True
