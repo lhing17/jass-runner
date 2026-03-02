@@ -3,7 +3,7 @@
 
 import pytest
 from jass_runner.natives.state import StateContext
-from jass_runner.natives.ability_natives import UnitAddAbility, UnitRemoveAbility, GetUnitAbilityLevel, SetUnitAbilityLevel
+from jass_runner.natives.ability_natives import UnitAddAbility, UnitRemoveAbility, GetUnitAbilityLevel, SetUnitAbilityLevel, IncUnitAbilityLevel, DecUnitAbilityLevel
 
 
 class TestUnitAddAbility:
@@ -112,3 +112,64 @@ class TestSetUnitAbilityLevel:
         result = set_level.execute(state, unit, 1097699445, 3)
 
         assert result is False
+
+
+class TestIncUnitAbilityLevel:
+    """测试IncUnitAbilityLevel native函数。"""
+
+    def test_increment_ability_level(self):
+        """测试增加技能等级。"""
+        state = StateContext()
+        add_ability = UnitAddAbility()
+        inc_level = IncUnitAbilityLevel()
+        unit = state.handle_manager.create_unit("hfoo", 0, 100.0, 200.0, 0.0)
+        ability_id = 1097699445
+
+        add_ability.execute(state, unit, ability_id)
+        result = inc_level.execute(state, unit, ability_id)
+
+        assert result is True
+        assert unit.get_ability_level(ability_id) == 2
+
+    def test_increment_nonexistent_ability_fails(self):
+        """测试增加不存在技能等级失败。"""
+        state = StateContext()
+        inc_level = IncUnitAbilityLevel()
+        unit = state.handle_manager.create_unit("hfoo", 0, 100.0, 200.0, 0.0)
+
+        result = inc_level.execute(state, unit, 1097699445)
+
+        assert result is False
+
+
+class TestDecUnitAbilityLevel:
+    """测试DecUnitAbilityLevel native函数。"""
+
+    def test_decrement_ability_level(self):
+        """测试降低技能等级。"""
+        state = StateContext()
+        add_ability = UnitAddAbility()
+        set_level = SetUnitAbilityLevel()
+        dec_level = DecUnitAbilityLevel()
+        unit = state.handle_manager.create_unit("hfoo", 0, 100.0, 200.0, 0.0)
+        ability_id = 1097699445
+
+        add_ability.execute(state, unit, ability_id)
+        set_level.execute(state, unit, ability_id, 3)
+        result = dec_level.execute(state, unit, ability_id)
+
+        assert result is True
+        assert unit.get_ability_level(ability_id) == 2
+
+    def test_decrement_at_level_one_fails(self):
+        """测试在等级1时降低技能等级失败。"""
+        state = StateContext()
+        add_ability = UnitAddAbility()
+        dec_level = DecUnitAbilityLevel()
+        unit = state.handle_manager.create_unit("hfoo", 0, 100.0, 200.0, 0.0)
+        ability_id = 1097699445
+
+        add_ability.execute(state, unit, ability_id)
+        result = dec_level.execute(state, unit, ability_id)
+
+        assert result is False  # 等级1时不能降低

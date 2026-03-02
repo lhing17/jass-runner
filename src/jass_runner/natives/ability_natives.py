@@ -159,3 +159,81 @@ class SetUnitAbilityLevel(NativeFunction):
             logger.info(f"[SetUnitAbilityLevel] 单位{unit.id}技能{ability_id}等级设为{level}")
 
         return result
+
+
+class IncUnitAbilityLevel(NativeFunction):
+    """增加单位技能等级。
+
+    对应JASS native函数: boolean IncUnitAbilityLevel(unit whichUnit, integer abilityId)
+    """
+
+    @property
+    def name(self) -> str:
+        """获取函数名称。"""
+        return "IncUnitAbilityLevel"
+
+    def execute(self, state_context, unit: Unit, ability_id: int) -> bool:
+        """执行IncUnitAbilityLevel native函数。
+
+        参数：
+            state_context: 状态上下文
+            unit: 目标单位
+            ability_id: 技能ID
+
+        返回：
+            增加成功返回True，否则返回False
+        """
+        if unit is None:
+            logger.warning("[IncUnitAbilityLevel] 单位为None")
+            return False
+
+        if not isinstance(unit, Unit):
+            logger.warning("[IncUnitAbilityLevel] 参数类型错误")
+            return False
+
+        result = unit.inc_ability_level(ability_id)
+
+        if result:
+            new_level = unit.get_ability_level(ability_id)
+            logger.info(f"[IncUnitAbilityLevel] 单位{unit.id}技能{ability_id}等级增加到{new_level}")
+
+        return result
+
+
+class DecUnitAbilityLevel(NativeFunction):
+    """降低单位技能等级。
+
+    对应JASS native函数: boolean DecUnitAbilityLevel(unit whichUnit, integer abilityId)
+    """
+
+    @property
+    def name(self) -> str:
+        """获取函数名称。"""
+        return "DecUnitAbilityLevel"
+
+    def execute(self, state_context, unit: Unit, ability_id: int) -> bool:
+        """执行DecUnitAbilityLevel native函数。
+
+        参数：
+            state_context: 状态上下文
+            unit: 目标单位
+            ability_id: 技能ID
+
+        返回：
+            降低成功返回True，否则返回False（等级已为1或技能不存在）
+        """
+        if unit is None:
+            logger.warning("[DecUnitAbilityLevel] 单位为None")
+            return False
+
+        if not isinstance(unit, Unit):
+            logger.warning("[DecUnitAbilityLevel] 参数类型错误")
+            return False
+
+        result = unit.dec_ability_level(ability_id)
+
+        if result:
+            new_level = unit.get_ability_level(ability_id)
+            logger.info(f"[DecUnitAbilityLevel] 单位{unit.id}技能{ability_id}等级降低到{new_level}")
+
+        return result

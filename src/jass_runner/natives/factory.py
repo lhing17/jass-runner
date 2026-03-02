@@ -36,7 +36,7 @@ from .unit_property_natives import SetUnitState, GetUnitX, GetUnitY, GetUnitLoc,
 from .unit_position_natives import SetUnitPosition, SetUnitPositionLoc, CreateUnitAtLoc, GetUnitFacing, SetUnitFacing, CreateUnitAtLocByName
 from .location import LocationConstructor, RemoveLocation
 from .group_natives import CreateGroup, DestroyGroup, GroupAddUnit, GroupRemoveUnit, GroupClear, FirstOfGroup, IsUnitInGroup, ForGroup
-from .ability_natives import UnitAddAbility, UnitRemoveAbility, GetUnitAbilityLevel, SetUnitAbilityLevel
+from .ability_natives import UnitAddAbility, UnitRemoveAbility, GetUnitAbilityLevel, SetUnitAbilityLevel, IncUnitAbilityLevel, DecUnitAbilityLevel
 
 
 class NativeFactory:
@@ -166,5 +166,7 @@ class NativeFactory:
         registry.register(UnitRemoveAbility())
         registry.register(GetUnitAbilityLevel())
         registry.register(SetUnitAbilityLevel())
+        registry.register(IncUnitAbilityLevel())
+        registry.register(DecUnitAbilityLevel())
 
         return registry
