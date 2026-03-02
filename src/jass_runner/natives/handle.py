@@ -126,7 +126,9 @@ class Group(Handle):
         返回：
             如果添加成功返回True，单位已在组中返回False
         """
-        if not unit or not unit.is_alive():
+        if not isinstance(unit, Unit):
+            return False
+        if not unit.is_alive():
             return False
         if unit.id in self._units:
             return False
@@ -191,3 +193,8 @@ class Group(Handle):
             单位数量
         """
         return len(self._units)
+
+    def destroy(self):
+        """销毁单位组，清理所有单位引用。"""
+        self.clear()
+        super().destroy()
