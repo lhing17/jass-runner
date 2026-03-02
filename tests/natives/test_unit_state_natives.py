@@ -5,7 +5,7 @@
 
 import pytest
 from jass_runner.natives.state import StateContext
-from jass_runner.natives.unit_state_natives import GetWidgetLife, SetWidgetLife, UnitDamageTarget
+from jass_runner.natives.unit_state_natives import GetWidgetLife, SetWidgetLife, UnitDamageTarget, GetUnitLevel
 
 
 class TestGetWidgetLife:
@@ -106,3 +106,38 @@ class TestUnitDamageTarget:
 
         # 应该不报错
         damage_target.execute(state, None, None, 25.0, True, False, 0, 0, 0)
+
+
+class TestGetUnitLevel:
+    """测试GetUnitLevel native函数。"""
+
+    def test_get_unit_level_default(self):
+        """测试获取单位默认等级。"""
+        state = StateContext()
+        get_level = GetUnitLevel()
+
+        unit = state.handle_manager.create_unit("hfoo", 0, 100.0, 200.0, 0.0)
+        # 默认等级为1
+        result = get_level.execute(state, unit)
+
+        assert result == 1
+
+    def test_get_unit_level_custom(self):
+        """测试获取自定义等级。"""
+        state = StateContext()
+        get_level = GetUnitLevel()
+
+        unit = state.handle_manager.create_unit("hfoo", 0, 100.0, 200.0, 0.0)
+        unit.level = 5
+
+        result = get_level.execute(state, unit)
+        assert result == 5
+
+    def test_get_unit_level_of_none(self):
+        """测试获取None等级返回0。"""
+        state = StateContext()
+        get_level = GetUnitLevel()
+
+        result = get_level.execute(state, None)
+
+        assert result == 0

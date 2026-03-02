@@ -136,3 +136,33 @@ class UnitDamageTarget(NativeFunction):
             logger.debug(f"[UnitDamageTarget] {attacker.id} 对 {target.id} 造成 {amount} 点伤害")
 
         return True
+
+
+class GetUnitLevel(NativeFunction):
+    """获取单位等级。
+
+    对应JASS native函数: integer GetUnitLevel(unit whichUnit)
+    """
+
+    @property
+    def name(self) -> str:
+        """获取函数名称。"""
+        return "GetUnitLevel"
+
+    def execute(self, state_context, unit) -> int:
+        """执行GetUnitLevel native函数。
+
+        参数：
+            state_context: 状态上下文
+            unit: 单位对象
+
+        返回：
+            单位等级，如果单位为None返回0
+        """
+        if unit is None:
+            return 0
+
+        if hasattr(unit, 'level'):
+            return int(unit.level)
+
+        return 0
