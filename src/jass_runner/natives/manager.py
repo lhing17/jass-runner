@@ -218,3 +218,81 @@ class HandleManager:
         if isinstance(handle, Group):
             return handle
         return None
+
+    def enum_units_of_player(self, player_id: int) -> List[str]:
+        """枚举指定玩家的所有单位。
+
+        参数：
+            player_id: 玩家ID
+
+        返回：
+            单位ID列表
+        """
+        result = []
+        type_name = "unit"
+
+        if type_name not in self._type_index:
+            return result
+
+        for handle_id in self._type_index[type_name]:
+            handle = self._handles.get(handle_id)
+            if handle and handle.is_alive() and isinstance(handle, Unit):
+                if handle.player_id == player_id:
+                    result.append(handle_id)
+
+        return result
+
+    def enum_units_in_range(self, x: float, y: float, radius: float) -> List[str]:
+        """枚举指定范围内的所有单位。
+
+        参数：
+            x: 中心X坐标
+            y: 中心Y坐标
+            radius: 半径
+
+        返回：
+            单位ID列表
+        """
+        result = []
+        type_name = "unit"
+
+        if type_name not in self._type_index:
+            return result
+
+        radius_sq = radius * radius
+
+        for handle_id in self._type_index[type_name]:
+            handle = self._handles.get(handle_id)
+            if handle and handle.is_alive() and isinstance(handle, Unit):
+                # 计算距离平方（避免开方）
+                dx = handle.x - x
+                dy = handle.y - y
+                dist_sq = dx * dx + dy * dy
+
+                if dist_sq <= radius_sq:
+                    result.append(handle_id)
+
+        return result
+
+    def enum_units_of_type(self, unit_type: str) -> List[str]:
+        """枚举指定类型的所有单位。
+
+        参数：
+            unit_type: 单位类型代码（如'hfoo'）
+
+        返回：
+            单位ID列表
+        """
+        result = []
+        type_name = "unit"
+
+        if type_name not in self._type_index:
+            return result
+
+        for handle_id in self._type_index[type_name]:
+            handle = self._handles.get(handle_id)
+            if handle and handle.is_alive() and isinstance(handle, Unit):
+                if handle.unit_type == unit_type:
+                    result.append(handle_id)
+
+        return result
