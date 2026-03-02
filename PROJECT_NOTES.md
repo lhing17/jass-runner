@@ -965,5 +965,24 @@ jass-runner/
   - 集成测试: 完整的单位生命周期工作流
 - **影响**: 所有 520 个测试通过，集成测试可以运行完整 JASS 代码
 
+#### 45. 单位组Native函数实现完成 (2026-03-02)
+- **新增组件**:
+  - `Group` 类 - 单位组管理（添加、移除、遍历）
+  - `group_natives.py` - 8个单位组Native函数
+- **新增Native函数**:
+  - 生命周期: CreateGroup, DestroyGroup
+  - 基本操作: GroupAddUnit, GroupRemoveUnit, GroupClear
+  - 查询: FirstOfGroup, IsUnitInGroup
+  - 遍历: ForGroup
+- **修改文件**:
+  - `src/jass_runner/natives/handle.py` - 添加Group类
+  - `src/jass_runner/natives/manager.py` - 添加Group管理支持
+  - `src/jass_runner/natives/group_natives.py` - 新建，实现8个函数
+  - `src/jass_runner/natives/factory.py` - 注册新函数
+- **测试覆盖**:
+  - 单元测试: Group类、8个native函数
+  - 集成测试: 完整单位组工作流
+- **测试统计**: 538个测试通过
+
 ---
 *最后更新: 2026-03-02*
