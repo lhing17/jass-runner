@@ -3,7 +3,7 @@
 
 import pytest
 from jass_runner.natives.state import StateContext
-from jass_runner.natives.ability_natives import UnitAddAbility, UnitRemoveAbility, GetUnitAbilityLevel, SetUnitAbilityLevel, IncUnitAbilityLevel, DecUnitAbilityLevel
+from jass_runner.natives.ability_natives import UnitAddAbility, UnitRemoveAbility, GetUnitAbilityLevel, SetUnitAbilityLevel, IncUnitAbilityLevel, DecUnitAbilityLevel, UnitMakeAbilityPermanent
 
 
 class TestUnitAddAbility:
@@ -173,3 +173,46 @@ class TestDecUnitAbilityLevel:
         result = dec_level.execute(state, unit, ability_id)
 
         assert result is False  # 等级1时不能降低
+
+
+class TestUnitMakeAbilityPermanent:
+    """测试UnitMakeAbilityPermanent native函数。"""
+
+    def test_make_ability_permanent(self):
+        """测试使技能永久。"""
+        state = StateContext()
+        add_ability = UnitAddAbility()
+        make_permanent = UnitMakeAbilityPermanent()
+        unit = state.handle_manager.create_unit("hfoo", 0, 100.0, 200.0, 0.0)
+        ability_id = 1097699445
+
+        add_ability.execute(state, unit, ability_id)
+        result = make_permanent.execute(state, unit, ability_id, True)
+
+        assert result is True
+        assert unit.is_ability_permanent(ability_id) is True
+
+    def test_make_ability_non_permanent(self):
+        """测试取消技能永久。"""
+        state = StateContext()
+        add_ability = UnitAddAbility()
+        make_permanent = UnitMakeAbilityPermanent()
+        unit = state.handle_manager.create_unit("hfoo", 0, 100.0, 200.0, 0.0)
+        ability_id = 1097699445
+
+        add_ability.execute(state, unit, ability_id)
+        make_permanent.execute(state, unit, ability_id, True)
+        result = make_permanent.execute(state, unit, ability_id, False)
+
+        assert result is True
+        assert unit.is_ability_permanent(ability_id) is False
+
+    def test_make_nonexistent_ability_permanent_fails(self):
+        """测试使不存在的技能永久失败。"""
+        state = StateContext()
+        make_permanent = UnitMakeAbilityPermanent()
+        unit = state.handle_manager.create_unit("hfoo", 0, 100.0, 200.0, 0.0)
+
+        result = make_permanent.execute(state, unit, 1097699445, True)
+
+        assert result is False

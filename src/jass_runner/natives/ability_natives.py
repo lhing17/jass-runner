@@ -237,3 +237,46 @@ class DecUnitAbilityLevel(NativeFunction):
             logger.info(f"[DecUnitAbilityLevel] 单位{unit.id}技能{ability_id}等级降低到{new_level}")
 
         return result
+
+
+class UnitMakeAbilityPermanent(NativeFunction):
+    """设置单位技能是否为永久技能。
+
+    对应JASS native函数: boolean UnitMakeAbilityPermanent(unit whichUnit, integer abilityId, boolean permanent)
+
+    注意: 永久技能通常不会被某些游戏机制（如变身结束）移除。
+    在当前模拟实现中，我们只是记录这个状态。
+    """
+
+    @property
+    def name(self) -> str:
+        """获取函数名称。"""
+        return "UnitMakeAbilityPermanent"
+
+    def execute(self, state_context, unit: Unit, ability_id: int, permanent: bool) -> bool:
+        """执行UnitMakeAbilityPermanent native函数。
+
+        参数：
+            state_context: 状态上下文
+            unit: 目标单位
+            ability_id: 技能ID
+            permanent: 是否设为永久
+
+        返回：
+            设置成功返回True，否则返回False
+        """
+        if unit is None:
+            logger.warning("[UnitMakeAbilityPermanent] 单位为None")
+            return False
+
+        if not isinstance(unit, Unit):
+            logger.warning("[UnitMakeAbilityPermanent] 参数类型错误")
+            return False
+
+        result = unit.make_ability_permanent(ability_id, permanent)
+
+        if result:
+            status = "永久" if permanent else "非永久"
+            logger.info(f"[UnitMakeAbilityPermanent] 单位{unit.id}技能{ability_id}设为{status}")
+
+        return result
