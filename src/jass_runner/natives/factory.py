@@ -33,7 +33,7 @@ from .trigger_register_event_natives import (
 )
 from .async_natives import TriggerSleepAction, ExecuteFunc
 from .unit_property_natives import SetUnitState, GetUnitX, GetUnitY, GetUnitLoc
-from .unit_position_natives import SetUnitPosition, SetUnitPositionLoc, CreateUnitAtLoc
+from .unit_position_natives import SetUnitPosition, SetUnitPositionLoc, CreateUnitAtLoc, GetUnitFacing, SetUnitFacing
 
 
 class NativeFactory:
@@ -138,5 +138,7 @@ class NativeFactory:
         registry.register(SetUnitPosition())
         registry.register(SetUnitPositionLoc())
         registry.register(CreateUnitAtLoc())
+        registry.register(GetUnitFacing())
+        registry.register(SetUnitFacing())
 
         return registry

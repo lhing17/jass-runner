@@ -106,3 +106,48 @@ class CreateUnitAtLoc(NativeFunction):
 
         logger.info(f"[CreateUnitAtLoc] 为玩家 {player_id} 在 {loc} 创建 {unit_type_str}，单位 ID: {unit.id}")
         return unit
+
+
+class GetUnitFacing(NativeFunction):
+    """获取单位朝向角度。"""
+
+    @property
+    def name(self) -> str:
+        return "GetUnitFacing"
+
+    def execute(self, state_context, unit: Unit) -> float:
+        """执行 GetUnitFacing native 函数。
+
+        参数：
+            state_context: 状态上下文
+            unit: 单位对象
+
+        返回：
+            float: 单位朝向角度（度）
+        """
+        if unit is None:
+            return 0.0
+        return unit.facing
+
+
+class SetUnitFacing(NativeFunction):
+    """设置单位朝向角度。"""
+
+    @property
+    def name(self) -> str:
+        return "SetUnitFacing"
+
+    def execute(self, state_context, unit: Unit, facing_angle: float):
+        """执行 SetUnitFacing native 函数。
+
+        参数：
+            state_context: 状态上下文
+            unit: 单位对象
+            facing_angle: 新的朝向角度（度）
+        """
+        if unit is None:
+            logger.warning("[SetUnitFacing] 尝试设置 None 单位的朝向")
+            return
+
+        unit.facing = float(facing_angle)
+        logger.debug(f"[SetUnitFacing] 单位 {unit.id} 朝向设置为 {facing_angle}")

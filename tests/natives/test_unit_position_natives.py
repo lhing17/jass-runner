@@ -146,3 +146,70 @@ class TestCreateUnitAtLoc:
         # 应该返回 None
         unit = create_unit_at_loc.execute(MockStateContext(), 0, 1213484355, None, 90.0)
         assert unit is None
+
+
+class TestGetUnitFacing:
+    """测试 GetUnitFacing native 函数。"""
+
+    def test_get_unit_facing(self):
+        """测试 GetUnitFacing native 函数。"""
+        from jass_runner.natives.unit_position_natives import GetUnitFacing
+        from jass_runner.natives.manager import HandleManager
+
+        manager = HandleManager()
+        unit = manager.create_unit("hfoo", 0, 100.0, 200.0, 45.0)
+
+        get_unit_facing = GetUnitFacing()
+
+        class MockStateContext:
+            def __init__(self):
+                self.handle_manager = manager
+
+        result = get_unit_facing.execute(MockStateContext(), unit)
+        assert result == 45.0
+
+    def test_get_unit_facing_with_none_unit(self):
+        """测试 GetUnitFacing 处理 None 单位。"""
+        from jass_runner.natives.unit_position_natives import GetUnitFacing
+
+        get_unit_facing = GetUnitFacing()
+
+        class MockStateContext:
+            pass
+
+        # 应该返回 0.0
+        result = get_unit_facing.execute(MockStateContext(), None)
+        assert result == 0.0
+
+
+class TestSetUnitFacing:
+    """测试 SetUnitFacing native 函数。"""
+
+    def test_set_unit_facing(self):
+        """测试 SetUnitFacing native 函数。"""
+        from jass_runner.natives.unit_position_natives import SetUnitFacing
+        from jass_runner.natives.manager import HandleManager
+
+        manager = HandleManager()
+        unit = manager.create_unit("hfoo", 0, 100.0, 200.0, 0.0)
+
+        set_unit_facing = SetUnitFacing()
+
+        class MockStateContext:
+            def __init__(self):
+                self.handle_manager = manager
+
+        set_unit_facing.execute(MockStateContext(), unit, 180.0)
+        assert unit.facing == 180.0
+
+    def test_set_unit_facing_with_none_unit(self):
+        """测试 SetUnitFacing 处理 None 单位。"""
+        from jass_runner.natives.unit_position_natives import SetUnitFacing
+
+        set_unit_facing = SetUnitFacing()
+
+        class MockStateContext:
+            pass
+
+        # 应该不抛出异常
+        set_unit_facing.execute(MockStateContext(), None, 180.0)
