@@ -48,6 +48,7 @@ class Unit(Handle):
         self.player_id = player_id
         self.x = x
         self.y = y
+        self.z = 0.0  # Z轴高度，默认为0
         self.facing = facing
         self.life = 100.0
         self.max_life = 100.0

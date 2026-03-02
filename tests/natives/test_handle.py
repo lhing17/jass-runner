@@ -137,3 +137,21 @@ def test_item_destroy():
     item.destroy()
     assert item.alive is False
     assert item.is_alive() is False
+
+
+def test_unit_has_z_coordinate():
+    """测试 Unit 对象有 z 坐标属性。"""
+    from jass_runner.natives.handle import Unit
+
+    unit = Unit("unit_001", "hfoo", 0, 100.0, 200.0, 0.0)
+    assert hasattr(unit, 'z')
+    assert unit.z == 0.0  # 默认 z 为 0
+
+
+def test_unit_with_custom_z():
+    """测试可以设置 Unit 的 z 坐标。"""
+    from jass_runner.natives.handle import Unit
+
+    unit = Unit("unit_001", "hfoo", 0, 100.0, 200.0, 0.0)
+    unit.z = 50.0
+    assert unit.z == 50.0
