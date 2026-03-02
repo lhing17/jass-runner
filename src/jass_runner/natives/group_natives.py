@@ -283,3 +283,71 @@ class ForGroup(NativeFunction):
                     logger.error(f"[ForGroup] 回调执行错误: {e}")
 
         logger.debug(f"[ForGroup] 遍历组{group.id}完成，处理了{len(unit_ids)}个单位")
+
+
+class BlzGroupGetSize(NativeFunction):
+    """获取单位组的大小（单位数量）。
+
+    对应JASS native函数: integer BlzGroupGetSize(group whichGroup)
+
+    这是暴雪扩展函数（Blz前缀），用于获取组内单位数量。
+    """
+
+    @property
+    def name(self) -> str:
+        """获取函数名称。"""
+        return "BlzGroupGetSize"
+
+    def execute(self, state_context, group: Group) -> int:
+        """执行BlzGroupGetSize native函数。
+
+        参数：
+            state_context: 状态上下文
+            group: 单位组
+
+        返回：
+            组内单位数量，如果组为None返回0
+        """
+        if group is None:
+            return 0
+
+        return group.get_size()
+
+
+class BlzGroupUnitAt(NativeFunction):
+    """获取单位组中指定索引的单位。
+
+    对应JASS native函数: unit BlzGroupUnitAt(group whichGroup, integer index)
+
+    这是暴雪扩展函数（Blz前缀），用于按索引访问组内单位。
+    注意: 由于set是无序的，索引位置不保证稳定。
+    """
+
+    @property
+    def name(self) -> str:
+        """获取函数名称。"""
+        return "BlzGroupUnitAt"
+
+    def execute(self, state_context, group: Group, index: int) -> Optional[Unit]:
+        """执行BlzGroupUnitAt native函数。
+
+        参数：
+            state_context: 状态上下文
+            group: 单位组
+            index: 索引位置（从0开始）
+
+        返回：
+            单位对象，如果索引无效或组为None返回None
+        """
+        if group is None:
+            return None
+
+        unit_id = group.unit_at(index)
+        if unit_id is None:
+            return None
+
+        # 通过HandleManager获取单位对象
+        handle_manager = state_context.handle_manager
+        unit = handle_manager.get_unit(unit_id)
+
+        return unit
