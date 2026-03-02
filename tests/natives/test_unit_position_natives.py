@@ -1,0 +1,103 @@
+"""单位位置 native 函数测试。
+
+此模块包含 SetUnitPosition 和 SetUnitPositionLoc native 函数的测试。
+"""
+
+import pytest
+from jass_runner.natives.handle import Unit
+from jass_runner.natives.location import Location
+
+
+class TestSetUnitPosition:
+    """测试 SetUnitPosition native 函数。"""
+
+    def test_set_unit_position(self):
+        """测试 SetUnitPosition native 函数。"""
+        from jass_runner.natives.unit_position_natives import SetUnitPosition
+        from jass_runner.natives.manager import HandleManager
+
+        manager = HandleManager()
+        unit = manager.create_unit("hfoo", 0, 100.0, 200.0, 0.0)
+
+        set_unit_position = SetUnitPosition()
+
+        class MockStateContext:
+            def __init__(self):
+                self.handle_manager = manager
+
+        set_unit_position.execute(MockStateContext(), unit, 300.0, 400.0)
+
+        assert unit.x == 300.0
+        assert unit.y == 400.0
+
+    def test_set_unit_position_with_none_unit(self):
+        """测试 SetUnitPosition 处理 None 单位。"""
+        from jass_runner.natives.unit_position_natives import SetUnitPosition
+
+        set_unit_position = SetUnitPosition()
+
+        class MockStateContext:
+            pass
+
+        # 应该不抛出异常
+        set_unit_position.execute(MockStateContext(), None, 300.0, 400.0)
+
+
+class TestSetUnitPositionLoc:
+    """测试 SetUnitPositionLoc native 函数。"""
+
+    def test_set_unit_position_loc(self):
+        """测试 SetUnitPositionLoc native 函数。"""
+        from jass_runner.natives.unit_position_natives import SetUnitPositionLoc
+        from jass_runner.natives.manager import HandleManager
+
+        manager = HandleManager()
+        unit = manager.create_unit("hfoo", 0, 100.0, 200.0, 0.0)
+
+        set_unit_position_loc = SetUnitPositionLoc()
+        loc = Location(500.0, 600.0, 50.0)
+
+        class MockStateContext:
+            def __init__(self):
+                self.handle_manager = manager
+
+        set_unit_position_loc.execute(MockStateContext(), unit, loc)
+
+        assert unit.x == 500.0
+        assert unit.y == 600.0
+        assert unit.z == 50.0
+
+    def test_set_unit_position_loc_with_none_unit(self):
+        """测试 SetUnitPositionLoc 处理 None 单位。"""
+        from jass_runner.natives.unit_position_natives import SetUnitPositionLoc
+        from jass_runner.natives.location import Location
+
+        set_unit_position_loc = SetUnitPositionLoc()
+        loc = Location(500.0, 600.0)
+
+        class MockStateContext:
+            pass
+
+        # 应该不抛出异常
+        set_unit_position_loc.execute(MockStateContext(), None, loc)
+
+    def test_set_unit_position_loc_with_none_location(self):
+        """测试 SetUnitPositionLoc 处理 None Location。"""
+        from jass_runner.natives.unit_position_natives import SetUnitPositionLoc
+        from jass_runner.natives.manager import HandleManager
+
+        manager = HandleManager()
+        unit = manager.create_unit("hfoo", 0, 100.0, 200.0, 0.0)
+
+        set_unit_position_loc = SetUnitPositionLoc()
+
+        class MockStateContext:
+            def __init__(self):
+                self.handle_manager = manager
+
+        # 应该不抛出异常
+        set_unit_position_loc.execute(MockStateContext(), unit, None)
+
+        # 单位位置不应改变
+        assert unit.x == 100.0
+        assert unit.y == 200.0

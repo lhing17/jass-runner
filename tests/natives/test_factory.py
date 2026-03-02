@@ -124,9 +124,9 @@ def test_create_default_registry():
     assert player_func is not None
     assert player_func.name == "Player"
 
-    # 检查基础函数数量（7个基础 + 19个触发器 + 15个数学 + 2个异步 = 43）
+    # 检查基础函数数量（7个基础 + 19个触发器 + 15个数学 + 2个异步 + 6个单位属性 = 49）
     all_funcs = registry.get_all()
-    assert len(all_funcs) == 43
+    assert len(all_funcs) == 49
 
 
 def test_all_math_natives_registered():
