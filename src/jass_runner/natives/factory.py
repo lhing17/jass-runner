@@ -35,7 +35,7 @@ from .async_natives import TriggerSleepAction, ExecuteFunc
 from .unit_property_natives import SetUnitState, GetUnitX, GetUnitY, GetUnitLoc, GetUnitTypeId, GetUnitName
 from .unit_position_natives import SetUnitPosition, SetUnitPositionLoc, CreateUnitAtLoc, GetUnitFacing, SetUnitFacing, CreateUnitAtLocByName
 from .location import LocationConstructor, RemoveLocation
-from .group_natives import CreateGroup, DestroyGroup, GroupAddUnit, GroupRemoveUnit, GroupClear
+from .group_natives import CreateGroup, DestroyGroup, GroupAddUnit, GroupRemoveUnit, GroupClear, FirstOfGroup, IsUnitInGroup
 
 
 class NativeFactory:
@@ -156,5 +156,7 @@ class NativeFactory:
         registry.register(GroupAddUnit())
         registry.register(GroupRemoveUnit())
         registry.register(GroupClear())
+        registry.register(FirstOfGroup())
+        registry.register(IsUnitInGroup())
 
         return registry

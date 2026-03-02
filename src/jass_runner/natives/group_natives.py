@@ -4,6 +4,7 @@
 """
 
 import logging
+from typing import Optional
 from .base import NativeFunction
 from .handle import Group, Unit
 
@@ -172,3 +173,69 @@ class GroupClear(NativeFunction):
         logger.debug(f"[GroupClear] 组{group.id}已清空")
 
         return True
+
+
+class FirstOfGroup(NativeFunction):
+    """获取单位组中的第一个单位。
+
+    对应JASS native函数: unit FirstOfGroup(group whichGroup)
+
+    注意: 由于Python的set是无序的，"第一个"是任意的。
+    """
+
+    @property
+    def name(self) -> str:
+        """获取函数名称。"""
+        return "FirstOfGroup"
+
+    def execute(self, state_context, group: Group) -> Optional[Unit]:
+        """执行FirstOfGroup native函数。
+
+        参数：
+            state_context: 状态上下文
+            group: 单位组
+
+        返回：
+            组内第一个单位，如果组为空返回None
+        """
+        if group is None:
+            logger.warning("[FirstOfGroup] 组为None")
+            return None
+
+        first_unit_id = group.first()
+        if first_unit_id is None:
+            return None
+
+        # 通过HandleManager获取单位对象
+        handle_manager = state_context.handle_manager
+        unit = handle_manager.get_unit(first_unit_id)
+
+        return unit
+
+
+class IsUnitInGroup(NativeFunction):
+    """检查单位是否在单位组中。
+
+    对应JASS native函数: boolean IsUnitInGroup(unit whichUnit, group whichGroup)
+    """
+
+    @property
+    def name(self) -> str:
+        """获取函数名称。"""
+        return "IsUnitInGroup"
+
+    def execute(self, state_context, unit: Unit, group: Group) -> bool:
+        """执行IsUnitInGroup native函数。
+
+        参数：
+            state_context: 状态上下文
+            unit: 要检查的单位
+            group: 单位组
+
+        返回：
+            单位在组中返回True，否则返回False
+        """
+        if group is None or unit is None:
+            return False
+
+        return group.contains(unit)

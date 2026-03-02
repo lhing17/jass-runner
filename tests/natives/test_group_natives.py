@@ -2,7 +2,7 @@
 
 import pytest
 from jass_runner.natives.state import StateContext
-from jass_runner.natives.group_natives import CreateGroup, DestroyGroup, GroupAddUnit, GroupRemoveUnit, GroupClear
+from jass_runner.natives.group_natives import CreateGroup, DestroyGroup, GroupAddUnit, GroupRemoveUnit, GroupClear, FirstOfGroup, IsUnitInGroup
 
 
 class TestCreateGroup:
@@ -139,3 +139,75 @@ class TestGroupClear:
 
         assert result is True
         assert group.size() == 0
+
+
+class TestFirstOfGroup:
+    """测试FirstOfGroup native函数。"""
+
+    def test_first_of_group_returns_unit(self):
+        """测试FirstOfGroup返回组内第一个单位。"""
+        state = StateContext()
+        from jass_runner.natives.group_natives import CreateGroup, GroupAddUnit, FirstOfGroup
+
+        create_group = CreateGroup()
+        add_unit = GroupAddUnit()
+        first_of_group = FirstOfGroup()
+
+        group = create_group.execute(state)
+        unit = state.handle_manager.create_unit("hfoo", 0, 100.0, 200.0, 0.0)
+        add_unit.execute(state, group, unit)
+
+        result = first_of_group.execute(state, group)
+
+        assert result == unit
+
+    def test_first_of_empty_group_returns_none(self):
+        """测试空组返回None。"""
+        state = StateContext()
+        from jass_runner.natives.group_natives import CreateGroup, FirstOfGroup
+
+        create_group = CreateGroup()
+        first_of_group = FirstOfGroup()
+
+        group = create_group.execute(state)
+
+        result = first_of_group.execute(state, group)
+
+        assert result is None
+
+
+class TestIsUnitInGroup:
+    """测试IsUnitInGroup native函数。"""
+
+    def test_unit_in_group_returns_true(self):
+        """测试单位在组内返回True。"""
+        state = StateContext()
+        from jass_runner.natives.group_natives import CreateGroup, GroupAddUnit, IsUnitInGroup
+
+        create_group = CreateGroup()
+        add_unit = GroupAddUnit()
+        is_unit_in_group = IsUnitInGroup()
+
+        group = create_group.execute(state)
+        unit = state.handle_manager.create_unit("hfoo", 0, 100.0, 200.0, 0.0)
+        add_unit.execute(state, group, unit)
+
+        result = is_unit_in_group.execute(state, unit, group)
+
+        assert result is True
+
+    def test_unit_not_in_group_returns_false(self):
+        """测试单位不在组内返回False。"""
+        state = StateContext()
+        from jass_runner.natives.group_natives import CreateGroup, IsUnitInGroup
+
+        create_group = CreateGroup()
+        is_unit_in_group = IsUnitInGroup()
+
+        group = create_group.execute(state)
+        unit = state.handle_manager.create_unit("hfoo", 0, 100.0, 200.0, 0.0)
+        # 不添加到组
+
+        result = is_unit_in_group.execute(state, unit, group)
+
+        assert result is False
