@@ -7,7 +7,7 @@ import pytest
 from jass_runner.natives.state import StateContext
 from jass_runner.natives.group_natives import (
     CreateGroup, GroupEnumUnitsOfPlayer, BlzGroupGetSize, GroupAddUnit,
-    GroupEnumUnitsInRange, GroupEnumUnitsInRangeOfLoc
+    GroupEnumUnitsInRange, GroupEnumUnitsInRangeOfLoc, GroupEnumUnitsInRect
 )
 from jass_runner.natives.location import LocationConstructor
 
@@ -177,3 +177,31 @@ class TestGroupEnumUnitsInRangeOfLoc:
 
         # 应该不报错，只是记录警告
         enum_units.execute(state, group, None, 100.0, None)
+
+
+class TestGroupEnumUnitsInRect:
+    """测试GroupEnumUnitsInRect native函数。"""
+
+    def test_enum_units_in_rect(self):
+        """测试在矩形区域内枚举单位。"""
+        state = StateContext()
+        create_group = CreateGroup()
+        enum_units = GroupEnumUnitsInRect()
+        get_size = BlzGroupGetSize()
+
+        group = create_group.execute(state)
+        # 在矩形内创建单位
+        unit1 = state.handle_manager.create_unit("hfoo", 0, 100.0, 100.0, 0.0)
+        unit2 = state.handle_manager.create_unit("hfoo", 0, 200.0, 200.0, 0.0)
+        # 在矩形外创建单位
+        unit3 = state.handle_manager.create_unit("hfoo", 0, 400.0, 400.0, 0.0)
+
+        # 创建矩形 (minX=50, minY=50, maxX=250, maxY=250)
+        from jass_runner.natives.handle import Rect
+        rect = Rect("rect_1", 50.0, 50.0, 250.0, 250.0)
+
+        # 枚举矩形内的单位
+        enum_units.execute(state, group, rect, None)
+
+        result = get_size.execute(state, group)
+        assert result == 2

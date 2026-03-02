@@ -4,7 +4,7 @@
 """
 
 from typing import Dict, List, Optional
-from .handle import Handle, Unit, Player, Item, Group
+from .handle import Handle, Unit, Player, Item, Group, Rect
 
 
 class HandleManager:
@@ -293,6 +293,43 @@ class HandleManager:
             handle = self._handles.get(handle_id)
             if handle and handle.is_alive() and isinstance(handle, Unit):
                 if handle.unit_type == unit_type:
+                    result.append(handle_id)
+
+        return result
+
+    def create_rect(self, min_x: float, min_y: float, max_x: float, max_y: float) -> Rect:
+        """创建一个新的矩形区域。"""
+        handle_id = f"rect_{self._generate_id()}"
+        rect = Rect(handle_id, min_x, min_y, max_x, max_y)
+        self._register_handle(rect)
+        return rect
+
+    def get_rect(self, rect_id: str) -> Optional[Rect]:
+        """获取矩形区域对象，进行类型检查。"""
+        handle = self.get_handle(rect_id)
+        if isinstance(handle, Rect):
+            return handle
+        return None
+
+    def enum_units_in_rect(self, rect: Rect) -> List[str]:
+        """枚举矩形区域内的所有单位。
+
+        参数：
+            rect: 矩形区域
+
+        返回：
+            单位ID列表
+        """
+        result = []
+        type_name = "unit"
+
+        if type_name not in self._type_index:
+            return result
+
+        for handle_id in self._type_index[type_name]:
+            handle = self._handles.get(handle_id)
+            if handle and handle.is_alive() and isinstance(handle, Unit):
+                if rect.contains(handle.x, handle.y):
                     result.append(handle_id)
 
         return result

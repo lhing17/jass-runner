@@ -6,7 +6,7 @@
 import logging
 from typing import Optional, Callable
 from .base import NativeFunction
-from .handle import Group, Unit, Player
+from .handle import Group, Unit, Player, Rect
 from .location import Location
 
 logger = logging.getLogger(__name__)
@@ -490,3 +490,52 @@ class GroupEnumUnitsInRangeOfLoc(NativeFunction):
         # 调用GroupEnumUnitsInRange，传入Location的坐标
         enum_in_range = GroupEnumUnitsInRange()
         enum_in_range.execute(state_context, group, location.x, location.y, radius, filter_func)
+
+
+class GroupEnumUnitsInRect(NativeFunction):
+    """枚举矩形区域内的所有单位并添加到组。
+
+    对应JASS native函数: void GroupEnumUnitsInRect(group whichGroup, rect r, boolexpr filter)
+    """
+
+    @property
+    def name(self) -> str:
+        """获取函数名称。"""
+        return "GroupEnumUnitsInRect"
+
+    def execute(self, state_context, group: Group, rect: Rect,
+                filter_func: Optional[Callable[['Unit'], bool]] = None):
+        """执行GroupEnumUnitsInRect native函数。
+
+        参数：
+            state_context: 状态上下文
+            group: 目标单位组
+            rect: 矩形区域
+            filter_func: 可选的过滤函数
+        """
+        if group is None:
+            logger.warning("[GroupEnumUnitsInRect] 组为None")
+            return
+
+        if rect is None:
+            logger.warning("[GroupEnumUnitsInRect] 矩形为None")
+            return
+
+        handle_manager = state_context.handle_manager
+
+        # 先清空组
+        group.clear()
+
+        # 获取矩形内的所有单位
+        unit_ids = handle_manager.enum_units_in_rect(rect)
+
+        added_count = 0
+        for unit_id in unit_ids:
+            unit = handle_manager.get_unit(unit_id)
+            if unit and unit.is_alive():
+                # 应用过滤器（如果有）
+                if filter_func is None or filter_func(unit):
+                    group.add_unit(unit)
+                    added_count += 1
+
+        logger.debug(f"[GroupEnumUnitsInRect] 矩形区域内的{added_count}个单位添加到组{group.id}")
