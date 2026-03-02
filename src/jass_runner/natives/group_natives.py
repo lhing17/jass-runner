@@ -7,6 +7,7 @@ import logging
 from typing import Optional, Callable
 from .base import NativeFunction
 from .handle import Group, Unit, Player
+from .location import Location
 
 logger = logging.getLogger(__name__)
 
@@ -403,3 +404,89 @@ class GroupEnumUnitsOfPlayer(NativeFunction):
                     added_count += 1
 
         logger.debug(f"[GroupEnumUnitsOfPlayer] 玩家{player.player_id}的{added_count}个单位添加到组{group.id}")
+
+
+class GroupEnumUnitsInRange(NativeFunction):
+    """枚举指定范围内的所有单位并添加到组。
+
+    对应JASS native函数: void GroupEnumUnitsInRange(group whichGroup, real x, real y, real radius, boolexpr filter)
+    """
+
+    @property
+    def name(self) -> str:
+        """获取函数名称。"""
+        return "GroupEnumUnitsInRange"
+
+    def execute(self, state_context, group: Group, x: float, y: float,
+                radius: float, filter_func: Optional[Callable[['Unit'], bool]] = None):
+        """执行GroupEnumUnitsInRange native函数。
+
+        参数：
+            state_context: 状态上下文
+            group: 目标单位组
+            x: 中心X坐标
+            y: 中心Y坐标
+            radius: 半径
+            filter_func: 可选的过滤函数
+        """
+        if group is None:
+            logger.warning("[GroupEnumUnitsInRange] 组为None")
+            return
+
+        if radius < 0:
+            logger.warning("[GroupEnumUnitsInRange] 半径不能为负数")
+            return
+
+        handle_manager = state_context.handle_manager
+
+        # 先清空组
+        group.clear()
+
+        # 获取范围内的所有单位
+        unit_ids = handle_manager.enum_units_in_range(x, y, radius)
+
+        added_count = 0
+        for unit_id in unit_ids:
+            unit = handle_manager.get_unit(unit_id)
+            if unit and unit.is_alive():
+                # 应用过滤器（如果有）
+                if filter_func is None or filter_func(unit):
+                    group.add_unit(unit)
+                    added_count += 1
+
+        logger.debug(f"[GroupEnumUnitsInRange] 范围({x}, {y})半径{radius}内的{added_count}个单位添加到组{group.id}")
+
+
+class GroupEnumUnitsInRangeOfLoc(NativeFunction):
+    """枚举Location范围内的所有单位并添加到组。
+
+    对应JASS native函数: void GroupEnumUnitsInRangeOfLoc(group whichGroup, location whichLocation, real radius, boolexpr filter)
+    """
+
+    @property
+    def name(self) -> str:
+        """获取函数名称。"""
+        return "GroupEnumUnitsInRangeOfLoc"
+
+    def execute(self, state_context, group: Group, location: Location,
+                radius: float, filter_func: Optional[Callable[['Unit'], bool]] = None):
+        """执行GroupEnumUnitsInRangeOfLoc native函数。
+
+        参数：
+            state_context: 状态上下文
+            group: 目标单位组
+            location: 中心位置
+            radius: 半径
+            filter_func: 可选的过滤函数
+        """
+        if group is None:
+            logger.warning("[GroupEnumUnitsInRangeOfLoc] 组为None")
+            return
+
+        if location is None:
+            logger.warning("[GroupEnumUnitsInRangeOfLoc] Location为None")
+            return
+
+        # 调用GroupEnumUnitsInRange，传入Location的坐标
+        enum_in_range = GroupEnumUnitsInRange()
+        enum_in_range.execute(state_context, group, location.x, location.y, radius, filter_func)

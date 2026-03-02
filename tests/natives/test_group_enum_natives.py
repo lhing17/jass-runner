@@ -6,8 +6,10 @@
 import pytest
 from jass_runner.natives.state import StateContext
 from jass_runner.natives.group_natives import (
-    CreateGroup, GroupEnumUnitsOfPlayer, BlzGroupGetSize, GroupAddUnit
+    CreateGroup, GroupEnumUnitsOfPlayer, BlzGroupGetSize, GroupAddUnit,
+    GroupEnumUnitsInRange, GroupEnumUnitsInRangeOfLoc
 )
+from jass_runner.natives.location import LocationConstructor
 
 
 class TestGroupEnumUnitsOfPlayer:
@@ -85,3 +87,93 @@ class TestGroupEnumUnitsOfPlayer:
 
         # 应该不报错，只是记录警告
         enum_units.execute(state, group, None, None)
+
+
+class TestGroupEnumUnitsInRange:
+    """测试GroupEnumUnitsInRange native函数。"""
+
+    def test_enum_units_in_range(self):
+        """测试在范围内枚举单位。"""
+        state = StateContext()
+        create_group = CreateGroup()
+        enum_units = GroupEnumUnitsInRange()
+        get_size = BlzGroupGetSize()
+
+        group = create_group.execute(state)
+        # 在范围内创建单位
+        unit1 = state.handle_manager.create_unit("hfoo", 0, 100.0, 200.0, 0.0)  # 距离0
+        unit2 = state.handle_manager.create_unit("hfoo", 0, 150.0, 200.0, 0.0)  # 距离50
+        # 在范围外创建单位
+        unit3 = state.handle_manager.create_unit("hfoo", 0, 300.0, 200.0, 0.0)  # 距离200
+
+        # 枚举中心(100, 200)半径100范围内的单位
+        enum_units.execute(state, group, 100.0, 200.0, 100.0, None)
+
+        result = get_size.execute(state, group)
+        assert result == 2
+
+    def test_enum_units_in_range_with_filter(self):
+        """测试在范围内枚举单位并应用过滤器。"""
+        state = StateContext()
+        create_group = CreateGroup()
+        enum_units = GroupEnumUnitsInRange()
+        get_size = BlzGroupGetSize()
+
+        group = create_group.execute(state)
+        # 在范围内创建不同类型单位
+        unit1 = state.handle_manager.create_unit("hfoo", 0, 100.0, 200.0, 0.0)  # 步兵
+        unit2 = state.handle_manager.create_unit("hkni", 0, 150.0, 200.0, 0.0)  # 骑士
+
+        # 只枚举步兵
+        filter_func = lambda u: u.unit_type == "hfoo"
+        enum_units.execute(state, group, 100.0, 200.0, 100.0, filter_func)
+
+        result = get_size.execute(state, group)
+        assert result == 1
+
+    def test_enum_units_in_range_negative_radius(self):
+        """测试负半径不报错。"""
+        state = StateContext()
+        create_group = CreateGroup()
+        enum_units = GroupEnumUnitsInRange()
+
+        group = create_group.execute(state)
+
+        # 应该不报错，只是记录警告
+        enum_units.execute(state, group, 100.0, 200.0, -100.0, None)
+
+
+class TestGroupEnumUnitsInRangeOfLoc:
+    """测试GroupEnumUnitsInRangeOfLoc native函数。"""
+
+    def test_enum_units_in_range_of_loc(self):
+        """测试在Location范围内枚举单位。"""
+        state = StateContext()
+        create_group = CreateGroup()
+        create_loc = LocationConstructor()
+        enum_units = GroupEnumUnitsInRangeOfLoc()
+        get_size = BlzGroupGetSize()
+
+        group = create_group.execute(state)
+        # 创建Location
+        loc = create_loc.execute(state, 100.0, 200.0)
+        # 在范围内创建单位
+        unit1 = state.handle_manager.create_unit("hfoo", 0, 100.0, 200.0, 0.0)
+        unit2 = state.handle_manager.create_unit("hfoo", 0, 150.0, 200.0, 0.0)
+
+        # 枚举Location半径100范围内的单位
+        enum_units.execute(state, group, loc, 100.0, None)
+
+        result = get_size.execute(state, group)
+        assert result == 2
+
+    def test_enum_units_in_range_of_none_loc(self):
+        """测试枚举None Location不报错。"""
+        state = StateContext()
+        create_group = CreateGroup()
+        enum_units = GroupEnumUnitsInRangeOfLoc()
+
+        group = create_group.execute(state)
+
+        # 应该不报错，只是记录警告
+        enum_units.execute(state, group, None, 100.0, None)
