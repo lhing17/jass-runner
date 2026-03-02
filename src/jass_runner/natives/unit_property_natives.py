@@ -6,6 +6,7 @@
 import logging
 from .base import NativeFunction
 from .handle import Unit
+from .location import Location
 
 logger = logging.getLogger(__name__)
 
@@ -54,3 +55,69 @@ class SetUnitState(NativeFunction):
         handle_manager.set_unit_state(unit.id, state_str, value)
 
         logger.debug(f"[SetUnitState] 单位 {unit.id} 的 {state_str} 设置为 {value}")
+
+
+class GetUnitX(NativeFunction):
+    """获取单位 X 坐标。"""
+
+    @property
+    def name(self) -> str:
+        return "GetUnitX"
+
+    def execute(self, state_context, unit: Unit) -> float:
+        """执行 GetUnitX native 函数。
+
+        参数：
+            state_context: 状态上下文
+            unit: 单位对象
+
+        返回：
+            单位的 X 坐标，如果单位是 None 则返回 0.0
+        """
+        if unit is None:
+            return 0.0
+        return unit.x
+
+
+class GetUnitY(NativeFunction):
+    """获取单位 Y 坐标。"""
+
+    @property
+    def name(self) -> str:
+        return "GetUnitY"
+
+    def execute(self, state_context, unit: Unit) -> float:
+        """执行 GetUnitY native 函数。
+
+        参数：
+            state_context: 状态上下文
+            unit: 单位对象
+
+        返回：
+            单位的 Y 坐标，如果单位是 None 则返回 0.0
+        """
+        if unit is None:
+            return 0.0
+        return unit.y
+
+
+class GetUnitLoc(NativeFunction):
+    """获取单位位置（Location 对象）。"""
+
+    @property
+    def name(self) -> str:
+        return "GetUnitLoc"
+
+    def execute(self, state_context, unit: Unit) -> Location:
+        """执行 GetUnitLoc native 函数。
+
+        参数：
+            state_context: 状态上下文
+            unit: 单位对象
+
+        返回：
+            单位的 Location 对象，如果单位是 None 则返回 (0, 0, 0)
+        """
+        if unit is None:
+            return Location(0.0, 0.0, 0.0)
+        return Location(unit.x, unit.y, unit.z)
