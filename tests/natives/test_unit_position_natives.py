@@ -213,3 +213,66 @@ class TestSetUnitFacing:
 
         # 应该不抛出异常
         set_unit_facing.execute(MockStateContext(), None, 180.0)
+
+
+class TestCreateUnitAtLocByName:
+    """测试 CreateUnitAtLocByName native 函数。"""
+
+    def test_create_unit_at_loc_by_name(self):
+        """测试 CreateUnitAtLocByName native 函数。"""
+        from jass_runner.natives.unit_position_natives import CreateUnitAtLocByName
+        from jass_runner.natives.location import Location
+        from jass_runner.natives.manager import HandleManager
+
+        manager = HandleManager()
+
+        create_unit_at_loc_by_name = CreateUnitAtLocByName()
+        loc = Location(700.0, 800.0, 0.0)
+
+        class MockStateContext:
+            def __init__(self):
+                self.handle_manager = manager
+
+        # 使用单位名称创建（如 "footman"）
+        unit = create_unit_at_loc_by_name.execute(MockStateContext(), 0, "footman", loc, 270.0)
+
+        assert unit is not None
+        assert unit.x == 700.0
+        assert unit.y == 800.0
+        assert unit.facing == 270.0
+
+    def test_create_unit_at_loc_by_name_with_none_location(self):
+        """测试 CreateUnitAtLocByName 处理 None Location。"""
+        from jass_runner.natives.unit_position_natives import CreateUnitAtLocByName
+        from jass_runner.natives.manager import HandleManager
+
+        manager = HandleManager()
+
+        create_unit_at_loc_by_name = CreateUnitAtLocByName()
+
+        class MockStateContext:
+            def __init__(self):
+                self.handle_manager = manager
+
+        # 应该返回 None
+        unit = create_unit_at_loc_by_name.execute(MockStateContext(), 0, "footman", None, 270.0)
+        assert unit is None
+
+    def test_create_unit_at_loc_by_name_with_empty_name(self):
+        """测试 CreateUnitAtLocByName 处理空名称。"""
+        from jass_runner.natives.unit_position_natives import CreateUnitAtLocByName
+        from jass_runner.natives.location import Location
+        from jass_runner.natives.manager import HandleManager
+
+        manager = HandleManager()
+
+        create_unit_at_loc_by_name = CreateUnitAtLocByName()
+        loc = Location(700.0, 800.0, 0.0)
+
+        class MockStateContext:
+            def __init__(self):
+                self.handle_manager = manager
+
+        # 应该返回 None
+        unit = create_unit_at_loc_by_name.execute(MockStateContext(), 0, "", loc, 270.0)
+        assert unit is None

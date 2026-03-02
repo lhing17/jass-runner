@@ -151,3 +151,56 @@ class SetUnitFacing(NativeFunction):
 
         unit.facing = float(facing_angle)
         logger.debug(f"[SetUnitFacing] 单位 {unit.id} 朝向设置为 {facing_angle}")
+
+
+class CreateUnitAtLocByName(NativeFunction):
+    """在指定位置按名称创建单位。"""
+
+    @property
+    def name(self) -> str:
+        return "CreateUnitAtLocByName"
+
+    def execute(self, state_context, player_id: int, unit_name: str,
+                loc: Location, facing: float):
+        """执行 CreateUnitAtLocByName native 函数。
+
+        参数：
+            state_context: 状态上下文
+            player_id: 玩家 ID
+            unit_name: 单位名称（如 "footman"）
+            loc: Location 位置对象
+            facing: 面向角度
+
+        返回：
+            Unit: 创建的单位对象
+        """
+        if loc is None:
+            logger.warning("[CreateUnitAtLocByName] Location 为 None")
+            return None
+
+        if not unit_name:
+            logger.warning("[CreateUnitAtLocByName] 单位名称为空")
+            return None
+
+        # 名称到单位类型的映射（简化实现）
+        name_to_type = {
+            "footman": "hfoo",
+            "peasant": "hpea",
+            "knight": "hkni",
+            "archer": "earc",
+            "grunt": "ogru",
+        }
+
+        unit_type = name_to_type.get(unit_name.lower(), unit_name[:4].lower())
+
+        # 通过 HandleManager 创建单位
+        handle_manager = state_context.handle_manager
+        unit = handle_manager.create_unit(unit_type, player_id,
+                                          loc.x, loc.y, facing)
+
+        # 设置 z 坐标和名称
+        unit.z = loc.z
+        unit.name = unit_name
+
+        logger.info(f"[CreateUnitAtLocByName] 为玩家 {player_id} 在 {loc} 创建 {unit_name} ({unit_type})，单位 ID: {unit.id}")
+        return unit
