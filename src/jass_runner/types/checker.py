@@ -45,8 +45,13 @@ class TypeChecker:
             return True
 
         # 检查handle子类型协变
+        # handle子类型可以赋值给handle父类型
         if target_type == 'handle':
             return TypeHierarchy.is_subtype(source_type, 'handle')
+
+        # handle父类型可以赋值给handle子类型（运行时类型检查）
+        if TypeHierarchy.is_subtype(target_type, 'handle'):
+            return source_type == 'handle' or TypeHierarchy.is_subtype(source_type, target_type)
 
         # 检查隐式转换规则
         if target_type in self._ALLOWED_IMPLICIT_CONVERSIONS:
