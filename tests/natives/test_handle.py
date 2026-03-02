@@ -155,3 +155,20 @@ def test_unit_with_custom_z():
     unit = Unit("unit_001", "hfoo", 0, 100.0, 200.0, 0.0)
     unit.z = 50.0
     assert unit.z == 50.0
+
+
+class TestUnitLevel:
+    """测试单位等级属性。"""
+
+    def test_unit_default_level(self):
+        """测试单位默认等级为1。"""
+        from jass_runner.natives.handle import Unit
+        unit = Unit("unit_1", "hfoo", 0, 100.0, 200.0, 0.0)
+        assert unit.level == 1
+
+    def test_unit_custom_level(self):
+        """测试自定义单位等级。"""
+        from jass_runner.natives.handle import Unit
+        unit = Unit("unit_1", "hfoo", 0, 100.0, 200.0, 0.0)
+        unit.level = 3
+        assert unit.level == 3

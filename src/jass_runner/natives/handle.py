@@ -58,6 +58,7 @@ class Unit(Handle):
         self.mana = 50.0
         self.max_mana = 50.0
         self.name = name or unit_type  # 如果没有提供名称，使用单位类型
+        self.level = 1  # 单位等级，默认为1
         self._abilities: Dict[int, int] = {}  # 技能ID -> 技能等级
         self._permanent_abilities: Set[int] = set()  # 永久技能ID集合
 
