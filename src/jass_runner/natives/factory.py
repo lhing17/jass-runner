@@ -35,6 +35,7 @@ from .async_natives import TriggerSleepAction, ExecuteFunc
 from .unit_property_natives import SetUnitState, GetUnitX, GetUnitY, GetUnitLoc, GetUnitTypeId, GetUnitName
 from .unit_position_natives import SetUnitPosition, SetUnitPositionLoc, CreateUnitAtLoc, GetUnitFacing, SetUnitFacing, CreateUnitAtLocByName
 from .location import LocationConstructor, RemoveLocation
+from .group_natives import CreateGroup, DestroyGroup
 
 
 class NativeFactory:
@@ -148,5 +149,9 @@ class NativeFactory:
         # 注册 Location 相关 native 函数
         registry.register(LocationConstructor())
         registry.register(RemoveLocation())
+
+        # 注册单位组native函数
+        registry.register(CreateGroup())
+        registry.register(DestroyGroup())
 
         return registry
