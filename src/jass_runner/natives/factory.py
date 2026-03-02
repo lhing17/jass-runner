@@ -37,7 +37,7 @@ from .unit_position_natives import SetUnitPosition, SetUnitPositionLoc, CreateUn
 from .location import LocationConstructor, RemoveLocation
 from .group_natives import CreateGroup, DestroyGroup, GroupAddUnit, GroupRemoveUnit, GroupClear, FirstOfGroup, IsUnitInGroup, ForGroup, BlzGroupGetSize, BlzGroupUnitAt, GroupEnumUnitsOfPlayer, GroupEnumUnitsInRange, GroupEnumUnitsInRangeOfLoc, GroupEnumUnitsInRect
 from .ability_natives import UnitAddAbility, UnitRemoveAbility, GetUnitAbilityLevel, SetUnitAbilityLevel, IncUnitAbilityLevel, DecUnitAbilityLevel, UnitMakeAbilityPermanent
-from .unit_state_natives import GetWidgetLife, SetWidgetLife, UnitDamageTarget, GetUnitLevel
+from .unit_state_natives import GetWidgetLife, SetWidgetLife, UnitDamageTarget, GetUnitLevel, IsUnitType
 
 
 class NativeFactory:
@@ -186,5 +186,6 @@ class NativeFactory:
         registry.register(SetWidgetLife())
         registry.register(UnitDamageTarget())
         registry.register(GetUnitLevel())
+        registry.register(IsUnitType())
 
         return registry

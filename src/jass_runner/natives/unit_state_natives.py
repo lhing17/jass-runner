@@ -166,3 +166,57 @@ class GetUnitLevel(NativeFunction):
             return int(unit.level)
 
         return 0
+
+
+class IsUnitType(NativeFunction):
+    """检查单位是否为指定类型。
+
+    对应JASS native函数: boolean IsUnitType(unit whichUnit, unittype whichUnitType)
+
+    注意: 在JASS中unittype是整数（FourCC）。
+    """
+
+    @property
+    def name(self) -> str:
+        """获取函数名称。"""
+        return "IsUnitType"
+
+    def execute(self, state_context, unit, unit_type: int) -> bool:
+        """执行IsUnitType native函数。
+
+        参数：
+            state_context: 状态上下文
+            unit: 单位对象
+            unit_type: 单位类型（FourCC整数）
+
+        返回：
+            单位类型匹配返回True，否则返回False
+        """
+        if unit is None:
+            return False
+
+        if not hasattr(unit, 'unit_type'):
+            return False
+
+        # 将单位类型字符串转换为FourCC进行比较
+        unit_type_str = unit.unit_type
+        unit_type_fourcc = self._string_to_fourcc(unit_type_str)
+
+        return unit_type_fourcc == unit_type
+
+    def _string_to_fourcc(self, s: str) -> int:
+        """将4字符字符串转换为FourCC整数。
+
+        参数：
+            s: 4字符字符串（如'hfoo'）
+
+        返回：
+            FourCC整数
+        """
+        if len(s) != 4:
+            return 0
+
+        result = 0
+        for i, char in enumerate(s):
+            result |= ord(char) << (i * 8)
+        return result

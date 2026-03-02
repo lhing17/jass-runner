@@ -5,7 +5,7 @@
 
 import pytest
 from jass_runner.natives.state import StateContext
-from jass_runner.natives.unit_state_natives import GetWidgetLife, SetWidgetLife, UnitDamageTarget, GetUnitLevel
+from jass_runner.natives.unit_state_natives import GetWidgetLife, SetWidgetLife, UnitDamageTarget, GetUnitLevel, IsUnitType
 
 
 class TestGetWidgetLife:
@@ -141,3 +141,40 @@ class TestGetUnitLevel:
         result = get_level.execute(state, None)
 
         assert result == 0
+
+
+class TestIsUnitType:
+    """测试IsUnitType native函数。"""
+
+    def test_is_unit_type_match(self):
+        """测试单位类型匹配。"""
+        state = StateContext()
+        is_unit_type = IsUnitType()
+
+        unit = state.handle_manager.create_unit("hfoo", 0, 100.0, 200.0, 0.0)
+
+        # 检查是否为步兵类型（'hfoo'的FourCC是1869571688）
+        result = is_unit_type.execute(state, unit, 1869571688)
+
+        assert result is True
+
+    def test_is_unit_type_no_match(self):
+        """测试单位类型不匹配。"""
+        state = StateContext()
+        is_unit_type = IsUnitType()
+
+        unit = state.handle_manager.create_unit("hkni", 0, 100.0, 200.0, 0.0)
+
+        # 检查是否为步兵类型（hfoo的FourCC是1869571688）
+        result = is_unit_type.execute(state, unit, 1869571688)
+
+        assert result is False
+
+    def test_is_unit_type_with_none(self):
+        """测试None单位返回False。"""
+        state = StateContext()
+        is_unit_type = IsUnitType()
+
+        result = is_unit_type.execute(state, None, 1869571688)
+
+        assert result is False
