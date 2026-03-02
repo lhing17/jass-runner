@@ -4,7 +4,7 @@
 """
 
 from typing import Dict, List, Optional
-from .handle import Handle, Unit, Player, Item
+from .handle import Handle, Unit, Player, Item, Group
 
 
 class HandleManager:
@@ -204,3 +204,17 @@ class HandleManager:
             })
 
         return True
+
+    def create_group(self) -> Group:
+        """创建一个新的单位组。"""
+        handle_id = f"group_{self._generate_id()}"
+        group = Group(handle_id)
+        self._register_handle(group)
+        return group
+
+    def get_group(self, group_id: str) -> Optional[Group]:
+        """获取单位组对象，进行类型检查。"""
+        handle = self.get_handle(group_id)
+        if isinstance(handle, Group):
+            return handle
+        return None

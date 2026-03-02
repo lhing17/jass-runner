@@ -3,6 +3,8 @@
 此模块包含所有JASS handle的基类和具体实现。
 """
 
+from typing import Set, Optional
+
 
 class Handle:
     """所有JASS handle的基类。
@@ -98,3 +100,94 @@ class Item(Handle):
         self.item_type = item_type
         self.x = x
         self.y = y
+
+
+class Group(Handle):
+    """单位组，包含一组单位的引用。
+
+    用于管理一组相关单位，支持添加、移除、遍历等操作。
+    """
+
+    def __init__(self, group_id: str):
+        """初始化单位组。
+
+        参数：
+            group_id: 组的唯一标识符
+        """
+        super().__init__(group_id, "group")
+        self._units: Set[str] = set()  # 存储单位ID集合
+
+    def add_unit(self, unit: 'Unit') -> bool:
+        """添加单位到组。
+
+        参数：
+            unit: 要添加的单位
+
+        返回：
+            如果添加成功返回True，单位已在组中返回False
+        """
+        if not unit or not unit.is_alive():
+            return False
+        if unit.id in self._units:
+            return False
+        self._units.add(unit.id)
+        return True
+
+    def remove_unit(self, unit: 'Unit') -> bool:
+        """从组中移除单位。
+
+        参数：
+            unit: 要移除的单位
+
+        返回：
+            如果移除成功返回True，单位不在组中返回False
+        """
+        if not unit:
+            return False
+        if unit.id not in self._units:
+            return False
+        self._units.remove(unit.id)
+        return True
+
+    def clear(self):
+        """清空单位组，移除所有单位。"""
+        self._units.clear()
+
+    def first(self) -> Optional[str]:
+        """获取组内第一个单位的ID。
+
+        返回：
+            第一个单位的ID，如果组为空返回None
+        """
+        if not self._units:
+            return None
+        return next(iter(self._units))
+
+    def contains(self, unit: 'Unit') -> bool:
+        """检查单位是否在组内。
+
+        参数：
+            unit: 要检查的单位
+
+        返回：
+            如果单位在组中返回True，否则返回False
+        """
+        if not unit:
+            return False
+        return unit.id in self._units
+
+    def get_units(self) -> Set[str]:
+        """获取组内所有单位的ID集合。
+
+        返回：
+            单位ID的集合副本
+        """
+        return self._units.copy()
+
+    def size(self) -> int:
+        """获取组内单位数量。
+
+        返回：
+            单位数量
+        """
+        return len(self._units)
