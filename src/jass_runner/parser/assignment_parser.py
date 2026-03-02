@@ -8,11 +8,15 @@ if TYPE_CHECKING:
 class AssignmentParserMixin:
     """提供赋值和调用语句解析功能。"""
 
-    def _parse_call_args(self: 'BaseParser') -> list:
+    def _parse_call_args(self: 'BaseParser', error_on_unknown: bool = False) -> list:
         """解析函数调用参数列表，支持嵌套调用。
 
         前置条件：当前 token 是 '(' 后的第一个参数token
         后置条件：当前 token 是 ')'
+
+        参数：
+            error_on_unknown: 遇到不支持的类型时是否记录错误并继续解析
+                            如果为False（默认），则遇到不支持的类型时停止解析
 
         返回：
             参数列表，支持嵌套 NativeCallNode
@@ -44,7 +48,7 @@ class AssignmentParserMixin:
                 if self.current_token and self.current_token.value == '(':
                     # 嵌套函数调用
                     self.next_token()  # 跳过 '('
-                    nested_args = self._parse_call_args()
+                    nested_args = self._parse_call_args(error_on_unknown=error_on_unknown)
                     # 跳过右括号
                     if self.current_token and self.current_token.value == ')':
                         self.next_token()
@@ -57,14 +61,19 @@ class AssignmentParserMixin:
                 arg_value = self.current_token.value
                 self.next_token()
             else:
-                # 不支持的参数类型，记录错误并跳过
-                if hasattr(self, 'errors'):
-                    self.errors.append(ParseError(
-                        message=f"不支持的参数类型: {self.current_token.type}",
-                        line=getattr(self.current_token, 'line', 0),
-                        column=getattr(self.current_token, 'column', 0)
-                    ))
-                self.next_token()
+                # 不支持的参数类型
+                if error_on_unknown:
+                    # 记录错误并跳过当前token，继续解析
+                    if hasattr(self, 'errors'):
+                        self.errors.append(ParseError(
+                            message=f"不支持的参数类型: {self.current_token.type}",
+                            line=getattr(self.current_token, 'line', 0),
+                            column=getattr(self.current_token, 'column', 0)
+                        ))
+                    self.next_token()
+                else:
+                    # 与原始parse_call_statement行为一致：停止解析更多参数
+                    break
 
             if arg_value is not None:
                 args.append(arg_value)
@@ -197,88 +206,8 @@ class AssignmentParserMixin:
                 return None
             self.next_token()
 
-            # 解析参数列表
-            args = []
-            while self.current_token and self.current_token.value != ')':
-                # 解析参数表达式（简化：字面量或标识符）
-                arg_value = None
-                if self.current_token.type == 'INTEGER':
-                    arg_value = self.current_token.value
-                    args.append(str(arg_value))  # 转换为字符串以便求值器处理
-                    self.next_token()
-                elif self.current_token.type == 'REAL':
-                    arg_value = self.current_token.value
-                    args.append(str(arg_value))  # 转换为字符串以便求值器处理
-                    self.next_token()
-                elif self.current_token.type == 'STRING':
-                    arg_value = self.current_token.value  # 保留引号以便求值器识别字符串字面量
-                    args.append(arg_value)
-                    self.next_token()
-                elif self.current_token.type == 'IDENTIFIER':
-                    arg_value = self.current_token.value
-                    self.next_token()
-
-                    # 检查是否是嵌套函数调用
-                    if self.current_token and self.current_token.value == '(':
-                        # 这是一个嵌套函数调用
-                        self.next_token()  # 跳过 '('
-
-                        # 解析嵌套函数的参数列表
-                        nested_args = []
-                        while self.current_token and self.current_token.value != ')':
-                            if self.current_token.type == 'INTEGER':
-                                nested_args.append(str(self.current_token.value))
-                            elif self.current_token.type == 'REAL':
-                                nested_args.append(str(self.current_token.value))
-                            elif self.current_token.type == 'STRING':
-                                nested_args.append(self.current_token.value)
-                            elif self.current_token.type == 'IDENTIFIER':
-                                nested_args.append(self.current_token.value)
-                            elif self.current_token.type == 'FOURCC':
-                                nested_args.append(str(self.current_token.value))
-
-                            self.next_token()
-
-                            # 检查是否有逗号
-                            if self.current_token and self.current_token.value == ',':
-                                self.next_token()
-                                continue
-                            elif self.current_token and self.current_token.value == ')':
-                                break
-
-                        # 跳过右括号
-                        if self.current_token and self.current_token.value == ')':
-                            self.next_token()
-
-                        # 创建嵌套函数调用节点
-                        arg_value = NativeCallNode(func_name=arg_value, args=nested_args)
-
-                    args.append(arg_value)
-                elif self.current_token.type == 'KEYWORD' and self.current_token.value in ('true', 'false'):
-                    # 布尔值
-                    arg_value = self.current_token.value
-                    args.append(arg_value)
-                    self.next_token()
-                elif self.current_token.type == 'KEYWORD' and self.current_token.value == 'function':
-                    # 函数引用: function func_name
-                    self.next_token()  # 跳过 'function'
-                    if self.current_token and self.current_token.type == 'IDENTIFIER':
-                        func_ref = self.current_token.value
-                        args.append(f"function:{func_ref}")
-                        self.next_token()
-                    else:
-                        # 函数引用后面必须有函数名
-                        break
-                else:
-                    # 不支持的类型
-                    break
-
-                # 检查是否有逗号继续下一个参数
-                if self.current_token and self.current_token.value == ',':
-                    self.next_token()
-                    continue
-                elif self.current_token and self.current_token.value == ')':
-                    break
+            # 使用 _parse_call_args 解析参数列表
+            args = self._parse_call_args()
 
             # 检查右括号
             if self.current_token and self.current_token.value == ')':
