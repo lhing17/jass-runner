@@ -28,6 +28,7 @@ from .math_extended import (
 )
 from .item_inventory_natives import (
     UnitAddItem,
+    UnitAddItemById,
 )
 
 __all__ = [
@@ -82,4 +83,5 @@ __all__ = [
     "GetRandomReal",
     # 物品背包函数
     "UnitAddItem",
+    "UnitAddItemById",
 ]

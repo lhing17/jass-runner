@@ -41,3 +41,41 @@ class UnitAddItem(NativeFunction):
         else:
             logger.warning(f"[UnitAddItem] 单位 {unit.id} 背包已满，无法添加物品")
         return result
+
+
+class UnitAddItemById(NativeFunction):
+    """创建物品并添加到单位背包。"""
+
+    @property
+    def name(self) -> str:
+        return "UnitAddItemById"
+
+    def execute(self, state_context: StateContext, unit: Unit, item_type_id: int, slot: int = -1) -> Optional[Item]:
+        """执行创建并添加物品操作。
+
+        参数：
+            state_context: 状态上下文
+            unit: 目标单位
+            item_type_id: 物品类型ID（FourCC整数）
+            slot: 目标槽位（-1表示自动找空槽，0-5表示指定槽位）
+
+        返回：
+            创建并添加成功返回Item对象，失败返回None
+        """
+        item_type_str = int_to_fourcc(item_type_id)
+        handle_manager = state_context.handle_manager
+
+        # 创建物品（使用单位位置）
+        item = handle_manager.create_item(item_type_str, unit.x, unit.y)
+
+        # 添加到单位
+        if unit.add_item(item, slot):
+            slot_str = f"槽位 {slot}" if slot >= 0 else "自动槽位"
+            logger.info(f"[UnitAddItemById] 创建 {item_type_str} 并添加到单位 {unit.id} 的{slot_str}")
+            return item
+        else:
+            # 添加失败，销毁物品
+            handle_manager.destroy_handle(item.id)
+            slot_str = f"槽位 {slot}" if slot >= 0 else "背包"
+            logger.warning(f"[UnitAddItemById] {slot_str}已满或无效，销毁已创建的 {item_type_str}")
+            return None
