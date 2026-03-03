@@ -1151,5 +1151,29 @@ jass-runner/
   - 集成测试: `tests/integration/test_effect_system.py`
 - **测试统计**: 683个测试通过
 
+#### 52. 玩家资源系统实现完成 (2026-03-03)
+- **新增组件**:
+  - Player类资源管理扩展 - 支持四种核心资源状态
+  - `player_resource_natives.py` - 2个玩家资源Native函数
+- **新增Native函数**:
+  - `GetPlayerState` - 获取玩家资源状态（金币、木材、人口上限、已用人口）
+  - `SetPlayerState` - 设置玩家资源状态
+- **修改文件**:
+  - `src/jass_runner/handles/player.py` - 添加资源属性（gold, lumber, food_cap, food_used）
+  - `src/jass_runner/natives/player_resource_natives.py` - 新建，实现2个函数
+  - `src/jass_runner/natives/factory.py` - 注册新函数
+- **关键设计**:
+  - 支持四种核心资源状态：
+    - GOLD（黄金）：0-1000000，初始500
+    - LUMBER（木材）：0-1000000，初始0
+    - FOOD_CAP（人口上限）：0-300，初始100
+    - FOOD_USED（已用人口）：0-FOOD_CAP，初始0
+  - 资源值超出范围时自动截断到边界
+  - 使用PlayerState枚举定义资源类型
+- **测试覆盖**:
+  - 单元测试: 10个测试用例覆盖所有函数和边界条件
+  - 集成测试: 3个场景测试完整资源管理流程
+- **测试统计**: 696个测试通过
+
 ---
 *最后更新: 2026-03-03*

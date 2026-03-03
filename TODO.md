@@ -156,8 +156,8 @@
 ### v0.7.0: 高级游戏机制 (Advanced Game Mechanics)
 > 目标：支持更复杂的游戏逻辑和高级API。
 
-- [ ] **P1** [Simulator] 玩家资源系统
-  - [ ] Native函数：GetPlayerState, SetPlayerState（金币、木材、人口）
+- [x] **P1** [Simulator] 玩家资源系统
+  - [x] Native函数：GetPlayerState, SetPlayerState（金币、木材、人口）
   - [ ] Native函数：GetPlayerName, SetPlayerName
   - [ ] 玩家颜色和种族设置
 - [ ] **P2** [Simulator] 区域和触发器高级功能
