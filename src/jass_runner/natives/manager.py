@@ -18,6 +18,7 @@ class HandleManager:
         self._type_index: Dict[str, List[str]] = {}  # 类型索引
         self._next_id = 1
         self._trigger_manager = None  # 触发器管理器引用
+        self._players: Dict[int, Player] = {}  # player_id -> Player对象缓存
         # 初始化16个玩家（ID 0-15）
         self._init_players()
 
@@ -27,6 +28,7 @@ class HandleManager:
             handle_id = f"player_{player_id}"
             player = Player(handle_id, player_id)
             self._register_handle(player)
+            self._players[player_id] = player
 
     def _generate_id(self) -> int:
         """生成下一个ID。"""
@@ -102,6 +104,17 @@ class HandleManager:
         if isinstance(handle, Player):
             return handle
         return None
+
+    def get_player_by_id(self, player_id: int) -> Optional[Player]:
+        """通过玩家ID获取玩家对象。
+
+        参数：
+            player_id: 玩家ID（0-15）
+
+        返回：
+            Player对象，如果ID无效则返回None
+        """
+        return self._players.get(player_id)
 
     def destroy_handle(self, handle_id: str) -> bool:
         """销毁指定的handle。"""

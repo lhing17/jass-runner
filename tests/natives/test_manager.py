@@ -448,3 +448,49 @@ def test_handle_manager_set_trigger_manager():
 
     # 验证已设置
     assert manager._trigger_manager is mock_trigger_manager
+
+
+def test_get_player_by_id_returns_player():
+    """测试get_player_by_id返回Player对象。"""
+    from jass_runner.natives.manager import HandleManager
+    from jass_runner.natives.handle import Player
+
+    manager = HandleManager()
+
+    # 测试获取玩家
+    player = manager.get_player_by_id(0)
+    assert player is not None
+    assert isinstance(player, Player)
+    assert player.player_id == 0
+
+    # 测试获取另一个玩家
+    player = manager.get_player_by_id(15)
+    assert player is not None
+    assert isinstance(player, Player)
+    assert player.player_id == 15
+
+
+def test_get_player_by_id_caches_player():
+    """测试get_player_by_id缓存玩家对象。"""
+    from jass_runner.natives.manager import HandleManager
+
+    manager = HandleManager()
+
+    # 获取同一个玩家两次
+    player1 = manager.get_player_by_id(5)
+    player2 = manager.get_player_by_id(5)
+
+    # 验证是同一个对象
+    assert player1 is player2
+
+
+def test_get_player_by_id_invalid_returns_none():
+    """测试get_player_by_id无效ID返回None。"""
+    from jass_runner.natives.manager import HandleManager
+
+    manager = HandleManager()
+
+    # 测试无效ID
+    assert manager.get_player_by_id(-1) is None
+    assert manager.get_player_by_id(16) is None
+    assert manager.get_player_by_id(100) is None
