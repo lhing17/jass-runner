@@ -63,7 +63,7 @@ from .effect_natives import (
     SetSpecialEffectScale,
     SetSpecialEffectColor,
 )
-from .camera import GetCameraMargin
+from .camera import GetCameraMargin, SetCameraBounds
 
 
 class NativeFactory:
@@ -252,5 +252,6 @@ class NativeFactory:
 
         # Camera natives
         registry.register(GetCameraMargin())
+        registry.register(SetCameraBounds())
 
         return registry

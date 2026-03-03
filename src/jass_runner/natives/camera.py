@@ -30,3 +30,37 @@ class GetCameraMargin(NativeFunction):
             logger.info(f"[GetCameraMargin] 边距类型={which_margin}, 返回值=100.0")
             return 100.0
         return 0.0
+
+
+class SetCameraBounds(NativeFunction):
+    """设置相机边界。"""
+
+    @property
+    def name(self) -> str:
+        return "SetCameraBounds"
+
+    def execute(self, state_context, x1: float, y1: float, x2: float, y2: float,
+                x3: float, y3: float, x4: float, y4: float) -> None:
+        """执行设置相机边界。
+
+        参数:
+            state_context: 状态上下文
+            x1, y1: 第一个角点坐标
+            x2, y2: 第二个角点坐标
+            x3, y3: 第三个角点坐标
+            x4, y4: 第四个角点坐标
+        """
+        bounds = state_context.camera_bounds
+        bounds['x1'] = x1
+        bounds['y1'] = y1
+        bounds['x2'] = x2
+        bounds['y2'] = y2
+        bounds['x3'] = x3
+        bounds['y3'] = y3
+        bounds['x4'] = x4
+        bounds['y4'] = y4
+
+        logger.info(
+            f"[SetCameraBounds] 相机边界已设置: "
+            f"({x1},{y1})-({x2},{y2})-({x3},{y3})-({x4},{y4})"
+        )
