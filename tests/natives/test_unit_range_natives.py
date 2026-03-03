@@ -2,7 +2,7 @@
 
 import pytest
 import math
-from jass_runner.natives.unit_range_natives import IsUnitInRangeXY, IsUnitInRangeLoc
+from jass_runner.natives.unit_range_natives import IsUnitInRangeXY, IsUnitInRangeLoc, IsUnitInRange
 from jass_runner.natives.handle import Unit
 from jass_runner.natives.location import Location
 
@@ -98,5 +98,38 @@ class TestIsUnitInRangeLoc:
         unit = Unit("unit_001", "Hpal", 0, 0.0, 0.0, 0.0)
 
         result = native.execute(unit, None, 100.0)
+
+        assert result is False
+
+
+class TestIsUnitInRange:
+    """测试IsUnitInRange函数。"""
+
+    def test_unit_in_range_of_other_unit(self):
+        """测试单位在另一个单位范围内返回True。"""
+        native = IsUnitInRange()
+        unit1 = Unit("unit_001", "Hpal", 0, 0.0, 0.0, 0.0)
+        unit2 = Unit("unit_002", "Hpal", 0, 100.0, 0.0, 0.0)
+
+        result = native.execute(unit1, unit2, 150.0)
+
+        assert result is True
+
+    def test_unit_out_of_range_of_other_unit(self):
+        """测试单位在另一个单位范围外返回False。"""
+        native = IsUnitInRange()
+        unit1 = Unit("unit_001", "Hpal", 0, 0.0, 0.0, 0.0)
+        unit2 = Unit("unit_002", "Hpal", 0, 200.0, 0.0, 0.0)
+
+        result = native.execute(unit1, unit2, 150.0)
+
+        assert result is False
+
+    def test_null_other_unit_returns_false(self):
+        """测试null其他单位返回False。"""
+        native = IsUnitInRange()
+        unit1 = Unit("unit_001", "Hpal", 0, 0.0, 0.0, 0.0)
+
+        result = native.execute(unit1, None, 100.0)
 
         assert result is False

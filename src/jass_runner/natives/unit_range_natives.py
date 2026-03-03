@@ -80,3 +80,36 @@ class IsUnitInRangeLoc(NativeFunction):
         actual_distance = math.sqrt(dx * dx + dy * dy)
 
         return actual_distance <= distance
+
+
+class IsUnitInRange(NativeFunction):
+    """检查单位是否在另一个单位指定距离内。"""
+
+    @property
+    def name(self) -> str:
+        """获取函数名称。"""
+        return "IsUnitInRange"
+
+    def execute(self, which_unit: Optional[Unit], other_unit: Optional[Unit], distance: float) -> bool:
+        """执行范围检测。
+
+        参数：
+            which_unit: 要检查的单位
+            other_unit: 目标单位
+            distance: 检测距离
+
+        返回：
+            如果单位在范围内返回True，否则返回False
+        """
+        if which_unit is None or other_unit is None:
+            return False
+
+        # 负距离视为0
+        if distance < 0:
+            distance = 0
+
+        dx = which_unit.x - other_unit.x
+        dy = which_unit.y - other_unit.y
+        actual_distance = math.sqrt(dx * dx + dy * dy)
+
+        return actual_distance <= distance
