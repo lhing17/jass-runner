@@ -1,6 +1,17 @@
 """玩家名称相关 native 函数的测试。"""
 
 
+def test_all_player_name_natives_registered():
+    """测试玩家名称 native 函数已注册。"""
+    from src.jass_runner.natives.factory import NativeFactory
+
+    factory = NativeFactory()
+    registry = factory.create_default_registry()
+
+    assert registry.get("GetPlayerName") is not None
+    assert registry.get("SetPlayerName") is not None
+
+
 def test_get_player_name():
     """测试 GetPlayerName native 函数。"""
     from src.jass_runner.natives.player_name_natives import GetPlayerName

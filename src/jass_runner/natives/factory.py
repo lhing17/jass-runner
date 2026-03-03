@@ -52,6 +52,10 @@ from .player_state_natives import (
     GetPlayerState,
     SetPlayerState,
 )
+from .player_name_natives import (
+    GetPlayerName,
+    SetPlayerName,
+)
 from .effect_natives import (
     AddSpecialEffect,
     AddSpecialEffectTarget,
@@ -240,5 +244,9 @@ class NativeFactory:
         # 注册玩家资源native函数
         registry.register(GetPlayerState())
         registry.register(SetPlayerState())
+
+        # 注册玩家名称native函数
+        registry.register(GetPlayerName())
+        registry.register(SetPlayerName())
 
         return registry
