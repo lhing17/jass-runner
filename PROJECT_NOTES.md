@@ -1127,5 +1127,29 @@ jass-runner/
   - `docs/plans/2026-03-03-item-system-implementation-plan.md` - 实施计划
 - **测试统计**: 678个测试通过
 
+#### 51. 特效系统实现完成 (2026-03-03)
+- **新增组件**:
+  - `Effect` 类 - 特效句柄，用于标识已创建的特效
+  - `effect_natives.py` - 5个特效系统Native函数
+- **新增Native函数**:
+  - 坐标特效: `AddSpecialEffect` - 在指定坐标创建特效
+  - 目标特效: `AddSpecialEffectTarget` - 在单位/物品上创建特效
+  - 特效销毁: `DestroyEffect` - 销毁特效
+  - 特效缩放: `SetSpecialEffectScale` - 设置特效缩放（仅日志）
+  - 特效颜色: `SetSpecialEffectColor` - 设置特效颜色（仅日志）
+- **修改文件**:
+  - `src/jass_runner/natives/handle.py` - 添加Effect类
+  - `src/jass_runner/natives/manager.py` - 添加特效生命周期管理
+  - `src/jass_runner/natives/effect_natives.py` - 新建，实现5个函数
+  - `src/jass_runner/natives/factory.py` - 注册新函数
+- **关键设计**:
+  - 极简日志方案，所有操作仅输出日志
+  - 支持坐标点和目标对象两种创建方式
+  - 特效句柄统一管理生命周期
+- **测试覆盖**:
+  - 单元测试: 5个测试用例覆盖所有函数
+  - 集成测试: `tests/integration/test_effect_system.py`
+- **测试统计**: 683个测试通过
+
 ---
 *最后更新: 2026-03-03*

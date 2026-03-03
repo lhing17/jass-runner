@@ -142,15 +142,16 @@
   - [x] Native函数：CreateItem, RemoveItem, GetItemTypeId
   - [x] Native函数：UnitAddItem, UnitRemoveItem, UnitItemInSlot
   - [x] Native函数：UnitAddItemById, UnitRemoveItemFromSlot
-- [ ] **P2** [Simulator] 特效系统基础
-  - [ ] Effect类实现（特效创建和销毁）
-  - [ ] Native函数：AddSpecialEffect, DestroyEffect
-  - [ ] 基础特效路径支持
+- [x] **P2** [Simulator] 特效系统基础 ✅ 已完成（2026-03-03）
+  - [x] Effect类实现（特效创建和销毁）
+  - [x] Native函数：AddSpecialEffect, AddSpecialEffectTarget, DestroyEffect
+  - [x] Native函数：SetSpecialEffectScale, SetSpecialEffectColor
+  - [x] 基础特效路径支持
 
-**v0.6.0 状态**: ⚠️ 部分完成（2026-03-03）
+**v0.6.0 状态**: ✅ 已完成（2026-03-03）
 - 物品系统：✅ 已完成 - 6个Native函数，14个单元测试，3个集成测试
-- 特效系统：⏳ 待实现
-- 测试覆盖：678个测试通过
+- 特效系统：✅ 已完成 - 5个Native函数，5个集成测试
+- 测试覆盖：683个测试通过
 
 ### v0.7.0: 高级游戏机制 (Advanced Game Mechanics)
 > 目标：支持更复杂的游戏逻辑和高级API。
