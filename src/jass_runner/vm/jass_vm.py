@@ -5,6 +5,8 @@
 """
 
 import logging
+import os
+import re
 from typing import Optional
 
 from ..parser.parser import Parser
@@ -42,6 +44,9 @@ class JassVM:
 
         self.ast = None
         self.loaded = False
+
+        # 加载 common.j 中的常量
+        self._load_constants()
 
     def load_script(self, script_content: str):
         """加载并解析 JASS 脚本。"""
@@ -89,3 +94,52 @@ class JassVM:
 
         if simulate_seconds > 0 and self.enable_timers:
             self.run_simulation(simulate_seconds)
+
+    def _load_constants(self):
+        """从 common.j 加载常量定义。"""
+        common_j_paths = [
+            'resources/common.j',
+            os.path.join(os.path.dirname(__file__), '..', '..', '..', 'resources', 'common.j')
+        ]
+
+        for path in common_j_paths:
+            if os.path.exists(path):
+                self._parse_constants_from_file(path)
+                break
+
+    def _parse_constants_from_file(self, filepath: str):
+        """解析文件中的常量定义。"""
+        constant_pattern = re.compile(
+            r'constant\s+(\w+)\s+(\w+)\s*=\s*([^\s]+)',
+            re.MULTILINE
+        )
+
+        with open(filepath, 'r', encoding='utf-8') as f:
+            content = f.read()
+
+        for match in constant_pattern.finditer(content):
+            const_type = match.group(1)  # integer, real, boolean, etc.
+            const_name = match.group(2)   # CAMERA_MARGIN_LEFT
+            const_value = match.group(3) # 0, true, etc.
+
+            # 转换值为Python类型并存储到解释器的全局变量
+            value = self._convert_constant_value(const_type, const_value)
+            self.interpreter.global_context.variables[const_name] = value
+
+    def _convert_constant_value(self, const_type: str, const_value: str):
+        """将JASS常量值转换为Python值。"""
+        if const_type == 'integer':
+            try:
+                return int(const_value)
+            except ValueError:
+                return 0
+        elif const_type == 'real':
+            try:
+                return float(const_value)
+            except ValueError:
+                return 0.0
+        elif const_type == 'boolean':
+            return const_value.lower() == 'true'
+        else:
+            # 对于handle类型和其他类型，存储字符串值
+            return const_value
