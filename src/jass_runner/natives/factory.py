@@ -48,6 +48,13 @@ from .item_inventory_natives import (
     GetItemTypeId,
     UnitItemInSlot,
 )
+from .effect_natives import (
+    AddSpecialEffect,
+    AddSpecialEffectTarget,
+    DestroyEffect,
+    SetSpecialEffectScale,
+    SetSpecialEffectColor,
+)
 
 
 class NativeFactory:
@@ -218,5 +225,12 @@ class NativeFactory:
         registry.register(UnitRemoveItemFromSlot())
         registry.register(GetItemTypeId())
         registry.register(UnitItemInSlot())
+
+        # 注册特效native函数
+        registry.register(AddSpecialEffect())
+        registry.register(AddSpecialEffectTarget())
+        registry.register(DestroyEffect())
+        registry.register(SetSpecialEffectScale())
+        registry.register(SetSpecialEffectColor())
 
         return registry
