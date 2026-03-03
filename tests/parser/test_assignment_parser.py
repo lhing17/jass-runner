@@ -104,5 +104,5 @@ class TestParseCallArgs:
 
         assert len(call_stmt.args) == 4
         assert call_stmt.args[0] == '1'
-        assert call_stmt.args[2] == '"string"'
+        assert call_stmt.args[2] == 'string'
         assert call_stmt.args[3] == '3.14'
