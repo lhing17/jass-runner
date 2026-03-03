@@ -79,3 +79,60 @@ class UnitAddItemById(NativeFunction):
             slot_str = f"槽位 {slot}" if slot >= 0 else "背包"
             logger.warning(f"[UnitAddItemById] {slot_str}已满或无效，销毁已创建的 {item_type_str}")
             return None
+
+
+class UnitRemoveItem(NativeFunction):
+    """从单位移除并销毁物品。"""
+
+    @property
+    def name(self) -> str:
+        return "UnitRemoveItem"
+
+    def execute(self, state_context: StateContext, unit: Unit, item: Item) -> bool:
+        """执行移除并销毁操作。
+
+        参数：
+            state_context: 状态上下文
+            unit: 目标单位
+            item: 要移除的物品
+
+        返回：
+            移除成功返回True，物品不在背包中返回False
+        """
+        result = unit.remove_item(item)
+        if result:
+            handle_manager = state_context.handle_manager
+            handle_manager.destroy_handle(item.id)
+            logger.info(f"[UnitRemoveItem] 销毁物品 {item.id}")
+            return True
+        logger.warning(f"[UnitRemoveItem] 物品 {item.id} 不在单位 {unit.id} 背包中")
+        return False
+
+
+class UnitRemoveItemFromSlot(NativeFunction):
+    """从指定槽位移除并销毁物品。"""
+
+    @property
+    def name(self) -> str:
+        return "UnitRemoveItemFromSlot"
+
+    def execute(self, state_context: StateContext, unit: Unit, slot: int) -> bool:
+        """执行从槽位移除并销毁操作。
+
+        参数：
+            state_context: 状态上下文
+            unit: 目标单位
+            slot: 槽位索引（0-5）
+
+        返回：
+            移除成功返回True，槽位为空或越界返回False
+        """
+        item = unit.get_item_in_slot(slot)
+        if item:
+            unit.remove_item_from_slot(slot)
+            handle_manager = state_context.handle_manager
+            handle_manager.destroy_handle(item.id)
+            logger.info(f"[UnitRemoveItemFromSlot] 槽位 {slot} 的物品已销毁")
+            return True
+        logger.warning(f"[UnitRemoveItemFromSlot] 槽位 {slot} 为空或无效")
+        return False

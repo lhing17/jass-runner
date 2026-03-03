@@ -29,6 +29,8 @@ from .math_extended import (
 from .item_inventory_natives import (
     UnitAddItem,
     UnitAddItemById,
+    UnitRemoveItem,
+    UnitRemoveItemFromSlot,
 )
 
 __all__ = [
@@ -84,4 +86,6 @@ __all__ = [
     # 物品背包函数
     "UnitAddItem",
     "UnitAddItemById",
+    "UnitRemoveItem",
+    "UnitRemoveItemFromSlot",
 ]

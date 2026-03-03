@@ -3,7 +3,12 @@
 import pytest
 from jass_runner.natives.handle import Unit, Item, Player
 from jass_runner.natives.manager import HandleManager
-from jass_runner.natives.item_inventory_natives import UnitAddItem, UnitAddItemById
+from jass_runner.natives.item_inventory_natives import (
+    UnitAddItem,
+    UnitAddItemById,
+    UnitRemoveItem,
+    UnitRemoveItemFromSlot,
+)
 from jass_runner.natives.state import StateContext
 
 
@@ -116,3 +121,71 @@ class TestUnitAddItemById:
         assert result is None
         # 确认原有物品仍在
         assert unit.get_item_in_slot(3) is existing_item
+
+
+class TestUnitRemoveItem:
+    """测试 UnitRemoveItem 函数。"""
+
+    def test_remove_item_success(self):
+        """测试成功移除并销毁物品。"""
+        state_context = StateContext()
+        handle_manager = state_context.handle_manager
+        player = handle_manager.get_player(0)
+        unit = handle_manager.create_unit(0, player, 0.0, 0.0, 0.0)
+        item = handle_manager.create_item("ratf", 1.0, 1.0)
+        unit.add_item(item)
+        native = UnitRemoveItem()
+
+        result = native.execute(state_context, unit, item)
+
+        assert result is True
+        assert unit.find_item(item) == -1
+        # 验证物品已销毁
+        assert handle_manager.get_handle(item.id) is None
+
+    def test_remove_item_not_in_inventory_fails(self):
+        """测试移除不在背包中的物品失败。"""
+        state_context = StateContext()
+        handle_manager = state_context.handle_manager
+        player = handle_manager.get_player(0)
+        unit = handle_manager.create_unit(0, player, 0.0, 0.0, 0.0)
+        item = handle_manager.create_item("ratf", 1.0, 1.0)
+        # 不添加到单位
+        native = UnitRemoveItem()
+
+        result = native.execute(state_context, unit, item)
+
+        assert result is False
+        # 物品未被销毁
+        assert handle_manager.get_handle(item.id) is not None
+
+
+class TestUnitRemoveItemFromSlot:
+    """测试 UnitRemoveItemFromSlot 函数。"""
+
+    def test_remove_from_slot_success(self):
+        """测试从指定槽位移除成功。"""
+        state_context = StateContext()
+        handle_manager = state_context.handle_manager
+        player = handle_manager.get_player(0)
+        unit = handle_manager.create_unit(0, player, 0.0, 0.0, 0.0)
+        item = handle_manager.create_item("ratf", 1.0, 1.0)
+        unit.add_item(item, 2)
+        native = UnitRemoveItemFromSlot()
+
+        result = native.execute(state_context, unit, 2)
+
+        assert result is True
+        assert unit.get_item_in_slot(2) is None
+
+    def test_remove_from_empty_slot_fails(self):
+        """测试从空槽位移除失败。"""
+        state_context = StateContext()
+        handle_manager = state_context.handle_manager
+        player = handle_manager.get_player(0)
+        unit = handle_manager.create_unit(0, player, 0.0, 0.0, 0.0)
+        native = UnitRemoveItemFromSlot()
+
+        result = native.execute(state_context, unit, 3)
+
+        assert result is False
