@@ -428,6 +428,7 @@ jass-runner/
 │   │   ├── unit_state_natives.py # 单位状态扩展
 │   │   ├── unit_ownership_natives.py # 单位所有权管理
 │   │   ├── unit_range_natives.py # 单位范围检测
+│   │   ├── item_inventory_natives.py # 物品背包系统
 │   │   └── async_natives.py # 异步Native函数
 │   ├── trigger/          # 触发器系统
 │   │   ├── __init__.py   # 模块初始化
@@ -939,7 +940,12 @@ jass-runner/
 - ✅ **单位组枚举Native函数实现完成** (8个函数: GroupEnumUnitsOfPlayer, GroupEnumUnitsInRange, GroupEnumUnitsInRangeOfLoc, GroupEnumUnitsInRect, BlzGroupGetSize, BlzGroupUnitAt)
 - ✅ **单位状态扩展Native函数实现完成** (8个函数: GetWidgetLife, SetWidgetLife, UnitDamageTarget, GetUnitLevel, IsUnitType, IsUnitAlive, IsUnitDead)
 - ✅ **单位所有权和关系Native函数实现完成** (7个函数: SetUnitOwner, IsUnitOwnedByPlayer, IsUnitAlly, IsUnitEnemy, IsUnitInRangeXY, IsUnitInRangeLoc, IsUnitInRange)
-- ✅ 所有 672 个测试通过
+- ✅ **物品背包系统Native函数实现完成**
+  - UnitAddItem, UnitAddItemById
+  - UnitRemoveItem, UnitRemoveItemFromSlot
+  - GetItemTypeId, UnitItemInSlot
+  - 14个单元测试 + 3个集成测试
+- ✅ 所有 678 个测试通过
 
 #### 42. 类型检查系统实现完成 (2026-03-02)
 - **核心组件**:
@@ -1090,6 +1096,32 @@ jass-runner/
   - 单元测试: Player联盟管理、7个native函数
   - 集成测试: 单位所有权和范围检测工作流
 - **测试统计**: 672个测试通过
+
+#### 50. 物品背包系统Native函数实现完成 (2026-03-03)
+- **新增组件**:
+  - Unit类背包扩展 - 6槽位物品管理系统
+  - `item_inventory_natives.py` - 6个物品背包Native函数
+- **新增Native函数**:
+  - 添加物品: UnitAddItem, UnitAddItemById
+  - 移除物品: UnitRemoveItem, UnitRemoveItemFromSlot
+  - 查询物品: GetItemTypeId, UnitItemInSlot
+- **修改文件**:
+  - `src/jass_runner/natives/handle.py` - Unit类添加inventory属性和操作方法
+  - `src/jass_runner/natives/item_inventory_natives.py` - 新建，实现6个函数
+  - `src/jass_runner/natives/factory.py` - 注册新函数
+  - `src/jass_runner/natives/__init__.py` - 导出新函数
+- **关键设计**:
+  - 6槽位固定大小背包（索引0-5）
+  - 支持自动找空槽和指定槽位两种模式
+  - 移除操作自动销毁Item对象
+  - FourCC类型ID转换支持
+- **测试覆盖**:
+  - 单元测试: 14个测试用例覆盖所有函数
+  - 集成测试: 3个场景测试完整生命周期
+- **文档**:
+  - `docs/plans/2026-03-03-item-system-design.md` - 系统设计文档
+  - `docs/plans/2026-03-03-item-system-implementation-plan.md` - 实施计划
+- **测试统计**: 678个测试通过
 
 ---
 *最后更新: 2026-03-03*
