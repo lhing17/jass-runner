@@ -133,18 +133,24 @@
 
 ## 5. 未来路线图 (Future Roadmap)
 
-### v0.6.0: 物品与特效系统 (Items & Effects)
+### v0.6.0: 物品与特效系统 (Items & Effects) ✅ 已完成（物品部分）
 > 目标：实现物品系统和基础特效支持。
 
-- [ ] **P1** [Simulator] 物品系统核心
-  - [ ] Item类实现（物品类型、属性、持有者）
-  - [ ] 物品容器管理（Unit inventory）
-  - [ ] Native函数：CreateItem, RemoveItem, GetItemTypeId
-  - [ ] Native函数：UnitAddItem, UnitRemoveItem, UnitItemInSlot
+- [x] **P1** [Simulator] 物品系统核心 ✅ 已完成（2026-03-03）
+  - [x] Item类实现（物品类型、属性、持有者）
+  - [x] 物品容器管理（Unit inventory）- 6槽位背包系统
+  - [x] Native函数：CreateItem, RemoveItem, GetItemTypeId
+  - [x] Native函数：UnitAddItem, UnitRemoveItem, UnitItemInSlot
+  - [x] Native函数：UnitAddItemById, UnitRemoveItemFromSlot
 - [ ] **P2** [Simulator] 特效系统基础
   - [ ] Effect类实现（特效创建和销毁）
   - [ ] Native函数：AddSpecialEffect, DestroyEffect
   - [ ] 基础特效路径支持
+
+**v0.6.0 状态**: ⚠️ 部分完成（2026-03-03）
+- 物品系统：✅ 已完成 - 6个Native函数，14个单元测试，3个集成测试
+- 特效系统：⏳ 待实现
+- 测试覆盖：678个测试通过
 
 ### v0.7.0: 高级游戏机制 (Advanced Game Mechanics)
 > 目标：支持更复杂的游戏逻辑和高级API。

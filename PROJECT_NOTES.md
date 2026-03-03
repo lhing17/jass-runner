@@ -494,7 +494,8 @@ jass-runner/
 │   │   ├── test_ability_natives.py # 技能系统操作测试
 │   │   ├── test_unit_state_natives.py # 单位状态扩展测试
 │   │   ├── test_unit_ownership_natives.py # 单位所有权测试
-│   │   └── test_unit_range_natives.py # 单位范围检测测试
+│   │   ├── test_unit_range_natives.py # 单位范围检测测试
+│   │   └── test_item_inventory_natives.py # 物品背包系统测试
 │   ├── trigger/         # 触发器测试
 │   │   ├── test_event_types.py    # 事件类型测试
 │   │   ├── test_trigger.py        # Trigger类测试
@@ -517,7 +518,8 @@ jass-runner/
 │   ├── integration/     # 集成测试
 │   │   ├── test_trigger_system.py      # 触发器系统基础集成测试
 │   │   ├── test_trigger_natives.py     # 触发器Native函数集成测试
-│   │   └── test_trigger_timer.py       # 计时器事件集成测试
+│   │   ├── test_trigger_timer.py       # 计时器事件集成测试
+│   │   └── test_item_inventory_integration.py # 物品背包系统集成测试
 ├── examples/hello_world.j # 示例脚本
 ├── docs/plans/         # 实施计划文档
 │   ├── 2026-02-24-jass-simulator-design.md
@@ -531,7 +533,9 @@ jass-runner/
 │   ├── 2026-02-26-jass-simulator-state-management-phase2-implementation.md  # Middleware
 │   ├── 2026-02-26-jass-simulator-state-management-phase3-implementation.md  # Selector
 │   ├── 2026-02-26-jass-simulator-state-management-phase4-implementation.md  # 集成
-│   └── 2026-02-26-jass-simulator-state-management-phase5-implementation.md  # DevTools
+│   ├── 2026-02-26-jass-simulator-state-management-phase5-implementation.md  # DevTools
+│   ├── 2026-03-03-item-system-design.md                              # 物品系统设计
+│   └── 2026-03-03-item-system-implementation-plan.md                 # 物品系统实施计划
 ├── docs/natives/README.md # Native函数文档
 ├── docs/phase1_summary.md # Phase 1总结
 ├── docs/phase2_summary.md # Phase 2总结
