@@ -61,6 +61,7 @@ class Unit(Handle):
         self.level = 1  # 单位等级，默认为1
         self._abilities: Dict[int, int] = {}  # 技能ID -> 技能等级
         self._permanent_abilities: Set[int] = set()  # 永久技能ID集合
+        self.inventory: List[Optional['Item']] = [None] * 6  # 6槽位背包
 
     def destroy(self):
         """销毁单位，将生命值设为0。"""
@@ -197,6 +198,84 @@ class Unit(Handle):
             是永久技能返回True，否则返回False
         """
         return ability_id in self._permanent_abilities
+
+    def add_item(self, item: 'Item', slot: int = -1) -> bool:
+        """添加物品到背包，成功返回 True。
+
+        参数：
+            item: 要添加的物品
+            slot: 目标槽位（-1表示自动找空槽，0-5表示指定槽位）
+
+        返回：
+            添加成功返回True，背包满或指定槽位被占返回False
+        """
+        if slot >= 0:
+            if 0 <= slot < 6 and self.inventory[slot] is None:
+                self.inventory[slot] = item
+                return True
+            return False
+        # 自动找空槽
+        for i in range(6):
+            if self.inventory[i] is None:
+                self.inventory[i] = item
+                return True
+        return False
+
+    def remove_item(self, item: 'Item') -> bool:
+        """从背包移除指定物品，成功返回 True。
+
+        参数：
+            item: 要移除的物品
+
+        返回：
+            移除成功返回True，物品不在背包中返回False
+        """
+        for i in range(6):
+            if self.inventory[i] is item:
+                self.inventory[i] = None
+                return True
+        return False
+
+    def remove_item_from_slot(self, slot: int) -> bool:
+        """从指定槽位移除物品，成功返回 True。
+
+        参数：
+            slot: 槽位索引（0-5）
+
+        返回：
+            移除成功返回True，槽位无效或为空返回False
+        """
+        if 0 <= slot < 6 and self.inventory[slot] is not None:
+            self.inventory[slot] = None
+            return True
+        return False
+
+    def get_item_in_slot(self, slot: int) -> Optional['Item']:
+        """获取指定槽位的物品。
+
+        参数：
+            slot: 槽位索引（0-5）
+
+        返回：
+            该槽位的物品，无效槽位或空槽返回None
+        """
+        if 0 <= slot < 6:
+            return self.inventory[slot]
+        return None
+
+    def find_item(self, item: 'Item') -> int:
+        """查找物品所在槽位。
+
+        参数：
+            item: 要查找的物品
+
+        返回：
+            物品所在槽位索引（0-5），未找到返回-1
+        """
+        for i in range(6):
+            if self.inventory[i] is item:
+                return i
+        return -1
 
 
 class Player(Handle):
