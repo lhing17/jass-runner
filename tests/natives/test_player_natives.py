@@ -1,7 +1,7 @@
 """玩家相关 native 函数测试。"""
 
 import pytest
-from src.jass_runner.natives.player_state_natives import GetPlayerState
+from src.jass_runner.natives.player_state_natives import GetPlayerState, SetPlayerState
 from src.jass_runner.natives.state import StateContext
 from src.jass_runner.natives.handle import Player
 
@@ -79,3 +79,49 @@ def test_get_player_state_different_player():
 
     assert result0 == 2000
     assert result1 == 1000
+
+
+def test_set_player_state():
+    """测试 SetPlayerState native 函数。"""
+    state_context = StateContext()
+    native = SetPlayerState()
+
+    player = state_context.handle_manager.get_player(0)
+    result = native.execute(state_context, player, 1, 2000)  # 设置 GOLD 为 2000
+
+    assert result == 2000
+    assert player.get_state(1) == 2000
+
+
+def test_set_player_state_lumber():
+    """测试 SetPlayerState 设置木材。"""
+    state_context = StateContext()
+    native = SetPlayerState()
+
+    player = state_context.handle_manager.get_player(0)
+    result = native.execute(state_context, player, 2, 1500)  # 设置 LUMBER 为 1500
+
+    assert result == 1500
+    assert player.get_state(2) == 1500
+
+
+def test_set_player_state_clamping():
+    """测试 SetPlayerState 截断功能。"""
+    state_context = StateContext()
+    native = SetPlayerState()
+
+    player = state_context.handle_manager.get_player(0)
+    result = native.execute(state_context, player, 1, 2000000)  # 超出上限
+
+    assert result == 1000000  # 被截断到上限
+    assert player.get_state(1) == 1000000
+
+
+def test_set_player_state_with_none_player():
+    """测试 SetPlayerState 处理 None 玩家。"""
+    state_context = StateContext()
+    native = SetPlayerState()
+
+    result = native.execute(state_context, None, 1, 1000)
+
+    assert result == 0

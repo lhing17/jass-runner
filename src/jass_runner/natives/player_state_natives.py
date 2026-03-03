@@ -46,3 +46,37 @@ class GetPlayerState(NativeFunction):
         result = player.get_state(state_type)
         logger.info(f"[GetPlayerState] 玩家{player.player_id} 状态{state_type}: {result}")
         return result
+
+
+class SetPlayerState(NativeFunction):
+    """设置玩家状态。"""
+
+    @property
+    def name(self) -> str:
+        """获取 native 函数名称。
+
+        返回：
+            函数名称 "SetPlayerState"
+        """
+        return "SetPlayerState"
+
+    def execute(self, state_context: 'StateContext', player: 'Player',
+                state_type: int, value: int) -> int:
+        """执行 SetPlayerState native 函数。
+
+        参数：
+            state_context: 状态上下文
+            player: 玩家对象
+            state_type: 状态类型（PLAYER_STATE_RESOURCE_*）
+            value: 要设置的值
+
+        返回：
+            实际设置的值（超出范围时自动截断）
+        """
+        if player is None:
+            logger.warning("[SetPlayerState] 玩家对象为 None")
+            return 0
+
+        actual_value = player.set_state(state_type, value)
+        logger.info(f"[SetPlayerState] 玩家{player.player_id} 设置状态{state_type}为{actual_value}（输入{value}）")
+        return actual_value
