@@ -5,7 +5,7 @@
 
 import pytest
 from jass_runner.natives.state import StateContext
-from jass_runner.natives.unit_ownership_natives import IsUnitOwnedByPlayer
+from jass_runner.natives.unit_ownership_natives import IsUnitOwnedByPlayer, IsUnitAlly, IsUnitEnemy
 
 
 class TestIsUnitOwnedByPlayer:
@@ -122,3 +122,88 @@ class TestSetUnitOwner:
 
         assert result is None
         assert unit.player_id == 0  # 未改变
+
+
+class TestIsUnitAlly:
+    """测试IsUnitAlly native函数。"""
+
+    def test_unit_is_ally_returns_true(self):
+        """测试单位所属玩家与指定玩家是盟友返回True。"""
+        state = StateContext()
+        native = IsUnitAlly()
+
+        # 创建玩家0的单位
+        unit = state.handle_manager.create_unit("hfoo", 0, 100.0, 200.0, 0.0)
+        # 获取玩家0（单位所有者）和玩家1
+        unit_owner = state.handle_manager.get_player(0)
+        other_player = state.handle_manager.get_player(1)
+
+        # 设置盟友关系
+        unit_owner.set_alliance(1, True)
+
+        result = native.execute(state, unit, other_player)
+
+        assert result is True
+
+    def test_unit_is_not_ally_returns_false(self):
+        """测试单位所属玩家与指定玩家不是盟友返回False。"""
+        state = StateContext()
+        native = IsUnitAlly()
+
+        # 创建玩家0的单位
+        unit = state.handle_manager.create_unit("hfoo", 0, 100.0, 200.0, 0.0)
+        # 获取玩家1
+        other_player = state.handle_manager.get_player(1)
+
+        # 不设置盟友关系
+        result = native.execute(state, unit, other_player)
+
+        assert result is False
+
+    def test_null_unit_returns_false(self):
+        """测试null单位返回False。"""
+        state = StateContext()
+        native = IsUnitAlly()
+
+        other_player = state.handle_manager.get_player(1)
+
+        result = native.execute(state, None, other_player)
+
+        assert result is False
+
+
+class TestIsUnitEnemy:
+    """测试IsUnitEnemy native函数。"""
+
+    def test_unit_is_enemy_returns_true(self):
+        """测试单位所属玩家与指定玩家是敌人返回True。"""
+        state = StateContext()
+        native = IsUnitEnemy()
+
+        # 创建玩家0的单位
+        unit = state.handle_manager.create_unit("hfoo", 0, 100.0, 200.0, 0.0)
+        # 获取玩家0（单位所有者）和玩家1
+        unit_owner = state.handle_manager.get_player(0)
+        other_player = state.handle_manager.get_player(1)
+
+        # 设置敌对关系
+        unit_owner.set_alliance(1, False)
+
+        result = native.execute(state, unit, other_player)
+
+        assert result is True
+
+    def test_unit_is_not_enemy_returns_false(self):
+        """测试单位所属玩家与指定玩家不是敌人返回False。"""
+        state = StateContext()
+        native = IsUnitEnemy()
+
+        # 创建玩家0的单位
+        unit = state.handle_manager.create_unit("hfoo", 0, 100.0, 200.0, 0.0)
+        # 获取玩家1
+        other_player = state.handle_manager.get_player(1)
+
+        # 不设置敌对关系
+        result = native.execute(state, unit, other_player)
+
+        assert result is False

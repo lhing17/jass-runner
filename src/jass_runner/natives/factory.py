@@ -38,7 +38,7 @@ from .location import LocationConstructor, RemoveLocation
 from .group_natives import CreateGroup, DestroyGroup, GroupAddUnit, GroupRemoveUnit, GroupClear, FirstOfGroup, IsUnitInGroup, ForGroup, BlzGroupGetSize, BlzGroupUnitAt, GroupEnumUnitsOfPlayer, GroupEnumUnitsInRange, GroupEnumUnitsInRangeOfLoc, GroupEnumUnitsInRect
 from .ability_natives import UnitAddAbility, UnitRemoveAbility, GetUnitAbilityLevel, SetUnitAbilityLevel, IncUnitAbilityLevel, DecUnitAbilityLevel, UnitMakeAbilityPermanent
 from .unit_state_natives import GetWidgetLife, SetWidgetLife, UnitDamageTarget, GetUnitLevel, IsUnitType, IsUnitAlive, IsUnitDead
-from .unit_ownership_natives import IsUnitOwnedByPlayer, SetUnitOwner
+from .unit_ownership_natives import IsUnitOwnedByPlayer, SetUnitOwner, IsUnitAlly, IsUnitEnemy
 from .unit_range_natives import IsUnitInRangeXY, IsUnitInRangeLoc, IsUnitInRange
 
 
@@ -195,6 +195,8 @@ class NativeFactory:
         # 注册单位所有权native函数
         registry.register(IsUnitOwnedByPlayer())
         registry.register(SetUnitOwner())
+        registry.register(IsUnitAlly())
+        registry.register(IsUnitEnemy())
 
         # 注册单位范围检测native函数
         registry.register(IsUnitInRangeXY())

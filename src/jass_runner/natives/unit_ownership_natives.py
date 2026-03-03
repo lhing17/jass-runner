@@ -84,3 +84,75 @@ class SetUnitOwner(NativeFunction):
             logger.info(f"单位 {which_unit.name} (ID:{which_unit.id}) 所有权从玩家 {old_owner} 变更为玩家 {which_player.player_id} (颜色已改变)")
         else:
             logger.info(f"单位 {which_unit.name} (ID:{which_unit.id}) 所有权从玩家 {old_owner} 变更为玩家 {which_player.player_id}")
+
+
+class IsUnitAlly(NativeFunction):
+    """检查单位所属玩家与指定玩家是否盟友。
+
+    对应JASS native函数: boolean IsUnitAlly(unit whichUnit, player whichPlayer)
+    """
+
+    @property
+    def name(self) -> str:
+        """获取函数名称。"""
+        return "IsUnitAlly"
+
+    def execute(self, state_context, which_unit: Optional[Unit], which_player: Optional[Player]) -> bool:
+        """执行盟友关系检查。
+
+        参数：
+            state_context: 状态上下文（包含HandleManager）
+            which_unit: 要检查的单位
+            which_player: 要检查的玩家
+
+        返回：
+            如果单位所属玩家与指定玩家是盟友返回True，否则返回False
+        """
+        if which_unit is None or which_player is None:
+            return False
+
+        if state_context is None:
+            return False
+
+        # 获取单位所属玩家对象
+        unit_owner = state_context.handle_manager.get_player_by_id(which_unit.player_id)
+        if unit_owner is None:
+            return False
+
+        return unit_owner.is_ally(which_player.player_id)
+
+
+class IsUnitEnemy(NativeFunction):
+    """检查单位所属玩家与指定玩家是否敌对。
+
+    对应JASS native函数: boolean IsUnitEnemy(unit whichUnit, player whichPlayer)
+    """
+
+    @property
+    def name(self) -> str:
+        """获取函数名称。"""
+        return "IsUnitEnemy"
+
+    def execute(self, state_context, which_unit: Optional[Unit], which_player: Optional[Player]) -> bool:
+        """执行敌对关系检查。
+
+        参数：
+            state_context: 状态上下文（包含HandleManager）
+            which_unit: 要检查的单位
+            which_player: 要检查的玩家
+
+        返回：
+            如果单位所属玩家与指定玩家是敌人返回True，否则返回False
+        """
+        if which_unit is None or which_player is None:
+            return False
+
+        if state_context is None:
+            return False
+
+        # 获取单位所属玩家对象
+        unit_owner = state_context.handle_manager.get_player_by_id(which_unit.player_id)
+        if unit_owner is None:
+            return False
+
+        return unit_owner.is_enemy(which_player.player_id)
