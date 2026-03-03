@@ -40,6 +40,14 @@ from .ability_natives import UnitAddAbility, UnitRemoveAbility, GetUnitAbilityLe
 from .unit_state_natives import GetWidgetLife, SetWidgetLife, UnitDamageTarget, GetUnitLevel, IsUnitType, IsUnitAlive, IsUnitDead
 from .unit_ownership_natives import IsUnitOwnedByPlayer, SetUnitOwner, IsUnitAlly, IsUnitEnemy
 from .unit_range_natives import IsUnitInRangeXY, IsUnitInRangeLoc, IsUnitInRange
+from .item_inventory_natives import (
+    UnitAddItem,
+    UnitAddItemById,
+    UnitRemoveItem,
+    UnitRemoveItemFromSlot,
+    GetItemTypeId,
+    UnitItemInSlot,
+)
 
 
 class NativeFactory:
@@ -202,5 +210,13 @@ class NativeFactory:
         registry.register(IsUnitInRangeXY())
         registry.register(IsUnitInRangeLoc())
         registry.register(IsUnitInRange())
+
+        # 注册物品背包native函数
+        registry.register(UnitAddItem())
+        registry.register(UnitAddItemById())
+        registry.register(UnitRemoveItem())
+        registry.register(UnitRemoveItemFromSlot())
+        registry.register(GetItemTypeId())
+        registry.register(UnitItemInSlot())
 
         return registry

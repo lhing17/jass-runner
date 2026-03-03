@@ -124,9 +124,9 @@ def test_create_default_registry():
     assert player_func is not None
     assert player_func.name == "Player"
 
-    # 检查基础函数数量（7个基础 + 19个触发器 + 15个数学 + 2个异步 + 14个单位操作 + 14个单位组 + 7个技能 + 7个单位状态 + 4个单位所有权 + 3个单位范围 = 92）
+    # 检查基础函数数量（7个基础 + 19个触发器 + 15个数学 + 2个异步 + 14个单位操作 + 14个单位组 + 7个技能 + 7个单位状态 + 4个单位所有权 + 3个单位范围 + 6个物品背包 = 98）
     all_funcs = registry.get_all()
-    assert len(all_funcs) == 92
+    assert len(all_funcs) == 98
 
 
 def test_all_math_natives_registered():
@@ -220,3 +220,47 @@ def test_factory_registers_async_natives():
     assert execute_func is not None
     assert execute_func.name == "ExecuteFunc"
     assert isinstance(execute_func, ExecuteFunc)
+
+
+def test_factory_registers_item_inventory_natives():
+    """测试工厂注册所有物品背包native函数。"""
+    from jass_runner.natives.factory import NativeFactory
+    from jass_runner.natives.item_inventory_natives import (
+        UnitAddItem, UnitAddItemById, UnitRemoveItem, UnitRemoveItemFromSlot,
+        GetItemTypeId, UnitItemInSlot,
+    )
+
+    factory = NativeFactory()
+    registry = factory.create_default_registry()
+
+    # 检查所有物品背包函数已注册
+    add_item = registry.get("UnitAddItem")
+    add_item_by_id = registry.get("UnitAddItemById")
+    remove_item = registry.get("UnitRemoveItem")
+    remove_from_slot = registry.get("UnitRemoveItemFromSlot")
+    get_type_id = registry.get("GetItemTypeId")
+    item_in_slot = registry.get("UnitItemInSlot")
+
+    assert add_item is not None
+    assert add_item.name == "UnitAddItem"
+    assert isinstance(add_item, UnitAddItem)
+
+    assert add_item_by_id is not None
+    assert add_item_by_id.name == "UnitAddItemById"
+    assert isinstance(add_item_by_id, UnitAddItemById)
+
+    assert remove_item is not None
+    assert remove_item.name == "UnitRemoveItem"
+    assert isinstance(remove_item, UnitRemoveItem)
+
+    assert remove_from_slot is not None
+    assert remove_from_slot.name == "UnitRemoveItemFromSlot"
+    assert isinstance(remove_from_slot, UnitRemoveItemFromSlot)
+
+    assert get_type_id is not None
+    assert get_type_id.name == "GetItemTypeId"
+    assert isinstance(get_type_id, GetItemTypeId)
+
+    assert item_in_slot is not None
+    assert item_in_slot.name == "UnitItemInSlot"
+    assert isinstance(item_in_slot, UnitItemInSlot)
