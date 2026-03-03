@@ -209,6 +209,8 @@ class Player(Handle):
         color: 玩家颜色ID
         slot_state: 插槽状态（'empty', 'closed', 'player'）
         controller: 控制器类型（'user', 'computer', 'neutral', 'rescueable'）
+        _allies: 盟友玩家ID集合
+        _enemies: 敌人玩家ID集合
     """
 
     def __init__(self, handle_id: str, player_id: int):
@@ -219,6 +221,44 @@ class Player(Handle):
         self.color = player_id  # 默认颜色等于ID
         self.slot_state = "player" if player_id < 12 else "empty"  # 0-11为玩家，12-15为空
         self.controller = "user" if player_id < 8 else "computer" if player_id < 12 else "neutral"
+        self._allies: Set[int] = set()  # 盟友玩家ID集合
+        self._enemies: Set[int] = set()  # 敌人玩家ID集合
+
+    def set_alliance(self, other_player_id: int, is_ally: bool) -> None:
+        """设置与其他玩家的关系。
+
+        参数：
+            other_player_id: 其他玩家ID
+            is_ally: True表示设为盟友，False表示设为敌人
+        """
+        if is_ally:
+            self._allies.add(other_player_id)
+            self._enemies.discard(other_player_id)
+        else:
+            self._enemies.add(other_player_id)
+            self._allies.discard(other_player_id)
+
+    def is_ally(self, other_player_id: int) -> bool:
+        """检查是否是指定玩家的盟友。
+
+        参数：
+            other_player_id: 其他玩家ID
+
+        返回：
+            是盟友返回True，否则返回False
+        """
+        return other_player_id in self._allies
+
+    def is_enemy(self, other_player_id: int) -> bool:
+        """检查是否是指定玩家的敌人。
+
+        参数：
+            other_player_id: 其他玩家ID
+
+        返回：
+            是敌人返回True，否则返回False
+        """
+        return other_player_id in self._enemies
 
 
 class Item(Handle):
