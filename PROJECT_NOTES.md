@@ -1175,5 +1175,24 @@ jass-runner/
   - 集成测试: 3个场景测试完整资源管理流程
 - **测试统计**: 696个测试通过
 
+#### 53. 玩家名称系统实现完成 (2026-03-04)
+- **新增组件**:
+  - `player_name_natives.py` - 2个玩家名称Native函数
+- **新增Native函数**:
+  - `GetPlayerName` - 获取玩家名称
+  - `SetPlayerName` - 设置玩家名称
+- **修改文件**:
+  - `src/jass_runner/natives/player_name_natives.py` - 新建，实现2个函数
+  - `src/jass_runner/natives/factory.py` - 注册新函数
+- **关键设计**:
+  - Player类已有name属性，默认格式"玩家{player_id}"
+  - 支持自定义玩家名称
+  - 设置名称时记录日志（包含原名称信息）
+- **测试覆盖**:
+  - 单元测试: 3个测试用例覆盖获取、设置、注册验证
+  - 集成测试: 1个场景测试完整名称管理流程
+- **测试统计**: 720个测试通过
+
+
 ---
 *最后更新: 2026-03-03*

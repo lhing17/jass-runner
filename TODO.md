@@ -158,7 +158,7 @@
 
 - [x] **P1** [Simulator] 玩家资源系统
   - [x] Native函数：GetPlayerState, SetPlayerState（金币、木材、人口）
-  - [ ] Native函数：GetPlayerName, SetPlayerName
+  - [x] Native函数：GetPlayerName, SetPlayerName
   - [ ] 玩家颜色和种族设置
 - [ ] **P2** [Simulator] 区域和触发器高级功能
   - [ ] Rect区域操作：Rect, RemoveRect
