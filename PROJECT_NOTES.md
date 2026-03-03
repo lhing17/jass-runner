@@ -411,12 +411,24 @@ jass-runner/
 │   │   ├── registry.py   # NativeRegistry注册系统
 │   │   ├── factory.py    # Native函数工厂
 │   │   ├── basic.py      # 基础native函数实现
-│   │   ├── handle.py     # Handle类定义（Player、Unit、Item）
+│   │   ├── handle.py     # Handle类定义（Player、Unit、Item、Group、Rect）
 │   │   ├── manager.py    # HandleManager句柄管理器
 │   │   ├── state.py      # StateContext状态上下文
+│   │   ├── location.py   # Location类定义
 │   │   ├── timer_natives.py # 计时器相关原生函数
 │   │   ├── trigger_natives.py # 触发器生命周期/动作/条件管理
-│   │   └── trigger_register_event_natives.py # 触发器事件注册
+│   │   ├── trigger_register_event_natives.py # 触发器事件注册
+│   │   ├── math_core.py  # 核心数学Native函数
+│   │   ├── math_extended.py # 扩展数学Native函数
+│   │   ├── unit_property_natives.py # 单位属性操作
+│   │   ├── unit_position_natives.py # 单位位置操作
+│   │   ├── group_natives.py # 单位组核心操作
+│   │   ├── group_enum_natives.py # 单位组枚举操作
+│   │   ├── ability_natives.py # 技能系统操作
+│   │   ├── unit_state_natives.py # 单位状态扩展
+│   │   ├── unit_ownership_natives.py # 单位所有权管理
+│   │   ├── unit_range_natives.py # 单位范围检测
+│   │   └── async_natives.py # 异步Native函数
 │   ├── trigger/          # 触发器系统
 │   │   ├── __init__.py   # 模块初始化
 │   │   ├── trigger.py    # Trigger类
@@ -468,8 +480,20 @@ jass-runner/
 │   │   ├── test_manager.py    # HandleManager测试
 │   │   ├── test_timer_natives.py # Timer原生函数测试
 │   │   ├── test_trigger_natives_unit.py # 触发器native函数测试
-│   │   └── test_trigger_register_event_natives_unit.py # 触发器事件注册测试
-│   │   └── test_async_natives.py # 异步native函数测试 (v0.4.0)
+│   │   ├── test_trigger_register_event_natives_unit.py # 触发器事件注册测试
+│   │   ├── test_async_natives.py # 异步native函数测试 (v0.4.0)
+│   │   ├── test_math_core.py  # 核心数学函数测试
+│   │   ├── test_math_extended.py # 扩展数学函数测试
+│   │   ├── test_location.py   # Location类测试
+│   │   ├── test_unit_property_natives.py # 单位属性操作测试
+│   │   ├── test_unit_position_natives.py # 单位位置操作测试
+│   │   ├── test_group_handle.py # Group类测试
+│   │   ├── test_group_natives.py # 单位组核心操作测试
+│   │   ├── test_group_enum_natives.py # 单位组枚举操作测试
+│   │   ├── test_ability_natives.py # 技能系统操作测试
+│   │   ├── test_unit_state_natives.py # 单位状态扩展测试
+│   │   ├── test_unit_ownership_natives.py # 单位所有权测试
+│   │   └── test_unit_range_natives.py # 单位范围检测测试
 │   ├── trigger/         # 触发器测试
 │   │   ├── test_event_types.py    # 事件类型测试
 │   │   ├── test_trigger.py        # Trigger类测试
@@ -910,7 +934,12 @@ jass-runner/
   - Phase 2: 解释器改造 (JassCoroutine, create_main_coroutine)
   - Phase 3: SimulationLoop 集成 (run, _update_frame)
   - Phase 4: 异步Native函数 (TriggerSleepAction, ExecuteFunc)
-- ✅ 所有 460 个测试通过
+- ✅ **单位组Native函数实现完成** (8个函数: CreateGroup, DestroyGroup, GroupAddUnit, GroupRemoveUnit, GroupClear, FirstOfGroup, IsUnitInGroup, ForGroup)
+- ✅ **技能系统Native函数实现完成** (7个函数: UnitAddAbility, UnitRemoveAbility, GetUnitAbilityLevel, SetUnitAbilityLevel, IncUnitAbilityLevel, DecUnitAbilityLevel, UnitMakeAbilityPermanent)
+- ✅ **单位组枚举Native函数实现完成** (8个函数: GroupEnumUnitsOfPlayer, GroupEnumUnitsInRange, GroupEnumUnitsInRangeOfLoc, GroupEnumUnitsInRect, BlzGroupGetSize, BlzGroupUnitAt)
+- ✅ **单位状态扩展Native函数实现完成** (8个函数: GetWidgetLife, SetWidgetLife, UnitDamageTarget, GetUnitLevel, IsUnitType, IsUnitAlive, IsUnitDead)
+- ✅ **单位所有权和关系Native函数实现完成** (7个函数: SetUnitOwner, IsUnitOwnedByPlayer, IsUnitAlly, IsUnitEnemy, IsUnitInRangeXY, IsUnitInRangeLoc, IsUnitInRange)
+- ✅ 所有 672 个测试通过
 
 #### 42. 类型检查系统实现完成 (2026-03-02)
 - **核心组件**:
@@ -1002,5 +1031,65 @@ jass-runner/
   - 集成测试: 完整技能系统工作流
 - **测试统计**: 572个测试通过
 
+#### 47. 单位组枚举Native函数实现完成 (2026-03-02)
+- **新增组件**:
+  - `Rect` 类 - 矩形区域管理（x1, y1, x2, y2）
+  - `group_enum_natives.py` - 8个单位组枚举Native函数
+- **新增Native函数**:
+  - 玩家单位枚举: GroupEnumUnitsOfPlayer
+  - 范围枚举: GroupEnumUnitsInRange, GroupEnumUnitsInRangeOfLoc
+  - 区域枚举: GroupEnumUnitsInRect
+  - 大小查询: BlzGroupGetSize
+  - 索引访问: BlzGroupUnitAt
+- **修改文件**:
+  - `src/jass_runner/natives/handle.py` - 添加Rect类
+  - `src/jass_runner/natives/manager.py` - 添加Rect管理和单位枚举支持
+  - `src/jass_runner/natives/group_enum_natives.py` - 新建，实现8个函数
+  - `src/jass_runner/natives/factory.py` - 注册新函数
+- **测试覆盖**:
+  - 单元测试: Rect类、8个native函数
+  - 集成测试: 单位组枚举工作流
+- **测试统计**: 608个测试通过
+
+#### 48. 单位状态扩展Native函数实现完成 (2026-03-02)
+- **新增组件**:
+  - `unit_state_natives.py` - 8个单位状态扩展Native函数
+- **新增Native函数**:
+  - Widget生命: GetWidgetLife, SetWidgetLife
+  - 单位伤害: UnitDamageTarget
+  - 单位等级: GetUnitLevel
+  - 单位类型检查: IsUnitType
+  - 存活状态: IsUnitAlive, IsUnitDead
+- **修改文件**:
+  - `src/jass_runner/natives/unit_state_natives.py` - 新建，实现8个函数
+  - `src/jass_runner/natives/factory.py` - 注册新函数
+  - `src/jass_runner/natives/handle.py` - 扩展Unit类（等级、类型标记）
+- **测试覆盖**:
+  - 单元测试: 8个native函数
+  - 集成测试: 单位状态工作流
+- **测试统计**: 640个测试通过
+
+#### 49. 单位所有权和关系Native函数实现完成 (2026-03-03)
+- **新增组件**:
+  - Player联盟管理系统 - 支持玩家间联盟关系设置和查询
+  - `unit_ownership_natives.py` - 7个单位所有权和关系Native函数
+- **新增Native函数**:
+  - 所有权管理: SetUnitOwner, IsUnitOwnedByPlayer
+  - 联盟关系: IsUnitAlly, IsUnitEnemy
+  - 范围检测: IsUnitInRangeXY, IsUnitInRangeLoc, IsUnitInRange
+- **修改文件**:
+  - `src/jass_runner/handles/player.py` - 添加联盟管理方法（set_alliance, is_allied_with）
+  - `src/jass_runner/natives/manager.py` - 添加get_player_by_id方法
+  - `src/jass_runner/natives/unit_ownership_natives.py` - 新建，实现7个函数
+  - `src/jass_runner/natives/factory.py` - 注册新函数
+- **技术细节**:
+  - 联盟关系双向设置（玩家A与B联盟时，B也与A联盟）
+  - 范围检测支持坐标、Location对象和单位间距离计算
+  - 使用欧几里得距离公式计算单位间距离
+- **测试覆盖**:
+  - 单元测试: Player联盟管理、7个native函数
+  - 集成测试: 单位所有权和范围检测工作流
+- **测试统计**: 672个测试通过
+
 ---
-*最后更新: 2026-03-02*
+*最后更新: 2026-03-03*

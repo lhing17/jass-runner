@@ -108,7 +108,7 @@
 - 异步Native函数：TriggerSleepAction、ExecuteFunc
 - 测试覆盖：460个测试通过
 
-### v0.5.0: 健壮性与完整性 (Robustness)
+### v0.5.0: 健壮性与完整性 (Robustness) ✅ 已完成
 > 目标：接近真实的 JASS 运行环境，具备良好的错误提示。
 
 - [x] **P2** [Language] 实现运行时类型检查。 ✅ 已完成（2026-03-02）
@@ -116,9 +116,77 @@
   - 支持integer→real隐式转换
   - 支持handle子类型协变
   - 类型不匹配时抛出JassTypeError
-- [ ] **P2** [Simulator] 持续补充 `common.j` 中的 Native 函数 Mock。
+- [x] **P2** [Simulator] 持续补充 `common.j` 中的 Native 函数 Mock。 ✅ 已完成（2026-03-03）
   - [x] 第一批：单位组核心（CreateGroup, DestroyGroup, GroupAddUnit, GroupRemoveUnit, GroupClear, FirstOfGroup, IsUnitInGroup, ForGroup）✅ 已完成
   - [x] 第二批：技能系统核心（UnitAddAbility, UnitRemoveAbility, GetUnitAbilityLevel, SetUnitAbilityLevel, IncUnitAbilityLevel, DecUnitAbilityLevel, UnitMakeAbilityPermanent）✅ 已完成
   - [x] 第三批：单位组枚举（GroupEnumUnitsOfPlayer, GroupEnumUnitsInRange, GroupEnumUnitsInRangeOfLoc, GroupEnumUnitsInRect, BlzGroupGetSize, BlzGroupUnitAt）✅ 已完成
   - [x] 第四批：单位状态扩展（GetWidgetLife, SetWidgetLife, UnitDamageTarget, GetUnitLevel, IsUnitType, IsUnitAlive, IsUnitDead）✅ 已完成
   - [x] 第五批：单位所有权和关系（SetUnitOwner, IsUnitOwnedByPlayer, IsUnitAlly, IsUnitEnemy, IsUnitInRangeXY, IsUnitInRangeLoc, IsUnitInRange）✅ 已完成
+
+**v0.5.0 状态**: ✅ 已完成（2026-03-03）
+- 运行时类型检查：完整的类型层次和检查规则
+- Native函数补充：38个函数（单位组8个 + 技能7个 + 枚举8个 + 状态8个 + 所有权7个）
+- 测试覆盖：672个测试通过
+- 代码质量：保持95%+覆盖率
+
+---
+
+## 5. 未来路线图 (Future Roadmap)
+
+### v0.6.0: 物品与特效系统 (Items & Effects)
+> 目标：实现物品系统和基础特效支持。
+
+- [ ] **P1** [Simulator] 物品系统核心
+  - [ ] Item类实现（物品类型、属性、持有者）
+  - [ ] 物品容器管理（Unit inventory）
+  - [ ] Native函数：CreateItem, RemoveItem, GetItemTypeId
+  - [ ] Native函数：UnitAddItem, UnitRemoveItem, UnitItemInSlot
+- [ ] **P2** [Simulator] 特效系统基础
+  - [ ] Effect类实现（特效创建和销毁）
+  - [ ] Native函数：AddSpecialEffect, DestroyEffect
+  - [ ] 基础特效路径支持
+
+### v0.7.0: 高级游戏机制 (Advanced Game Mechanics)
+> 目标：支持更复杂的游戏逻辑和高级API。
+
+- [ ] **P1** [Simulator] 玩家资源系统
+  - [ ] Native函数：GetPlayerState, SetPlayerState（金币、木材、人口）
+  - [ ] Native函数：GetPlayerName, SetPlayerName
+  - [ ] 玩家颜色和种族设置
+- [ ] **P2** [Simulator] 区域和触发器高级功能
+  - [ ] Rect区域操作：Rect, RemoveRect
+  - [ ] 区域事件：TriggerRegisterEnterRegion, TriggerRegisterLeaveRegion
+  - [ ] 可见性系统：CreateFogModifier
+- [ ] **P2** [Simulator] 对话框和多人游戏
+  - [ ] 对话框API：DialogCreate, DialogAddButton
+  - [ ] 多人同步：GetLocalPlayer, GetPlayerId
+
+### v0.8.0: 性能优化与工具链 (Performance & Tooling)
+> 目标：提升执行性能，完善开发工具。
+
+- [ ] **P1** [Core] 性能优化
+  - [ ] AST缓存和预编译
+  - [ ] Native函数调用优化
+  - [ ] 内存使用优化（Handle系统）
+- [ ] **P2** [Tools] 开发工具
+  - [ ] 性能分析器（Profiler）
+  - [ ] 内存泄漏检测
+  - [ ] 更好的错误堆栈跟踪
+- [ ] **P2** [DevTools] Redux DevTools集成
+  - [ ] 时间旅行调试
+  - [ ] 状态快照和回放
+  - [ ] 动作日志可视化
+
+### 长期目标 (Long-term Goals)
+
+- [ ] **P3** [Language] 完整的JASS语法支持
+  - [ ] `type` 自定义类型定义
+  - [ ] `native` 声明支持
+  - [ ] 预处理指令（#include等）
+- [ ] **P3** [Simulator] 完整的common.j模拟
+  - [ ] 覆盖80%+的common.j函数
+  - [ ] 完整的Blz（Blizzard）API支持
+- [ ] **P3** [Integration] 编辑器集成
+  - [ ] VS Code插件
+  - [ ] 语法高亮和智能提示
+  - [ ] 调试器集成
