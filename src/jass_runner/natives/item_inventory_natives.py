@@ -136,3 +136,44 @@ class UnitRemoveItemFromSlot(NativeFunction):
             return True
         logger.warning(f"[UnitRemoveItemFromSlot] 槽位 {slot} 为空或无效")
         return False
+
+
+class GetItemTypeId(NativeFunction):
+    """获取物品类型ID（FourCC整数）。"""
+
+    @property
+    def name(self) -> str:
+        return "GetItemTypeId"
+
+    def execute(self, state_context: StateContext, item: Item) -> int:
+        """返回物品类型ID。
+
+        参数：
+            state_context: 状态上下文
+            item: 物品对象
+
+        返回：
+            物品类型ID（FourCC整数）
+        """
+        return string_to_fourcc(item.item_type)
+
+
+class UnitItemInSlot(NativeFunction):
+    """获取单位指定槽位的物品。"""
+
+    @property
+    def name(self) -> str:
+        return "UnitItemInSlot"
+
+    def execute(self, state_context: StateContext, unit: Unit, slot: int) -> Optional[Item]:
+        """返回指定槽位的物品，空槽返回None。
+
+        参数：
+            state_context: 状态上下文
+            unit: 目标单位
+            slot: 槽位索引（0-5）
+
+        返回：
+            该槽位的物品，无效槽位或空槽返回None
+        """
+        return unit.get_item_in_slot(slot)

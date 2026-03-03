@@ -31,6 +31,8 @@ from .item_inventory_natives import (
     UnitAddItemById,
     UnitRemoveItem,
     UnitRemoveItemFromSlot,
+    GetItemTypeId,
+    UnitItemInSlot,
 )
 
 __all__ = [
@@ -88,4 +90,6 @@ __all__ = [
     "UnitAddItemById",
     "UnitRemoveItem",
     "UnitRemoveItemFromSlot",
+    "GetItemTypeId",
+    "UnitItemInSlot",
 ]

@@ -8,6 +8,8 @@ from jass_runner.natives.item_inventory_natives import (
     UnitAddItemById,
     UnitRemoveItem,
     UnitRemoveItemFromSlot,
+    GetItemTypeId,
+    UnitItemInSlot,
 )
 from jass_runner.natives.state import StateContext
 
@@ -189,3 +191,61 @@ class TestUnitRemoveItemFromSlot:
         result = native.execute(state_context, unit, 3)
 
         assert result is False
+
+
+class TestGetItemTypeId:
+    """测试 GetItemTypeId 函数。"""
+
+    def test_get_item_type_id(self):
+        """测试获取物品类型ID正确。"""
+        state_context = StateContext()
+        handle_manager = state_context.handle_manager
+        # 'ratf' = 1718903154 (小端序)
+        item = handle_manager.create_item("ratf", 1.0, 1.0)
+        native = GetItemTypeId()
+
+        result = native.execute(state_context, item)
+
+        assert result == 1718903154
+
+    def test_get_item_type_id_different_items(self):
+        """测试不同类型物品返回不同ID。"""
+        state_context = StateContext()
+        handle_manager = state_context.handle_manager
+
+        item1 = handle_manager.create_item("ratf", 1.0, 1.0)  # 'ratf'
+        item2 = handle_manager.create_item("pghe", 2.0, 2.0)  # 'pghe'
+
+        native = GetItemTypeId()
+
+        assert native.execute(state_context, item1) != native.execute(state_context, item2)
+
+
+class TestUnitItemInSlot:
+    """测试 UnitItemInSlot 函数。"""
+
+    def test_get_item_in_slot_exists(self):
+        """测试获取存在的物品。"""
+        state_context = StateContext()
+        handle_manager = state_context.handle_manager
+        player = handle_manager.get_player(0)
+        unit = handle_manager.create_unit(0, player, 0.0, 0.0, 0.0)
+        item = handle_manager.create_item("ratf", 1.0, 1.0)
+        unit.add_item(item, 4)
+        native = UnitItemInSlot()
+
+        result = native.execute(state_context, unit, 4)
+
+        assert result is item
+
+    def test_get_item_in_slot_empty(self):
+        """测试空槽返回None。"""
+        state_context = StateContext()
+        handle_manager = state_context.handle_manager
+        player = handle_manager.get_player(0)
+        unit = handle_manager.create_unit(0, player, 0.0, 0.0, 0.0)
+        native = UnitItemInSlot()
+
+        result = native.execute(state_context, unit, 2)
+
+        assert result is None
