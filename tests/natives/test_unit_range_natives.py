@@ -2,8 +2,9 @@
 
 import pytest
 import math
-from jass_runner.natives.unit_range_natives import IsUnitInRangeXY
+from jass_runner.natives.unit_range_natives import IsUnitInRangeXY, IsUnitInRangeLoc
 from jass_runner.natives.handle import Unit
+from jass_runner.natives.location import Location
 
 
 class TestIsUnitInRangeXY:
@@ -66,3 +67,36 @@ class TestIsUnitInRangeXY:
 
         # 距离为0，只有恰好在同一点才返回True
         assert result is True
+
+
+class TestIsUnitInRangeLoc:
+    """测试IsUnitInRangeLoc函数。"""
+
+    def test_unit_in_range_of_location(self):
+        """测试单位在位置范围内返回True。"""
+        native = IsUnitInRangeLoc()
+        unit = Unit("unit_001", "Hpal", 0, 0.0, 0.0, 0.0)
+        loc = Location(100.0, 0.0)
+
+        result = native.execute(unit, loc, 150.0)
+
+        assert result is True
+
+    def test_unit_out_of_range_of_location(self):
+        """测试单位在位置范围外返回False。"""
+        native = IsUnitInRangeLoc()
+        unit = Unit("unit_001", "Hpal", 0, 0.0, 0.0, 0.0)
+        loc = Location(200.0, 0.0)
+
+        result = native.execute(unit, loc, 150.0)
+
+        assert result is False
+
+    def test_null_location_returns_false(self):
+        """测试null位置返回False。"""
+        native = IsUnitInRangeLoc()
+        unit = Unit("unit_001", "Hpal", 0, 0.0, 0.0, 0.0)
+
+        result = native.execute(unit, None, 100.0)
+
+        assert result is False

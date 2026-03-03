@@ -39,7 +39,7 @@ from .group_natives import CreateGroup, DestroyGroup, GroupAddUnit, GroupRemoveU
 from .ability_natives import UnitAddAbility, UnitRemoveAbility, GetUnitAbilityLevel, SetUnitAbilityLevel, IncUnitAbilityLevel, DecUnitAbilityLevel, UnitMakeAbilityPermanent
 from .unit_state_natives import GetWidgetLife, SetWidgetLife, UnitDamageTarget, GetUnitLevel, IsUnitType, IsUnitAlive, IsUnitDead
 from .unit_ownership_natives import IsUnitOwnedByPlayer
-from .unit_range_natives import IsUnitInRangeXY
+from .unit_range_natives import IsUnitInRangeXY, IsUnitInRangeLoc
 
 
 class NativeFactory:
@@ -197,5 +197,6 @@ class NativeFactory:
 
         # 注册单位范围检测native函数
         registry.register(IsUnitInRangeXY())
+        registry.register(IsUnitInRangeLoc())
 
         return registry
