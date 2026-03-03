@@ -143,6 +143,10 @@ class Evaluator:
         if token == 'false':
             return False
 
+        # 处理null值
+        if token == 'null':
+            return None
+
         # 处理变量引用
         if self.context.has_variable(token):
             return self.context.get_variable(token)
@@ -169,6 +173,10 @@ class Evaluator:
 
         # 算术运算符
         if operator == '+':
+            # 处理字符串拼接：如果任一侧是字符串，都转为字符串拼接
+            if isinstance(left, str) or isinstance(right, str):
+                # JASS: string + any = string concatenation
+                return str(left) + str(right)
             return left + right
         elif operator == '-':
             return left - right
@@ -217,9 +225,9 @@ class Evaluator:
             raise ValueError(f"不支持的一元运算符: {operator}")
 
     def _parse_and_evaluate(self, tokens: List[str]) -> Any:
-        """解析并求值token列表（支持运算符优先级）。
+        """解析并求值token列表（支持运算符优先级和函数调用）。
 
-        使用调度场算法处理运算符优先级。
+        使用调度场算法处理运算符优先级，同时识别函数调用模式。
 
         参数：
             tokens: token列表
@@ -234,13 +242,80 @@ class Evaluator:
         if len(tokens) == 1:
             return self._parse_value(tokens[0])
 
+        # 第一步：处理函数调用模式（如 GetCameraMargin(0)）
+        # 将函数调用转换为先求值函数，然后再参与表达式计算
+        i = 0
+        processed_tokens = []
+        while i < len(tokens):
+            token = tokens[i]
+
+            # 检查是否是函数调用模式：标识符 + 左括号
+            if (token not in self.OPERATOR_PRECEDENCE and
+                token not in self.UNARY_OPERATORS and
+                token not in ('+', '-', '*', '/', '(', ')') and
+                i + 1 < len(tokens) and tokens[i + 1] == '('):
+
+                # 这是一个函数调用
+                func_name = token
+                i += 2  # 跳过函数名和左括号
+
+                # 收集函数参数直到匹配的右括号
+                func_args = []
+                paren_depth = 1
+                arg_tokens = []
+
+                while i < len(tokens) and paren_depth > 0:
+                    if tokens[i] == '(':
+                        paren_depth += 1
+                        arg_tokens.append(tokens[i])
+                    elif tokens[i] == ')':
+                        paren_depth -= 1
+                        if paren_depth == 0:
+                            # 参数结束
+                            if arg_tokens:
+                                # 递归求值参数表达式
+                                arg_value = self._parse_and_evaluate(arg_tokens)
+                                func_args.append(arg_value)
+                            i += 1
+                            break
+                        else:
+                            arg_tokens.append(tokens[i])
+                    elif tokens[i] == ',' and paren_depth == 1:
+                        # 参数分隔符
+                        if arg_tokens:
+                            arg_value = self._parse_and_evaluate(arg_tokens)
+                            func_args.append(arg_value)
+                        arg_tokens = []
+                        i += 1
+                    else:
+                        arg_tokens.append(tokens[i])
+                        i += 1
+
+                # 执行函数调用并获取结果
+                from ..parser.ast_nodes import NativeCallNode
+                call_node = NativeCallNode(func_name=func_name, args=func_args)
+                func_result = self.evaluate_native_call(call_node)
+                processed_tokens.append(str(func_result))
+            else:
+                processed_tokens.append(token)
+                i += 1
+
+        # 第二步：使用逆波兰算法处理表达式
+        # 处理一元运算符（如 -11520.0）
+        # 如果表达式以 - 开头且后面跟着数字，将其作为负数处理
+        if (len(processed_tokens) >= 2 and
+            processed_tokens[0] == '-' and
+            processed_tokens[1] not in ('(', ')')):
+            # 这是一元负号
+            processed_tokens = ['0'] + processed_tokens[0:]  # 转换为 0 - X
+
         # 转换为输出队列和运算符栈
         output_queue = []
         operator_stack = []
 
         i = 0
-        while i < len(tokens):
-            token = tokens[i]
+        while i < len(processed_tokens):
+            token = processed_tokens[i]
 
             # 处理左括号：压入运算符栈
             if token == '(':
@@ -310,7 +385,20 @@ class Evaluator:
     def evaluate_native_call(self, node):
         """求值原生函数调用。"""
         func_name = node.func_name
-        args = [self.evaluate(arg) for arg in node.args]
+        # 处理参数：如果是列表（混合参数）、字符串或节点则求值，否则直接使用已求值的参数
+        args = []
+        for arg in node.args:
+            if isinstance(arg, (int, float, bool)):
+                # 已经是基本类型值，直接使用
+                args.append(arg)
+            elif isinstance(arg, list):
+                # 混合参数列表，需要求值为一个数值
+                # 例如: ['11520.0', '-', NativeCallNode(...)]
+                result = self._evaluate_mixed_list(arg)
+                args.append(result)
+            else:
+                # 字符串或节点，需要求值
+                args.append(self.evaluate(arg))
 
         # 从上下文中获取原生函数
         native_func = self.context.get_native_function(func_name)
@@ -328,6 +416,32 @@ class Evaluator:
                 return interpreter._call_function_with_args(func, args)
 
         raise RuntimeError(f"Native function not found: {func_name}")
+
+    def _evaluate_mixed_list(self, tokens: list) -> Any:
+        """求值混合列表（包含字符串、数字和NativeCallNode）。
+
+        将混合列表转换为表达式并求值，例如：
+        ['11520.0', '-', NativeCallNode(func_name='GetCameraMargin', args=[0])]
+        转换为表达式 "11520.0 - 100.0" -> 11420.0
+
+        参数：
+            tokens: 混合token列表
+
+        返回：
+            求值后的数值结果
+        """
+        # 将列表转换为可求值的token列表
+        processed_tokens = []
+        for token in tokens:
+            if hasattr(token, 'func_name'):
+                # 是 NativeCallNode，求值并获取结果
+                func_result = self.evaluate_native_call(token)
+                processed_tokens.append(str(func_result))
+            else:
+                processed_tokens.append(str(token))
+
+        # 使用 _parse_and_evaluate 求值表达式
+        return self._parse_and_evaluate(processed_tokens)
 
     def evaluate_condition(self, condition: Any) -> bool:
         """求值条件表达式，返回布尔结果。
@@ -389,6 +503,10 @@ class Evaluator:
                 return True
             if expression == 'false':
                 return False
+
+            # 处理null值
+            if expression == 'null':
+                return None
 
             # 处理函数引用 (function:func_name)
             if expression.startswith('function:'):

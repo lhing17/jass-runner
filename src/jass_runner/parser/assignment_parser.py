@@ -9,7 +9,7 @@ class AssignmentParserMixin:
     """提供赋值和调用语句解析功能。"""
 
     def _parse_call_args(self: 'BaseParser', error_on_unknown: bool = False) -> list:
-        """解析函数调用参数列表，支持嵌套调用。
+        """解析函数调用参数列表，支持嵌套调用和复杂表达式。
 
         前置条件：当前 token 是 '(' 后的第一个参数token
         后置条件：当前 token 是 ')'
@@ -19,73 +19,119 @@ class AssignmentParserMixin:
                             如果为False（默认），则遇到不支持的类型时停止解析
 
         返回：
-            参数列表，支持嵌套 NativeCallNode
+            参数列表，支持嵌套 NativeCallNode 和表达式字符串
         """
         from .ast_nodes import NativeCallNode
 
         args = []
 
         while self.current_token and self.current_token.value != ')':
-            arg_value = None
-
-            if self.current_token.type == 'INTEGER':
-                arg_value = str(self.current_token.value)
-                self.next_token()
-            elif self.current_token.type == 'REAL':
-                arg_value = str(self.current_token.value)
-                self.next_token()
-            elif self.current_token.type == 'STRING':
-                arg_value = self.current_token.value
-                self.next_token()
-            elif self.current_token.type == 'FOURCC':
-                arg_value = str(self.current_token.value)
-                self.next_token()
-            elif self.current_token.type == 'IDENTIFIER':
-                arg_name = self.current_token.value
-                self.next_token()
-
-                # 检查是否是嵌套函数调用
-                if self.current_token and self.current_token.value == '(':
-                    # 嵌套函数调用
-                    self.next_token()  # 跳过 '('
-                    nested_args = self._parse_call_args(error_on_unknown=error_on_unknown)
-                    # 跳过右括号
-                    if self.current_token and self.current_token.value == ')':
-                        self.next_token()
-                    arg_value = NativeCallNode(func_name=arg_name, args=nested_args)
-                else:
-                    # 普通标识符（变量名）
-                    arg_value = arg_name
-            elif self.current_token.type == 'KEYWORD' and self.current_token.value in ('true', 'false'):
-                # 布尔值
-                arg_value = self.current_token.value
-                self.next_token()
-            else:
-                # 不支持的参数类型
-                if error_on_unknown:
-                    # 记录错误并跳过当前token，继续解析
-                    if hasattr(self, 'errors'):
-                        self.errors.append(ParseError(
-                            message=f"不支持的参数类型: {self.current_token.type}",
-                            line=getattr(self.current_token, 'line', 0),
-                            column=getattr(self.current_token, 'column', 0)
-                        ))
-                    self.next_token()
-                else:
-                    # 与原始parse_call_statement行为一致：停止解析更多参数
-                    break
-
+            arg_value = self._parse_single_arg(error_on_unknown)
             if arg_value is not None:
                 args.append(arg_value)
-
-            # 检查是否有逗号继续下一个参数
+            # 检查是否有逗号继续下一个参数，或者遇到右括号结束
             if self.current_token and self.current_token.value == ',':
                 self.next_token()
-                continue
             elif self.current_token and self.current_token.value == ')':
                 break
-
         return args
+
+    def _parse_single_arg(self: 'BaseParser', error_on_unknown: bool = False) -> Any:
+        """解析单个参数，支持字面量、变量、嵌套调用和复杂表达式。
+
+        返回：
+            解析后的参数值（字符串字面量、数值字符串、NativeCallNode或表达式字符串）
+        """
+        from .ast_nodes import NativeCallNode
+
+        # 收集当前参数的所有token，直到遇到逗号或右括号
+        arg_tokens = []
+        current_func_name = None
+        paren_depth = 0
+
+        while self.current_token and self.current_token.value != ')' and self.current_token.value != ',':
+            token = self.current_token
+
+            # 遇到嵌套函数调用：标识符 + 左括号
+            if token.type == 'IDENTIFIER' and self._peek_token() == '(':
+                func_name = token.value
+                self.next_token()  # 越过标识符
+                self.next_token()  # 越过左括号
+
+                # 递归解析嵌套参数
+                nested_args = self._parse_call_args(error_on_unknown)
+
+                # 跳过右括号
+                if self.current_token and self.current_token.value == ')':
+                    self.next_token()
+
+                # 创建 NativeCallNode 并作为token处理
+                arg_tokens.append(NativeCallNode(func_name=func_name, args=nested_args))
+                continue
+
+            # 遇到左括号（不是函数调用，而是表达式的一部分）
+            if token.value == '(':
+                paren_depth += 1
+                arg_tokens.append(str(token.value))
+                self.next_token()
+                continue
+
+            # 遇到右括号
+            if token.value == ')':
+                if paren_depth > 0:
+                    paren_depth -= 1
+                    arg_tokens.append(str(token.value))
+                    self.next_token()
+                    continue
+                # 否则是参数结束，退出循环
+                break
+
+            # 收集token值
+            if token.type == 'IDENTIFIER':
+                arg_tokens.append(str(token.value))
+            else:
+                arg_tokens.append(str(token.value))
+            self.next_token()
+
+        # 处理收集的token
+        if not arg_tokens:
+            return None
+
+        # 如果只有一个token且是NativeCallNode，直接返回
+        if len(arg_tokens) == 1 and hasattr(arg_tokens[0], 'func_name'):
+            return arg_tokens[0]
+
+        # 如果只有一个token且是字面量，直接返回
+        if len(arg_tokens) == 1:
+            token = arg_tokens[0]
+            # 尝试解析为数字
+            try:
+                return str(int(token))
+            except ValueError:
+                try:
+                    return str(float(token))
+                except ValueError:
+                    # 字符串字面量，去除引号
+                    if token.startswith('"') and token.endswith('"'):
+                        return token[1:-1]
+                    return token
+
+        # 多个token：组合成混合列表（字符串和NativeCallNode）
+        # 这样可以保留嵌套函数调用供evaluator处理
+        result = []
+        for t in arg_tokens:
+            if hasattr(t, 'func_name'):
+                # NativeCallNode 保留原样
+                result.append(t)
+            else:
+                result.append(str(t))
+        return result
+
+    def _peek_token(self: 'BaseParser') -> Optional[str]:
+        """查看下一个token的值，不移动当前位置。"""
+        if not hasattr(self, 'tokens') or self.token_index + 1 >= len(self.tokens):
+            return None
+        return self.tokens[self.token_index + 1].value
 
     def parse_local_declaration(self: 'BaseParser') -> Optional[Any]:
         """解析局部变量声明。

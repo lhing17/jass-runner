@@ -168,21 +168,6 @@
   - [ ] 对话框API：DialogCreate, DialogAddButton
   - [ ] 多人同步：GetLocalPlayer, GetPlayerId
 
-### v0.8.0: 性能优化与工具链 (Performance & Tooling)
-> 目标：提升执行性能，完善开发工具。
-
-- [ ] **P1** [Core] 性能优化
-  - [ ] AST缓存和预编译
-  - [ ] Native函数调用优化
-  - [ ] 内存使用优化（Handle系统）
-- [ ] **P2** [Tools] 开发工具
-  - [ ] 性能分析器（Profiler）
-  - [ ] 内存泄漏检测
-  - [ ] 更好的错误堆栈跟踪
-- [ ] **P2** [DevTools] Redux DevTools集成
-  - [ ] 时间旅行调试
-  - [ ] 状态快照和回放
-  - [ ] 动作日志可视化
 
 ### 长期目标 (Long-term Goals)
 
