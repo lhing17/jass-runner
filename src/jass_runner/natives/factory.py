@@ -48,6 +48,10 @@ from .item_inventory_natives import (
     GetItemTypeId,
     UnitItemInSlot,
 )
+from .player_state_natives import (
+    GetPlayerState,
+    SetPlayerState,
+)
 from .effect_natives import (
     AddSpecialEffect,
     AddSpecialEffectTarget,
@@ -232,5 +236,9 @@ class NativeFactory:
         registry.register(DestroyEffect())
         registry.register(SetSpecialEffectScale())
         registry.register(SetSpecialEffectColor())
+
+        # 注册玩家资源native函数
+        registry.register(GetPlayerState())
+        registry.register(SetPlayerState())
 
         return registry

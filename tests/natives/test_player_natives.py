@@ -125,3 +125,14 @@ def test_set_player_state_with_none_player():
     result = native.execute(state_context, None, 1, 1000)
 
     assert result == 0
+
+
+def test_all_player_natives_registered():
+    """测试所有玩家资源 native 函数已注册。"""
+    from src.jass_runner.natives.factory import NativeFactory
+
+    factory = NativeFactory()
+    registry = factory.create_default_registry()
+
+    assert registry.get("GetPlayerState") is not None
+    assert registry.get("SetPlayerState") is not None
