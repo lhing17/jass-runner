@@ -63,6 +63,7 @@ from .effect_natives import (
     SetSpecialEffectScale,
     SetSpecialEffectColor,
 )
+from .camera import GetCameraMargin
 
 
 class NativeFactory:
@@ -248,5 +249,8 @@ class NativeFactory:
         # 注册玩家名称native函数
         registry.register(GetPlayerName())
         registry.register(SetPlayerName())
+
+        # Camera natives
+        registry.register(GetCameraMargin())
 
         return registry
