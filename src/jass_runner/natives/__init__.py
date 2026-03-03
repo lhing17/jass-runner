@@ -26,6 +26,9 @@ from .math_core import (
 from .math_extended import (
     Tan, ModuloInteger, ModuloReal, R2S, S2R, I2S, S2I, GetRandomInt, GetRandomReal,
 )
+from .item_inventory_natives import (
+    UnitAddItem,
+)
 
 __all__ = [
     "NativeFunction",
@@ -77,4 +80,6 @@ __all__ = [
     "S2I",
     "GetRandomInt",
     "GetRandomReal",
+    # 物品背包函数
+    "UnitAddItem",
 ]
