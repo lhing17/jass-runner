@@ -23,6 +23,14 @@ class StateContext:
         self.global_vars = {}  # 全局变量存储
         self.local_stores = {}  # 上下文局部存储
 
+        # 相机边界存储
+        self.camera_bounds = {
+            'x1': 0.0, 'y1': 0.0,
+            'x2': 0.0, 'y2': 0.0,
+            'x3': 0.0, 'y3': 0.0,
+            'x4': 0.0, 'y4': 0.0
+        }
+
         # 连接HandleManager和TriggerManager
         self.handle_manager.set_trigger_manager(self.trigger_manager)
 
