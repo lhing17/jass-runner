@@ -3,8 +3,12 @@
 此模块包含HandleManager类，负责所有handle的生命周期管理。
 """
 
-from typing import Dict, List, Optional
-from .handle import Handle, Unit, Player, Item, Group, Rect
+from typing import Dict, List, Optional, Union
+import logging
+from .handle import Handle, Unit, Player, Item, Group, Rect, Effect
+
+
+logger = logging.getLogger(__name__)
 
 
 class HandleManager:
@@ -346,3 +350,73 @@ class HandleManager:
                     result.append(handle_id)
 
         return result
+
+    def create_effect(self, model_path: str, x: float, y: float, z: float) -> Effect:
+        """在指定坐标创建特效。
+
+        参数：
+            model_path: 特效模型路径
+            x: X坐标
+            y: Y坐标
+            z: Z坐标
+
+        返回：
+            创建的特效对象
+        """
+        effect_id = self._generate_id()
+        effect = Effect(effect_id, model_path, target=(x, y, z))
+        self._register_handle(effect)
+        logger.info(f"[特效] 在 ({x}, {y}, {z}) 创建特效: {model_path} (ID: {effect.id})")
+        return effect
+
+    def create_effect_target(self, model_path: str,
+                            target: Union[Unit, Item],
+                            attach_point: str) -> Effect:
+        """在目标对象上创建特效。
+
+        参数：
+            model_path: 特效模型路径
+            target: 目标对象（单位或物品）
+            attach_point: 附着点名称（如 "hand", "origin"）
+
+        返回：
+            创建的特效对象
+        """
+        effect_id = self._generate_id()
+        effect = Effect(effect_id, model_path, target=target, attach_point=attach_point)
+        self._register_handle(effect)
+
+        # 获取目标类型和ID信息
+        target_type = target.type_name
+        target_info = f"[{target_type}#{target.id}]"
+        logger.info(f"[特效] 在 {target_info} 的附着点 [{attach_point}] 创建特效: {model_path} (ID: {effect.id})")
+        return effect
+
+    def destroy_effect(self, effect: Effect) -> bool:
+        """销毁特效。
+
+        参数：
+            effect: 要销毁的特效对象
+
+        返回：
+            销毁成功返回True，特效已死亡返回False
+        """
+        if not effect or not effect.is_alive():
+            return False
+        logger.info(f"[特效] 销毁特效 (ID: {effect.id})")
+        effect.destroy()
+        return True
+
+    def get_effect(self, effect_id: str) -> Optional[Effect]:
+        """获取特效对象，进行类型检查。
+
+        参数：
+            effect_id: 特效ID
+
+        返回：
+            Effect对象，如果不存在或类型不匹配返回None
+        """
+        handle = self.get_handle(effect_id)
+        if isinstance(handle, Effect):
+            return handle
+        return None
