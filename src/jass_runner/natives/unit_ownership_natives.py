@@ -4,7 +4,9 @@
 """
 
 import logging
+from typing import Optional
 from .base import NativeFunction
+from .handle import Unit, Player
 
 logger = logging.getLogger(__name__)
 
@@ -45,3 +47,40 @@ class IsUnitOwnedByPlayer(NativeFunction):
             return False
 
         return unit_player_id == player_id
+
+
+class SetUnitOwner(NativeFunction):
+    """设置单位所属玩家。
+
+    对应JASS native函数: nothing SetUnitOwner(unit whichUnit, player whichPlayer, boolean changeColor)
+    """
+
+    @property
+    def name(self) -> str:
+        """获取函数名称。"""
+        return "SetUnitOwner"
+
+    def execute(self, state_context, which_unit: Optional[Unit], which_player: Optional[Player], change_color: bool) -> None:
+        """执行单位所有权变更。
+
+        参数：
+            state_context: 状态上下文
+            which_unit: 要变更所有者的单位
+            which_player: 新所有者玩家
+            change_color: 是否改变单位颜色
+
+        返回：
+            None
+        """
+        if which_unit is None or which_player is None:
+            return
+
+        old_owner = which_unit.player_id
+        which_unit.player_id = which_player.player_id
+
+        if change_color:
+            # 改变单位颜色（通过颜色ID）
+            which_unit.color = which_player.color
+            logger.info(f"单位 {which_unit.name} (ID:{which_unit.id}) 所有权从玩家 {old_owner} 变更为玩家 {which_player.player_id} (颜色已改变)")
+        else:
+            logger.info(f"单位 {which_unit.name} (ID:{which_unit.id}) 所有权从玩家 {old_owner} 变更为玩家 {which_player.player_id}")
