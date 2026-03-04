@@ -100,6 +100,12 @@ from .game_speed_natives import (
     SetGameSpeed,
 )
 from .fog_natives import FogState, FogMaskEnable, FogEnable, IsFogMaskEnabled, IsFogEnabled
+from .version_natives import (
+    VersionGet,
+    ConvertVersion,
+    VERSION_REIGN_OF_CHAOS,
+    VERSION_FROZEN_THRONE,
+)
 
 
 class NativeFactory:
@@ -336,5 +342,9 @@ class NativeFactory:
         registry.register(FogEnable(self._fog_state))
         registry.register(IsFogMaskEnabled(self._fog_state))
         registry.register(IsFogEnabled(self._fog_state))
+
+        # 注册版本相关 native 函数
+        registry.register(VersionGet())
+        registry.register(ConvertVersion())
 
         return registry
