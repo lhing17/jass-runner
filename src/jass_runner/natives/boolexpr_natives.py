@@ -204,3 +204,183 @@ class DestroyFilter(NativeFunction):
             logger.warning(f"[DestroyFilter] filterfunc not found: {filter_id}")
 
         return None
+
+
+class And(NativeFunction):
+    """创建逻辑与表达式。"""
+
+    @property
+    def name(self) -> str:
+        """获取 native 函数的名称。
+
+        返回：
+            "And"
+        """
+        return "And"
+
+    def execute(self, state_context, operand_a: str, operand_b: str, *args, **kwargs):
+        """执行 And native 函数。
+
+        参数：
+            state_context: 状态上下文，必须包含 handle_manager
+            operand_a: 第一个 boolexpr 的 handle ID
+            operand_b: 第二个 boolexpr 的 handle ID
+            *args: 额外位置参数
+            **kwargs: 关键字参数
+
+        返回：
+            新的 boolexpr handle ID，失败返回 None
+        """
+        # 检查 state_context 和 handle_manager
+        if state_context is None:
+            logger.error("[And] state_context is None")
+            return None
+
+        if not hasattr(state_context, 'handle_manager') or state_context.handle_manager is None:
+            logger.error("[And] handle_manager not found in state_context")
+            return None
+
+        # 获取两个操作数
+        expr_a = state_context.handle_manager.get_boolexpr(operand_a)
+        expr_b = state_context.handle_manager.get_boolexpr(operand_b)
+
+        if expr_a is None:
+            logger.error(f"[And] operand_a not found: {operand_a}")
+            return None
+
+        if expr_b is None:
+            logger.error(f"[And] operand_b not found: {operand_b}")
+            return None
+
+        # 生成唯一ID
+        handle_id = f"boolexpr_{state_context.handle_manager._generate_id()}"
+
+        # 导入 AndExpr 类
+        from .handle import AndExpr
+
+        # 创建 AndExpr 对象
+        and_expr = AndExpr(handle_id, expr_a, expr_b)
+
+        # 注册到 handle_manager
+        state_context.handle_manager._register_handle(and_expr)
+
+        logger.info(f"[And] Created boolexpr: {handle_id}")
+        return handle_id
+
+
+class Or(NativeFunction):
+    """创建逻辑或表达式。"""
+
+    @property
+    def name(self) -> str:
+        """获取 native 函数的名称。
+
+        返回：
+            "Or"
+        """
+        return "Or"
+
+    def execute(self, state_context, operand_a: str, operand_b: str, *args, **kwargs):
+        """执行 Or native 函数。
+
+        参数：
+            state_context: 状态上下文，必须包含 handle_manager
+            operand_a: 第一个 boolexpr 的 handle ID
+            operand_b: 第二个 boolexpr 的 handle ID
+            *args: 额外位置参数
+            **kwargs: 关键字参数
+
+        返回：
+            新的 boolexpr handle ID，失败返回 None
+        """
+        # 检查 state_context 和 handle_manager
+        if state_context is None:
+            logger.error("[Or] state_context is None")
+            return None
+
+        if not hasattr(state_context, 'handle_manager') or state_context.handle_manager is None:
+            logger.error("[Or] handle_manager not found in state_context")
+            return None
+
+        # 获取两个操作数
+        expr_a = state_context.handle_manager.get_boolexpr(operand_a)
+        expr_b = state_context.handle_manager.get_boolexpr(operand_b)
+
+        if expr_a is None:
+            logger.error(f"[Or] operand_a not found: {operand_a}")
+            return None
+
+        if expr_b is None:
+            logger.error(f"[Or] operand_b not found: {operand_b}")
+            return None
+
+        # 生成唯一ID
+        handle_id = f"boolexpr_{state_context.handle_manager._generate_id()}"
+
+        # 导入 OrExpr 类
+        from .handle import OrExpr
+
+        # 创建 OrExpr 对象
+        or_expr = OrExpr(handle_id, expr_a, expr_b)
+
+        # 注册到 handle_manager
+        state_context.handle_manager._register_handle(or_expr)
+
+        logger.info(f"[Or] Created boolexpr: {handle_id}")
+        return handle_id
+
+
+class Not(NativeFunction):
+    """创建逻辑非表达式。"""
+
+    @property
+    def name(self) -> str:
+        """获取 native 函数的名称。
+
+        返回：
+            "Not"
+        """
+        return "Not"
+
+    def execute(self, state_context, operand: str, *args, **kwargs):
+        """执行 Not native 函数。
+
+        参数：
+            state_context: 状态上下文，必须包含 handle_manager
+            operand: boolexpr 的 handle ID
+            *args: 额外位置参数
+            **kwargs: 关键字参数
+
+        返回：
+            新的 boolexpr handle ID，失败返回 None
+        """
+        # 检查 state_context 和 handle_manager
+        if state_context is None:
+            logger.error("[Not] state_context is None")
+            return None
+
+        if not hasattr(state_context, 'handle_manager') or state_context.handle_manager is None:
+            logger.error("[Not] handle_manager not found in state_context")
+            return None
+
+        # 获取操作数
+        expr = state_context.handle_manager.get_boolexpr(operand)
+
+        if expr is None:
+            logger.error(f"[Not] operand not found: {operand}")
+            return None
+
+        # 生成唯一ID
+        handle_id = f"boolexpr_{state_context.handle_manager._generate_id()}"
+
+        # 导入 NotExpr 类
+        from .handle import NotExpr
+
+        # 创建 NotExpr 对象
+        not_expr = NotExpr(handle_id, expr)
+
+        # 注册到 handle_manager
+        state_context.handle_manager._register_handle(not_expr)
+
+        logger.info(f"[Not] Created boolexpr: {handle_id}")
+        return handle_id
