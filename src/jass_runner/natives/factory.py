@@ -77,6 +77,14 @@ from .boolexpr_natives import (
     Not,
     DestroyBoolExpr,
 )
+from .force_natives import (
+    CreateForce,
+    DestroyForce,
+    ForceAddPlayer,
+    ForceRemovePlayer,
+    ForceClear,
+    ForceEnumPlayers,
+)
 
 
 class NativeFactory:
@@ -289,5 +297,13 @@ class NativeFactory:
         registry.register(Or())
         registry.register(Not())
         registry.register(DestroyBoolExpr())
+
+        # 注册玩家组(force)相关 native 函数
+        registry.register(CreateForce())
+        registry.register(DestroyForce())
+        registry.register(ForceAddPlayer())
+        registry.register(ForceRemovePlayer())
+        registry.register(ForceClear())
+        registry.register(ForceEnumPlayers())
 
         return registry

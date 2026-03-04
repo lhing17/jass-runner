@@ -7,7 +7,10 @@ class BaseParser:
 
     # 可能出现在参数列表中的JASS类型关键词
     TYPE_KEYWORDS = {
-        'integer', 'real', 'string', 'boolean', 'code', 'handle', 'nothing'
+        'integer', 'real', 'string', 'boolean', 'code', 'handle', 'nothing',
+        # Handle 子类型
+        'force', 'unit', 'item', 'player', 'group', 'timer', 'trigger', 'location',
+        'rect', 'effect', 'boolexpr', 'conditionfunc', 'filterfunc',
     }
 
     def __init__(self, code: str):
