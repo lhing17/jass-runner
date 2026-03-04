@@ -1,6 +1,5 @@
 """玩家状态管理测试。"""
 
-import pytest
 from src.jass_runner.natives.handle import Player
 
 
