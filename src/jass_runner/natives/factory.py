@@ -90,6 +90,7 @@ from .game_speed_natives import (
     GetGameSpeed,
     SetGameSpeed,
 )
+from .fog_natives import FogState, FogMaskEnable, FogEnable, IsFogMaskEnabled, IsFogEnabled
 
 
 class NativeFactory:
@@ -105,6 +106,7 @@ class NativeFactory:
             timer_system: 可选的计时器系统实例
         """
         self._timer_system = timer_system
+        self._fog_state = FogState()  # 初始化迷雾状态
 
     def create_default_registry(self) -> NativeRegistry:
         """创建包含默认native函数的注册表。
@@ -315,5 +317,11 @@ class NativeFactory:
         registry.register(ConvertGameSpeed())
         registry.register(GetGameSpeed())
         registry.register(SetGameSpeed())
+
+        # 注册战争迷雾相关的 native 函数
+        registry.register(FogMaskEnable(self._fog_state))
+        registry.register(FogEnable(self._fog_state))
+        registry.register(IsFogMaskEnabled(self._fog_state))
+        registry.register(IsFogEnabled(self._fog_state))
 
         return registry

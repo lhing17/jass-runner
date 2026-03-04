@@ -83,3 +83,17 @@ def test_is_fog_enabled_returns_state():
     state.fog_enabled = False
     result = native.execute([])
     assert result is False
+
+
+def test_fog_natives_registered_in_factory():
+    """测试 Fog native 函数在工厂中被注册。"""
+    from jass_runner.natives.factory import NativeFactory
+
+    factory = NativeFactory()
+    registry = factory.create_default_registry()
+
+    # 验证所有函数都被注册
+    assert registry.get("FogMaskEnable") is not None
+    assert registry.get("FogEnable") is not None
+    assert registry.get("IsFogMaskEnabled") is not None
+    assert registry.get("IsFogEnabled") is not None
