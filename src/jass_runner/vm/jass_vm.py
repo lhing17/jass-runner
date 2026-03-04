@@ -63,6 +63,54 @@ class JassVM:
             script_content = f.read()
         self.load_script(script_content)
 
+    def load_blizzard(self, path: str = None) -> bool:
+        """
+        加载 blizzard.j 作为前置脚本。
+
+        参数:
+            path: blizzard.j 的路径，None 则自动查找 resources/blizzard.j
+
+        返回:
+            bool: 加载成功返回 True，失败返回 False（仅记录警告）
+        """
+        # 自动查找路径
+        if path is None:
+            path = self._find_blizzard_path()
+            if path is None:
+                logger.warning("未找到 blizzard.j，已跳过加载")
+                return False
+
+        try:
+            with open(path, 'r', encoding='utf-8') as f:
+                content = f.read()
+
+            parser = Parser(content)
+            self.blizzard_ast = parser.parse()
+            self.blizzard_loaded = True
+            logger.info(f"blizzard.j 已加载: {path}")
+            return True
+
+        except FileNotFoundError:
+            logger.warning(f"blizzard.j 文件未找到: {path}")
+            return False
+        except Exception as e:
+            logger.warning(f"blizzard.j 解析失败: {e}")
+            return False
+
+    def _find_blizzard_path(self) -> Optional[str]:
+        """自动查找 blizzard.j 的默认路径。"""
+        possible_paths = [
+            'resources/blizzard.j',
+            os.path.join(os.path.dirname(__file__), '..', '..', '..', 'resources', 'blizzard.j'),
+            os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', '..', '..', 'resources', 'blizzard.j'),
+        ]
+
+        for p in possible_paths:
+            normalized = os.path.normpath(p)
+            if os.path.exists(normalized):
+                return normalized
+        return None
+
     def execute(self):
         """执行已加载的脚本。"""
         if not self.loaded:

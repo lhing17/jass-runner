@@ -1,6 +1,58 @@
 """测试 JassVM 类。"""
+import pytest
+
 
 def test_jass_vm_creation():
+    """测试 JassVM 可以被创建。"""
+    from jass_runner.vm.jass_vm import JassVM
+
+    vm = JassVM()
+    assert vm is not None
+    assert hasattr(vm, 'load_script')
+    assert hasattr(vm, 'execute')
+    assert hasattr(vm, 'run')
+
+
+class TestLoadBlizzard:
+    """测试 load_blizzard 方法。"""
+
+    def test_load_blizzard_auto_path_success(self):
+        """测试自动路径加载 blizzard.j 成功。"""
+        from jass_runner.vm.jass_vm import JassVM
+
+        vm = JassVM()
+
+        result = vm.load_blizzard()
+
+        assert result is True
+        assert vm.blizzard_loaded is True
+        assert vm.blizzard_ast is not None
+
+    def test_load_blizzard_custom_path_success(self):
+        """测试自定义路径加载 blizzard.j 成功。"""
+        from jass_runner.vm.jass_vm import JassVM
+
+        vm = JassVM()
+        path = 'resources/blizzard.j'
+
+        result = vm.load_blizzard(path)
+
+        assert result is True
+        assert vm.blizzard_loaded is True
+
+    def test_load_blizzard_invalid_path_returns_false(self):
+        """测试无效路径返回 False 不抛出异常。"""
+        from jass_runner.vm.jass_vm import JassVM
+
+        vm = JassVM()
+
+        result = vm.load_blizzard('nonexistent/path.j')
+
+        assert result is False
+        assert vm.blizzard_loaded is False
+
+
+def test_vm_error_handling():
     """测试 JassVM 可以被创建。"""
     from jass_runner.vm.jass_vm import JassVM
 
