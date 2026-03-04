@@ -153,3 +153,35 @@ class PlaySound(NativeFunction):
             f"[PlaySound] 声音开始播放: "
             f"ID={sound.id}, 标签={sound.sound_label}"
         )
+
+
+class StopSound(NativeFunction):
+    """停止声音播放。"""
+
+    @property
+    def name(self) -> str:
+        return "StopSound"
+
+    def execute(
+        self,
+        state_context,
+        sound: Sound,
+        killWhenDone: bool = False,
+        fadeOut: bool = False
+    ) -> None:
+        """停止声音播放。
+
+        参数：
+            state_context: 状态上下文
+            sound: 要停止的声音对象
+            killWhenDone: 是否在播放完成后销毁
+            fadeOut: 是否淡出
+        """
+        sound.is_playing = False
+        if killWhenDone:
+            sound.kill_when_done = True
+        logger.info(
+            f"[StopSound] 声音已停止: "
+            f"ID={sound.id}, 标签={sound.sound_label}, "
+            f"淡出={fadeOut}"
+        )
