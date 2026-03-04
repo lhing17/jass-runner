@@ -624,3 +624,33 @@ class Effect(Handle):
         self.model_path = model_path
         self.target = target
         self.attach_point = attach_point
+
+
+class BoolExpr(Handle):
+    """布尔表达式基类，用于条件判断和过滤。
+
+    属性：
+        _func: 包装的函数（可为None）
+    """
+
+    def __init__(self, handle_id: str):
+        """初始化布尔表达式。
+
+        参数：
+            handle_id: 唯一标识符
+        """
+        super().__init__(handle_id, "boolexpr")
+        self._func = None
+
+    def evaluate(self, *args, **kwargs) -> bool:
+        """评估表达式，返回布尔值。
+
+        参数：
+            *args, **kwargs: 传递给包装函数的参数
+
+        返回：
+            评估结果，无函数时返回False
+        """
+        if self._func:
+            return bool(self._func(*args, **kwargs))
+        return False
