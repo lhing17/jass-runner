@@ -67,6 +67,16 @@ from .effect_natives import (
 )
 from .camera import GetCameraMargin, SetCameraBounds, SetDayNightModels
 from .sound_natives import NewSoundEnvironment, SetAmbientDaySound, SetAmbientNightSound, SetMapMusic
+from .boolexpr_natives import (
+    Condition,
+    Filter,
+    DestroyCondition,
+    DestroyFilter,
+    And,
+    Or,
+    Not,
+    DestroyBoolExpr,
+)
 
 
 class NativeFactory:
@@ -269,5 +279,15 @@ class NativeFactory:
         registry.register(ConvertAllianceType())
         registry.register(SetPlayerAlliance())
         registry.register(GetPlayerAlliance())
+
+        # 注册布尔表达式相关 native 函数
+        registry.register(Condition())
+        registry.register(Filter())
+        registry.register(DestroyCondition())
+        registry.register(DestroyFilter())
+        registry.register(And())
+        registry.register(Or())
+        registry.register(Not())
+        registry.register(DestroyBoolExpr())
 
         return registry
