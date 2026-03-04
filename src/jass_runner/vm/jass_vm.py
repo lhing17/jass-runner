@@ -44,6 +44,8 @@ class JassVM:
 
         self.ast = None
         self.loaded = False
+        self.blizzard_ast = None  # 存储 blizzard.j 的 AST
+        self.blizzard_loaded = False  # blizzard.j 是否已加载
 
         # 加载 common.j 中的常量
         self._load_constants()
