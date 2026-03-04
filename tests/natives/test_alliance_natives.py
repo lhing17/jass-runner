@@ -82,3 +82,59 @@ class TestSetPlayerAlliance:
         # 不应抛出异常
         native.execute(state_context, None, MagicMock(), ALLIANCE_PASSIVE, True)
         native.execute(state_context, MagicMock(), None, ALLIANCE_PASSIVE, True)
+
+
+class TestGetPlayerAlliance:
+    """测试 GetPlayerAlliance native 函数。"""
+
+    def test_get_alliance_true(self):
+        """测试获取已启用的联盟关系。"""
+        from src.jass_runner.natives.alliance_manager import AllianceManager
+        from src.jass_runner.natives.alliance_natives import GetPlayerAlliance
+
+        native = GetPlayerAlliance()
+        state_context = MagicMock()
+        state_context.alliance_manager = AllianceManager()
+
+        player0 = MagicMock()
+        player0.player_id = 0
+        player1 = MagicMock()
+        player1.player_id = 1
+
+        # 先设置
+        state_context.alliance_manager.set_alliance(0, 1, ALLIANCE_PASSIVE, True)
+
+        result = native.execute(state_context, player0, player1, ALLIANCE_PASSIVE)
+        assert result is True
+
+    def test_get_alliance_false(self):
+        """测试获取未启用的联盟关系。"""
+        from src.jass_runner.natives.alliance_manager import AllianceManager
+        from src.jass_runner.natives.alliance_natives import GetPlayerAlliance
+
+        native = GetPlayerAlliance()
+        state_context = MagicMock()
+        state_context.alliance_manager = AllianceManager()
+
+        player0 = MagicMock()
+        player0.player_id = 0
+        player1 = MagicMock()
+        player1.player_id = 1
+
+        result = native.execute(state_context, player0, player1, ALLIANCE_PASSIVE)
+        assert result is False
+
+    def test_get_alliance_with_none_player(self):
+        """测试传入 None player 时返回 False。"""
+        from src.jass_runner.natives.alliance_manager import AllianceManager
+        from src.jass_runner.natives.alliance_natives import GetPlayerAlliance
+
+        native = GetPlayerAlliance()
+        state_context = MagicMock()
+        state_context.alliance_manager = AllianceManager()
+
+        result = native.execute(state_context, None, MagicMock(), ALLIANCE_PASSIVE)
+        assert result is False
+
+        result = native.execute(state_context, MagicMock(), None, ALLIANCE_PASSIVE)
+        assert result is False

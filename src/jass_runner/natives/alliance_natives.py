@@ -79,3 +79,45 @@ class SetPlayerAlliance(NativeFunction):
             f"[SetPlayerAlliance] 玩家{source_player.player_id} 对 "
             f"玩家{other_player.player_id} 设置 {alliance_name}={value}"
         )
+
+
+class GetPlayerAlliance(NativeFunction):
+    """获取两个玩家之间的联盟关系状态。"""
+
+    @property
+    def name(self) -> str:
+        return "GetPlayerAlliance"
+
+    def execute(self, state_context: 'StateContext',
+                source_player: 'Player', other_player: 'Player',
+                alliance_type: int) -> bool:
+        """执行 GetPlayerAlliance。
+
+        参数：
+            state_context: 状态上下文
+            source_player: 源玩家
+            other_player: 目标玩家
+            alliance_type: 联盟类型
+
+        返回：
+            该联盟类型是否启用
+        """
+        if source_player is None or other_player is None:
+            logger.warning("[GetPlayerAlliance] 玩家对象为 None")
+            return False
+
+        alliance_manager = state_context.alliance_manager
+        alliance_name = get_alliance_name(alliance_type)
+
+        result = alliance_manager.get_alliance(
+            source_player.player_id,
+            other_player.player_id,
+            alliance_type
+        )
+
+        logger.info(
+            f"[GetPlayerAlliance] 玩家{source_player.player_id} 对 "
+            f"玩家{other_player.player_id} 的 {alliance_name}={result}"
+        )
+
+        return result
