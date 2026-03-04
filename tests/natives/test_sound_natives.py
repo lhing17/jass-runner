@@ -4,7 +4,7 @@ import pytest
 from unittest.mock import MagicMock
 from src.jass_runner.natives.sound_natives import (
     NewSoundEnvironment, SetAmbientDaySound, SetAmbientNightSound, SetMapMusic,
-    CreateSoundFromLabel
+    CreateSoundFromLabel, PlaySound
 )
 from src.jass_runner.natives.state import StateContext
 from src.jass_runner.natives.handle import Sound
@@ -147,3 +147,23 @@ class TestCreateSoundFromLabel:
         mock_manager.create_sound.assert_called_once_with(
             "Rescue", False, False, False, 10000, 10000
         )
+
+
+class TestPlaySound:
+    """测试PlaySound native函数。"""
+
+    def test_play_sound_sets_is_playing(self):
+        """测试PlaySound设置is_playing为True。"""
+        # 准备
+        native = PlaySound()
+        mock_state = MagicMock()
+        mock_sound = MagicMock(spec=Sound)
+        mock_sound.id = 1
+        mock_sound.sound_label = "Rescue"
+        mock_sound.is_playing = False
+
+        # 执行
+        native.execute(mock_state, mock_sound)
+
+        # 验证
+        assert mock_sound.is_playing is True

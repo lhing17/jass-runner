@@ -132,3 +132,24 @@ class CreateSoundFromLabel(NativeFunction):
             fadeInRate,
             fadeOutRate
         )
+
+
+class PlaySound(NativeFunction):
+    """播放声音。"""
+
+    @property
+    def name(self) -> str:
+        return "PlaySound"
+
+    def execute(self, state_context, sound: Sound) -> None:
+        """播放声音。
+
+        参数：
+            state_context: 状态上下文
+            sound: 要播放的声音对象
+        """
+        sound.is_playing = True
+        logger.info(
+            f"[PlaySound] 声音开始播放: "
+            f"ID={sound.id}, 标签={sound.sound_label}"
+        )
