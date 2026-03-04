@@ -26,6 +26,7 @@ def run_war3map():
         # 创建虚拟机实例
         vm = JassVM(enable_timers=True)
         
+        vm.load_blizzard()
         # 加载脚本文件
         vm.load_file(war3map_path)
         

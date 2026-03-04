@@ -1,9 +1,13 @@
 """联盟相关 native 函数测试。"""
 
-import pytest
 from unittest.mock import MagicMock
-from src.jass_runner.natives.alliance_natives import ConvertAllianceType
-from src.jass_runner.natives.alliance import ALLIANCE_PASSIVE, ALLIANCE_SHARED_VISION
+from src.jass_runner.natives.alliance_natives import (
+    ConvertAllianceType,
+)
+from src.jass_runner.natives.alliance import (
+    ALLIANCE_PASSIVE,
+    ALLIANCE_SHARED_VISION,
+)
 
 
 class TestConvertAllianceType:
@@ -25,8 +29,13 @@ class TestConvertAllianceType:
         native = ConvertAllianceType()
         state_context = MagicMock()
 
-        assert native.execute(state_context, ALLIANCE_PASSIVE) == ALLIANCE_PASSIVE
-        assert native.execute(state_context, ALLIANCE_SHARED_VISION) == ALLIANCE_SHARED_VISION
+        result_passive = native.execute(state_context, ALLIANCE_PASSIVE)
+        assert result_passive == ALLIANCE_PASSIVE
+
+        result_vision = native.execute(
+            state_context, ALLIANCE_SHARED_VISION
+        )
+        assert result_vision == ALLIANCE_SHARED_VISION
 
 
 class TestSetPlayerAlliance:
@@ -46,9 +55,14 @@ class TestSetPlayerAlliance:
         player1 = MagicMock()
         player1.player_id = 1
 
-        native.execute(state_context, player0, player1, ALLIANCE_PASSIVE, True)
+        native.execute(
+            state_context, player0, player1, ALLIANCE_PASSIVE, True
+        )
 
-        assert state_context.alliance_manager.get_alliance(0, 1, ALLIANCE_PASSIVE) is True
+        result = state_context.alliance_manager.get_alliance(
+            0, 1, ALLIANCE_PASSIVE
+        )
+        assert result is True
 
     def test_set_alliance_false(self):
         """测试设置联盟关系为 false。"""
@@ -65,10 +79,17 @@ class TestSetPlayerAlliance:
         player1.player_id = 1
 
         # 先设置再取消
-        native.execute(state_context, player0, player1, ALLIANCE_PASSIVE, True)
-        native.execute(state_context, player0, player1, ALLIANCE_PASSIVE, False)
+        native.execute(
+            state_context, player0, player1, ALLIANCE_PASSIVE, True
+        )
+        native.execute(
+            state_context, player0, player1, ALLIANCE_PASSIVE, False
+        )
 
-        assert state_context.alliance_manager.get_alliance(0, 1, ALLIANCE_PASSIVE) is False
+        result = state_context.alliance_manager.get_alliance(
+            0, 1, ALLIANCE_PASSIVE
+        )
+        assert result is False
 
     def test_set_alliance_with_none_player(self):
         """测试传入 None player 时的处理。"""
@@ -80,8 +101,12 @@ class TestSetPlayerAlliance:
         state_context.alliance_manager = AllianceManager()
 
         # 不应抛出异常
-        native.execute(state_context, None, MagicMock(), ALLIANCE_PASSIVE, True)
-        native.execute(state_context, MagicMock(), None, ALLIANCE_PASSIVE, True)
+        native.execute(
+            state_context, None, MagicMock(), ALLIANCE_PASSIVE, True
+        )
+        native.execute(
+            state_context, MagicMock(), None, ALLIANCE_PASSIVE, True
+        )
 
 
 class TestGetPlayerAlliance:
@@ -102,9 +127,13 @@ class TestGetPlayerAlliance:
         player1.player_id = 1
 
         # 先设置
-        state_context.alliance_manager.set_alliance(0, 1, ALLIANCE_PASSIVE, True)
+        state_context.alliance_manager.set_alliance(
+            0, 1, ALLIANCE_PASSIVE, True
+        )
 
-        result = native.execute(state_context, player0, player1, ALLIANCE_PASSIVE)
+        result = native.execute(
+            state_context, player0, player1, ALLIANCE_PASSIVE
+        )
         assert result is True
 
     def test_get_alliance_false(self):
@@ -121,7 +150,9 @@ class TestGetPlayerAlliance:
         player1 = MagicMock()
         player1.player_id = 1
 
-        result = native.execute(state_context, player0, player1, ALLIANCE_PASSIVE)
+        result = native.execute(
+            state_context, player0, player1, ALLIANCE_PASSIVE
+        )
         assert result is False
 
     def test_get_alliance_with_none_player(self):
@@ -133,8 +164,12 @@ class TestGetPlayerAlliance:
         state_context = MagicMock()
         state_context.alliance_manager = AllianceManager()
 
-        result = native.execute(state_context, None, MagicMock(), ALLIANCE_PASSIVE)
+        result = native.execute(
+            state_context, None, MagicMock(), ALLIANCE_PASSIVE
+        )
         assert result is False
 
-        result = native.execute(state_context, MagicMock(), None, ALLIANCE_PASSIVE)
+        result = native.execute(
+            state_context, MagicMock(), None, ALLIANCE_PASSIVE
+        )
         assert result is False

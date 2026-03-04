@@ -41,7 +41,8 @@
       "Bash(git log -1 --oneline --show-signature)",
       "Bash(move testscoroutinetest_imports.py testscoroutinetest_coroutine_imports.py)",
       "Bash(move:*)",
-      "Bash(git stash:*)"
+      "Bash(git stash:*)",
+      "WebSearch"
     ]
   }
 }

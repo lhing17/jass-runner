@@ -28,7 +28,8 @@ class ConvertAllianceType(NativeFunction):
     def name(self) -> str:
         return "ConvertAllianceType"
 
-    def execute(self, state_context: 'StateContext', alliance_type: int) -> int:
+    def execute(self, state_context: 'StateContext',
+                alliance_type: int) -> int:
         """执行 ConvertAllianceType。
 
         参数：

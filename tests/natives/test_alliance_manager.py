@@ -1,6 +1,5 @@
 """AllianceManager 测试。"""
 
-import pytest
 from src.jass_runner.natives.alliance_manager import AllianceManager
 from src.jass_runner.natives.alliance import (
     ALLIANCE_PASSIVE,
