@@ -126,7 +126,7 @@ def test_create_default_registry():
 
     # 检查注册的函数总数
     all_funcs = registry.get_all()
-    assert len(all_funcs) == 139  # 118 + 8 (boolexpr) + 6 (force) + 3 (game speed) + 4 (fog)
+    assert len(all_funcs) == 143  # 118 + 8 (boolexpr) + 6 (force) + 3 (game speed) + 4 (fog) + 4 (sound)
 
 
 def test_all_math_natives_registered():
