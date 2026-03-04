@@ -207,6 +207,18 @@ class JassVM:
                 return 0.0
         elif const_type == 'boolean':
             return const_value.lower() == 'true'
+        elif const_type == 'alliancetype':
+            # 处理 ConvertAllianceType(0) 格式的函数调用
+            # 提取括号中的整数
+            try:
+                import re
+                match = re.search(r'ConvertAllianceType\((\d+)\)', const_value)
+                if match:
+                    return int(match.group(1))
+                else:
+                    return int(const_value)
+            except (ValueError, AttributeError):
+                return 0
         else:
             # 对于handle类型和其他类型，存储字符串值
             return const_value

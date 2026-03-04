@@ -42,6 +42,17 @@ endfunction
 
         assert success
 
+    def test_alliance_constants_are_integers(self):
+        """测试联盟类型常量被正确解析为整数。"""
+        vm = JassVM()
+
+        # 检查 ALLIANCE_PASSIVE 被解析为整数 0
+        assert vm.interpreter.global_context.variables.get('ALLIANCE_PASSIVE') == 0
+
+        # 检查其他联盟常量也被正确解析
+        assert vm.interpreter.global_context.variables.get('ALLIANCE_SHARED_VISION') == 5
+        assert vm.interpreter.global_context.variables.get('ALLIANCE_SHARED_CONTROL') == 6
+
     def test_convert_alliance_type(self):
         """测试 ConvertAllianceType 在脚本中的使用。"""
         jass_code = '''
