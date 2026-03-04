@@ -68,3 +68,61 @@ class Condition(NativeFunction):
 
         logger.info(f"[Condition] Created conditionfunc: {handle_id}")
         return handle_id
+
+
+class Filter(NativeFunction):
+    """将 code 函数包装为 filterfunc。
+
+    创建一个 filterfunc 对象，包装传入的函数。
+    被包装的函数接受一个单位参数，应返回布尔值。
+    """
+
+    @property
+    def name(self) -> str:
+        """获取 native 函数的名称。
+
+        返回：
+            "Filter"
+        """
+        return "Filter"
+
+    def execute(self, state_context, func: Callable, *args, **kwargs):
+        """执行 Filter native 函数。
+
+        参数：
+            state_context: 状态上下文，必须包含 handle_manager
+            func: 要包装的过滤函数（接受unit参数，返回bool）
+            *args: 额外位置参数
+            **kwargs: 关键字参数
+
+        返回：
+            filterfunc 的 handle ID，失败返回 None
+        """
+        # 检查 state_context 和 handle_manager
+        if state_context is None:
+            logger.error("[Filter] state_context is None")
+            return None
+
+        if not hasattr(state_context, 'handle_manager') or state_context.handle_manager is None:
+            logger.error("[Filter] handle_manager not found in state_context")
+            return None
+
+        # 检查 func 是否可调用
+        if not callable(func):
+            logger.error("[Filter] func is not callable")
+            return None
+
+        # 生成唯一ID
+        handle_id = f"filter_{state_context.handle_manager._generate_id()}"
+
+        # 导入 FilterFunc 类
+        from .handle import FilterFunc
+
+        # 创建 FilterFunc 对象
+        filter_func = FilterFunc(handle_id, func)
+
+        # 注册到 handle_manager
+        state_context.handle_manager._register_handle(filter_func)
+
+        logger.info(f"[Filter] Created filterfunc: {handle_id}")
+        return handle_id
