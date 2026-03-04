@@ -6,6 +6,7 @@
 from typing import Dict
 from .manager import HandleManager
 from ..trigger.manager import TriggerManager
+from .alliance_manager import AllianceManager
 
 
 class StateContext:
@@ -20,6 +21,7 @@ class StateContext:
     def __init__(self):
         self.handle_manager = HandleManager()
         self.trigger_manager = TriggerManager()  # 触发器管理器
+        self.alliance_manager = AllianceManager()  # 联盟管理器
         self.global_vars = {}  # 全局变量存储
         self.local_stores = {}  # 上下文局部存储
 
