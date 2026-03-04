@@ -1,8 +1,13 @@
 """测试声音相关 native 函数。"""
 
 import pytest
-from src.jass_runner.natives.sound_natives import NewSoundEnvironment, SetAmbientDaySound, SetAmbientNightSound, SetMapMusic
+from unittest.mock import MagicMock
+from src.jass_runner.natives.sound_natives import (
+    NewSoundEnvironment, SetAmbientDaySound, SetAmbientNightSound, SetMapMusic,
+    CreateSoundFromLabel
+)
 from src.jass_runner.natives.state import StateContext
+from src.jass_runner.natives.handle import Sound
 
 
 class TestNewSoundEnvironment:
@@ -110,3 +115,35 @@ class TestSetMapMusic:
         result = native.execute(context, "WarcraftMusic", True, 5)
 
         assert result is None
+
+
+class TestCreateSoundFromLabel:
+    """测试 CreateSoundFromLabel native 函数。"""
+
+    def test_create_sound_from_label_returns_sound(self):
+        """测试 CreateSoundFromLabel 返回 Sound 对象。"""
+        # 准备
+        native = CreateSoundFromLabel()
+        mock_state = MagicMock()
+        mock_manager = MagicMock()
+        mock_sound = MagicMock(spec=Sound)
+        mock_sound.id = 1
+        mock_manager.create_sound.return_value = mock_sound
+        mock_state.handle_manager = mock_manager
+
+        # 执行
+        result = native.execute(
+            mock_state,
+            "Rescue",
+            False,
+            False,
+            False,
+            10000,
+            10000
+        )
+
+        # 验证
+        assert result == mock_sound
+        mock_manager.create_sound.assert_called_once_with(
+            "Rescue", False, False, False, 10000, 10000
+        )

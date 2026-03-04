@@ -5,6 +5,7 @@
 
 import logging
 from .base import NativeFunction
+from .handle import Sound
 
 logger = logging.getLogger(__name__)
 
@@ -88,4 +89,46 @@ class SetMapMusic(NativeFunction):
         logger.info(
             f"[SetMapMusic] 地图音乐已设置: "
             f"音乐名称={music_name}, 随机播放={random}, 索引={index}"
+        )
+
+
+class CreateSoundFromLabel(NativeFunction):
+    """从标签创建声音对象。"""
+
+    @property
+    def name(self) -> str:
+        return "CreateSoundFromLabel"
+
+    def execute(
+        self,
+        state_context,
+        sound_label: str,
+        looping: bool,
+        is3D: bool,
+        stopwhenoutofrange: bool,
+        fadeInRate: int,
+        fadeOutRate: int
+    ) -> Sound:
+        """从标签创建声音对象。
+
+        参数：
+            state_context: 状态上下文
+            sound_label: 声音标签（如"Rescue"）
+            looping: 是否循环播放
+            is3D: 是否为3D音效
+            stopwhenoutofrange: 超出范围时是否停止
+            fadeInRate: 淡入速率
+            fadeOutRate: 淡出速率
+
+        返回：
+            创建的Sound对象
+        """
+        handle_manager = state_context.handle_manager
+        return handle_manager.create_sound(
+            sound_label,
+            looping,
+            is3D,
+            stopwhenoutofrange,
+            fadeInRate,
+            fadeOutRate
         )
