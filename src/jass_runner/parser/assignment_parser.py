@@ -111,9 +111,7 @@ class AssignmentParserMixin:
                 try:
                     return str(float(token))
                 except ValueError:
-                    # 字符串字面量，去除引号
-                    if token.startswith('"') and token.endswith('"'):
-                        return token[1:-1]
+                    # 不是数字，直接返回原值（保留字符串引号）
                     return token
 
         # 多个token：组合成混合列表（字符串和NativeCallNode）
