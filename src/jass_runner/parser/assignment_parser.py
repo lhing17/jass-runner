@@ -87,7 +87,7 @@ class AssignmentParserMixin:
                 break
 
             # 收集token值
-            if token.type == 'IDENTIFIER':
+            if token.type == 'IDENTIFIER' or (token.type == 'KEYWORD' and token.value == 'function'):
                 arg_tokens.append(str(token.value))
             else:
                 arg_tokens.append(str(token.value))
@@ -113,6 +113,11 @@ class AssignmentParserMixin:
                 except ValueError:
                     # 不是数字，直接返回原值（保留字符串引号）
                     return token
+
+        # 多个token：检查是否是函数引用（function FuncName）
+        if len(arg_tokens) == 2 and arg_tokens[0] == 'function':
+            # 函数引用：返回 "function:FuncName" 格式
+            return f"function:{arg_tokens[1]}"
 
         # 多个token：组合成混合列表（字符串和NativeCallNode）
         # 这样可以保留嵌套函数调用供evaluator处理

@@ -49,9 +49,27 @@ class Condition(NativeFunction):
             logger.error("[Condition] handle_manager not found in state_context")
             return None
 
+        # 处理函数引用字符串（如 "function:FuncName"）
+        if isinstance(func, str) and func.startswith("function:"):
+            func_name = func[9:]  # 去掉 'function:' 前缀
+            # 从 state_context 获取解释器
+            if hasattr(state_context, 'interpreter') and state_context.interpreter:
+                interpreter = state_context.interpreter
+                def func_wrapper():
+                    if func_name in interpreter.functions:
+                        from ..parser.parser import FunctionDecl
+                        f = interpreter.functions[func_name]
+                        if isinstance(f, FunctionDecl):
+                            return interpreter.execute_function(f)
+                    return False
+                func = func_wrapper
+            else:
+                logger.error(f"[Condition] Cannot resolve function reference: {func}")
+                return None
+
         # 检查 func 是否可调用
         if not callable(func):
-            logger.error("[Condition] func is not callable")
+            logger.error(f"[Condition] func is not callable: {func} (type: {type(func)})")
             return None
 
         # 生成唯一ID
@@ -107,9 +125,31 @@ class Filter(NativeFunction):
             logger.error("[Filter] handle_manager not found in state_context")
             return None
 
+        # 处理函数引用字符串（如 "function:FuncName"）
+        if isinstance(func, str) and func.startswith("function:"):
+            func_name = func[9:]  # 去掉 'function:' 前缀
+            # 从 state_context 获取解释器
+            if hasattr(state_context, 'interpreter') and state_context.interpreter:
+                interpreter = state_context.interpreter
+                def func_wrapper(unit):
+                    # 将 unit 存入全局变量，供过滤函数访问
+                    if hasattr(state_context, 'set_global'):
+                        state_context.set_global('FilterUnit', unit)
+                    if func_name in interpreter.functions:
+                        from ..parser.parser import FunctionDecl
+                        f = interpreter.functions[func_name]
+                        if isinstance(f, FunctionDecl):
+                            result = interpreter.execute_function(f)
+                            return result if result is not None else False
+                    return False
+                func = func_wrapper
+            else:
+                logger.error(f"[Filter] Cannot resolve function reference: {func}")
+                return None
+
         # 检查 func 是否可调用
         if not callable(func):
-            logger.error("[Filter] func is not callable")
+            logger.error(f"[Filter] func is not callable: {func} (type: {type(func)})")
             return None
 
         # 生成唯一ID

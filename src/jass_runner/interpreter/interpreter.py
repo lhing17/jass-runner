@@ -15,6 +15,7 @@ class Interpreter:
 
     def __init__(self, native_registry=None):
         self.state_context = StateContext()
+        self.state_context.interpreter = self  # 设置 interpreter 引用
         self.global_context = ExecutionContext(native_registry=native_registry, state_context=self.state_context, interpreter=self)
         self.current_context = self.global_context
         self.functions = {}
