@@ -950,6 +950,11 @@ jass-runner/
   - GetItemTypeId, UnitItemInSlot
   - 14个单元测试 + 3个集成测试
 - ✅ 所有 678 个测试通过
+- ✅ **JassVM blizzard.j 前置加载支持实现完成** (2026-03-04)
+  - `load_blizzard()` 方法支持自动查找和自定义路径
+  - `execute()` 优先执行 blizzard.j 脚本
+  - CLI 添加 `--blizzard` 和 `--blizzard-path` 选项
+  - 所有 756 个测试通过
 
 #### 42. 类型检查系统实现完成 (2026-03-02)
 - **核心组件**:
@@ -1193,6 +1198,44 @@ jass-runner/
   - 集成测试: 1个场景测试完整名称管理流程
 - **测试统计**: 720个测试通过
 
+#### 54. 声音系统Native函数实现完成 (2026-03-04)
+- **新增组件**:
+  - `sound_natives.py` - 3个声音环境Native函数
+- **新增Native函数**:
+  - `SetAmbientDaySound` - 设置白天环境音效
+  - `SetAmbientNightSound` - 设置夜晚环境音效
+  - `SetMapMusic` - 设置地图背景音乐
+- **修改文件**:
+  - `src/jass_runner/natives/sound_natives.py` - 新建，实现3个函数
+  - `src/jass_runner/natives/factory.py` - 注册新函数
+- **关键设计**:
+  - 极简日志方案，仅输出日志记录声音设置
+  - 支持音乐播放模式参数（random, sequential, once）
+  - 使用FourCC格式标识声音文件
+- **测试覆盖**:
+  - 单元测试: 3个测试用例覆盖所有函数
+  - 集成测试: 1个场景测试完整声音系统
+- **测试统计**: 724个测试通过
+
+#### 55. JassVM blizzard.j 前置加载支持实现完成 (2026-03-04)
+- **新增功能**:
+  - `blizzard_ast` 和 `blizzard_loaded` 状态变量 - 存储blizzard.j的AST和加载状态
+  - `load_blizzard(path)` 方法 - 加载blizzard.j作为前置脚本
+  - `_find_blizzard_path()` 方法 - 自动查找blizzard.j默认路径
+- **修改文件**:
+  - `src/jass_runner/vm/jass_vm.py` - 添加状态变量和方法
+  - `src/jass_runner/cli.py` - 添加`--blizzard`和`--blizzard-path`选项
+- **关键设计**:
+  - 自动查找resources/blizzard.j或项目相对路径
+  - 支持自定义路径参数
+  - 加载失败返回False，仅记录警告不抛出异常
+  - execute()方法优先执行blizzard.j，再执行用户脚本
+  - run()方法支持load_blizzard参数自动加载
+  - CLI支持-b/--blizzard选项和--blizzard-path参数
+- **测试覆盖**:
+  - 单元测试: 5个测试用例（自动加载、自定义路径、无效路径、执行流程、run方法集成）
+- **测试统计**: 756个测试通过
+
 
 ---
-*最后更新: 2026-03-03*
+*最后更新: 2026-03-04*

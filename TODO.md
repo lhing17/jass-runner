@@ -156,9 +156,16 @@
 ### v0.7.0: 高级游戏机制 (Advanced Game Mechanics)
 > 目标：支持更复杂的游戏逻辑和高级API。
 
+- [x] **P1** [VM] blizzard.j 前置加载支持 ✅ 已完成（2026-03-04）
+  - [x] JassVM 状态变量：`blizzard_ast`, `blizzard_loaded`
+  - [x] `load_blizzard()` 方法：自动查找和自定义路径
+  - [x] `execute()` 优先执行 blizzard.j 脚本
+  - [x] `run()` 方法支持 `load_blizzard` 参数
+  - [x] CLI 添加 `-b/--blizzard` 和 `--blizzard-path` 选项
 - [x] **P1** [Simulator] 玩家资源系统
   - [x] Native函数：GetPlayerState, SetPlayerState（金币、木材、人口）
   - [x] Native函数：GetPlayerName, SetPlayerName
+  - [x] Native函数：SetAmbientDaySound, SetAmbientNightSound, SetMapMusic
   - [ ] 玩家颜色和种族设置
 - [ ] **P2** [Simulator] 区域和触发器高级功能
   - [ ] Rect区域操作：Rect, RemoveRect
@@ -175,6 +182,9 @@
   - [ ] `type` 自定义类型定义
   - [ ] `native` 声明支持
   - [ ] 预处理指令（#include等）
+- [x] **P3** [Simulator] blizzard.j前置加载支持 ✅ 已完成（2026-03-04）
+  - [x] JassVM支持加载blizzard.j作为前置脚本
+  - [x] CLI支持--blizzard选项
 - [ ] **P3** [Simulator] 完整的common.j模拟
   - [ ] 覆盖80%+的common.j函数
   - [ ] 完整的Blz（Blizzard）API支持
