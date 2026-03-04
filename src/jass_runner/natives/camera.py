@@ -64,3 +64,24 @@ class SetCameraBounds(NativeFunction):
             f"[SetCameraBounds] 相机边界已设置: "
             f"({x1},{y1})-({x2},{y2})-({x3},{y3})-({x4},{y4})"
         )
+
+
+class SetDayNightModels(NativeFunction):
+    """设置昼夜模型路径。"""
+
+    @property
+    def name(self) -> str:
+        return "SetDayNightModels"
+
+    def execute(self, state_context, terrain_model: str, sky_model: str) -> None:
+        """执行设置昼夜模型。
+
+        参数:
+            state_context: 状态上下文
+            terrain_model: 地形模型文件路径
+            sky_model: 天空模型文件路径
+        """
+        logger.info(
+            f"[SetDayNightModels] 昼夜模型已设置: "
+            f"地形模型={terrain_model}, 天空模型={sky_model}"
+        )

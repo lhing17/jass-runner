@@ -1,7 +1,7 @@
 """测试 Camera 相关 native 函数。"""
 
 import pytest
-from src.jass_runner.natives.camera import GetCameraMargin, SetCameraBounds
+from src.jass_runner.natives.camera import GetCameraMargin, SetCameraBounds, SetDayNightModels
 from src.jass_runner.natives.state import StateContext
 
 
@@ -92,3 +92,30 @@ class TestSetCameraBounds:
 
         assert context.camera_bounds['x1'] == -11520.0
         assert context.camera_bounds['y2'] == 11264.0
+
+
+class TestSetDayNightModels:
+    """测试 SetDayNightModels 类。"""
+
+    def test_model_paths_are_logged(self):
+        """测试模型路径正确记录（通过无异常验证）。"""
+        native = SetDayNightModels()
+        context = StateContext()
+
+        # 应该成功执行，不需要验证返回值（返回None）
+        result = native.execute(
+            context,
+            "Environment\\DNC\\DNCLordaeron\\DNCLordaeronTerrain\\DNCLordaeronTerrain.mdl",
+            "Environment\\DNC\\DNCLordaeron\\DNCLordaeronUnit\\DNCLordaeronUnit.mdl"
+        )
+
+        assert result is None
+
+    def test_empty_model_paths_work(self):
+        """测试空模型路径也能正常工作。"""
+        native = SetDayNightModels()
+        context = StateContext()
+
+        result = native.execute(context, "", "")
+
+        assert result is None

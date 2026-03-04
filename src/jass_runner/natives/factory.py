@@ -63,7 +63,8 @@ from .effect_natives import (
     SetSpecialEffectScale,
     SetSpecialEffectColor,
 )
-from .camera import GetCameraMargin, SetCameraBounds
+from .camera import GetCameraMargin, SetCameraBounds, SetDayNightModels
+from .sound_natives import NewSoundEnvironment, SetAmbientDaySound, SetAmbientNightSound, SetMapMusic
 
 
 class NativeFactory:
@@ -253,5 +254,12 @@ class NativeFactory:
         # Camera natives
         registry.register(GetCameraMargin())
         registry.register(SetCameraBounds())
+        registry.register(SetDayNightModels())
+
+        # Sound natives
+        registry.register(NewSoundEnvironment())
+        registry.register(SetAmbientDaySound())
+        registry.register(SetAmbientNightSound())
+        registry.register(SetMapMusic())
 
         return registry
