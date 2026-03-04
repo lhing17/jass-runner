@@ -5,7 +5,7 @@
 
 from typing import Dict, List, Optional, Union
 import logging
-from .handle import Handle, Unit, Player, Item, Group, Rect, Effect, BoolExpr
+from .handle import Handle, Unit, Player, Item, Group, Rect, Effect, BoolExpr, Sound
 
 
 logger = logging.getLogger(__name__)
@@ -391,6 +391,67 @@ class HandleManager:
         target_info = f"[{target_type}#{target.id}]"
         logger.info(f"[特效] 在 {target_info} 的附着点 [{attach_point}] 创建特效: {model_path} (ID: {effect.id})")
         return effect
+
+    def create_sound(
+        self,
+        sound_label: str,
+        looping: bool,
+        is3D: bool,
+        stopwhenoutofrange: bool,
+        fadeInRate: int,
+        fadeOutRate: int
+    ) -> Sound:
+        """创建声音对象。
+
+        参数：
+            sound_label: 声音标签（如"Rescue"）
+            looping: 是否循环播放
+            is3D: 是否为3D音效
+            stopwhenoutofrange: 超出范围时是否停止
+            fadeInRate: 淡入速率
+            fadeOutRate: 淡出速率
+
+        返回：
+            创建的Sound对象
+        """
+        handle_id = self._next_handle_id
+        self._next_handle_id += 1
+
+        sound = Sound(
+            handle_id=handle_id,
+            sound_label=sound_label,
+            looping=looping,
+            is3D=is3D,
+            stopwhenoutofrange=stopwhenoutofrange,
+            fadeInRate=fadeInRate,
+            fadeOutRate=fadeOutRate
+        )
+
+        self._handles[handle_id] = sound
+        logger.info(
+            f"[CreateSoundFromLabel] 声音已创建: "
+            f"ID={handle_id}, 标签={sound_label}, 循环={looping}"
+        )
+        return sound
+
+    def destroy_sound(self, sound: Sound) -> bool:
+        """销毁声音对象。
+
+        参数：
+            sound: 要销毁的声音对象
+
+        返回：
+            销毁成功返回True，声音已死亡返回False
+        """
+        if sound.is_dead:
+            return False
+
+        sound.mark_dead()
+        if sound.id in self._handles:
+            del self._handles[sound.id]
+
+        logger.info(f"[DestroySound] 声音已销毁: ID={sound.id}")
+        return True
 
     def destroy_effect(self, effect: Effect) -> bool:
         """销毁特效。
