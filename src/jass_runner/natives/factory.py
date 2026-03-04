@@ -51,6 +51,7 @@ from .item_inventory_natives import (
 from .player_state_natives import (
     GetPlayerState,
     SetPlayerState,
+    ConvertPlayerState,
 )
 from .player_name_natives import (
     GetPlayerName,
@@ -247,6 +248,7 @@ class NativeFactory:
         # 注册玩家资源native函数
         registry.register(GetPlayerState())
         registry.register(SetPlayerState())
+        registry.register(ConvertPlayerState())
 
         # 注册玩家名称native函数
         registry.register(GetPlayerName())
