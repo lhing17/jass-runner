@@ -3,8 +3,12 @@
 此模块包含战争迷雾相关的 native 函数。
 """
 
-from typing import Any, List
+import logging
+from typing import Any
 from .base import NativeFunction
+
+
+logger = logging.getLogger(__name__)
 
 
 class FogState:
@@ -19,10 +23,6 @@ class FogState:
 class FogMaskEnable(NativeFunction):
     """启用或禁用黑色遮罩。"""
 
-    name = "FogMaskEnable"
-    parameters = ["boolean"]
-    return_type = "nothing"
-
     def __init__(self, fog_state: FogState):
         """初始化。
 
@@ -31,25 +31,34 @@ class FogMaskEnable(NativeFunction):
         """
         self._fog_state = fog_state
 
-    def execute(self, args: List[Any]) -> None:
+    @property
+    def name(self) -> str:
+        """获取 native 函数的名称。
+
+        返回：
+            "FogMaskEnable"
+        """
+        return "FogMaskEnable"
+
+    def execute(self, state_context, enable: bool = None, *args, **kwargs) -> None:
         """执行函数。
 
         参数：
-            args: [enable] - 是否启用黑色遮罩
+            state_context: 状态上下文
+            enable: 是否启用黑色遮罩
+            *args: 额外位置参数
+            **kwargs: 关键字参数
         """
-        enable = args[0]
+        if enable is None:
+            enable = False
         self._fog_state.mask_enabled = enable
         status = "启用" if enable else "禁用"
-        print(f"[Fog] 黑色遮罩状态: {status}")
+        logger.info(f"[Fog] 黑色遮罩状态: {status}")
 
 
 class FogEnable(NativeFunction):
     """启用或禁用战争迷雾。"""
 
-    name = "FogEnable"
-    parameters = ["boolean"]
-    return_type = "nothing"
-
     def __init__(self, fog_state: FogState):
         """初始化。
 
@@ -58,25 +67,34 @@ class FogEnable(NativeFunction):
         """
         self._fog_state = fog_state
 
-    def execute(self, args: List[Any]) -> None:
+    @property
+    def name(self) -> str:
+        """获取 native 函数的名称。
+
+        返回：
+            "FogEnable"
+        """
+        return "FogEnable"
+
+    def execute(self, state_context, enable: bool = None, *args, **kwargs) -> None:
         """执行函数。
 
         参数：
-            args: [enable] - 是否启用战争迷雾
+            state_context: 状态上下文
+            enable: 是否启用战争迷雾
+            *args: 额外位置参数
+            **kwargs: 关键字参数
         """
-        enable = args[0]
+        if enable is None:
+            enable = False
         self._fog_state.fog_enabled = enable
         status = "启用" if enable else "禁用"
-        print(f"[Fog] 战争迷雾状态: {status}")
+        logger.info(f"[Fog] 战争迷雾状态: {status}")
 
 
 class IsFogMaskEnabled(NativeFunction):
     """查询黑色遮罩是否启用。"""
 
-    name = "IsFogMaskEnabled"
-    parameters = []
-    return_type = "boolean"
-
     def __init__(self, fog_state: FogState):
         """初始化。
 
@@ -85,11 +103,22 @@ class IsFogMaskEnabled(NativeFunction):
         """
         self._fog_state = fog_state
 
-    def execute(self, args: List[Any]) -> bool:
+    @property
+    def name(self) -> str:
+        """获取 native 函数的名称。
+
+        返回：
+            "IsFogMaskEnabled"
+        """
+        return "IsFogMaskEnabled"
+
+    def execute(self, state_context, *args, **kwargs) -> bool:
         """执行函数。
 
         参数：
-            args: 无参数
+            state_context: 状态上下文
+            *args: 额外位置参数
+            **kwargs: 关键字参数
 
         返回：
             黑色遮罩是否启用
@@ -100,10 +129,6 @@ class IsFogMaskEnabled(NativeFunction):
 class IsFogEnabled(NativeFunction):
     """查询战争迷雾是否启用。"""
 
-    name = "IsFogEnabled"
-    parameters = []
-    return_type = "boolean"
-
     def __init__(self, fog_state: FogState):
         """初始化。
 
@@ -112,11 +137,22 @@ class IsFogEnabled(NativeFunction):
         """
         self._fog_state = fog_state
 
-    def execute(self, args: List[Any]) -> bool:
+    @property
+    def name(self) -> str:
+        """获取 native 函数的名称。
+
+        返回：
+            "IsFogEnabled"
+        """
+        return "IsFogEnabled"
+
+    def execute(self, state_context, *args, **kwargs) -> bool:
         """执行函数。
 
         参数：
-            args: 无参数
+            state_context: 状态上下文
+            *args: 额外位置参数
+            **kwargs: 关键字参数
 
         返回：
             战争迷雾是否启用

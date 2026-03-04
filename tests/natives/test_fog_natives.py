@@ -27,11 +27,11 @@ def test_fog_mask_enable_sets_state():
     native = FogMaskEnable(state)
 
     # 禁用遮罩
-    native.execute([False])
+    native.execute(None, False)
     assert state.mask_enabled is False
 
     # 启用遮罩
-    native.execute([True])
+    native.execute(None, True)
     assert state.mask_enabled is True
 
 
@@ -43,11 +43,11 @@ def test_fog_enable_sets_state():
     native = FogEnable(state)
 
     # 禁用迷雾
-    native.execute([False])
+    native.execute(None, False)
     assert state.fog_enabled is False
 
     # 启用迷雾
-    native.execute([True])
+    native.execute(None, True)
     assert state.fog_enabled is True
 
 
@@ -59,12 +59,12 @@ def test_is_fog_mask_enabled_returns_state():
     native = IsFogMaskEnabled(state)
 
     # 默认启用
-    result = native.execute([])
+    result = native.execute(None)
     assert result is True
 
     # 禁用后查询
     state.mask_enabled = False
-    result = native.execute([])
+    result = native.execute(None)
     assert result is False
 
 
@@ -76,12 +76,12 @@ def test_is_fog_enabled_returns_state():
     native = IsFogEnabled(state)
 
     # 默认启用
-    result = native.execute([])
+    result = native.execute(None)
     assert result is True
 
     # 禁用后查询
     state.fog_enabled = False
-    result = native.execute([])
+    result = native.execute(None)
     assert result is False
 
 
