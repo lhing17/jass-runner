@@ -5,7 +5,7 @@
 
 from typing import Dict, List, Optional, Union
 import logging
-from .handle import Handle, Unit, Player, Item, Group, Rect, Effect
+from .handle import Handle, Unit, Player, Item, Group, Rect, Effect, BoolExpr
 
 
 logger = logging.getLogger(__name__)
@@ -418,5 +418,19 @@ class HandleManager:
         """
         handle = self.get_handle(effect_id)
         if isinstance(handle, Effect):
+            return handle
+        return None
+
+    def get_boolexpr(self, handle_id: str) -> Optional[BoolExpr]:
+        """获取布尔表达式对象，进行类型检查。
+
+        参数：
+            handle_id: 布尔表达式ID
+
+        返回：
+            BoolExpr对象，如果不存在或类型不匹配返回None
+        """
+        handle = self.get_handle(handle_id)
+        if isinstance(handle, BoolExpr):
             return handle
         return None
