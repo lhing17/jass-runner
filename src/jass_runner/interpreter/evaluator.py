@@ -468,6 +468,10 @@ class Evaluator:
 
     def evaluate(self, expression: Any) -> Any:
         """求值一个JASS表达式或AST节点。"""
+        # 处理null值（None）
+        if expression is None:
+            return None
+
         # 如果是字符串，按原逻辑处理
         if isinstance(expression, str):
             expression = expression.strip()
