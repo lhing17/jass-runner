@@ -95,3 +95,30 @@ class IsFogMaskEnabled(NativeFunction):
             黑色遮罩是否启用
         """
         return self._fog_state.mask_enabled
+
+
+class IsFogEnabled(NativeFunction):
+    """查询战争迷雾是否启用。"""
+
+    name = "IsFogEnabled"
+    parameters = []
+    return_type = "boolean"
+
+    def __init__(self, fog_state: FogState):
+        """初始化。
+
+        参数：
+            fog_state: 迷雾状态管理器
+        """
+        self._fog_state = fog_state
+
+    def execute(self, args: List[Any]) -> bool:
+        """执行函数。
+
+        参数：
+            args: 无参数
+
+        返回：
+            战争迷雾是否启用
+        """
+        return self._fog_state.fog_enabled

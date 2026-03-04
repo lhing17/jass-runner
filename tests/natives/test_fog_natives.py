@@ -66,3 +66,20 @@ def test_is_fog_mask_enabled_returns_state():
     state.mask_enabled = False
     result = native.execute([])
     assert result is False
+
+
+def test_is_fog_enabled_returns_state():
+    """测试 IsFogEnabled 返回战争迷雾状态。"""
+    from jass_runner.natives.fog_natives import IsFogEnabled, FogState
+
+    state = FogState()
+    native = IsFogEnabled(state)
+
+    # 默认启用
+    result = native.execute([])
+    assert result is True
+
+    # 禁用后查询
+    state.fog_enabled = False
+    result = native.execute([])
+    assert result is False
