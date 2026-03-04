@@ -126,3 +126,81 @@ class Filter(NativeFunction):
 
         logger.info(f"[Filter] Created filterfunc: {handle_id}")
         return handle_id
+
+
+class DestroyCondition(NativeFunction):
+    """销毁 conditionfunc。"""
+
+    @property
+    def name(self) -> str:
+        """获取 native 函数的名称。
+
+        返回：
+            "DestroyCondition"
+        """
+        return "DestroyCondition"
+
+    def execute(self, state_context, condition_id: str, *args, **kwargs):
+        """执行 DestroyCondition native 函数。
+
+        参数：
+            state_context: 状态上下文，必须包含 handle_manager
+            condition_id: 要销毁的 conditionfunc ID
+            *args: 额外位置参数
+            **kwargs: 关键字参数
+
+        返回：
+            None（对应 JASS 的 nothing）
+        """
+        # 检查 state_context 和 handle_manager
+        if state_context is None or not hasattr(state_context, 'handle_manager'):
+            logger.error("[DestroyCondition] state_context or handle_manager not found")
+            return None
+
+        # 销毁 handle
+        success = state_context.handle_manager.destroy_handle(condition_id)
+        if success:
+            logger.info(f"[DestroyCondition] Destroyed conditionfunc: {condition_id}")
+        else:
+            logger.warning(f"[DestroyCondition] conditionfunc not found: {condition_id}")
+
+        return None
+
+
+class DestroyFilter(NativeFunction):
+    """销毁 filterfunc。"""
+
+    @property
+    def name(self) -> str:
+        """获取 native 函数的名称。
+
+        返回：
+            "DestroyFilter"
+        """
+        return "DestroyFilter"
+
+    def execute(self, state_context, filter_id: str, *args, **kwargs):
+        """执行 DestroyFilter native 函数。
+
+        参数：
+            state_context: 状态上下文，必须包含 handle_manager
+            filter_id: 要销毁的 filterfunc ID
+            *args: 额外位置参数
+            **kwargs: 关键字参数
+
+        返回：
+            None（对应 JASS 的 nothing）
+        """
+        # 检查 state_context 和 handle_manager
+        if state_context is None or not hasattr(state_context, 'handle_manager'):
+            logger.error("[DestroyFilter] state_context or handle_manager not found")
+            return None
+
+        # 销毁 handle
+        success = state_context.handle_manager.destroy_handle(filter_id)
+        if success:
+            logger.info(f"[DestroyFilter] Destroyed filterfunc: {filter_id}")
+        else:
+            logger.warning(f"[DestroyFilter] filterfunc not found: {filter_id}")
+
+        return None
