@@ -219,6 +219,17 @@ class JassVM:
                     return int(const_value)
             except (ValueError, AttributeError):
                 return 0
+        elif const_type == 'playerstate':
+            # 处理 ConvertPlayerState(0) 格式的函数调用
+            try:
+                import re
+                match = re.search(r'ConvertPlayerState\((\d+)\)', const_value)
+                if match:
+                    return int(match.group(1))
+                else:
+                    return int(const_value)
+            except (ValueError, AttributeError):
+                return 0
         else:
             # 对于handle类型和其他类型，存储字符串值
             return const_value
