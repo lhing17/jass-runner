@@ -33,3 +33,19 @@ def test_fog_mask_enable_sets_state():
     # 启用遮罩
     native.execute([True])
     assert state.mask_enabled is True
+
+
+def test_fog_enable_sets_state():
+    """测试 FogEnable 设置战争迷雾状态。"""
+    from jass_runner.natives.fog_natives import FogEnable, FogState
+
+    state = FogState()
+    native = FogEnable(state)
+
+    # 禁用迷雾
+    native.execute([False])
+    assert state.fog_enabled is False
+
+    # 启用迷雾
+    native.execute([True])
+    assert state.fog_enabled is True
