@@ -56,6 +56,7 @@ from .player_name_natives import (
     GetPlayerName,
     SetPlayerName,
 )
+from .alliance_natives import ConvertAllianceType, SetPlayerAlliance, GetPlayerAlliance
 from .effect_natives import (
     AddSpecialEffect,
     AddSpecialEffectTarget,
@@ -261,5 +262,10 @@ class NativeFactory:
         registry.register(SetAmbientDaySound())
         registry.register(SetAmbientNightSound())
         registry.register(SetMapMusic())
+
+        # 注册联盟相关 native 函数
+        registry.register(ConvertAllianceType())
+        registry.register(SetPlayerAlliance())
+        registry.register(GetPlayerAlliance())
 
         return registry
