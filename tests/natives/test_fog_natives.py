@@ -17,3 +17,19 @@ class TestFogState:
 
         assert state.mask_enabled is True
         assert state.fog_enabled is True
+
+
+def test_fog_mask_enable_sets_state():
+    """测试 FogMaskEnable 设置黑色遮罩状态。"""
+    from jass_runner.natives.fog_natives import FogMaskEnable, FogState
+
+    state = FogState()
+    native = FogMaskEnable(state)
+
+    # 禁用遮罩
+    native.execute([False])
+    assert state.mask_enabled is False
+
+    # 启用遮罩
+    native.execute([True])
+    assert state.mask_enabled is True

@@ -14,3 +14,30 @@ class FogState:
         """初始化迷雾状态，默认为启用。"""
         self.mask_enabled = True
         self.fog_enabled = True
+
+
+class FogMaskEnable(NativeFunction):
+    """启用或禁用黑色遮罩。"""
+
+    name = "FogMaskEnable"
+    parameters = ["boolean"]
+    return_type = "nothing"
+
+    def __init__(self, fog_state: FogState):
+        """初始化。
+
+        参数：
+            fog_state: 迷雾状态管理器
+        """
+        self._fog_state = fog_state
+
+    def execute(self, args: List[Any]) -> None:
+        """执行函数。
+
+        参数：
+            args: [enable] - 是否启用黑色遮罩
+        """
+        enable = args[0]
+        self._fog_state.mask_enabled = enable
+        status = "启用" if enable else "禁用"
+        print(f"[Fog] 黑色遮罩状态: {status}")
