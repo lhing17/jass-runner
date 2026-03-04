@@ -384,3 +384,42 @@ class Not(NativeFunction):
 
         logger.info(f"[Not] Created boolexpr: {handle_id}")
         return handle_id
+
+
+class DestroyBoolExpr(NativeFunction):
+    """销毁 boolexpr。"""
+
+    @property
+    def name(self) -> str:
+        """获取 native 函数的名称。
+
+        返回：
+            "DestroyBoolExpr"
+        """
+        return "DestroyBoolExpr"
+
+    def execute(self, state_context, boolexpr_id: str, *args, **kwargs):
+        """执行 DestroyBoolExpr native 函数。
+
+        参数：
+            state_context: 状态上下文，必须包含 handle_manager
+            boolexpr_id: 要销毁的 boolexpr ID
+            *args: 额外位置参数
+            **kwargs: 关键字参数
+
+        返回：
+            None（对应 JASS 的 nothing）
+        """
+        # 检查 state_context 和 handle_manager
+        if state_context is None or not hasattr(state_context, 'handle_manager'):
+            logger.error("[DestroyBoolExpr] state_context or handle_manager not found")
+            return None
+
+        # 销毁 handle
+        success = state_context.handle_manager.destroy_handle(boolexpr_id)
+        if success:
+            logger.info(f"[DestroyBoolExpr] Destroyed boolexpr: {boolexpr_id}")
+        else:
+            logger.warning(f"[DestroyBoolExpr] boolexpr not found: {boolexpr_id}")
+
+        return None
