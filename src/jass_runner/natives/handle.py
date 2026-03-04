@@ -715,3 +715,91 @@ class FilterFunc(BoolExpr):
         if self._func:
             return bool(self._func(unit))
         return False
+
+
+class AndExpr(BoolExpr):
+    """逻辑与表达式。
+
+    组合两个布尔表达式，当两者都为True时返回True。
+    """
+
+    def __init__(self, handle_id: str, operand_a: BoolExpr, operand_b: BoolExpr):
+        """初始化逻辑与表达式。
+
+        参数：
+            handle_id: 唯一标识符
+            operand_a: 第一个操作数
+            operand_b: 第二个操作数
+        """
+        super().__init__(handle_id)
+        self._operand_a = operand_a
+        self._operand_b = operand_b
+
+    def evaluate(self, *args, **kwargs) -> bool:
+        """评估逻辑与表达式。
+
+        参数：
+            *args, **kwargs: 传递给操作数的参数
+
+        返回：
+            两个操作数都为True时返回True
+        """
+        return self._operand_a.evaluate(*args, **kwargs) and self._operand_b.evaluate(*args, **kwargs)
+
+
+class OrExpr(BoolExpr):
+    """逻辑或表达式。
+
+    组合两个布尔表达式，当任一者为True时返回True。
+    """
+
+    def __init__(self, handle_id: str, operand_a: BoolExpr, operand_b: BoolExpr):
+        """初始化逻辑或表达式。
+
+        参数：
+            handle_id: 唯一标识符
+            operand_a: 第一个操作数
+            operand_b: 第二个操作数
+        """
+        super().__init__(handle_id)
+        self._operand_a = operand_a
+        self._operand_b = operand_b
+
+    def evaluate(self, *args, **kwargs) -> bool:
+        """评估逻辑或表达式。
+
+        参数：
+            *args, **kwargs: 传递给操作数的参数
+
+        返回：
+            任一操作数为True时返回True
+        """
+        return self._operand_a.evaluate(*args, **kwargs) or self._operand_b.evaluate(*args, **kwargs)
+
+
+class NotExpr(BoolExpr):
+    """逻辑非表达式。
+
+    对一个布尔表达式取反。
+    """
+
+    def __init__(self, handle_id: str, operand: BoolExpr):
+        """初始化逻辑非表达式。
+
+        参数：
+            handle_id: 唯一标识符
+            operand: 操作数
+        """
+        super().__init__(handle_id)
+        self._operand = operand
+
+    def evaluate(self, *args, **kwargs) -> bool:
+        """评估逻辑非表达式。
+
+        参数：
+            *args, **kwargs: 传递给操作数的参数
+
+        返回：
+            操作数为False时返回True
+        """
+        return not self._operand.evaluate(*args, **kwargs)
