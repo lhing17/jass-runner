@@ -85,6 +85,11 @@ from .force_natives import (
     ForceClear,
     ForceEnumPlayers,
 )
+from .game_speed_natives import (
+    ConvertGameSpeed,
+    GetGameSpeed,
+    SetGameSpeed,
+)
 
 
 class NativeFactory:
@@ -305,5 +310,10 @@ class NativeFactory:
         registry.register(ForceRemovePlayer())
         registry.register(ForceClear())
         registry.register(ForceEnumPlayers())
+
+        # 注册游戏速度相关 native 函数
+        registry.register(ConvertGameSpeed())
+        registry.register(GetGameSpeed())
+        registry.register(SetGameSpeed())
 
         return registry

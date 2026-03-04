@@ -69,6 +69,33 @@ class AssignmentParserMixin:
                 arg_tokens.append(NativeCallNode(func_name=func_name, args=nested_args))
                 continue
 
+            # 遇到数组访问：标识符 + 左方括号
+            if token.type == 'IDENTIFIER' and self._peek_token() == '[':
+                from .ast_nodes import ArrayAccess
+                array_name = token.value
+                self.next_token()  # 越过标识符
+                self.next_token()  # 越过 '['
+
+                # 解析索引
+                index = None
+                if self.current_token:
+                    if self.current_token.type == 'INTEGER':
+                        from .ast_nodes import IntegerExpr
+                        index = IntegerExpr(value=self.current_token.value)
+                        self.next_token()
+                    elif self.current_token.type == 'IDENTIFIER':
+                        from .ast_nodes import VariableExpr
+                        index = VariableExpr(name=self.current_token.value)
+                        self.next_token()
+
+                # 跳过右方括号
+                if self.current_token and self.current_token.value == ']':
+                    self.next_token()
+
+                # 创建 ArrayAccess 节点
+                arg_tokens.append(ArrayAccess(array_name=array_name, index=index))
+                continue
+
             # 遇到左括号（不是函数调用，而是表达式的一部分）
             if token.value == '(':
                 paren_depth += 1
