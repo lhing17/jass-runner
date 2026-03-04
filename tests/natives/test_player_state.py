@@ -42,3 +42,41 @@ def test_player_resource_clamping():
     result = player.set_state(1, -100)
     assert result == 0
     assert player.get_state(1) == 0
+
+
+class TestConvertPlayerState:
+    """测试 ConvertPlayerState native 函数。"""
+
+    def test_convert_player_state_returns_input(self):
+        """测试 ConvertPlayerState 返回传入的整数。"""
+        from unittest.mock import MagicMock
+        from src.jass_runner.natives.player_state_natives import (
+            ConvertPlayerState,
+        )
+
+        native = ConvertPlayerState()
+        state_context = MagicMock()
+
+        result = native.execute(state_context, 0)
+        assert result == 0
+
+        result = native.execute(state_context, 25)
+        assert result == 25
+
+    def test_convert_player_state_with_various_values(self):
+        """测试不同 playerstate 值。"""
+        from unittest.mock import MagicMock
+        from src.jass_runner.natives.player_state_natives import (
+            ConvertPlayerState,
+        )
+
+        native = ConvertPlayerState()
+        state_context = MagicMock()
+
+        # 测试资源状态
+        assert native.execute(state_context, 1) == 1  # GOLD
+        assert native.execute(state_context, 2) == 2  # LUMBER
+
+        # 测试其他状态
+        assert native.execute(state_context, 11) == 11  # OBSERVER
+        assert native.execute(state_context, 25) == 25  # NO_CREEP_SLEEP

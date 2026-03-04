@@ -80,3 +80,28 @@ class SetPlayerState(NativeFunction):
         actual_value = player.set_state(state_type, value)
         logger.info(f"[SetPlayerState] 玩家{player.player_id} 设置状态{state_type}为{actual_value}（输入{value}）")
         return actual_value
+
+
+class ConvertPlayerState(NativeFunction):
+    """将整数转换为玩家状态类型。
+
+    在 Warcraft 3 中，这是一个类型转换函数，
+    在我们的实现中直接返回传入的整数。
+    """
+
+    @property
+    def name(self) -> str:
+        return "ConvertPlayerState"
+
+    def execute(self, state_context: 'StateContext', player_state: int) -> int:
+        """执行 ConvertPlayerState。
+
+        参数：
+            state_context: 状态上下文
+            player_state: 玩家状态类型整数
+
+        返回：
+            传入的玩家状态类型整数
+        """
+        logger.info(f"[ConvertPlayerState] 转换玩家状态类型: {player_state}")
+        return player_state
