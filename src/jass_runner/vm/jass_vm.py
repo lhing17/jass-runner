@@ -121,6 +121,11 @@ class JassVM:
 
         logger.info("开始脚本执行")
         try:
+            # 如果已加载 blizzard.j，先执行它
+            if self.blizzard_loaded and self.blizzard_ast is not None:
+                logger.debug("执行 blizzard.j")
+                self.interpreter.execute(self.blizzard_ast)
+
             self.interpreter.execute(self.ast)
             logger.info("脚本执行成功完成")
         except Exception as e:

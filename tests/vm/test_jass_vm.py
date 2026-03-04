@@ -51,16 +51,20 @@ class TestLoadBlizzard:
         assert result is False
         assert vm.blizzard_loaded is False
 
+    def test_execute_with_blizzard_calls_blizzard_functions(self):
+        """测试加载 blizzard 后能执行其中的函数。"""
+        from jass_runner.vm.jass_vm import JassVM
 
-def test_vm_error_handling():
-    """测试 JassVM 可以被创建。"""
-    from jass_runner.vm.jass_vm import JassVM
+        vm = JassVM()
+        vm.load_blizzard()
 
-    vm = JassVM()
-    assert vm is not None
-    assert hasattr(vm, 'load_script')
-    assert hasattr(vm, 'execute')
-    assert hasattr(vm, 'run')
+        # 加载一个简单的用户脚本（空函数，不调用未实现的 native）
+        vm.load_script('''
+function main takes nothing returns nothing
+endfunction
+''')
+        # 应该成功执行，不抛出异常（blizzard.j 已加载）
+        vm.execute()
 
 
 def test_vm_error_handling():
