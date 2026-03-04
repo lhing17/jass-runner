@@ -4,7 +4,7 @@ import pytest
 from unittest.mock import MagicMock
 from src.jass_runner.natives.sound_natives import (
     NewSoundEnvironment, SetAmbientDaySound, SetAmbientNightSound, SetMapMusic,
-    CreateSoundFromLabel, PlaySound, StopSound
+    CreateSoundFromLabel, PlaySound, StopSound, KillSoundWhenDone
 )
 from src.jass_runner.natives.state import StateContext
 from src.jass_runner.natives.handle import Sound
@@ -187,3 +187,23 @@ class TestStopSound:
 
         # 验证
         assert mock_sound.is_playing is False
+
+
+class TestKillSoundWhenDone:
+    """测试KillSoundWhenDone native函数。"""
+
+    def test_kill_sound_when_done_sets_flag(self):
+        """测试KillSoundWhenDone设置kill_when_done标志。"""
+        # 准备
+        native = KillSoundWhenDone()
+        mock_state = MagicMock()
+        mock_sound = MagicMock(spec=Sound)
+        mock_sound.id = 1
+        mock_sound.sound_label = "Rescue"
+        mock_sound.kill_when_done = False
+
+        # 执行
+        native.execute(mock_state, mock_sound, True)
+
+        # 验证
+        assert mock_sound.kill_when_done is True

@@ -185,3 +185,25 @@ class StopSound(NativeFunction):
             f"ID={sound.id}, 标签={sound.sound_label}, "
             f"淡出={fadeOut}"
         )
+
+
+class KillSoundWhenDone(NativeFunction):
+    """设置声音播放完成后自动销毁。"""
+
+    @property
+    def name(self) -> str:
+        return "KillSoundWhenDone"
+
+    def execute(self, state_context, sound: Sound, flag: bool) -> None:
+        """设置声音播放完成后自动销毁。
+
+        参数：
+            state_context: 状态上下文
+            sound: 声音对象
+            flag: 是否播放完成后销毁
+        """
+        sound.kill_when_done = flag
+        logger.info(
+            f"[KillSoundWhenDone] 设置声音自动销毁: "
+            f"ID={sound.id}, 标签={sound.sound_label}, 启用={flag}"
+        )
