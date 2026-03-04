@@ -64,3 +64,43 @@ class TestPlayerAlliance:
         player.set_alliance(1, True)
         assert player.is_ally(1)
         assert not player.is_enemy(1)
+
+
+class TestPlayerExtendedStates:
+    """测试 Player 类扩展状态支持。"""
+
+    def test_get_state_non_resource_default_zero(self):
+        """测试获取未设置的非资源状态返回 0。"""
+        from src.jass_runner.natives.handle import Player
+
+        player = Player("player_0", 0)
+
+        # 获取未设置的状态（如 PLAYER_STATE_NO_CREEP_SLEEP = 25）
+        result = player.get_state(25)
+        assert result == 0
+
+    def test_set_and_get_state_non_resource(self):
+        """测试设置和获取非资源状态。"""
+        from src.jass_runner.natives.handle import Player
+
+        player = Player("player_0", 0)
+
+        # 设置非资源状态
+        player.set_state(25, 1)
+
+        # 获取状态
+        result = player.get_state(25)
+        assert result == 1
+
+    def test_resource_states_still_work(self):
+        """测试资源状态仍然正常工作。"""
+        from src.jass_runner.natives.handle import Player
+
+        player = Player("player_0", 0)
+
+        # 设置金币
+        player.set_state(Player.PLAYER_STATE_RESOURCE_GOLD, 1000)
+
+        # 获取金币
+        result = player.get_state(Player.PLAYER_STATE_RESOURCE_GOLD)
+        assert result == 1000

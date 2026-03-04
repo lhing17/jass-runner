@@ -315,6 +315,8 @@ class Player(Handle):
         self._lumber: int = 0         # 木材 0-1000000，初始0
         self._food_cap: int = 100     # 人口上限 0-300，初始100
         self._food_used: int = 0      # 已用人口 0-food_cap，初始0
+        # 通用状态存储字典（用于非资源类状态）
+        self._state_data: Dict[int, int] = {}
 
     def _clamp_resource(self, value: int, min_val: int, max_val: int) -> int:
         """将值截断到有效范围。
@@ -350,7 +352,8 @@ class Player(Handle):
         elif state_type == Player.PLAYER_STATE_RESOURCE_FOOD_USED:
             return self._food_used
         else:
-            raise ValueError(f"无效的玩家状态类型: {state_type}")
+            # 其他状态从字典读取，默认为 0
+            return self._state_data.get(state_type, 0)
 
     def set_state(self, state_type: int, value: int) -> int:
         """设置玩家状态值。
@@ -380,7 +383,9 @@ class Player(Handle):
             self._food_used = self._clamp_resource(value, 0, max_food)
             return self._food_used
         else:
-            raise ValueError(f"无效的玩家状态类型: {state_type}")
+            # 其他状态存入字典
+            self._state_data[state_type] = value
+            return value
 
     def set_alliance(self, other_player_id: int, is_ally: bool) -> None:
         """设置与其他玩家的关系。
