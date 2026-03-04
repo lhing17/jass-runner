@@ -654,3 +654,32 @@ class BoolExpr(Handle):
         if self._func:
             return bool(self._func(*args, **kwargs))
         return False
+
+
+class ConditionFunc(BoolExpr):
+    """条件函数，用于触发器条件判断。
+
+    继承自 BoolExpr，专门用于 TriggerAddCondition。
+    包装的函数不接受参数，返回布尔值。
+    """
+
+    def __init__(self, handle_id: str, func=None):
+        """初始化条件函数。
+
+        参数：
+            handle_id: 唯一标识符
+            func: 条件函数（无参数，返回bool）
+        """
+        super().__init__(handle_id)
+        self.type_name = "conditionfunc"
+        self._func = func
+
+    def evaluate(self) -> bool:
+        """评估条件。
+
+        返回：
+            条件函数的执行结果，无函数时返回False
+        """
+        if self._func:
+            return bool(self._func())
+        return False
