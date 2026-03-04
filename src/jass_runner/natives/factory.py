@@ -66,7 +66,16 @@ from .effect_natives import (
     SetSpecialEffectColor,
 )
 from .camera import GetCameraMargin, SetCameraBounds, SetDayNightModels
-from .sound_natives import NewSoundEnvironment, SetAmbientDaySound, SetAmbientNightSound, SetMapMusic
+from .sound_natives import (
+    NewSoundEnvironment,
+    SetAmbientDaySound,
+    SetAmbientNightSound,
+    SetMapMusic,
+    CreateSoundFromLabel,
+    PlaySound,
+    StopSound,
+    KillSoundWhenDone,
+)
 from .boolexpr_natives import (
     Condition,
     Filter,
@@ -289,6 +298,10 @@ class NativeFactory:
         registry.register(SetAmbientDaySound())
         registry.register(SetAmbientNightSound())
         registry.register(SetMapMusic())
+        registry.register(CreateSoundFromLabel())
+        registry.register(PlaySound())
+        registry.register(StopSound())
+        registry.register(KillSoundWhenDone())
 
         # 注册联盟相关 native 函数
         registry.register(ConvertAllianceType())
