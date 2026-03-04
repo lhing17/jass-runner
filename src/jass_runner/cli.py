@@ -59,6 +59,19 @@ def create_parser():
         version='JASS 运行器 1.0.0'
     )
 
+    parser.add_argument(
+        '--blizzard', '-b',
+        action='store_true',
+        help='加载 blizzard.j 前置脚本'
+    )
+
+    parser.add_argument(
+        '--blizzard-path',
+        type=str,
+        default=None,
+        help='指定 blizzard.j 的路径（默认: resources/blizzard.j）'
+    )
+
     return parser
 
 
@@ -88,6 +101,13 @@ def main():
     try:
         # 创建并运行虚拟机
         vm = JassVM(enable_timers=not args.no_timers)
+
+        # 如果指定了 --blizzard，加载 blizzard.j
+        if args.blizzard:
+            success = vm.load_blizzard(args.blizzard_path)
+            if not success:
+                logging.warning("blizzard.j 加载失败，继续执行用户脚本")
+
         vm.load_file(args.script)
         vm.execute()
 
