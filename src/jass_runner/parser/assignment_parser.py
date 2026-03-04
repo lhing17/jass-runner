@@ -208,8 +208,9 @@ class AssignmentParserMixin:
                     elif self.current_token.type == 'STRING':
                         value = self.current_token.value[1:-1]  # 移除引号
                         self.next_token()
-                    elif self.current_token.type == 'IDENTIFIER':
-                        # 可能是函数调用，如 CreateUnit(...)
+                    elif self.current_token.type == 'IDENTIFIER' or (self.current_token.type == 'KEYWORD' and self.current_token.value in self.TYPE_KEYWORDS):
+                        # 可能是函数调用，如 CreateUnit(...) 或 CreateForce()
+                        # 注意：类型关键词（如 force）在函数名位置也应被视为标识符
                         func_name = self.current_token.value
                         self.next_token()
 
@@ -359,9 +360,27 @@ class AssignmentParserMixin:
             if self.current_token.type == 'INTEGER':
                 value = IntegerExpr(value=self.current_token.value)
                 self.next_token()
-            elif self.current_token.type == 'IDENTIFIER':
-                value = VariableExpr(name=self.current_token.value)
+            elif self.current_token.type == 'IDENTIFIER' or (self.current_token.type == 'KEYWORD' and self.current_token.value in self.TYPE_KEYWORDS):
+                # 可能是函数调用或变量引用
+                # 注意：类型关键词（如 force）在函数名位置也应被视为标识符
+                expr_name = self.current_token.value
                 self.next_token()
+
+                if self.current_token and self.current_token.value == '(':
+                    # 这是一个函数调用
+                    self.next_token()  # 跳过 '('
+
+                    # 使用 _parse_call_args 解析参数列表
+                    args = self._parse_call_args()
+
+                    # 跳过右括号
+                    if self.current_token and self.current_token.value == ')':
+                        self.next_token()
+
+                    value = NativeCallNode(func_name=expr_name, args=args)
+                else:
+                    # 不是函数调用，作为变量引用
+                    value = VariableExpr(name=expr_name)
 
         # 如果存在分号则跳过
         if self.current_token and self.current_token.value == ';':
@@ -415,8 +434,10 @@ class AssignmentParserMixin:
 
             # 解析右侧值（可以是字面量、函数调用、数组访问或表达式）
             value = None
-            if self.current_token and self.current_token.type == 'IDENTIFIER':
+            if self.current_token and (self.current_token.type == 'IDENTIFIER' or
+                                       (self.current_token.type == 'KEYWORD' and self.current_token.value in self.TYPE_KEYWORDS)):
                 # 可能是函数调用，如 CreateUnit(...)，数组访问如 arr[0]，或表达式如 i + 1
+                # 注意：类型关键词（如 force）在函数名位置也应被视为标识符
                 expr_name = self.current_token.value
                 self.next_token()
 

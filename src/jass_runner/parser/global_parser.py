@@ -112,6 +112,43 @@ class GlobalParserMixin:
                     elif self.current_token.type == 'KEYWORD' and self.current_token.value in ('true', 'false'):
                         value = self.current_token.value == 'true'
                         self.next_token()
+                    elif self.current_token.type == 'IDENTIFIER' or (self.current_token.type == 'KEYWORD' and self.current_token.value in self.TYPE_KEYWORDS):
+                        # 可能是函数调用，如 CreateForce()
+                        func_name = self.current_token.value
+                        self.next_token()
+
+                        if self.current_token and self.current_token.value == '(':
+                            # 这是一个函数调用
+                            self.next_token()  # 跳过 '('
+
+                            # 解析参数列表
+                            args = []
+                            while self.current_token and self.current_token.value != ')':
+                                if self.current_token.type == 'INTEGER':
+                                    args.append(self.current_token.value)
+                                    self.next_token()
+                                elif self.current_token.type == 'REAL':
+                                    args.append(self.current_token.value)
+                                    self.next_token()
+                                elif self.current_token.type == 'STRING':
+                                    args.append(self.current_token.value[1:-1])
+                                    self.next_token()
+                                elif self.current_token.type == 'IDENTIFIER':
+                                    args.append(self.current_token.value)
+                                    self.next_token()
+                                else:
+                                    self.next_token()
+
+                                # 跳过逗号
+                                if self.current_token and self.current_token.value == ',':
+                                    self.next_token()
+
+                            # 跳过右括号
+                            if self.current_token and self.current_token.value == ')':
+                                self.next_token()
+
+                            from .ast_nodes import NativeCallNode
+                            value = NativeCallNode(func_name=func_name, args=args)
             elif is_constant:
                 # constant 必须有初始值
                 self.errors.append(ParseError(
