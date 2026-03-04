@@ -27,3 +27,58 @@ class TestConvertAllianceType:
 
         assert native.execute(state_context, ALLIANCE_PASSIVE) == ALLIANCE_PASSIVE
         assert native.execute(state_context, ALLIANCE_SHARED_VISION) == ALLIANCE_SHARED_VISION
+
+
+class TestSetPlayerAlliance:
+    """测试 SetPlayerAlliance native 函数。"""
+
+    def test_set_alliance_true(self):
+        """测试设置联盟关系为 true。"""
+        from src.jass_runner.natives.alliance_manager import AllianceManager
+        from src.jass_runner.natives.alliance_natives import SetPlayerAlliance
+
+        native = SetPlayerAlliance()
+        state_context = MagicMock()
+        state_context.alliance_manager = AllianceManager()
+
+        player0 = MagicMock()
+        player0.player_id = 0
+        player1 = MagicMock()
+        player1.player_id = 1
+
+        native.execute(state_context, player0, player1, ALLIANCE_PASSIVE, True)
+
+        assert state_context.alliance_manager.get_alliance(0, 1, ALLIANCE_PASSIVE) is True
+
+    def test_set_alliance_false(self):
+        """测试设置联盟关系为 false。"""
+        from src.jass_runner.natives.alliance_manager import AllianceManager
+        from src.jass_runner.natives.alliance_natives import SetPlayerAlliance
+
+        native = SetPlayerAlliance()
+        state_context = MagicMock()
+        state_context.alliance_manager = AllianceManager()
+
+        player0 = MagicMock()
+        player0.player_id = 0
+        player1 = MagicMock()
+        player1.player_id = 1
+
+        # 先设置再取消
+        native.execute(state_context, player0, player1, ALLIANCE_PASSIVE, True)
+        native.execute(state_context, player0, player1, ALLIANCE_PASSIVE, False)
+
+        assert state_context.alliance_manager.get_alliance(0, 1, ALLIANCE_PASSIVE) is False
+
+    def test_set_alliance_with_none_player(self):
+        """测试传入 None player 时的处理。"""
+        from src.jass_runner.natives.alliance_manager import AllianceManager
+        from src.jass_runner.natives.alliance_natives import SetPlayerAlliance
+
+        native = SetPlayerAlliance()
+        state_context = MagicMock()
+        state_context.alliance_manager = AllianceManager()
+
+        # 不应抛出异常
+        native.execute(state_context, None, MagicMock(), ALLIANCE_PASSIVE, True)
+        native.execute(state_context, MagicMock(), None, ALLIANCE_PASSIVE, True)

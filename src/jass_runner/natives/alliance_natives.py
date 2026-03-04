@@ -40,3 +40,42 @@ class ConvertAllianceType(NativeFunction):
         """
         logger.info(f"[ConvertAllianceType] 转换联盟类型: {alliance_type}")
         return alliance_type
+
+
+class SetPlayerAlliance(NativeFunction):
+    """设置两个玩家之间的联盟关系。"""
+
+    @property
+    def name(self) -> str:
+        return "SetPlayerAlliance"
+
+    def execute(self, state_context: 'StateContext',
+                source_player: 'Player', other_player: 'Player',
+                alliance_type: int, value: bool) -> None:
+        """执行 SetPlayerAlliance。
+
+        参数：
+            state_context: 状态上下文
+            source_player: 源玩家
+            other_player: 目标玩家
+            alliance_type: 联盟类型
+            value: True 启用，False 禁用
+        """
+        if source_player is None or other_player is None:
+            logger.warning("[SetPlayerAlliance] 玩家对象为 None")
+            return
+
+        alliance_manager = state_context.alliance_manager
+        alliance_name = get_alliance_name(alliance_type)
+
+        alliance_manager.set_alliance(
+            source_player.player_id,
+            other_player.player_id,
+            alliance_type,
+            value
+        )
+
+        logger.info(
+            f"[SetPlayerAlliance] 玩家{source_player.player_id} 对 "
+            f"玩家{other_player.player_id} 设置 {alliance_name}={value}"
+        )
