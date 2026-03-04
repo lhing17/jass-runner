@@ -414,8 +414,8 @@ class HandleManager:
         返回：
             创建的Sound对象
         """
-        handle_id = self._next_handle_id
-        self._next_handle_id += 1
+        handle_id = self._next_id
+        self._next_id += 1
 
         sound = Sound(
             handle_id=handle_id,
