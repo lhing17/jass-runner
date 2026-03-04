@@ -66,6 +66,17 @@ endfunction
         # 应该成功执行，不抛出异常（blizzard.j 已加载）
         vm.execute()
 
+    def test_run_with_load_blizzard_true(self):
+        """测试 run 方法支持加载 blizzard。"""
+        from jass_runner.vm.jass_vm import JassVM
+
+        vm = JassVM()
+
+        vm.run('function main takes nothing returns nothing endfunction',
+               load_blizzard=True)
+
+        assert vm.blizzard_loaded is True
+
 
 def test_vm_error_handling():
     """测试 VM 错误处理。"""

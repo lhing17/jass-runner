@@ -142,8 +142,20 @@ class JassVM:
         self.simulation_loop.run_seconds(seconds)
         logger.info(f"模拟完成。模拟时间: {self.simulation_loop.get_simulated_time():.2f}秒")
 
-    def run(self, script_content: str, simulate_seconds: float = 0.0):
-        """加载并执行脚本，可选运行模拟。"""
+    def run(self, script_content: str, simulate_seconds: float = 0.0,
+            load_blizzard: bool = False, blizzard_path: str = None):
+        """
+        加载并执行脚本，可选运行模拟。
+
+        参数:
+            script_content: JASS 脚本内容
+            simulate_seconds: 模拟秒数
+            load_blizzard: 是否加载 blizzard.j
+            blizzard_path: 自定义 blizzard.j 路径
+        """
+        if load_blizzard:
+            self.load_blizzard(blizzard_path)
+
         self.load_script(script_content)
         self.execute()
 
