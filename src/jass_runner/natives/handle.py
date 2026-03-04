@@ -683,3 +683,35 @@ class ConditionFunc(BoolExpr):
         if self._func:
             return bool(self._func())
         return False
+
+
+class FilterFunc(BoolExpr):
+    """过滤函数，用于单位组枚举过滤。
+
+    继承自 BoolExpr，专门用于 GroupEnumUnits 等函数。
+    包装的函数接受一个单位参数，返回布尔值。
+    """
+
+    def __init__(self, handle_id: str, func=None):
+        """初始化过滤函数。
+
+        参数：
+            handle_id: 唯一标识符
+            func: 过滤函数（接受unit参数，返回bool）
+        """
+        super().__init__(handle_id)
+        self.type_name = "filterfunc"
+        self._func = func
+
+    def evaluate(self, unit) -> bool:
+        """评估单位是否符合过滤条件。
+
+        参数：
+            unit: 要评估的单位对象
+
+        返回：
+            过滤函数的执行结果，无函数时返回False
+        """
+        if self._func:
+            return bool(self._func(unit))
+        return False
