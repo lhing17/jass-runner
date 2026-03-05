@@ -72,6 +72,9 @@ EVENT_PLAYER_CHAT = "player_chat"
 EVENT_GAME_TIMER_EXPIRED = "game_timer_expired"
 """游戏计时器到期事件 - 当游戏计时器到期时触发。"""
 
+EVENT_GAME_STATE_LIMIT = "game_state_limit"
+"""游戏状态限制事件 - 当游戏状态达到指定限制条件时触发。"""
+
 
 # =============================================================================
 # 事件分类列表
@@ -106,6 +109,7 @@ PLAYER_EVENTS = [
 
 GAME_EVENTS = [
     EVENT_GAME_TIMER_EXPIRED,
+    EVENT_GAME_STATE_LIMIT,
 ]
 """游戏事件列表，包含所有与游戏整体状态相关的事件类型。"""
 

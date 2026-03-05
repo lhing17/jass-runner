@@ -81,6 +81,13 @@ class TestEventTypeConstants:
         assert isinstance(EVENT_GAME_TIMER_EXPIRED, str)
         assert EVENT_GAME_TIMER_EXPIRED == "game_timer_expired"
 
+    def test_event_game_state_limit_exists(self):
+        """测试EVENT_GAME_STATE_LIMIT事件常量存在且值正确。"""
+        from jass_runner.trigger.event_types import EVENT_GAME_STATE_LIMIT
+
+        assert isinstance(EVENT_GAME_STATE_LIMIT, str)
+        assert EVENT_GAME_STATE_LIMIT == "game_state_limit"
+
 
 class TestEventCategoryLists:
     """测试事件分类列表。"""
@@ -142,10 +149,39 @@ class TestEventCategoryLists:
         from jass_runner.trigger.event_types import (
             GAME_EVENTS,
             EVENT_GAME_TIMER_EXPIRED,
+            EVENT_GAME_STATE_LIMIT,
         )
 
-        assert len(GAME_EVENTS) == 1
+        assert len(GAME_EVENTS) == 2
         assert EVENT_GAME_TIMER_EXPIRED in GAME_EVENTS
+        assert EVENT_GAME_STATE_LIMIT in GAME_EVENTS
+
+    def test_all_events_includes_game_state_limit(self):
+        """测试ALL_EVENTS列表包含EVENT_GAME_STATE_LIMIT事件。"""
+        from jass_runner.trigger.event_types import (
+            ALL_EVENTS,
+            EVENT_GAME_STATE_LIMIT,
+            PLAYER_UNIT_EVENTS,
+            UNIT_EVENTS,
+            PLAYER_EVENTS,
+            GAME_EVENTS,
+        )
+
+        # 验证总数正确 (8 + 2 + 4 + 2 = 16)
+        assert len(ALL_EVENTS) == 16
+
+        # 验证EVENT_GAME_STATE_LIMIT在ALL_EVENTS中
+        assert EVENT_GAME_STATE_LIMIT in ALL_EVENTS
+
+        # 验证所有分类都在ALL_EVENTS中
+        for event in PLAYER_UNIT_EVENTS:
+            assert event in ALL_EVENTS
+        for event in UNIT_EVENTS:
+            assert event in ALL_EVENTS
+        for event in PLAYER_EVENTS:
+            assert event in ALL_EVENTS
+        for event in GAME_EVENTS:
+            assert event in ALL_EVENTS
 
     def test_all_events_list(self):
         """测试ALL_EVENTS列表包含所有事件。"""
@@ -157,8 +193,8 @@ class TestEventCategoryLists:
             GAME_EVENTS,
         )
 
-        # 验证总数正确 (8 + 2 + 4 + 1 = 15)
-        assert len(ALL_EVENTS) == 15
+        # 验证总数正确 (8 + 2 + 4 + 2 = 16)
+        assert len(ALL_EVENTS) == 16
 
         # 验证所有分类都在ALL_EVENTS中
         for event in PLAYER_UNIT_EVENTS:
