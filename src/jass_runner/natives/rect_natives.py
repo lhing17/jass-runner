@@ -3,6 +3,8 @@
 此模块包含JASS Rect相关native函数的实现：
 - Rect: 创建矩形区域
 - RemoveRect: 移除矩形区域
+- SetRect: 设置矩形边界
+- MoveRectTo: 移动矩形到指定中心点
 - GetRectCenterX: 获取矩形中心X坐标
 - GetRectCenterY: 获取矩形中心Y坐标
 - GetRectMinX: 获取矩形最小X坐标
@@ -310,3 +312,104 @@ class RemoveRect(NativeFunction):
         handle_manager = state_context.handle_manager
         handle_manager.destroy_handle(rect.id)
         logger.debug(f"[RemoveRect] 移除矩形区域: {rect.id}")
+
+
+class SetRect(NativeFunction):
+    """设置矩形边界（JASS SetRect native函数）。"""
+
+    @property
+    def name(self) -> str:
+        """获取native函数名称。
+
+        返回：
+            native函数名称字符串 "SetRect"
+        """
+        return "SetRect"
+
+    def execute(self, state_context, rect, min_x: float, min_y: float,
+                max_x: float, max_y: float):
+        """执行SetRect native函数，更新矩形边界坐标。
+
+        参数：
+            state_context: 状态上下文，提供对HandleManager的访问
+            rect: 要更新的Rect对象或rect handle
+            min_x: 新的最小X坐标（左边界）
+            min_y: 新的最小Y坐标（下边界）
+            max_x: 新的最大X坐标（右边界）
+            max_y: 新的最大Y坐标（上边界）
+
+        返回：
+            None
+        """
+        if rect is None:
+            logger.warning("[SetRect] 传入的rect为None")
+            return None
+
+        # 如果传入的是handle ID字符串，通过HandleManager获取Rect对象
+        if isinstance(rect, str):
+            handle_manager = state_context.handle_manager
+            rect = handle_manager.get_rect(rect)
+            if rect is None:
+                logger.warning(f"[SetRect] 无效的rect handle ID")
+                return None
+
+        # 更新矩形边界
+        rect.min_x = min_x
+        rect.min_y = min_y
+        rect.max_x = max_x
+        rect.max_y = max_y
+
+        logger.debug(f"[SetRect] 设置矩形 {rect.id} 边界: ({min_x}, {min_y}) - ({max_x}, {max_y})")
+        return None
+
+
+class MoveRectTo(NativeFunction):
+    """移动矩形到指定中心点（JASS MoveRectTo native函数）。"""
+
+    @property
+    def name(self) -> str:
+        """获取native函数名称。
+
+        返回：
+            native函数名称字符串 "MoveRectTo"
+        """
+        return "MoveRectTo"
+
+    def execute(self, state_context, rect, new_center_x: float, new_center_y: float):
+        """执行MoveRectTo native函数，移动矩形中心点并保持尺寸。
+
+        保持矩形宽高不变，将中心点移动到指定位置。
+
+        参数：
+            state_context: 状态上下文，提供对HandleManager的访问
+            rect: 要移动的Rect对象或rect handle
+            new_center_x: 新的中心X坐标
+            new_center_y: 新的中心Y坐标
+
+        返回：
+            None
+        """
+        if rect is None:
+            logger.warning("[MoveRectTo] 传入的rect为None")
+            return None
+
+        # 如果传入的是handle ID字符串，通过HandleManager获取Rect对象
+        if isinstance(rect, str):
+            handle_manager = state_context.handle_manager
+            rect = handle_manager.get_rect(rect)
+            if rect is None:
+                logger.warning(f"[MoveRectTo] 无效的rect handle ID")
+                return None
+
+        # 计算当前宽高
+        width = rect.max_x - rect.min_x
+        height = rect.max_y - rect.min_y
+
+        # 计算新的边界（保持宽高不变）
+        rect.min_x = new_center_x - width / 2.0
+        rect.max_x = new_center_x + width / 2.0
+        rect.min_y = new_center_y - height / 2.0
+        rect.max_y = new_center_y + height / 2.0
+
+        logger.debug(f"[MoveRectTo] 移动矩形 {rect.id} 到中心 ({new_center_x}, {new_center_y})")
+        return None

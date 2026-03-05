@@ -4,7 +4,7 @@
 """
 
 import pytest
-from unittest.mock import MagicMock
+from unittest.mock import MagicMock, Mock
 
 
 class TestGetRectCenterX:
@@ -260,4 +260,106 @@ class TestRemoveRectNative:
         result = remove_rect.execute(state_context, None)
 
         # 验证 - 正常返回，没有异常
+        assert result is None
+
+
+class TestSetRect:
+    """测试 SetRect native 函数。"""
+
+    def test_name_is_correct(self):
+        """测试函数名称正确。"""
+        from jass_runner.natives.rect_natives import SetRect
+
+        native = SetRect()
+        assert native.name == "SetRect"
+
+    def test_set_rect_updates_bounds(self):
+        """测试 SetRect 更新矩形边界。"""
+        from jass_runner.natives.rect_natives import SetRect
+        from jass_runner.natives.manager import HandleManager
+
+        native = SetRect()
+
+        # 准备
+        state_context = MagicMock()
+        state_context.handle_manager = HandleManager()
+
+        # 创建矩形
+        rect = state_context.handle_manager.create_rect(-100.0, -100.0, 100.0, 100.0)
+
+        # 执行 - 更新边界
+        native.execute(state_context, rect, -50.0, -50.0, 50.0, 50.0)
+
+        # 验证 - 边界已更新
+        assert rect.min_x == -50.0
+        assert rect.min_y == -50.0
+        assert rect.max_x == 50.0
+        assert rect.max_y == 50.0
+
+    def test_set_rect_with_invalid_handle(self):
+        """测试无效 handle 不报错。"""
+        from jass_runner.natives.rect_natives import SetRect
+        from jass_runner.natives.manager import HandleManager
+
+        native = SetRect()
+
+        # 准备
+        state_context = MagicMock()
+        state_context.handle_manager = HandleManager()
+
+        # 执行 - 传入None，应该不抛出异常
+        result = native.execute(state_context, None, -50.0, -50.0, 50.0, 50.0)
+
+        # 验证 - 正常返回None
+        assert result is None
+
+
+class TestMoveRectTo:
+    """测试 MoveRectTo native 函数。"""
+
+    def test_name_is_correct(self):
+        """测试函数名称正确。"""
+        from jass_runner.natives.rect_natives import MoveRectTo
+
+        native = MoveRectTo()
+        assert native.name == "MoveRectTo"
+
+    def test_move_rect_to_moves_center(self):
+        """测试 MoveRectTo 移动矩形中心。"""
+        from jass_runner.natives.rect_natives import MoveRectTo
+        from jass_runner.natives.manager import HandleManager
+
+        native = MoveRectTo()
+
+        # 准备
+        state_context = MagicMock()
+        state_context.handle_manager = HandleManager()
+
+        # 创建矩形，初始为 (-100, -100) 到 (100, 100)，中心(0,0)，宽高200x200
+        rect = state_context.handle_manager.create_rect(-100.0, -100.0, 100.0, 100.0)
+
+        # 执行 - 移动到 (500, 500)，保持宽高 200x200
+        native.execute(state_context, rect, 500.0, 500.0)
+
+        # 验证 - 新的边界应该是 (400, 400) 到 (600, 600)
+        assert rect.min_x == 400.0
+        assert rect.max_x == 600.0
+        assert rect.min_y == 400.0
+        assert rect.max_y == 600.0
+
+    def test_move_rect_to_with_invalid_handle(self):
+        """测试无效 handle 不报错。"""
+        from jass_runner.natives.rect_natives import MoveRectTo
+        from jass_runner.natives.manager import HandleManager
+
+        native = MoveRectTo()
+
+        # 准备
+        state_context = MagicMock()
+        state_context.handle_manager = HandleManager()
+
+        # 执行 - 传入None，应该不抛出异常
+        result = native.execute(state_context, None, 0.0, 0.0)
+
+        # 验证 - 正常返回None
         assert result is None
