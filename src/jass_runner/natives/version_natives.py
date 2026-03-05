@@ -5,12 +5,27 @@
 
 import logging
 from .base import NativeFunction
+from .handle_base import Handle
 
 logger = logging.getLogger(__name__)
 
 # 版本常量
 VERSION_REIGN_OF_CHAOS = 0   # 混乱之治
 VERSION_FROZEN_THRONE = 1    # 冰封王座
+
+
+class Version(Handle):
+    """版本类型 handle。
+
+    用于表示游戏版本（混乱之治或冰封王座）。
+
+    属性：
+        version_value: 版本整数值（0或1）
+    """
+
+    def __init__(self, handle_id: str, version_value: int):
+        super().__init__(handle_id, "version")
+        self.version_value = version_value
 
 
 class VersionGet(NativeFunction):
@@ -23,17 +38,25 @@ class VersionGet(NativeFunction):
     def name(self) -> str:
         return "VersionGet"
 
-    def execute(self, state_context) -> int:
+    def execute(self, state_context) -> Version:
         """获取当前游戏版本。
 
         参数：
             state_context: 状态上下文
 
         返回：
-            VERSION_FROZEN_THRONE (1)
+            Version handle对象（冰封王座版本）
         """
-        logger.info("[VersionGet] 返回游戏版本: 冰封王座 (1)")
-        return VERSION_FROZEN_THRONE
+        # 从状态上下文中获取handle管理器来创建唯一handle
+        handle_manager = getattr(state_context, 'handle_manager', None)
+        if handle_manager:
+            handle_id = f"version_{handle_manager._generate_id()}"
+        else:
+            handle_id = "version_001"
+
+        version = Version(handle_id, VERSION_FROZEN_THRONE)
+        logger.info(f"[VersionGet] 返回游戏版本: 冰封王座 (handle={handle_id})")
+        return version
 
 
 class ConvertVersion(NativeFunction):

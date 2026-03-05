@@ -1,6 +1,6 @@
 import pytest
-from unittest.mock import MagicMock
-from jass_runner.natives.version_natives import VersionGet, ConvertVersion, VERSION_FROZEN_THRONE
+from unittest.mock import MagicMock, patch
+from jass_runner.natives.version_natives import VersionGet, ConvertVersion, VERSION_FROZEN_THRONE, Version
 
 
 class TestConvertVersion:
@@ -35,15 +35,17 @@ class TestConvertVersion:
 class TestVersionGet:
     """测试VersionGet native函数。"""
 
-    def test_version_get_returns_frozen_throne(self):
-        """测试VersionGet返回冰封王座版本。"""
+    def test_version_get_returns_version_handle(self):
+        """测试VersionGet返回Version handle对象。"""
         # 准备
         native = VersionGet()
         mock_state = MagicMock()
+        mock_state.handle_manager.generate_id.return_value = "version_001"
 
         # 执行
         result = native.execute(mock_state)
 
         # 验证
-        assert result == VERSION_FROZEN_THRONE
-        assert result == 1
+        assert isinstance(result, Version)
+        assert result.version_value == VERSION_FROZEN_THRONE
+        assert result.type_name == "version"

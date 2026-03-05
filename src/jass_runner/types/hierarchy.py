@@ -25,6 +25,7 @@ class TypeHierarchy:
         'sound': 'handle',
         'effect': 'handle',
         'location': 'handle',
+        'version': 'handle',
     }
 
     @classmethod
