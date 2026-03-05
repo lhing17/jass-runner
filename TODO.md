@@ -167,16 +167,22 @@
   - [x] `VersionGet` Native函数（返回version handle）
   - [x] `ConvertVersion` Native函数
   - [x] 类型层次结构注册version→handle映射
-- [x] **P1** [Simulator] 玩家资源系统
+- [x] **P1** [Simulator] 玩家资源系统 ✅ 已完成（2026-03-05）
   - [x] Native函数：GetPlayerState, SetPlayerState（金币、木材、人口）
   - [x] Native函数：GetPlayerName, SetPlayerName
   - [x] Native函数：SetAmbientDaySound, SetAmbientNightSound, SetMapMusic
-  - [ ] 玩家颜色和种族设置
-- [ ] **P2** [Simulator] 区域和触发器高级功能
-  - [ ] Rect区域操作：Rect, RemoveRect
-  - [ ] 区域事件：TriggerRegisterEnterRegion, TriggerRegisterLeaveRegion
-  - [ ] 可见性系统：CreateFogModifier
-- [ ] **P2** [Simulator] 对话框和多人游戏
+  - [ ] 玩家颜色和种族设置（未来版本）
+- [x] **P2** [Simulator] 区域和触发器高级功能 ✅ 已完成（2026-03-05）
+  - [x] Rect区域操作：Rect, RemoveRect, SetRect, MoveRectTo
+  - [x] Rect查询函数：GetRectCenterX/Y, GetRectMinX/Y, GetRectMaxX/Y
+  - [x] 游戏状态事件：TriggerRegisterGameStateEvent（TIME_OF_DAY）
+  - [ ] 区域事件：TriggerRegisterEnterRegion, TriggerRegisterLeaveRegion（未来版本）
+  - [ ] 可见性系统：CreateFogModifier（未来版本）
+- [x] **P2** [Simulator] 相机系统 ✅ 已完成（2026-03-05）
+  - [x] 相机边界查询：GetCameraBoundMinX/Y, GetCameraBoundMaxX/Y
+  - [x] 相机边距：GetCameraMargin
+  - [x] 相机边界设置：SetCameraBounds
+- [ ] **P3** [Simulator] 对话框和多人游戏（未来版本）
   - [ ] 对话框API：DialogCreate, DialogAddButton
   - [ ] 多人同步：GetLocalPlayer, GetPlayerId
 
@@ -193,8 +199,15 @@
 - [x] **P3** [Simulator] Version系统支持 ✅ 已完成（2026-03-05）
   - [x] Version handle类实现
   - [x] VersionGet和ConvertVersion Native函数
+- [x] **P3** [Simulator] GameState事件系统支持 ✅ 已完成（2026-03-05）
+  - [x] LimitOp类型和GameStateManager管理器
+  - [x] TriggerRegisterGameStateEvent Native函数
+  - [x] 日夜循环系统（TIME_OF_DAY）
+- [x] **P3** [Simulator] Rect区域系统支持 ✅ 已完成（2026-03-05）
+  - [x] Rect类和10个相关Native函数
+  - [x] 支持构造、修改、查询操作
 - [ ] **P3** [Simulator] 完整的common.j模拟
-  - [ ] 覆盖80%+的common.j函数
+  - [ ] 覆盖80%+的common.j函数（当前约20%）
   - [ ] 完整的Blz（Blizzard）API支持
 - [ ] **P3** [Integration] 编辑器集成
   - [ ] VS Code插件

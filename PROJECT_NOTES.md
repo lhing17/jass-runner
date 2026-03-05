@@ -430,7 +430,10 @@ jass-runner/
 │   │   ├── unit_range_natives.py # 单位范围检测
 │   │   ├── item_inventory_natives.py # 物品背包系统
 │   │   ├── async_natives.py # 异步Native函数
-│   │   └── version_natives.py # 版本系统Native函数
+│   │   ├── version_natives.py # 版本系统Native函数
+│   │   ├── gamestate_event_natives.py # 游戏状态事件Native函数
+│   │   ├── rect_natives.py # Rect区域Native函数
+│   │   └── camera.py # 相机相关Native函数
 │   ├── trigger/          # 触发器系统
 │   │   ├── __init__.py   # 模块初始化
 │   │   ├── trigger.py    # Trigger类
@@ -459,6 +462,9 @@ jass-runner/
 │   ├── utils/            # 工具函数
 │   │   ├── __init__.py
 │   │   └── fourcc.py     # FourCC转换工具
+│   ├── gamestate/        # 游戏状态管理
+│   │   ├── __init__.py
+│   │   └── manager.py    # GameStateManager实现
 │   └── vm/               # 虚拟机核心
 │       ├── __init__.py
 │       ├── jass_vm.py    # JassVM主类
@@ -616,6 +622,16 @@ jass-runner/
     - 从common.j标准提取，分为核心函数（6个）和扩展函数（9个）
     - 使用Python标准库math和random模块，弧度制保持一致
     - 错误处理返回默认值，不中断执行（符合JASS行为）
+14. **GameState事件系统设计**：
+    - 使用LimitOp类型支持6种比较操作符（LESS_THAN, EQUAL, GREATER_THAN等）
+    - GameStateManager管理游戏状态和日夜循环（每9000帧一个周期）
+    - 与TriggerManager集成，状态满足条件时自动触发EVENT_GAME_STATE_LIMIT事件
+    - 使用epsilon容差（0.001）处理浮点数比较
+15. **Rect区域设计**：
+    - Rect类管理矩形区域（min_x, min_y, max_x, max_y）
+    - 通过HandleManager管理生命周期
+    - MoveRectTo保持矩形尺寸不变，只改变中心位置
+    - 支持直接传入Rect对象或handle ID进行查询
 
 ## 待解决问题
 
@@ -961,6 +977,17 @@ jass-runner/
   - `VersionGet` 和 `ConvertVersion` Native函数
   - 修复类型检查问题，支持version→handle协变
   - 所有 794 个测试通过
+- ✅ **GameState事件系统实现完成** (2026-03-05)
+  - `LimitOp` 类型和 `GameStateManager` 管理器
+  - `TriggerRegisterGameStateEvent` Native函数
+  - 日夜循环系统（每9000帧一个周期）
+  - 所有 832 个测试通过
+- ✅ **相机边界查询Native函数实现完成** (2026-03-05)
+  - `GetCameraBoundMinX/Y`, `GetCameraBoundMaxX/Y` 4个函数
+  - 所有 832 个测试通过
+- ✅ **Rect核心Native函数实现完成** (2026-03-05)
+  - 10个Rect函数：构造、修改、查询
+  - 所有 851 个测试通过
 
 #### 42. 类型检查系统实现完成 (2026-03-02)
 - **核心组件**:
@@ -1260,6 +1287,70 @@ jass-runner/
 - **测试覆盖**:
   - 单元测试: 3个测试用例覆盖VersionGet和ConvertVersion
 - **测试统计**: 794个测试通过
+
+#### 57. GameState事件系统实现完成 (2026-03-05)
+- **新增组件**:
+  - `LimitOp` 类型 - 6种比较操作符常量（LESS_THAN, EQUAL, GREATER_THAN等）
+  - `IGameState`/`FGameState` 类型 - 游戏状态类型常量
+  - `GameStateManager` 类 - 管理游戏状态和日夜循环
+  - `EVENT_GAME_STATE_LIMIT` 事件类型
+- **新增Native函数**:
+  - `TriggerRegisterGameStateEvent` - 注册游戏状态事件监听
+- **关键设计**:
+  - 日夜循环系统：每9000帧一个完整周期（24小时）
+  - 支持条件比较：EQUAL, LESS_THAN, GREATER_THAN等
+  - 与TriggerManager集成，状态满足条件时自动触发事件
+  - 使用epsilon容差处理浮点数比较
+- **修改文件**:
+  - `src/jass_runner/types/limitop.py` - 新建，实现LimitOp类型
+  - `src/jass_runner/types/gamestate.py` - 新建，实现GameState类型
+  - `src/jass_runner/gamestate/manager.py` - 新建，实现GameStateManager
+  - `src/jass_runner/natives/gamestate_event_natives.py` - 新建，实现事件注册函数
+  - `src/jass_runner/trigger/event_types.py` - 添加EVENT_GAME_STATE_LIMIT
+  - `src/jass_runner/natives/state.py` - 集成GameStateManager
+  - `src/jass_runner/natives/factory.py` - 注册新函数
+- **测试覆盖**:
+  - 单元测试: LimitOp(12个), GameState(3个), Manager(7个), Native(4个)
+  - 集成测试: 6个测试验证完整事件流程
+- **测试统计**: 832个测试通过
+
+#### 58. 相机边界查询Native函数实现完成 (2026-03-05)
+- **新增Native函数**:
+  - `GetCameraBoundMinX` - 获取相机边界最小X坐标
+  - `GetCameraBoundMaxX` - 获取相机边界最大X坐标
+  - `GetCameraBoundMinY` - 获取相机边界最小Y坐标
+  - `GetCameraBoundMaxY` - 获取相机边界最大Y坐标
+- **关键设计**:
+  - 从SetCameraBounds设置的边界值中计算min/max
+  - 支持任意四边形边界（非矩形）
+  - 返回float类型坐标值
+- **修改文件**:
+  - `src/jass_runner/natives/camera.py` - 添加4个查询函数
+  - `src/jass_runner/natives/factory.py` - 注册新函数
+  - `tests/natives/test_factory.py` - 更新函数数量统计(160个)
+- **测试统计**: 832个测试通过
+
+#### 59. Rect核心Native函数实现完成 (2026-03-05)
+- **新增组件**:
+  - `rect_natives.py` - 10个Rect相关Native函数
+- **新增Native函数**:
+  - 构造函数: `Rect`, `RemoveRect`
+  - 修改函数: `SetRect`, `MoveRectTo`
+  - 查询函数: `GetRectCenterX`, `GetRectCenterY`, `GetRectMinX`, `GetRectMinY`, `GetRectMaxX`, `GetRectMaxY`
+- **关键设计**:
+  - Rect对象通过HandleManager管理生命周期
+  - MoveRectTo保持矩形尺寸不变，只改变中心位置
+  - 查询函数支持直接传入Rect对象或handle ID
+  - 无效handle返回0.0
+- **修改文件**:
+  - `src/jass_runner/natives/rect_natives.py` - 新建，实现10个函数
+  - `src/jass_runner/natives/factory.py` - 注册新函数
+  - `tests/natives/test_rect_natives.py` - 新建，19个测试用例
+  - `tests/natives/test_factory.py` - 更新函数数量统计(160→170个)
+- **测试覆盖**:
+  - 单元测试: 19个测试用例覆盖所有函数
+  - 集成测试: 与GroupEnumUnitsInRect集成测试
+- **测试统计**: 851个测试通过
 
 
 ---
