@@ -60,6 +60,7 @@ class TestGameStateManager:
 
         manager = GameStateManager()
         handle = manager.register_state_listener(
+            "trigger_0",  # 触发器ID
             FGameState.TIME_OF_DAY,
             LimitOp.GREATER_THAN_OR_EQUAL,
             6.0
@@ -85,6 +86,7 @@ class TestGameStateManager:
 
         # 注册监听器：当时间 >= 6:00时触发
         manager.register_state_listener(
+            "trigger_0",  # 触发器ID
             FGameState.TIME_OF_DAY,
             LimitOp.GREATER_THAN_OR_EQUAL,
             6.0
@@ -97,6 +99,7 @@ class TestGameStateManager:
         assert len(triggered_events) == 1
         assert triggered_events[0][0] == "game_state_limit"
         assert triggered_events[0][1]["state_id"] == FGameState.TIME_OF_DAY
+        assert triggered_events[0][1]["trigger_id"] == "trigger_0"
 
     def test_state_listener_triggers_only_once(self):
         """测试状态监听器只触发一次。"""
@@ -115,6 +118,7 @@ class TestGameStateManager:
 
         # 注册监听器：当时间 >= 6:00时触发
         manager.register_state_listener(
+            "trigger_0",  # 触发器ID
             FGameState.TIME_OF_DAY,
             LimitOp.GREATER_THAN_OR_EQUAL,
             6.0

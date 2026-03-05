@@ -74,6 +74,7 @@ class GameStateManager:
 
     def register_state_listener(
         self,
+        trigger_id: str,
         state_id: int,
         op: int,
         value: float
@@ -83,6 +84,7 @@ class GameStateManager:
         当游戏状态满足指定条件时触发事件。
 
         参数：
+            trigger_id: 触发器ID，用于关联事件和触发器
             state_id: 游戏状态ID（使用FGameState常量）
             op: 比较操作符（使用LimitOp常量）
             value: 比较的目标值
@@ -94,11 +96,26 @@ class GameStateManager:
         self._next_listener_id += 1
 
         self._state_listeners[handle] = {
+            "trigger_id": trigger_id,
             "state_id": state_id,
             "op": op,
             "value": value,
             "triggered": False,
         }
+
+        # 在trigger_manager中注册事件，以便触发器能接收该类型的事件
+        if self._trigger_manager is not None:
+            # 检查trigger_manager是否有register_event方法
+            if hasattr(self._trigger_manager, 'register_event'):
+                self._trigger_manager.register_event(
+                    trigger_id,
+                    "game_state_limit",
+                    {
+                        "state_id": state_id,
+                        "op": op,
+                        "value": value,
+                    }
+                )
 
         return handle
 
@@ -112,6 +129,7 @@ class GameStateManager:
             if listener["triggered"]:
                 continue
 
+            trigger_id = listener["trigger_id"]
             state_id = listener["state_id"]
             op = listener["op"]
             value = listener["value"]
@@ -127,6 +145,7 @@ class GameStateManager:
                 self._fire_event(
                     "game_state_limit",
                     {
+                        "trigger_id": trigger_id,
                         "state_id": state_id,
                         "value": current_value,
                     }

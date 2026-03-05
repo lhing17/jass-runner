@@ -208,7 +208,14 @@ class TriggerManager:
         # 构建状态上下文
         state_context = {"event_data": event_data}
 
+        # 获取目标触发器ID（如果事件数据中包含）
+        target_trigger_id = event_data.get("trigger_id")
+
         for trigger_id in candidate_ids:
+            # 如果指定了目标触发器ID，则只处理该触发器
+            if target_trigger_id is not None and trigger_id != target_trigger_id:
+                continue
+
             trigger = self._triggers.get(trigger_id)
             if trigger is None:
                 continue
