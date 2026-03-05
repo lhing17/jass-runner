@@ -66,6 +66,102 @@ class SetCameraBounds(NativeFunction):
         )
 
 
+class GetCameraBoundMinX(NativeFunction):
+    """获取相机边界最小X坐标。"""
+
+    @property
+    def name(self) -> str:
+        return "GetCameraBoundMinX"
+
+    def execute(self, state_context) -> float:
+        """执行获取相机边界最小X坐标。
+
+        参数:
+            state_context: 状态上下文
+
+        返回:
+            相机边界最小X坐标
+        """
+        bounds = state_context.camera_bounds
+        x_coords = [bounds.get('x1', 0.0), bounds.get('x2', 0.0),
+                    bounds.get('x3', 0.0), bounds.get('x4', 0.0)]
+        min_x = min(x_coords)
+        logger.info(f"[GetCameraBoundMinX] 返回最小X坐标: {min_x}")
+        return min_x
+
+
+class GetCameraBoundMaxX(NativeFunction):
+    """获取相机边界最大X坐标。"""
+
+    @property
+    def name(self) -> str:
+        return "GetCameraBoundMaxX"
+
+    def execute(self, state_context) -> float:
+        """执行获取相机边界最大X坐标。
+
+        参数:
+            state_context: 状态上下文
+
+        返回:
+            相机边界最大X坐标
+        """
+        bounds = state_context.camera_bounds
+        x_coords = [bounds.get('x1', 0.0), bounds.get('x2', 0.0),
+                    bounds.get('x3', 0.0), bounds.get('x4', 0.0)]
+        max_x = max(x_coords)
+        logger.info(f"[GetCameraBoundMaxX] 返回最大X坐标: {max_x}")
+        return max_x
+
+
+class GetCameraBoundMinY(NativeFunction):
+    """获取相机边界最小Y坐标。"""
+
+    @property
+    def name(self) -> str:
+        return "GetCameraBoundMinY"
+
+    def execute(self, state_context) -> float:
+        """执行获取相机边界最小Y坐标。
+
+        参数:
+            state_context: 状态上下文
+
+        返回:
+            相机边界最小Y坐标
+        """
+        bounds = state_context.camera_bounds
+        y_coords = [bounds.get('y1', 0.0), bounds.get('y2', 0.0),
+                    bounds.get('y3', 0.0), bounds.get('y4', 0.0)]
+        min_y = min(y_coords)
+        logger.info(f"[GetCameraBoundMinY] 返回最小Y坐标: {min_y}")
+        return min_y
+
+
+class GetCameraBoundMaxY(NativeFunction):
+    """获取相机边界最大Y坐标。"""
+
+    @property
+    def name(self) -> str:
+        return "GetCameraBoundMaxY"
+
+    def execute(self, state_context) -> float:
+        """执行获取相机边界最大Y坐标。
+
+        参数:
+            state_context: 状态上下文
+
+        返回:
+            相机边界最大Y坐标
+        """
+        bounds = state_context.camera_bounds
+        y_coords = [bounds.get('y1', 0.0), bounds.get('y2', 0.0),
+                    bounds.get('y3', 0.0), bounds.get('y4', 0.0)]
+        max_y = max(y_coords)
+        logger.info(f"[GetCameraBoundMaxY] 返回最大Y坐标: {max_y}")
+        return max_y
+
+
 class SetDayNightModels(NativeFunction):
     """设置昼夜模型路径。"""
 
