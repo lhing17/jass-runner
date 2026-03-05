@@ -429,7 +429,8 @@ jass-runner/
 │   │   ├── unit_ownership_natives.py # 单位所有权管理
 │   │   ├── unit_range_natives.py # 单位范围检测
 │   │   ├── item_inventory_natives.py # 物品背包系统
-│   │   └── async_natives.py # 异步Native函数
+│   │   ├── async_natives.py # 异步Native函数
+│   │   └── version_natives.py # 版本系统Native函数
 │   ├── trigger/          # 触发器系统
 │   │   ├── __init__.py   # 模块初始化
 │   │   ├── trigger.py    # Trigger类
@@ -955,6 +956,11 @@ jass-runner/
   - `execute()` 优先执行 blizzard.j 脚本
   - CLI 添加 `--blizzard` 和 `--blizzard-path` 选项
   - 所有 756 个测试通过
+- ✅ **Version系统实现完成** (2026-03-05)
+  - `Version` handle类实现，支持version类型
+  - `VersionGet` 和 `ConvertVersion` Native函数
+  - 修复类型检查问题，支持version→handle协变
+  - 所有 794 个测试通过
 
 #### 42. 类型检查系统实现完成 (2026-03-02)
 - **核心组件**:
@@ -1236,6 +1242,25 @@ jass-runner/
   - 单元测试: 5个测试用例（自动加载、自定义路径、无效路径、执行流程、run方法集成）
 - **测试统计**: 756个测试通过
 
+#### 56. Version系统实现完成 (2026-03-05)
+- **新增组件**:
+  - `Version` 类 - 版本类型handle，继承自Handle基类
+  - `version_natives.py` - 2个版本相关Native函数
+- **新增Native函数**:
+  - `VersionGet` - 获取当前游戏版本，返回Version handle对象
+  - `ConvertVersion` - 转换版本类型
+- **关键修复**:
+  - 修复VersionGet返回类型：从integer改为version handle类型
+  - 在TypeHierarchy中添加version到handle的映射关系
+  - 使用HandleManager._generate_id()生成唯一handle ID
+- **修改文件**:
+  - `src/jass_runner/natives/version_natives.py` - 新建，实现Version类和2个函数
+  - `src/jass_runner/natives/factory.py` - 注册新函数
+  - `src/jass_runner/types/hierarchy.py` - 添加version类型映射
+- **测试覆盖**:
+  - 单元测试: 3个测试用例覆盖VersionGet和ConvertVersion
+- **测试统计**: 794个测试通过
+
 
 ---
-*最后更新: 2026-03-04*
+*最后更新: 2026-03-05*

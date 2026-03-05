@@ -162,6 +162,11 @@
   - [x] `execute()` 优先执行 blizzard.j 脚本
   - [x] `run()` 方法支持 `load_blizzard` 参数
   - [x] CLI 添加 `-b/--blizzard` 和 `--blizzard-path` 选项
+- [x] **P1** [Simulator] Version系统 ✅ 已完成（2026-03-05）
+  - [x] Version handle类实现（继承Handle基类）
+  - [x] `VersionGet` Native函数（返回version handle）
+  - [x] `ConvertVersion` Native函数
+  - [x] 类型层次结构注册version→handle映射
 - [x] **P1** [Simulator] 玩家资源系统
   - [x] Native函数：GetPlayerState, SetPlayerState（金币、木材、人口）
   - [x] Native函数：GetPlayerName, SetPlayerName
@@ -185,6 +190,9 @@
 - [x] **P3** [Simulator] blizzard.j前置加载支持 ✅ 已完成（2026-03-04）
   - [x] JassVM支持加载blizzard.j作为前置脚本
   - [x] CLI支持--blizzard选项
+- [x] **P3** [Simulator] Version系统支持 ✅ 已完成（2026-03-05）
+  - [x] Version handle类实现
+  - [x] VersionGet和ConvertVersion Native函数
 - [ ] **P3** [Simulator] 完整的common.j模拟
   - [ ] 覆盖80%+的common.j函数
   - [ ] 完整的Blz（Blizzard）API支持
