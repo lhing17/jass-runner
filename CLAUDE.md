@@ -113,6 +113,15 @@ python examples/run_complete_example.py
 - 示例脚本：放在 `examples/` 目录中
 - 文档：Markdown格式，放在 `docs/` 目录中
 
+## JASS脚本加载策略
+
+- **预加载机制**：`JassVM` 在初始化时会自动处理标准库文件：
+  - `common.j`：加载基础 JASS 常量和 native 声明
+  - `blizzard.j`：加载 BJ 扩展函数（以 `bj_` 开头的函数）
+- **常量自动注入**：
+  - `common.j` 中的常量和 `blizzard.j` 中定义的 `bj_` 常量会自动加载到执行上下文
+  - **不需要**在 Python 代码中重复实现这些常量，除非有特殊模拟需求
+
 ## 注意事项
 
 1. **TDD方法**：所有实现遵循测试驱动开发，先写失败测试
