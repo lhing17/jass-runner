@@ -7,6 +7,160 @@ import pytest
 from unittest.mock import MagicMock
 
 
+class TestGetRectCenterX:
+    """测试 GetRectCenterX native函数的功能。"""
+
+    def test_get_rect_center_x_returns_center(self):
+        """测试 GetRectCenterX 返回矩形中心X坐标。"""
+        from jass_runner.natives.rect_natives import GetRectCenterX
+        from jass_runner.natives.manager import HandleManager
+
+        # 准备
+        state_context = MagicMock()
+        state_context.handle_manager = HandleManager()
+        get_center_x = GetRectCenterX()
+
+        # 创建一个矩形 (0, 0) - (100, 100)
+        rect = state_context.handle_manager.create_rect(0.0, 0.0, 100.0, 100.0)
+
+        # 执行
+        result = get_center_x.execute(state_context, rect)
+
+        # 验证 - 中心X应为 50.0
+        assert result == 50.0
+
+    def test_get_rect_center_x_with_invalid_handle_returns_zero(self):
+        """测试 GetRectCenterX 处理无效handle返回0.0。"""
+        from jass_runner.natives.rect_natives import GetRectCenterX
+        from jass_runner.natives.manager import HandleManager
+
+        # 准备
+        state_context = MagicMock()
+        state_context.handle_manager = HandleManager()
+        get_center_x = GetRectCenterX()
+
+        # 执行 - 传入None
+        result = get_center_x.execute(state_context, None)
+
+        # 验证 - 应返回 0.0
+        assert result == 0.0
+
+
+class TestGetRectCenterY:
+    """测试 GetRectCenterY native函数的功能。"""
+
+    def test_get_rect_center_y_returns_center(self):
+        """测试 GetRectCenterY 返回矩形中心Y坐标。"""
+        from jass_runner.natives.rect_natives import GetRectCenterY
+        from jass_runner.natives.manager import HandleManager
+
+        # 准备
+        state_context = MagicMock()
+        state_context.handle_manager = HandleManager()
+        get_center_y = GetRectCenterY()
+
+        # 创建一个矩形 (0, 0) - (100, 200)
+        rect = state_context.handle_manager.create_rect(0.0, 0.0, 100.0, 200.0)
+
+        # 执行
+        result = get_center_y.execute(state_context, rect)
+
+        # 验证 - 中心Y应为 100.0
+        assert result == 100.0
+
+
+class TestGetRectMinX:
+    """测试 GetRectMinX native函数的功能。"""
+
+    def test_get_rect_min_x_returns_min_x(self):
+        """测试 GetRectMinX 返回矩形最小X坐标。"""
+        from jass_runner.natives.rect_natives import GetRectMinX
+        from jass_runner.natives.manager import HandleManager
+
+        # 准备
+        state_context = MagicMock()
+        state_context.handle_manager = HandleManager()
+        get_min_x = GetRectMinX()
+
+        # 创建一个矩形 (10.0, 20.0) - (100.0, 200.0)
+        rect = state_context.handle_manager.create_rect(10.0, 20.0, 100.0, 200.0)
+
+        # 执行
+        result = get_min_x.execute(state_context, rect)
+
+        # 验证
+        assert result == 10.0
+
+
+class TestGetRectMinY:
+    """测试 GetRectMinY native函数的功能。"""
+
+    def test_get_rect_min_y_returns_min_y(self):
+        """测试 GetRectMinY 返回矩形最小Y坐标。"""
+        from jass_runner.natives.rect_natives import GetRectMinY
+        from jass_runner.natives.manager import HandleManager
+
+        # 准备
+        state_context = MagicMock()
+        state_context.handle_manager = HandleManager()
+        get_min_y = GetRectMinY()
+
+        # 创建一个矩形 (10.0, 20.0) - (100.0, 200.0)
+        rect = state_context.handle_manager.create_rect(10.0, 20.0, 100.0, 200.0)
+
+        # 执行
+        result = get_min_y.execute(state_context, rect)
+
+        # 验证
+        assert result == 20.0
+
+
+class TestGetRectMaxX:
+    """测试 GetRectMaxX native函数的功能。"""
+
+    def test_get_rect_max_x_returns_max_x(self):
+        """测试 GetRectMaxX 返回矩形最大X坐标。"""
+        from jass_runner.natives.rect_natives import GetRectMaxX
+        from jass_runner.natives.manager import HandleManager
+
+        # 准备
+        state_context = MagicMock()
+        state_context.handle_manager = HandleManager()
+        get_max_x = GetRectMaxX()
+
+        # 创建一个矩形 (10.0, 20.0) - (100.0, 200.0)
+        rect = state_context.handle_manager.create_rect(10.0, 20.0, 100.0, 200.0)
+
+        # 执行
+        result = get_max_x.execute(state_context, rect)
+
+        # 验证
+        assert result == 100.0
+
+
+class TestGetRectMaxY:
+    """测试 GetRectMaxY native函数的功能。"""
+
+    def test_get_rect_max_y_returns_max_y(self):
+        """测试 GetRectMaxY 返回矩形最大Y坐标。"""
+        from jass_runner.natives.rect_natives import GetRectMaxY
+        from jass_runner.natives.manager import HandleManager
+
+        # 准备
+        state_context = MagicMock()
+        state_context.handle_manager = HandleManager()
+        get_max_y = GetRectMaxY()
+
+        # 创建一个矩形 (10.0, 20.0) - (100.0, 200.0)
+        rect = state_context.handle_manager.create_rect(10.0, 20.0, 100.0, 200.0)
+
+        # 执行
+        result = get_max_y.execute(state_context, rect)
+
+        # 验证
+        assert result == 200.0
+
+
 class TestRectNative:
     """测试 Rect native函数的功能。"""
 
