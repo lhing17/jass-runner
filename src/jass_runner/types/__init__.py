@@ -6,5 +6,6 @@
 from .errors import JassTypeError
 from .hierarchy import TypeHierarchy
 from .checker import TypeChecker
+from .limitop import LimitOp
 
-__all__ = ['JassTypeError', 'TypeHierarchy', 'TypeChecker']
+__all__ = ['JassTypeError', 'TypeHierarchy', 'TypeChecker', 'LimitOp']
