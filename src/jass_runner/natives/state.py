@@ -7,6 +7,7 @@ from typing import Dict
 from .manager import HandleManager
 from ..trigger.manager import TriggerManager
 from .alliance_manager import AllianceManager
+from ..gamestate.manager import GameStateManager
 
 
 class StateContext:
@@ -16,12 +17,14 @@ class StateContext:
     - 全局状态（handle引用）由HandleManager管理
     - 局部状态（临时变量）由ExecutionContext管理
     - 触发器系统由TriggerManager管理
+    - 游戏状态由GameStateManager管理
     """
 
     def __init__(self):
         self.handle_manager = HandleManager()
         self.trigger_manager = TriggerManager()  # 触发器管理器
         self.alliance_manager = AllianceManager()  # 联盟管理器
+        self.game_state_manager = GameStateManager(self.trigger_manager)  # 游戏状态管理器
         self.global_vars = {}  # 全局变量存储
         self.local_stores = {}  # 上下文局部存储
 
