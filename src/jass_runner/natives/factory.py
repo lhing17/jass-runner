@@ -110,6 +110,18 @@ from .version_natives import (
     VERSION_REIGN_OF_CHAOS,
     VERSION_FROZEN_THRONE,
 )
+from .rect_natives import (
+    RectNative,
+    RemoveRect,
+    SetRect,
+    MoveRectTo,
+    GetRectCenterX,
+    GetRectCenterY,
+    GetRectMinX,
+    GetRectMinY,
+    GetRectMaxX,
+    GetRectMaxY,
+)
 
 
 class NativeFactory:
@@ -357,5 +369,17 @@ class NativeFactory:
         # 注册版本相关 native 函数
         registry.register(VersionGet())
         registry.register(ConvertVersion())
+
+        # 注册矩形区域相关 native 函数
+        registry.register(RectNative())
+        registry.register(RemoveRect())
+        registry.register(SetRect())
+        registry.register(MoveRectTo())
+        registry.register(GetRectCenterX())
+        registry.register(GetRectCenterY())
+        registry.register(GetRectMinX())
+        registry.register(GetRectMinY())
+        registry.register(GetRectMaxX())
+        registry.register(GetRectMaxY())
 
         return registry
