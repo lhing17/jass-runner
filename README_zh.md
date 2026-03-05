@@ -39,6 +39,9 @@ pip install -e .
 
 # 安装开发依赖
 pip install -e ".[dev]"
+
+# 验证项目配置
+python -c "import tomllib; tomllib.load(open('pyproject.toml', 'rb'))"
 ```
 
 ## 使用方法

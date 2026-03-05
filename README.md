@@ -47,6 +47,9 @@ pip install -e .
 
 # Install development dependencies
 pip install -e ".[dev]"
+
+# Verify project configuration
+python -c "import tomllib; tomllib.load(open('pyproject.toml', 'rb'))"
 ```
 
 ## Usage
