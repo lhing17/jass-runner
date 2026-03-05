@@ -31,6 +31,7 @@ from .trigger_register_event_natives import (
     TriggerRegisterPlayerEvent,
     TriggerRegisterGameEvent,
 )
+from .gamestate_event_natives import TriggerRegisterGameStateEvent
 from .async_natives import TriggerSleepAction, ExecuteFunc
 from .unit_property_natives import SetUnitState, GetUnitX, GetUnitY, GetUnitLoc, GetUnitTypeId, GetUnitName
 from .unit_position_natives import SetUnitPosition, SetUnitPositionLoc, CreateUnitAtLoc, GetUnitFacing, SetUnitFacing, CreateUnitAtLocByName
@@ -168,6 +169,9 @@ class NativeFactory:
         registry.register(TriggerRegisterUnitEvent())
         registry.register(TriggerRegisterPlayerEvent())
         registry.register(TriggerRegisterGameEvent())
+
+        # 注册游戏状态事件注册native函数
+        registry.register(TriggerRegisterGameStateEvent())
 
         # 注册数学core native函数
         registry.register(SquareRoot())
