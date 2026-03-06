@@ -174,3 +174,37 @@ class GetPlayerTechResearched(NativeFunction):
         result = whichPlayer.get_tech_researched(techid, specificonly)
         logger.info(f"[GetPlayerTechResearched] 玩家{whichPlayer.player_id} 科技{techid} 已研究: {result}")
         return result
+
+
+class GetPlayerTechCount(NativeFunction):
+    """获取玩家科技数量/等级。"""
+
+    @property
+    def name(self) -> str:
+        """获取native函数名称。
+
+        返回：
+            函数名称 "GetPlayerTechCount"
+        """
+        return "GetPlayerTechCount"
+
+    def execute(self, state_context: 'StateContext', whichPlayer: 'Player',
+                techid: int, specificonly: bool) -> int:
+        """执行GetPlayerTechCount native函数。
+
+        参数：
+            state_context: 状态上下文
+            whichPlayer: 玩家对象
+            techid: 科技ID（FourCC格式）
+            specificonly: 是否只检查特定科技（当前忽略）
+
+        返回：
+            科技等级，玩家为None返回0
+        """
+        if whichPlayer is None:
+            logger.warning("[GetPlayerTechCount] 玩家对象为None")
+            return 0
+
+        result = whichPlayer.get_tech_count(techid, specificonly)
+        logger.info(f"[GetPlayerTechCount] 玩家{whichPlayer.player_id} 科技{techid} 等级为{result}")
+        return result

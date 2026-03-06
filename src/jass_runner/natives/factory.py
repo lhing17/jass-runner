@@ -122,6 +122,14 @@ from .rect_natives import (
     GetRectMaxX,
     GetRectMaxY,
 )
+from .player_tech_natives import (
+    SetPlayerTechMaxAllowed,
+    GetPlayerTechMaxAllowed,
+    AddPlayerTechResearched,
+    SetPlayerTechResearched,
+    GetPlayerTechResearched,
+    GetPlayerTechCount,
+)
 
 
 class NativeFactory:
@@ -381,5 +389,13 @@ class NativeFactory:
         registry.register(GetRectMinY())
         registry.register(GetRectMaxX())
         registry.register(GetRectMaxY())
+
+        # 注册玩家科技相关 native 函数
+        registry.register(SetPlayerTechMaxAllowed())
+        registry.register(GetPlayerTechMaxAllowed())
+        registry.register(AddPlayerTechResearched())
+        registry.register(SetPlayerTechResearched())
+        registry.register(GetPlayerTechResearched())
+        registry.register(GetPlayerTechCount())
 
         return registry

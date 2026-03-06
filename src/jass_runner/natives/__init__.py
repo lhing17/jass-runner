@@ -34,6 +34,14 @@ from .item_inventory_natives import (
     GetItemTypeId,
     UnitItemInSlot,
 )
+from .player_tech_natives import (
+    SetPlayerTechMaxAllowed,
+    GetPlayerTechMaxAllowed,
+    AddPlayerTechResearched,
+    SetPlayerTechResearched,
+    GetPlayerTechResearched,
+    GetPlayerTechCount,
+)
 
 __all__ = [
     "NativeFunction",
@@ -92,4 +100,11 @@ __all__ = [
     "UnitRemoveItemFromSlot",
     "GetItemTypeId",
     "UnitItemInSlot",
+    # 玩家科技函数
+    "SetPlayerTechMaxAllowed",
+    "GetPlayerTechMaxAllowed",
+    "AddPlayerTechResearched",
+    "SetPlayerTechResearched",
+    "GetPlayerTechResearched",
+    "GetPlayerTechCount",
 ]
