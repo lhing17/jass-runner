@@ -130,6 +130,10 @@ from .player_tech_natives import (
     GetPlayerTechResearched,
     GetPlayerTechCount,
 )
+from .player_controller_natives import (
+    GetPlayerController,
+    ConvertMapControl,
+)
 
 
 class NativeFactory:
@@ -397,5 +401,9 @@ class NativeFactory:
         registry.register(SetPlayerTechResearched())
         registry.register(GetPlayerTechResearched())
         registry.register(GetPlayerTechCount())
+
+        # 注册玩家控制器相关 native 函数
+        registry.register(GetPlayerController())
+        registry.register(ConvertMapControl())
 
         return registry
