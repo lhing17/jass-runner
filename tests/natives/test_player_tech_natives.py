@@ -2,7 +2,7 @@
 
 import pytest
 from unittest.mock import MagicMock
-from src.jass_runner.natives.player_tech_natives import SetPlayerTechMaxAllowed, GetPlayerTechMaxAllowed, AddPlayerTechResearched, SetPlayerTechResearched
+from src.jass_runner.natives.player_tech_natives import SetPlayerTechMaxAllowed, GetPlayerTechMaxAllowed, AddPlayerTechResearched, SetPlayerTechResearched, GetPlayerTechResearched
 from src.jass_runner.natives.player import Player
 
 
@@ -107,3 +107,47 @@ class TestSetPlayerTechResearched:
 
         result = native.execute(state_context, None, 1214542384, 5)
         assert result is None
+
+
+class TestGetPlayerTechResearched:
+    """测试GetPlayerTechResearched native函数。"""
+
+    def test_get_player_tech_researched_true(self):
+        """测试获取已研究的科技返回True。"""
+        native = GetPlayerTechResearched()
+        state_context = MagicMock()
+        player = Player("test_handle", 0)
+        tech_id = 1214542384
+
+        player.set_tech_researched(tech_id, 3)
+        result = native.execute(state_context, player, tech_id, False)
+        assert result is True
+
+    def test_get_player_tech_researched_false(self):
+        """测试获取未研究的科技返回False。"""
+        native = GetPlayerTechResearched()
+        state_context = MagicMock()
+        player = Player("test_handle", 0)
+        tech_id = 1214542384
+
+        result = native.execute(state_context, player, tech_id, False)
+        assert result is False
+
+    def test_get_player_tech_researched_zero_level(self):
+        """测试等级为0时返回False。"""
+        native = GetPlayerTechResearched()
+        state_context = MagicMock()
+        player = Player("test_handle", 0)
+        tech_id = 1214542384
+
+        player.set_tech_researched(tech_id, 0)
+        result = native.execute(state_context, player, tech_id, False)
+        assert result is False
+
+    def test_get_player_tech_researched_none_player(self):
+        """测试player为None时返回False。"""
+        native = GetPlayerTechResearched()
+        state_context = MagicMock()
+
+        result = native.execute(state_context, None, 1214542384, False)
+        assert result is False

@@ -140,3 +140,37 @@ class SetPlayerTechResearched(NativeFunction):
         whichPlayer.set_tech_researched(techid, setToLevel)
         logger.info(f"[SetPlayerTechResearched] 玩家{whichPlayer.player_id} 科技{techid} 等级设为{setToLevel}")
         return None
+
+
+class GetPlayerTechResearched(NativeFunction):
+    """获取玩家科技是否已研究。"""
+
+    @property
+    def name(self) -> str:
+        """获取native函数名称。
+
+        返回：
+            函数名称 "GetPlayerTechResearched"
+        """
+        return "GetPlayerTechResearched"
+
+    def execute(self, state_context: 'StateContext', whichPlayer: 'Player',
+                techid: int, specificonly: bool) -> bool:
+        """执行GetPlayerTechResearched native函数。
+
+        参数：
+            state_context: 状态上下文
+            whichPlayer: 玩家对象
+            techid: 科技ID（FourCC格式）
+            specificonly: 是否只检查特定科技（当前忽略）
+
+        返回：
+            等级大于0返回True，否则返回False
+        """
+        if whichPlayer is None:
+            logger.warning("[GetPlayerTechResearched] 玩家对象为None")
+            return False
+
+        result = whichPlayer.get_tech_researched(techid, specificonly)
+        logger.info(f"[GetPlayerTechResearched] 玩家{whichPlayer.player_id} 科技{techid} 已研究: {result}")
+        return result
