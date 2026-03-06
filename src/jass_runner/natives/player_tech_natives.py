@@ -77,3 +77,35 @@ class GetPlayerTechMaxAllowed(NativeFunction):
         result = whichPlayer.get_tech_max_allowed(techid)
         logger.info(f"[GetPlayerTechMaxAllowed] 玩家{whichPlayer.player_id} 科技{techid} 最大等级为{result}")
         return result
+
+
+class AddPlayerTechResearched(NativeFunction):
+    """增加玩家科技研究等级。"""
+
+    @property
+    def name(self) -> str:
+        """获取native函数名称。
+
+        返回：
+            函数名称 "AddPlayerTechResearched"
+        """
+        return "AddPlayerTechResearched"
+
+    def execute(self, state_context: 'StateContext', whichPlayer: 'Player',
+                techid: int, levels: int) -> None:
+        """执行AddPlayerTechResearched native函数。
+
+        参数：
+            state_context: 状态上下文
+            whichPlayer: 玩家对象
+            techid: 科技ID（FourCC格式）
+            levels: 要增加的等级数
+        """
+        if whichPlayer is None:
+            logger.warning("[AddPlayerTechResearched] 玩家对象为None")
+            return None
+
+        whichPlayer.add_tech_researched(techid, levels)
+        new_level = whichPlayer.get_tech_count(techid, False)
+        logger.info(f"[AddPlayerTechResearched] 玩家{whichPlayer.player_id} 科技{techid} 增加{levels}级，当前等级{new_level}")
+        return None
