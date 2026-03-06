@@ -436,7 +436,8 @@ jass-runner/
 │   │   ├── camera.py # 相机相关Native函数
 │   │   ├── player_tech_natives.py # 玩家科技Native函数
 │   │   ├── player_controller_natives.py # 玩家控制器Native函数
-│   │   └── player_slot_state_natives.py # 玩家插槽状态Native函数
+│   │   ├── player_slot_state_natives.py # 玩家插槽状态Native函数
+│   │   └── unit_slots_natives.py # 技能格子槽位Native函数
 │   ├── trigger/          # 触发器系统
 │   │   ├── __init__.py   # 模块初始化
 │   │   ├── trigger.py    # Trigger类
@@ -507,7 +508,9 @@ jass-runner/
 │   │   ├── test_unit_range_natives.py # 单位范围检测测试
 │   │   ├── test_player_controller_natives.py # 玩家控制器Native函数测试
 │   │   ├── test_player_slot_state_natives.py # 玩家插槽状态Native函数测试
-│   │   └── test_item_inventory_natives.py # 物品背包系统测试
+│   │   ├── test_item_inventory_natives.py # 物品背包系统测试
+│   │   ├── test_unit_slots_natives.py # 技能格子槽位Native函数测试
+│   │   └── test_unit_slots_integration.py # 技能格子槽位集成测试
 │   ├── trigger/         # 触发器测试
 │   │   ├── test_event_types.py    # 事件类型测试
 │   │   ├── test_trigger.py        # Trigger类测试
@@ -653,6 +656,11 @@ jass-runner/
     - player_id映射规则：<12为PLAYING，>=12为EMPTY
     - ConvertPlayerSlotState作为类型转换函数，直接返回传入的整数
     - 支持integer到playerslotstate的隐式类型转换
+19. **技能格子槽位设计**：
+    - 全局变量MAX_ITEM_TYPE_SLOTS和MAX_UNIT_TYPE_SLOTS控制最大槽位数（默认11）
+    - SetAllXxx函数修改全局变量，影响后续所有单位的槽位设置上限
+    - SetXxx函数为单位设置具体槽位数，受全局变量限制（截断处理）
+    - 使用模块引用方式修改全局变量，确保跨模块修改生效
 
 ## 待解决问题
 
@@ -1072,6 +1080,56 @@ jass-runner/
   - 单元测试: GetPlayerController（4个）、ConvertMapControl（4个）
   - 集成测试: 玩家控制器完整流程（6个）
 - **测试统计**: 所有 887 个测试通过
+
+#### 62. 玩家插槽状态Native函数实现完成 (2026-03-06)
+- **新增组件**:
+  - `player_slot_state_natives.py` - 2个玩家插槽状态相关Native函数
+  - Player类slot_state属性改为整数类型（0=EMPTY, 1=PLAYING, 2=LEFT）
+- **新增Native函数** (2个):
+  - `GetPlayerSlotState` - 获取玩家插槽状态（返回playerslotstate）
+  - `ConvertPlayerSlotState` - 将整数转换为playerslotstate类型
+- **关键设计**:
+  - Player.slot_state从字符串改为整数，与JASS常量定义一致
+  - player_id < 12: PLAYER_SLOT_STATE_PLAYING (1)
+  - player_id >= 12: PLAYER_SLOT_STATE_EMPTY (0)
+  - ConvertPlayerSlotState直接返回传入的整数（类型转换函数）
+  - 支持integer到playerslotstate的隐式类型转换
+- **修改文件**:
+  - `src/jass_runner/natives/player.py` - 修改slot_state属性为整数类型
+  - `src/jass_runner/natives/player_slot_state_natives.py` - 新建，实现2个native函数
+  - `src/jass_runner/natives/factory.py` - 注册2个新函数
+  - `src/jass_runner/types/checker.py` - 添加integer→playerslotstate隐式转换
+  - `tests/natives/test_factory.py` - 更新函数数量统计(170→172个)
+  - `tests/natives/test_handle.py` - 更新slot_state断言（字符串→整数）
+- **测试覆盖**:
+  - 单元测试: GetPlayerSlotState（4个）、ConvertPlayerSlotState（4个）
+  - 集成测试: 玩家插槽状态完整流程（6个）
+- **测试统计**: 所有 900 个测试通过
+
+#### 63. 技能格子槽位Native函数实现完成 (2026-03-06)
+- **新增组件**:
+  - `unit_slots_natives.py` - 4个技能格子槽位相关Native函数
+  - Unit类添加_item_type_slots和_unit_type_slots属性
+- **新增Native函数** (4个):
+  - `SetAllItemTypeSlots` - 设置全局物品类型最大槽位数
+  - `SetAllUnitTypeSlots` - 设置全局单位类型最大槽位数
+  - `SetItemTypeSlots` - 为单位设置技能格子中出售物品的槽位数
+  - `SetUnitTypeSlots` - 为单位设置技能格子中出售单位的槽位数
+- **关键设计**:
+  - 全局变量MAX_ITEM_TYPE_SLOTS和MAX_UNIT_TYPE_SLOTS默认值为11
+  - SetAllXxx函数修改全局变量，影响后续所有单位的槽位设置上限
+  - SetXxx函数为单位设置具体槽位数，受全局变量限制（截断到0-最大值）
+  - 使用模块引用方式（unit_module.MAX_ITEM_TYPE_SLOTS）修改全局变量，确保跨模块修改生效
+  - 负数槽位数被截断到0，超过最大值被截断到最大值
+- **修改文件**:
+  - `src/jass_runner/natives/unit.py` - 添加全局变量和槽位属性，实现设置方法
+  - `src/jass_runner/natives/unit_slots_natives.py` - 新建，实现4个native函数
+  - `src/jass_runner/natives/factory.py` - 注册4个新函数
+  - `tests/natives/test_factory.py` - 更新函数数量统计(172→174个)
+- **测试覆盖**:
+  - 单元测试: 4个native函数（9个测试）
+  - 集成测试: 技能格子槽位完整流程（7个测试）
+- **测试统计**: 所有 919 个测试通过
 
 #### 42. 类型检查系统实现完成 (2026-03-02)
 - **核心组件**:
