@@ -7,6 +7,10 @@ from typing import Dict, List, Optional, Set
 
 from .handle_base import Handle
 
+# 技能格子槽位全局最大值（默认11）
+MAX_ITEM_TYPE_SLOTS = 11
+MAX_UNIT_TYPE_SLOTS = 11
+
 
 class Unit(Handle):
     """单位handle。
@@ -41,6 +45,10 @@ class Unit(Handle):
         self._abilities: Dict[int, int] = {}  # 技能ID -> 技能等级
         self._permanent_abilities: Set[int] = set()  # 永久技能ID集合
         self.inventory: List[Optional['Item']] = [None] * 6  # 6槽位背包
+
+        # 技能格子槽位配置（用于商店出售物品/单位）
+        self._item_type_slots = MAX_ITEM_TYPE_SLOTS  # 出售物品的槽位数
+        self._unit_type_slots = MAX_UNIT_TYPE_SLOTS  # 出售单位的槽位数
 
     def destroy(self):
         """销毁单位，将生命值设为0。"""
@@ -255,3 +263,29 @@ class Unit(Handle):
             if self.inventory[i] is item:
                 return i
         return -1
+
+    def set_item_type_slots(self, slots: int) -> int:
+        """设置技能格子中出售物品的槽位数。
+
+        参数：
+            slots: 期望的槽位数
+
+        返回：
+            实际设置的槽位数（会被截断到 0-MAX_ITEM_TYPE_SLOTS 范围）
+        """
+        actual_slots = max(0, min(slots, MAX_ITEM_TYPE_SLOTS))
+        self._item_type_slots = actual_slots
+        return actual_slots
+
+    def set_unit_type_slots(self, slots: int) -> int:
+        """设置技能格子中出售单位的槽位数。
+
+        参数：
+            slots: 期望的槽位数
+
+        返回：
+            实际设置的槽位数（会被截断到 0-MAX_UNIT_TYPE_SLOTS 范围）
+        """
+        actual_slots = max(0, min(slots, MAX_UNIT_TYPE_SLOTS))
+        self._unit_type_slots = actual_slots
+        return actual_slots
