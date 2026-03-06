@@ -138,6 +138,12 @@ from .player_slot_state_natives import (
     GetPlayerSlotState,
     ConvertPlayerSlotState,
 )
+from .unit_slots_natives import (
+    SetAllItemTypeSlots,
+    SetAllUnitTypeSlots,
+    SetItemTypeSlots,
+    SetUnitTypeSlots,
+)
 
 
 class NativeFactory:
@@ -413,5 +419,11 @@ class NativeFactory:
         # 注册玩家插槽状态相关 native 函数
         registry.register(GetPlayerSlotState())
         registry.register(ConvertPlayerSlotState())
+
+        # 注册技能格子槽位相关 native 函数
+        registry.register(SetAllItemTypeSlots())
+        registry.register(SetAllUnitTypeSlots())
+        registry.register(SetItemTypeSlots())
+        registry.register(SetUnitTypeSlots())
 
         return registry
