@@ -367,6 +367,17 @@ class Interpreter:
         if isinstance(value, float):
             return 'real'
         if isinstance(value, str):
+            # 识别handle ID格式
+            if value.startswith('trigger_'):
+                return 'trigger'
+            if value.startswith('timer_'):
+                return 'timer'
+            if value.startswith('unit_'):
+                return 'unit'
+            if value.startswith('group_'):
+                return 'group'
+            if value.startswith('rect_'):
+                return 'rect'
             return 'string'
 
         # handle子类型检测
