@@ -47,6 +47,9 @@ class Player(Handle):
         self._food_used: int = 0      # 已用人口 0-food_cap，初始0
         # 通用状态存储字典（用于非资源类状态）
         self._state_data: Dict[int, int] = {}
+        # 科技系统
+        self._tech_max_allowed: Dict[int, int] = {}  # techid -> 最大允许等级
+        self._tech_researched: Dict[int, int] = {}   # techid -> 当前研究等级
 
     def _clamp_resource(self, value: int, min_val: int, max_val: int) -> int:
         """将值截断到有效范围。
@@ -152,3 +155,67 @@ class Player(Handle):
             是敌人返回True，否则返回False
         """
         return other_player_id in self._enemies
+
+    def set_tech_max_allowed(self, techid: int, maximum: int) -> None:
+        """设置科技最大允许等级。
+
+        参数：
+            techid: 科技ID（FourCC）
+            maximum: 最大允许等级
+        """
+        self._tech_max_allowed[techid] = maximum
+
+    def get_tech_max_allowed(self, techid: int) -> int:
+        """获取科技最大允许等级。
+
+        参数：
+            techid: 科技ID（FourCC）
+
+        返回：
+            最大允许等级，未设置返回0
+        """
+        return self._tech_max_allowed.get(techid, 0)
+
+    def add_tech_researched(self, techid: int, levels: int) -> None:
+        """增加科技研究等级。
+
+        参数：
+            techid: 科技ID（FourCC）
+            levels: 要增加的等级数
+        """
+        current = self._tech_researched.get(techid, 0)
+        self._tech_researched[techid] = current + levels
+
+    def set_tech_researched(self, techid: int, level: int) -> None:
+        """设置科技研究等级。
+
+        参数：
+            techid: 科技ID（FourCC）
+            level: 研究等级
+        """
+        self._tech_researched[techid] = level
+
+    def get_tech_researched(self, techid: int, specificonly: bool) -> bool:
+        """检查科技是否已研究。
+
+        参数：
+            techid: 科技ID（FourCC）
+            specificonly: 是否只检查特定科技
+
+        返回：
+            已研究返回True，否则返回False
+        """
+        return self._tech_researched.get(techid, 0) > 0
+
+    def get_tech_count(self, techid: int, specificonly: bool) -> int:
+        """获取科技研究等级。
+
+        参数：
+            techid: 科技ID（FourCC）
+            specificonly: 是否只检查特定科技
+
+        返回：
+            研究等级，未设置返回0
+        """
+        return self._tech_researched.get(techid, 0)
+
