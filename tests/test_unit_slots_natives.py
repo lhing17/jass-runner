@@ -70,16 +70,25 @@ class TestSetItemTypeSlots:
 
     def test_set_valid_slots(self):
         """测试为单位设置有效的槽位数。"""
-        native = SetItemTypeSlots()
-        mock_context = MagicMock()
-        mock_unit = MagicMock()
-        mock_unit.id = "unit_001"
-        mock_unit.set_item_type_slots.return_value = 5
+        from jass_runner.natives import unit as unit_module
+        # 重置全局变量为默认值
+        original_max = unit_module.MAX_ITEM_TYPE_SLOTS
+        unit_module.MAX_ITEM_TYPE_SLOTS = 11
 
-        result = native.execute(mock_context, mock_unit, 5)
+        try:
+            native = SetItemTypeSlots()
+            mock_context = MagicMock()
+            mock_unit = MagicMock()
+            mock_unit.id = "unit_001"
+            mock_unit._item_type_slots = 11
 
-        assert result == 5
-        mock_unit.set_item_type_slots.assert_called_once_with(5)
+            result = native.execute(mock_context, mock_unit, 5)
+
+            assert result == 5
+            assert mock_unit._item_type_slots == 5
+        finally:
+            # 恢复全局变量
+            unit_module.MAX_ITEM_TYPE_SLOTS = original_max
 
     def test_returns_zero_for_none_unit(self):
         """测试单位对象为None时返回0。"""
@@ -96,16 +105,25 @@ class TestSetUnitTypeSlots:
 
     def test_set_valid_slots(self):
         """测试为单位设置有效的槽位数。"""
-        native = SetUnitTypeSlots()
-        mock_context = MagicMock()
-        mock_unit = MagicMock()
-        mock_unit.id = "unit_002"
-        mock_unit.set_unit_type_slots.return_value = 7
+        from jass_runner.natives import unit as unit_module
+        # 重置全局变量为默认值
+        original_max = unit_module.MAX_UNIT_TYPE_SLOTS
+        unit_module.MAX_UNIT_TYPE_SLOTS = 11
 
-        result = native.execute(mock_context, mock_unit, 7)
+        try:
+            native = SetUnitTypeSlots()
+            mock_context = MagicMock()
+            mock_unit = MagicMock()
+            mock_unit.id = "unit_002"
+            mock_unit._unit_type_slots = 11
 
-        assert result == 7
-        mock_unit.set_unit_type_slots.assert_called_once_with(7)
+            result = native.execute(mock_context, mock_unit, 7)
+
+            assert result == 7
+            assert mock_unit._unit_type_slots == 7
+        finally:
+            # 恢复全局变量
+            unit_module.MAX_UNIT_TYPE_SLOTS = original_max
 
     def test_returns_zero_for_none_unit(self):
         """测试单位对象为None时返回0。"""

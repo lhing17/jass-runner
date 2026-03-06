@@ -7,7 +7,7 @@ import logging
 from typing import TYPE_CHECKING
 
 from .base import NativeFunction
-from .unit import MAX_ITEM_TYPE_SLOTS, MAX_UNIT_TYPE_SLOTS
+from . import unit as unit_module
 
 if TYPE_CHECKING:
     from .state import StateContext
@@ -33,9 +33,8 @@ class SetAllItemTypeSlots(NativeFunction):
         返回：
             实际设置的最大槽位数（会被截断到 0-11 范围）
         """
-        global MAX_ITEM_TYPE_SLOTS
         actual_slots = max(0, min(slots, 11))
-        MAX_ITEM_TYPE_SLOTS = actual_slots
+        unit_module.MAX_ITEM_TYPE_SLOTS = actual_slots
         logger.info(f"[SetAllItemTypeSlots] 设置全局物品类型最大槽位数为: {actual_slots}")
         return actual_slots
 
@@ -57,9 +56,8 @@ class SetAllUnitTypeSlots(NativeFunction):
         返回：
             实际设置的最大槽位数（会被截断到 0-11 范围）
         """
-        global MAX_UNIT_TYPE_SLOTS
         actual_slots = max(0, min(slots, 11))
-        MAX_UNIT_TYPE_SLOTS = actual_slots
+        unit_module.MAX_UNIT_TYPE_SLOTS = actual_slots
         logger.info(f"[SetAllUnitTypeSlots] 设置全局单位类型最大槽位数为: {actual_slots}")
         return actual_slots
 
@@ -86,7 +84,8 @@ class SetItemTypeSlots(NativeFunction):
             logger.warning("[SetItemTypeSlots] 单位对象为 None")
             return 0
 
-        actual_slots = unit.set_item_type_slots(slots)
+        actual_slots = max(0, min(slots, unit_module.MAX_ITEM_TYPE_SLOTS))
+        unit._item_type_slots = actual_slots
         logger.info(f"[SetItemTypeSlots] 单位{unit.id} 设置物品类型槽位数为: {actual_slots}")
         return actual_slots
 
@@ -113,6 +112,7 @@ class SetUnitTypeSlots(NativeFunction):
             logger.warning("[SetUnitTypeSlots] 单位对象为 None")
             return 0
 
-        actual_slots = unit.set_unit_type_slots(slots)
+        actual_slots = max(0, min(slots, unit_module.MAX_UNIT_TYPE_SLOTS))
+        unit._unit_type_slots = actual_slots
         logger.info(f"[SetUnitTypeSlots] 单位{unit.id} 设置单位类型槽位数为: {actual_slots}")
         return actual_slots
