@@ -433,7 +433,8 @@ jass-runner/
 │   │   ├── version_natives.py # 版本系统Native函数
 │   │   ├── gamestate_event_natives.py # 游戏状态事件Native函数
 │   │   ├── rect_natives.py # Rect区域Native函数
-│   │   └── camera.py # 相机相关Native函数
+│   │   ├── camera.py # 相机相关Native函数
+│   │   └── player_tech_natives.py # 玩家科技Native函数
 │   ├── trigger/          # 触发器系统
 │   │   ├── __init__.py   # 模块初始化
 │   │   ├── trigger.py    # Trigger类
@@ -632,6 +633,12 @@ jass-runner/
     - 通过HandleManager管理生命周期
     - MoveRectTo保持矩形尺寸不变，只改变中心位置
     - 支持直接传入Rect对象或handle ID进行查询
+16. **玩家科技系统设计**：
+    - TechId使用FourCC整数格式（如'Hpal'→1214542384），与单位类型ID一致
+    - 独立字典存储：`_tech_max_allowed`存储最大允许等级，`_tech_researched`存储当前研究等级
+    - 等级无限制，支持任意等级（与魔兽争霸3中科技等级通常1-5不同）
+    - `GetPlayerTechResearched`在等级>0时返回true，表示科技已研究
+    - 多玩家科技状态完全隔离，每个Player实例独立管理
 
 ## 待解决问题
 
@@ -988,6 +995,35 @@ jass-runner/
 - ✅ **Rect核心Native函数实现完成** (2026-03-05)
   - 10个Rect函数：构造、修改、查询
   - 所有 851 个测试通过
+- ✅ **玩家科技系统实现完成** (2026-03-06)
+  - 6个玩家科技Native函数
+  - 所有 874 个测试通过
+
+#### 60. 玩家科技系统Native函数实现完成 (2026-03-06)
+- **新增组件**:
+  - `player_tech_natives.py` - 6个玩家科技相关Native函数
+  - Player类科技状态管理 - 两个字典存储科技等级
+- **新增Native函数** (6个):
+  - `SetPlayerTechMaxAllowed` - 设置科技最大允许等级
+  - `GetPlayerTechMaxAllowed` - 获取科技最大允许等级
+  - `AddPlayerTechResearched` - 增加科技研究等级
+  - `SetPlayerTechResearched` - 设置科技研究等级
+  - `GetPlayerTechResearched` - 检查科技是否已研究（返回boolean）
+  - `GetPlayerTechCount` - 获取科技研究等级（返回integer）
+- **关键设计**:
+  - TechId使用FourCC整数格式（如'Hpal'→1214542384）
+  - 独立字典存储：`_tech_max_allowed`和`_tech_researched`
+  - 等级无限制，支持任意等级
+  - 多玩家科技状态完全隔离
+- **修改文件**:
+  - `src/jass_runner/natives/player.py` - 添加科技状态字典和6个管理方法
+  - `src/jass_runner/natives/player_tech_natives.py` - 新建，实现6个native函数
+  - `src/jass_runner/natives/factory.py` - 注册6个新函数
+  - `src/jass_runner/natives/__init__.py` - 导出6个新函数
+- **测试覆盖**:
+  - 单元测试: Player类科技功能（6个）、Native函数（13个）、Factory（7个）
+  - 集成测试: 完整流程、多玩家隔离、多科技管理（3个）
+- **测试统计**: 所有 874 个测试通过
 
 #### 42. 类型检查系统实现完成 (2026-03-02)
 - **核心组件**:
@@ -1354,4 +1390,4 @@ jass-runner/
 
 
 ---
-*最后更新: 2026-03-05*
+*最后更新: 2026-03-06*

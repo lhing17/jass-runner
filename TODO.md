@@ -206,8 +206,11 @@
 - [x] **P3** [Simulator] Rect区域系统支持 ✅ 已完成（2026-03-05）
   - [x] Rect类和10个相关Native函数
   - [x] 支持构造、修改、查询操作
+- [x] **P3** [Simulator] 玩家科技系统 ✅ 已完成（2026-03-06）
+  - [x] 6个玩家科技Native函数（SetPlayerTechMaxAllowed, GetPlayerTechMaxAllowed等）
+  - [x] Player类科技状态管理
 - [ ] **P3** [Simulator] 完整的common.j模拟
-  - [ ] 覆盖80%+的common.j函数（当前约20%）
+  - [ ] 覆盖80%+的common.j函数（当前约25%）
   - [ ] 完整的Blz（Blizzard）API支持
 - [ ] **P3** [Integration] 编辑器集成
   - [ ] VS Code插件
