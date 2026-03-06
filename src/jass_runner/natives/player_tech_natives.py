@@ -109,3 +109,34 @@ class AddPlayerTechResearched(NativeFunction):
         new_level = whichPlayer.get_tech_count(techid, False)
         logger.info(f"[AddPlayerTechResearched] 玩家{whichPlayer.player_id} 科技{techid} 增加{levels}级，当前等级{new_level}")
         return None
+
+
+class SetPlayerTechResearched(NativeFunction):
+    """设置玩家科技研究等级。"""
+
+    @property
+    def name(self) -> str:
+        """获取native函数名称。
+
+        返回：
+            函数名称 "SetPlayerTechResearched"
+        """
+        return "SetPlayerTechResearched"
+
+    def execute(self, state_context: 'StateContext', whichPlayer: 'Player',
+                techid: int, setToLevel: int) -> None:
+        """执行SetPlayerTechResearched native函数。
+
+        参数：
+            state_context: 状态上下文
+            whichPlayer: 玩家对象
+            techid: 科技ID（FourCC格式）
+            setToLevel: 要设置的等级
+        """
+        if whichPlayer is None:
+            logger.warning("[SetPlayerTechResearched] 玩家对象为None")
+            return None
+
+        whichPlayer.set_tech_researched(techid, setToLevel)
+        logger.info(f"[SetPlayerTechResearched] 玩家{whichPlayer.player_id} 科技{techid} 等级设为{setToLevel}")
+        return None

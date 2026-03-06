@@ -2,7 +2,7 @@
 
 import pytest
 from unittest.mock import MagicMock
-from src.jass_runner.natives.player_tech_natives import SetPlayerTechMaxAllowed, GetPlayerTechMaxAllowed, AddPlayerTechResearched
+from src.jass_runner.natives.player_tech_natives import SetPlayerTechMaxAllowed, GetPlayerTechMaxAllowed, AddPlayerTechResearched, SetPlayerTechResearched
 from src.jass_runner.natives.player import Player
 
 
@@ -83,4 +83,27 @@ class TestAddPlayerTechResearched:
         state_context = MagicMock()
 
         result = native.execute(state_context, None, 1214542384, 2)
+        assert result is None
+
+
+class TestSetPlayerTechResearched:
+    """测试SetPlayerTechResearched native函数。"""
+
+    def test_set_player_tech_researched(self):
+        """测试设置玩家科技研究等级。"""
+        native = SetPlayerTechResearched()
+        state_context = MagicMock()
+        player = Player("test_handle", 0)
+        tech_id = 1214542384
+
+        result = native.execute(state_context, player, tech_id, 5)
+        assert result is None
+        assert player.get_tech_count(tech_id, False) == 5
+
+    def test_set_player_tech_researched_none_player(self):
+        """测试player为None时的处理。"""
+        native = SetPlayerTechResearched()
+        state_context = MagicMock()
+
+        result = native.execute(state_context, None, 1214542384, 5)
         assert result is None
