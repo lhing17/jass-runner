@@ -134,6 +134,10 @@ from .player_controller_natives import (
     GetPlayerController,
     ConvertMapControl,
 )
+from .player_slot_state_natives import (
+    GetPlayerSlotState,
+    ConvertPlayerSlotState,
+)
 
 
 class NativeFactory:
@@ -405,5 +409,9 @@ class NativeFactory:
         # 注册玩家控制器相关 native 函数
         registry.register(GetPlayerController())
         registry.register(ConvertMapControl())
+
+        # 注册玩家插槽状态相关 native 函数
+        registry.register(GetPlayerSlotState())
+        registry.register(ConvertPlayerSlotState())
 
         return registry
