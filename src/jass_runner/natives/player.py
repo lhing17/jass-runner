@@ -37,7 +37,13 @@ class Player(Handle):
         self.race = "human"  # 默认人类
         self.color = player_id  # 默认颜色等于ID
         self.slot_state = "player" if player_id < 12 else "empty"  # 0-11为玩家，12-15为空
-        self.controller = "user" if player_id < 8 else "computer" if player_id < 12 else "neutral"
+        # MAP_CONTROL_USER=0, MAP_CONTROL_COMPUTER=1, MAP_CONTROL_NEUTRAL=3
+        if player_id < 8:
+            self.controller = 0  # MAP_CONTROL_USER
+        elif player_id < 12:
+            self.controller = 1  # MAP_CONTROL_COMPUTER
+        else:
+            self.controller = 3  # MAP_CONTROL_NEUTRAL
         self._allies: Set[int] = set()  # 盟友玩家ID集合
         self._enemies: Set[int] = set()  # 敌人玩家ID集合
         # 资源属性（最小集）
