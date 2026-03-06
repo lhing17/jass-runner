@@ -540,7 +540,7 @@ class TriggerEvaluate(NativeFunction):
             return False
 
         # 评估条件
-        result = trigger.evaluate_conditions()
+        result = trigger.evaluate_conditions(state_context)
         logger.info(f"[TriggerEvaluate] Trigger {trigger_id} evaluation result: {result}")
         return result
 
