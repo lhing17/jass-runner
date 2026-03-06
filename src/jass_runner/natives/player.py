@@ -16,7 +16,7 @@ class Player(Handle):
         name: 玩家名称
         race: 种族（如'human', 'orc', 'undead', 'nightelf'）
         color: 玩家颜色ID
-        slot_state: 插槽状态（'empty', 'closed', 'player'）
+        slot_state: 插槽状态（0=EMPTY, 1=PLAYING, 2=LEFT）
         controller: 控制器类型（'user', 'computer', 'neutral', 'rescueable'）
         _gold, _lumber: 黄金和木材
         _food_cap, _food_used: 人口上限和已用人口
@@ -36,7 +36,11 @@ class Player(Handle):
         self.name = f"玩家{player_id}"
         self.race = "human"  # 默认人类
         self.color = player_id  # 默认颜色等于ID
-        self.slot_state = "player" if player_id < 12 else "empty"  # 0-11为玩家，12-15为空
+        # PLAYER_SLOT_STATE_EMPTY=0, PLAYER_SLOT_STATE_PLAYING=1, PLAYER_SLOT_STATE_LEFT=2
+        if player_id < 12:
+            self.slot_state = 1  # PLAYER_SLOT_STATE_PLAYING
+        else:
+            self.slot_state = 0  # PLAYER_SLOT_STATE_EMPTY
         # MAP_CONTROL_USER=0, MAP_CONTROL_COMPUTER=1, MAP_CONTROL_NEUTRAL=3
         if player_id < 8:
             self.controller = 0  # MAP_CONTROL_USER
