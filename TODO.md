@@ -212,6 +212,9 @@
 - [x] **P3** [Simulator] 玩家控制器Native函数 ✅ 已完成（2026-03-06）
   - [x] GetPlayerController和ConvertMapControl函数
   - [x] Player.controller改为整数类型
+- [x] **P3** [Simulator] 玩家插槽状态Native函数 ✅ 已完成（2026-03-06）
+  - [x] GetPlayerSlotState和ConvertPlayerSlotState函数
+  - [x] Player.slot_state改为整数类型
 - [ ] **P3** [Simulator] 完整的common.j模拟
   - [ ] 覆盖80%+的common.j函数（当前约25%）
   - [ ] 完整的Blz（Blizzard）API支持

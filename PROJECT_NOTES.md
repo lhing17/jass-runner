@@ -435,7 +435,8 @@ jass-runner/
 │   │   ├── rect_natives.py # Rect区域Native函数
 │   │   ├── camera.py # 相机相关Native函数
 │   │   ├── player_tech_natives.py # 玩家科技Native函数
-│   │   └── player_controller_natives.py # 玩家控制器Native函数
+│   │   ├── player_controller_natives.py # 玩家控制器Native函数
+│   │   └── player_slot_state_natives.py # 玩家插槽状态Native函数
 │   ├── trigger/          # 触发器系统
 │   │   ├── __init__.py   # 模块初始化
 │   │   ├── trigger.py    # Trigger类
@@ -505,6 +506,7 @@ jass-runner/
 │   │   ├── test_unit_ownership_natives.py # 单位所有权测试
 │   │   ├── test_unit_range_natives.py # 单位范围检测测试
 │   │   ├── test_player_controller_natives.py # 玩家控制器Native函数测试
+│   │   ├── test_player_slot_state_natives.py # 玩家插槽状态Native函数测试
 │   │   └── test_item_inventory_natives.py # 物品背包系统测试
 │   ├── trigger/         # 触发器测试
 │   │   ├── test_event_types.py    # 事件类型测试
@@ -646,6 +648,11 @@ jass-runner/
     - player_id映射规则：<8为USER，8-11为COMPUTER，>=12为NEUTRAL
     - ConvertMapControl作为类型转换函数，直接返回传入的整数
     - 支持integer到mapcontrol的隐式类型转换
+18. **玩家插槽状态类型设计**：
+    - Player.slot_state从字符串改为整数（0=EMPTY, 1=PLAYING, 2=LEFT），与JASS常量定义一致
+    - player_id映射规则：<12为PLAYING，>=12为EMPTY
+    - ConvertPlayerSlotState作为类型转换函数，直接返回传入的整数
+    - 支持integer到playerslotstate的隐式类型转换
 
 ## 待解决问题
 
@@ -1009,6 +1016,10 @@ jass-runner/
   - GetPlayerController和ConvertMapControl函数
   - Player.controller改为整数类型
   - 所有 887 个测试通过
+- ✅ **玩家插槽状态Native函数实现完成** (2026-03-06)
+  - GetPlayerSlotState和ConvertPlayerSlotState函数
+  - Player.slot_state改为整数类型
+  - 所有 903 个测试通过
 
 #### 60. 玩家科技系统Native函数实现完成 (2026-03-06)
 - **新增组件**:
@@ -1430,6 +1441,31 @@ jass-runner/
 *最后更新: 2026-03-06*
 
 ---
+
+#### 62. 玩家插槽状态Native函数实现完成 (2026-03-06)
+- **新增组件**:
+  - `player_slot_state_natives.py` - 2个玩家插槽状态相关Native函数
+  - Player类slot_state属性改为整数类型（0=EMPTY, 1=PLAYING, 2=LEFT）
+- **新增Native函数** (2个):
+  - `GetPlayerSlotState` - 获取玩家插槽状态（返回playerslotstate）
+  - `ConvertPlayerSlotState` - 将整数转换为playerslotstate类型
+- **关键设计**:
+  - Player.slot_state从字符串改为整数，与JASS常量定义一致
+  - player_id < 12: PLAYER_SLOT_STATE_PLAYING (1)
+  - player_id >= 12: PLAYER_SLOT_STATE_EMPTY (0)
+  - ConvertPlayerSlotState直接返回传入的整数（类型转换函数）
+  - 支持integer到playerslotstate的隐式类型转换
+- **修改文件**:
+  - `src/jass_runner/natives/player.py` - 修改slot_state属性为整数类型
+  - `src/jass_runner/natives/player_slot_state_natives.py` - 新建，实现2个native函数
+  - `src/jass_runner/natives/factory.py` - 注册2个新函数
+  - `src/jass_runner/types/checker.py` - 添加integer→playerslotstate隐式转换
+  - `tests/natives/test_factory.py` - 更新函数数量统计(170→172个)
+  - `tests/natives/test_handle.py` - 更新slot_state断言（字符串→整数）
+- **测试覆盖**:
+  - 单元测试: GetPlayerSlotState（5个）、ConvertPlayerSlotState（4个）
+  - 集成测试: 玩家插槽状态完整流程（7个）
+- **测试统计**: 所有 903 个测试通过
 
 #### 61. 玩家控制器Native函数实现完成 (2026-03-06)
 - **新增组件**:
