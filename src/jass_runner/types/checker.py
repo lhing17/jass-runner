@@ -17,6 +17,7 @@ class TypeChecker:
 
     # 允许的隐式转换规则: {目标类型: [允许的来源类型列表]}
     _ALLOWED_IMPLICIT_CONVERSIONS = {
+        'mapcontrol': ['integer'],
         'real': ['integer'],
     }
 

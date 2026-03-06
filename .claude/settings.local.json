@@ -42,7 +42,9 @@
       "Bash(move testscoroutinetest_imports.py testscoroutinetest_coroutine_imports.py)",
       "Bash(move:*)",
       "Bash(git stash:*)",
-      "WebSearch"
+      "WebSearch",
+      "Bash(grep:*)",
+      "Bash(git pull:*)"
     ]
   }
 }

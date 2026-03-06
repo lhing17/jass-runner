@@ -87,7 +87,7 @@ def test_player_class():
     assert player.race == "human"
     assert player.color == 0
     assert player.slot_state == "player"
-    assert player.controller == "user"
+    assert player.controller == 0  # MAP_CONTROL_USER
 
 
 def test_player_default_values():
@@ -97,13 +97,13 @@ def test_player_default_values():
     # 测试玩家8-11（电脑）
     for i in range(8, 12):
         player = Player(f"player_{i}", i)
-        assert player.controller == "computer"
+        assert player.controller == 1  # MAP_CONTROL_COMPUTER
         assert player.slot_state == "player"
 
     # 测试玩家12-15（中立/空）
     for i in range(12, 16):
         player = Player(f"player_{i}", i)
-        assert player.controller == "neutral"
+        assert player.controller == 3  # MAP_CONTROL_NEUTRAL
         assert player.slot_state == "empty"
 
 
