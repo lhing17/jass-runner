@@ -581,6 +581,8 @@ class Evaluator:
                         func = interpreter.functions[func_name]
                         if isinstance(func, FunctionDecl):
                             interpreter.execute_function(func)
+                # 设置函数名属性，便于日志记录
+                callback_wrapper.__name__ = func_name
                 return callback_wrapper
 
             # 处理变量引用

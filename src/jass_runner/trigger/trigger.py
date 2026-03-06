@@ -42,11 +42,12 @@ class Trigger:
         """
         return f"{prefix}{uuid.uuid4().hex[:8]}"
 
-    def add_action(self, action_func: Callable) -> str:
+    def add_action(self, action_func: Callable, func_name: str = None) -> str:
         """添加动作到触发器。
 
         参数：
             action_func: 动作函数，接收state_context参数
+            func_name: 可选的函数名，用于日志记录
 
         返回：
             动作handle字符串（格式：action_ + uuid前8位）
@@ -54,7 +55,8 @@ class Trigger:
         handle = self._generate_handle("action_")
         self.actions.append({
             "handle": handle,
-            "func": action_func
+            "func": action_func,
+            "func_name": func_name or getattr(action_func, '__name__', None)
         })
         return handle
 
@@ -179,8 +181,15 @@ class Trigger:
                 action["func"](state_context)
             except Exception as e:
                 # 记录异常但继续执行后续动作
-                logger.warning(
-                    f"动作执行出错 [trigger_id={self.trigger_id}, "
-                    f"action={action['handle']}]: {e}"
-                )
+                func_name = action.get('func_name')
+                if func_name:
+                    logger.warning(
+                        f"动作执行出错 [trigger_id={self.trigger_id}, "
+                        f"action='{func_name}' ({action['handle']})]: {e}"
+                    )
+                else:
+                    logger.warning(
+                        f"动作执行出错 [trigger_id={self.trigger_id}, "
+                        f"action={action['handle']}]: {e}"
+                    )
                 continue

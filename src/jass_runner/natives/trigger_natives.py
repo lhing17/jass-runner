@@ -260,7 +260,11 @@ class TriggerAddAction(NativeFunction):
 
         # 添加动作
         action_handle = trigger.add_action(action_func)
-        logger.info(f"[TriggerAddAction] Added action {action_handle} to trigger {trigger_id}")
+        func_name = getattr(action_func, '__name__', None)
+        if func_name:
+            logger.info(f"[TriggerAddAction] Added action '{func_name}' ({action_handle}) to trigger {trigger_id}")
+        else:
+            logger.info(f"[TriggerAddAction] Added action {action_handle} to trigger {trigger_id}")
         return action_handle
 
 
