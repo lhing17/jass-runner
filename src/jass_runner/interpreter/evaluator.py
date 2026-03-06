@@ -17,6 +17,18 @@ class OperatorPrecedence:
     UNARY = 7
 
 
+class FunctionResult:
+    """包装函数调用结果，用于在表达式求值中传递对象。"""
+    def __init__(self, value):
+        self.value = value
+
+    def __str__(self):
+        return str(self.value)
+
+    def __repr__(self):
+        return f"FunctionResult({self.value!r})"
+
+
 class Evaluator:
     """求值JASS表达式。"""
 
@@ -59,13 +71,30 @@ class Evaluator:
                 i += 1
                 continue
 
-            # 处理字符串字面量
+            # 处理字符串字面量（双引号）
             if expression[i] == '"':
                 j = i + 1
                 while j < len(expression) and expression[j] != '"':
                     j += 1
                 tokens.append(expression[i:j+1])
                 i = j + 1
+                continue
+
+            # 处理单引号（四字符码）
+            if expression[i] == "'":
+                j = i + 1
+                # 四字符码：'xxxx'，其中 xxxx 是恰好4个字符
+                while j < len(expression) and expression[j] != "'":
+                    j += 1
+                # 包含首尾单引号
+                tokens.append(expression[i:j+1])
+                i = j + 1
+                continue
+
+            # 处理逗号（函数参数分隔符）
+            if expression[i] == ',':
+                tokens.append(',')
+                i += 1
                 continue
 
             # 处理运算符和括号
@@ -117,15 +146,24 @@ class Evaluator:
         返回：
             解析后的值
         """
+        # 如果是 FunctionResult，解包值
+        if isinstance(token, FunctionResult):
+            return token.value
+
         # 如果token已经是解析后的值（如int、float等），直接返回
         if not isinstance(token, str):
             return token
 
         token = token.strip()
 
-        # 处理字符串字面量
+        # 处理字符串字面量（双引号）
         if token.startswith('"') and token.endswith('"'):
             return token[1:-1]
+
+        # 处理四字符码（单引号，如 'Rhrt'）
+        if token.startswith("'") and token.endswith("'"):
+            from ..utils import fourcc_to_int
+            return fourcc_to_int(token[1:-1])  # 去掉首尾单引号
 
         # 处理整数字面量
         if token.isdigit():
@@ -268,6 +306,7 @@ class Evaluator:
                     if tokens[i] == '(':
                         paren_depth += 1
                         arg_tokens.append(tokens[i])
+                        i += 1
                     elif tokens[i] == ')':
                         paren_depth -= 1
                         if paren_depth == 0:
@@ -280,6 +319,7 @@ class Evaluator:
                             break
                         else:
                             arg_tokens.append(tokens[i])
+                            i += 1
                     elif tokens[i] == ',' and paren_depth == 1:
                         # 参数分隔符
                         if arg_tokens:
@@ -295,7 +335,8 @@ class Evaluator:
                 from ..parser.ast_nodes import NativeCallNode
                 call_node = NativeCallNode(func_name=func_name, args=func_args)
                 func_result = self.evaluate_native_call(call_node)
-                processed_tokens.append(str(func_result))
+                # 使用 FunctionResult 包装结果，避免转换为字符串
+                processed_tokens.append(FunctionResult(func_result))
             else:
                 processed_tokens.append(token)
                 i += 1
@@ -380,7 +421,14 @@ class Evaluator:
             else:
                 eval_stack.append(token)
 
-        return eval_stack[0] if eval_stack else None
+        if not eval_stack:
+            return None
+
+        # 如果结果是 FunctionResult，解包它
+        result = eval_stack[0]
+        if isinstance(result, FunctionResult):
+            return result.value
+        return result
 
     def evaluate_native_call(self, node):
         """求值原生函数调用。"""
@@ -396,9 +444,15 @@ class Evaluator:
                 # 例如: ['11520.0', '-', NativeCallNode(...)]
                 result = self._evaluate_mixed_list(arg)
                 args.append(result)
-            else:
-                # 字符串或节点，需要求值
+            elif isinstance(arg, str):
+                # 字符串需要求值
                 args.append(self.evaluate(arg))
+            elif hasattr(arg, 'func_name'):
+                # NativeCallNode，递归求值
+                args.append(self.evaluate_native_call(arg))
+            else:
+                # 其他类型（如对象），直接使用
+                args.append(arg)
 
         # 从上下文中获取原生函数
         native_func = self.context.get_native_function(func_name)
@@ -476,16 +530,20 @@ class Evaluator:
         if isinstance(expression, str):
             expression = expression.strip()
 
-            # 检查是否包含算术运算符、比较运算符或逻辑运算符
+            # 检查是否包含算术运算符、比较运算符、逻辑运算符或函数调用
             operators = ['+', '-', '*', '/', '==', '!=', '>', '<', '>=', '<=', 'and', 'or', 'not']
-            if any(op in expression for op in operators):
+            has_operator = any(op in expression for op in operators)
+            has_function_call = '(' in expression and ')' in expression
+
+            if has_operator or has_function_call:
                 # 确保不是字符串字面量或函数引用
                 if not (expression.startswith('"') and expression.endswith('"')) and \
                    not expression.startswith('function:'):
                     tokens = self._tokenize_expression(expression)
                     # 检查是否包含一元运算符（如not true只有2个token）
                     has_unary = any(t in self.UNARY_OPERATORS for t in tokens)
-                    if len(tokens) >= 3 or (len(tokens) == 2 and has_unary):
+                    # 对于函数调用（如Player(0)），只要有括号就处理
+                    if has_function_call or len(tokens) >= 3 or (len(tokens) == 2 and has_unary):
                         return self._parse_and_evaluate(tokens)
 
             # 处理字符串字面量
