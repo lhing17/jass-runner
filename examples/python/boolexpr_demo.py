@@ -7,7 +7,7 @@ import sys
 import os
 
 # 添加 src 到路径
-sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..', 'src'))
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..', '..', 'src'))
 
 from jass_runner.natives.factory import NativeFactory
 from jass_runner.natives.manager import HandleManager

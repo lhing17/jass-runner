@@ -4,7 +4,7 @@ def test_parse_example_script():
     """Test parsing the example script."""
     from src.jass_runner.parser.parser import Parser
 
-    with open('examples/hello_world.j', 'r', encoding='utf-8') as f:
+    with open('examples/jass/hello_world.j', 'r', encoding='utf-8') as f:
         code = f.read()
 
     parser = Parser(code)

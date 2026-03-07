@@ -15,7 +15,7 @@ pip install -e ".[dev]"
 ### 运行示例脚本
 
 ```bash
-python -m jass_runner examples/hello_world.j
+python -m jass_runner examples/jass/hello_world.j
 ```
 
 ## 状态管理系统

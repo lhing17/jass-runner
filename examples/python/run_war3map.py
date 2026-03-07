@@ -13,7 +13,7 @@ def run_war3map():
     
     # 确定文件路径
     current_dir = os.path.dirname(os.path.abspath(__file__))
-    project_root = os.path.dirname(current_dir)
+    project_root = os.path.dirname(os.path.dirname(current_dir))
     war3map_path = os.path.join(project_root, 'resources', 'war3map.j')
     
     if not os.path.exists(war3map_path):
@@ -45,7 +45,7 @@ def run_war3map():
 if __name__ == "__main__":
     # 添加 src 目录到 Python 路径，以便能导入 jass_runner
     current_dir = os.path.dirname(os.path.abspath(__file__))
-    src_dir = os.path.join(os.path.dirname(current_dir), 'src')
+    src_dir = os.path.join(os.path.dirname(os.path.dirname(current_dir)), 'src')
     if src_dir not in sys.path:
         sys.path.insert(0, src_dir)
         

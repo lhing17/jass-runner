@@ -126,7 +126,8 @@ jass-runner/
 ├── tests/                # Test code
 │   └── __init__.py       # Test package
 ├── examples/             # Example scripts
-│   └── hello_world.j     # Simple example
+│   ├── jass/             # JASS scripts
+│   └── python/           # Python runner scripts
 └── docs/plans/          # Implementation plan documents
     ├── 2026-02-24-jass-simulator-design.md
     ├── 2026-02-24-jass-simulator-phase1-setup.md
@@ -188,10 +189,10 @@ More examples in [examples/](examples/) directory.
 
 ## Examples
 
-### Simple Example (examples/hello_world.j)
+### Simple Example (examples/jass/hello_world.j)
 
 ```jass
-// examples/hello_world.j
+// examples/jass/hello_world.j
 // Simple JASS test script
 
 function main takes nothing returns nothing
@@ -203,10 +204,10 @@ endfunction
 
 ```bash
 # Run via CLI
-jass-runner examples/hello_world.j
+jass-runner examples/jass/hello_world.j
 
 # Or via Python script
-python examples/run_complete_example.py
+python examples/python/run_complete_example.py
 ```
 
 ## Extending Development

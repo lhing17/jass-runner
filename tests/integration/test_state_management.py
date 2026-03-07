@@ -11,7 +11,7 @@ from jass_runner.parser.parser import Parser
 def test_state_management_end_to_end():
     """测试状态管理系统的端到端功能。"""
     # 加载测试脚本
-    script_path = os.path.join(os.path.dirname(__file__), "../../examples/state_management_test.j")
+    script_path = os.path.join(os.path.dirname(__file__), "../../examples/jass/state_management_test.j")
     with open(script_path, "r", encoding="utf-8") as f:
         code = f.read()
 

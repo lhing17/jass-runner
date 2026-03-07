@@ -6,7 +6,7 @@
 
 import sys
 import os
-sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..', 'src'))
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..', '..', 'src'))
 
 import logging
 from jass_runner.vm.jass_vm import JassVM
@@ -21,7 +21,7 @@ def run_example(script_name, title, simulate_seconds=0):
         simulate_seconds: 需要模拟运行的秒数，0表示不模拟
     """
     # 读取 JASS 脚本
-    script_path = os.path.join(os.path.dirname(__file__), script_name)
+    script_path = os.path.join(os.path.dirname(__file__), '../jass', script_name)
     if not os.path.exists(script_path):
         print(f"Error: Script not found: {script_path}")
         return False

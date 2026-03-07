@@ -118,7 +118,8 @@ jass-runner/
 ├── tests/                # 测试代码
 │   └── __init__.py       # 测试包
 ├── examples/             # 示例脚本
-│   └── hello_world.j     # 简单示例
+│   ├── jass/             # JASS 脚本
+│   └── python/           # Python 运行脚本
 └── docs/plans/          # 实施计划文档
     ├── 2026-02-24-jass-simulator-design.md
     ├── 2026-02-24-jass-simulator-phase1-setup.md
@@ -140,10 +141,10 @@ jass-runner/
 
 ## 示例
 
-### 简单示例 (examples/hello_world.j)
+### 简单示例 (examples/jass/hello_world.j)
 
 ```jass
-// examples/hello_world.j
+// examples/jass/hello_world.j
 // 简单的JASS测试脚本
 
 function main takes nothing returns nothing
@@ -155,10 +156,10 @@ endfunction
 
 ```bash
 # 通过CLI运行示例
-jass-runner examples/hello_world.j
+jass-runner examples/jass/hello_world.j
 
 # 或通过Python脚本
-python examples/run_complete_example.py
+python examples/python/run_complete_example.py
 ```
 
 ## 扩展开发

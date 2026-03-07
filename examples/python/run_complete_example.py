@@ -2,7 +2,7 @@
 
 import sys
 import os
-sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..', 'src'))
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..', '..', 'src'))
 
 import logging
 from jass_runner.vm.jass_vm import JassVM
@@ -13,7 +13,7 @@ def main():
     logging.basicConfig(level=logging.INFO, format='%(message)s')
 
     # 读取 JASS 脚本
-    script_path = os.path.join(os.path.dirname(__file__), 'complete_example.j')
+    script_path = os.path.join(os.path.dirname(__file__), '../jass/complete_example.j')
     with open(script_path, 'r', encoding='utf-8') as f:
         jass_code = f.read()
 
