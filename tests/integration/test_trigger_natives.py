@@ -235,3 +235,110 @@ class TestTriggerNativesIntegration:
         # 验证：触发器已销毁
         trigger = state_context.trigger_manager.get_trigger(trigger_id)
         assert trigger is None, "销毁后触发器应该不存在"
+
+    def test_trigger_execute_native_integration(self, state_context, registry):
+        """测试手动执行触发器动作。
+
+        验证流程：
+        1. 创建触发器
+        2. 使用TriggerAddAction添加动作
+        3. 使用TriggerExecute手动执行触发器
+        4. 验证动作被执行
+        """
+        # 准备
+        create_trigger = registry.get("CreateTrigger")
+        add_action = registry.get("TriggerAddAction")
+        execute_trigger = registry.get("TriggerExecute")
+
+        trigger_id = create_trigger.execute(state_context)
+
+        # 标记动作执行次数
+        action_executed = []
+
+        def action_func(state_context):
+            action_executed.append(True)
+
+        # 添加动作
+        add_action.execute(state_context, trigger_id, action_func)
+
+        # 执行：手动执行触发器
+        result = execute_trigger.execute(state_context, trigger_id)
+
+        # 验证
+        assert result is None, "TriggerExecute应该返回None"
+        assert len(action_executed) == 1, "动作应该被执行一次"
+
+    def test_trigger_execute_with_multiple_actions(self, state_context, registry):
+        """测试TriggerExecute执行多个动作。
+
+        验证流程：
+        1. 创建触发器
+        2. 添加多个动作
+        3. 执行触发器
+        4. 验证所有动作都被执行
+        """
+        # 准备
+        create_trigger = registry.get("CreateTrigger")
+        add_action = registry.get("TriggerAddAction")
+        execute_trigger = registry.get("TriggerExecute")
+
+        trigger_id = create_trigger.execute(state_context)
+
+        # 标记动作执行顺序
+        execution_order = []
+
+        def action_func_1(state_context):
+            execution_order.append(1)
+
+        def action_func_2(state_context):
+            execution_order.append(2)
+
+        def action_func_3(state_context):
+            execution_order.append(3)
+
+        # 添加多个动作
+        add_action.execute(state_context, trigger_id, action_func_1)
+        add_action.execute(state_context, trigger_id, action_func_2)
+        add_action.execute(state_context, trigger_id, action_func_3)
+
+        # 执行
+        execute_trigger.execute(state_context, trigger_id)
+
+        # 验证
+        assert execution_order == [1, 2, 3], "动作应该按添加顺序执行"
+
+    def test_trigger_execute_does_not_evaluate_conditions(self, state_context, registry):
+        """测试TriggerExecute不评估条件直接执行动作。
+
+        验证流程：
+        1. 创建触发器
+        2. 添加返回False的条件
+        3. 添加动作
+        4. 执行TriggerExecute
+        5. 验证动作仍然被执行（不评估条件）
+        """
+        # 准备
+        create_trigger = registry.get("CreateTrigger")
+        add_action = registry.get("TriggerAddAction")
+        add_condition = registry.get("TriggerAddCondition")
+        execute_trigger = registry.get("TriggerExecute")
+
+        trigger_id = create_trigger.execute(state_context)
+
+        action_executed = []
+
+        def action_func(state_context):
+            action_executed.append(True)
+
+        def false_condition(state_context):
+            return False
+
+        # 添加条件和动作
+        add_condition.execute(state_context, trigger_id, false_condition)
+        add_action.execute(state_context, trigger_id, action_func)
+
+        # 执行
+        execute_trigger.execute(state_context, trigger_id)
+
+        # 验证：即使条件为False，动作仍然被执行
+        assert len(action_executed) == 1, "TriggerExecute应该不评估条件直接执行动作"
