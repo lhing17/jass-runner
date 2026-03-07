@@ -22,6 +22,7 @@ from .trigger_natives import (
     TriggerClearConditions,
     TriggerEvaluate,
     TriggerClearEvents,
+    TriggerExecute,
 )
 from .trigger_register_event_natives import (
     TriggerRegisterTimerEvent,
@@ -198,6 +199,7 @@ class NativeFactory:
 
         # 注册触发器事件管理native函数
         registry.register(TriggerClearEvents())
+        registry.register(TriggerExecute())
 
         # 注册触发器事件注册native函数
         registry.register(TriggerRegisterTimerEvent())
