@@ -538,3 +538,45 @@ class TestTriggerClearEvents:
 
         assert result is None
 
+
+class TestTriggerExecute:
+    """测试 TriggerExecute 原生函数。"""
+
+    def test_execute_trigger_returns_none(self, mock_state_context):
+        """测试 TriggerExecute 成功时返回None。"""
+        from jass_runner.natives.trigger_natives import TriggerExecute
+
+        mock_trigger = MagicMock()
+        mock_state_context.trigger_manager.get_trigger.return_value = mock_trigger
+
+        native = TriggerExecute()
+        assert native.name == "TriggerExecute"
+
+        result = native.execute(mock_state_context, "trigger_0")
+
+        assert result is None
+        mock_state_context.trigger_manager.get_trigger.assert_called_once_with("trigger_0")
+        mock_trigger.execute_actions.assert_called_once_with(mock_state_context)
+
+    def test_execute_trigger_invalid_trigger(self, mock_state_context):
+        """测试执行不存在的触发器返回None。"""
+        from jass_runner.natives.trigger_natives import TriggerExecute
+
+        mock_state_context.trigger_manager.get_trigger.return_value = None
+
+        native = TriggerExecute()
+        result = native.execute(mock_state_context, "trigger_invalid")
+
+        assert result is None
+
+    def test_execute_trigger_without_trigger_manager(self, mock_state_context):
+        """测试没有trigger_manager时执行触发器返回None。"""
+        from jass_runner.natives.trigger_natives import TriggerExecute
+
+        delattr(mock_state_context, 'trigger_manager')
+
+        native = TriggerExecute()
+        result = native.execute(mock_state_context, "trigger_0")
+
+        assert result is None
+
