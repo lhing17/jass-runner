@@ -49,7 +49,7 @@
 - [ ] **技能系统**: UnitAddAbility, GetUnitAbilityLevel（未来版本）
 
 ### 3.1 Warcraft III 原生 API (Native API)
-- [x] **触发器 API**: 实现 `TriggerRegister...`, `TriggerAddAction`, `TriggerEvaluate` 等。 ✅ 已完成（2026-03-01）
+- [x] **触发器 API**: 实现 `TriggerRegister...`, `TriggerAddAction`, `TriggerEvaluate`, `TriggerExecute` 等。 ✅ 已完成（2026-03-07）
 - [ ] **技能/Buff API**: 实现 `UnitAddAbility`, `GetUnitAbilityLevel` 等。
 - [ ] **物品交互 API**: 实现 `UnitAddItem`, `UnitUseItem` 等。
 - [ ] **命令系统 API**: 实现 `IssueOrder`, `IssueTargetOrder` 等。

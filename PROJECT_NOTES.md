@@ -1131,6 +1131,32 @@ jass-runner/
   - 集成测试: 技能格子槽位完整流程（7个测试）
 - **测试统计**: 所有 919 个测试通过
 
+#### 64. TriggerExecute Native函数实现完成 (2026-03-07)
+- **新增组件**:
+  - `TriggerExecute` 类 - 手动执行触发器动作的Native函数
+- **功能描述**:
+  - 执行触发器中已添加的所有action，不评估条件（强制触发模式）
+  - 与 `TriggerEvaluate` 形成互补（TriggerEvaluate仅评估条件不执行动作）
+  - 支持通过trigger_manager获取触发器并调用execute_actions方法
+- **关键设计**:
+  - 采用简单委托模式，直接调用trigger.execute_actions(state_context)
+  - 不评估条件，直接执行所有动作（与Warcraft III行为一致）
+  - 返回None（对应JASS的nothing返回类型）
+  - 触发器不存在时记录warning日志，不抛出异常
+- **修改文件**:
+  - `src/jass_runner/natives/trigger_natives.py` - 添加TriggerExecute类
+  - `src/jass_runner/natives/factory.py` - 注册TriggerExecute函数
+  - `tests/natives/test_trigger_natives_unit.py` - 添加3个单元测试
+  - `tests/integration/test_trigger_natives.py` - 添加3个集成测试
+  - `tests/natives/test_factory.py` - 更新函数数量统计(174→175个)
+- **设计文档**:
+  - `docs/plans/2026-03-07-trigger-execute-design.md` - 设计文档
+  - `docs/plans/2026-03-07-trigger-execute-implementation.md` - 实施计划
+- **测试覆盖**:
+  - 单元测试: 3个测试用例（正常执行、无效触发器、缺少trigger_manager）
+  - 集成测试: 3个测试（基本执行、多动作执行、不评估条件）
+- **测试统计**: 所有 922 个测试通过
+
 #### 42. 类型检查系统实现完成 (2026-03-02)
 - **核心组件**:
   - `JassTypeError` 异常类 - 包含类型和位置信息的类型错误
@@ -1495,8 +1521,34 @@ jass-runner/
 - **测试统计**: 851个测试通过
 
 
+#### 64. TriggerExecute Native函数实现完成 (2026-03-07)
+- **新增组件**:
+  - `TriggerExecute` 类 - 手动执行触发器动作的Native函数
+- **功能描述**:
+  - 执行触发器中已添加的所有action，不评估条件（强制触发模式）
+  - 与 `TriggerEvaluate` 形成互补（TriggerEvaluate仅评估条件不执行动作）
+  - 支持通过trigger_manager获取触发器并调用execute_actions方法
+- **关键设计**:
+  - 采用简单委托模式，直接调用trigger.execute_actions(state_context)
+  - 不评估条件，直接执行所有动作（与Warcraft III行为一致）
+  - 返回None（对应JASS的nothing返回类型）
+  - 触发器不存在时记录warning日志，不抛出异常
+- **修改文件**:
+  - `src/jass_runner/natives/trigger_natives.py` - 添加TriggerExecute类
+  - `src/jass_runner/natives/factory.py` - 注册TriggerExecute函数
+  - `tests/natives/test_trigger_natives_unit.py` - 添加3个单元测试
+  - `tests/integration/test_trigger_natives.py` - 添加3个集成测试
+  - `tests/natives/test_factory.py` - 更新函数数量统计(174→175个)
+- **设计文档**:
+  - `docs/plans/2026-03-07-trigger-execute-design.md` - 设计文档
+  - `docs/plans/2026-03-07-trigger-execute-implementation.md` - 实施计划
+- **测试覆盖**:
+  - 单元测试: 3个测试用例（正常执行、无效触发器、缺少trigger_manager）
+  - 集成测试: 3个测试（基本执行、多动作执行、不评估条件）
+- **测试统计**: 所有 922 个测试通过
+
 ---
-*最后更新: 2026-03-06*
+*最后更新: 2026-03-07*
 
 ---
 
