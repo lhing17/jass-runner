@@ -586,3 +586,50 @@ class TriggerClearEvents(NativeFunction):
 
         # 始终返回None（nothing）
         return None
+
+
+class TriggerExecute(NativeFunction):
+    """手动执行触发器动作的原生函数。
+
+    获取触发器并调用其execute_actions方法执行所有动作。
+    注意：此函数不评估条件，直接执行所有动作。
+    """
+
+    @property
+    def name(self) -> str:
+        """获取native函数的名称。
+
+        返回：
+            "TriggerExecute"
+        """
+        return "TriggerExecute"
+
+    def execute(self, state_context, trigger_id: str, *args, **kwargs):
+        """执行 TriggerExecute 原生函数。
+
+        参数：
+            state_context: 状态上下文，必须包含trigger_manager
+            trigger_id: 要执行的触发器ID
+            *args: 额外位置参数
+            **kwargs: 关键字参数
+
+        返回：
+            None（对应JASS的nothing返回类型）
+        """
+        # 检查state_context和trigger_manager存在性
+        if state_context is None or not hasattr(state_context, 'trigger_manager'):
+            logger.error("[TriggerExecute] state_context or trigger_manager not found")
+            return None
+
+        # 获取触发器
+        trigger = state_context.trigger_manager.get_trigger(trigger_id)
+        if trigger is None:
+            logger.warning(f"[TriggerExecute] Trigger not found: {trigger_id}")
+            return None
+
+        # 执行所有动作
+        trigger.execute_actions(state_context)
+        logger.info(f"[TriggerExecute] Executed trigger: {trigger_id}")
+
+        # 始终返回None（nothing）
+        return None
