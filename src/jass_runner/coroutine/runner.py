@@ -50,8 +50,9 @@ class CoroutineRunner:
                 f"协程数超过限制({self.max_coroutines})"
             )
 
-        # 创建新协程
-        coroutine = Coroutine(interpreter, func, args)
+        # 创建新协程（使用JassCoroutine以正确执行JASS函数体）
+        from ..interpreter.coroutine import JassCoroutine
+        coroutine = JassCoroutine(interpreter, func, args)
         coroutine.start()
         self._active.append(coroutine)
         return coroutine
