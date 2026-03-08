@@ -37,6 +37,9 @@ class JassVM:
         self.native_registry = self.native_factory.create_default_registry()
         self.interpreter = Interpreter(native_registry=self.native_registry)
 
+        # 设置 ExecuteFunc 的 interpreter 引用
+        self._setup_execute_func()
+
         # 计时器的模拟循环
         self.simulation_loop: Optional[SimulationLoop] = None
         if enable_timers and self.timer_system:
@@ -49,6 +52,16 @@ class JassVM:
 
         # 加载 common.j 中的常量
         self._load_constants()
+
+    def _setup_execute_func(self):
+        """设置 ExecuteFunc 的 interpreter 引用。
+
+        ExecuteFunc 需要访问 interpreter 来创建新协程执行指定函数。
+        """
+        from ..natives.async_natives import ExecuteFunc
+        execute_func = self.native_registry.get('ExecuteFunc')
+        if execute_func and isinstance(execute_func, ExecuteFunc):
+            execute_func.interpreter = self.interpreter
 
     def load_script(self, script_content: str):
         """加载并解析 JASS 脚本。"""
