@@ -575,7 +575,7 @@ class Evaluator:
                 func_name = expression[9:]  # 去掉 'function:' 前缀
                 # 返回一个可调用对象，用于回调
                 interpreter = self.context.interpreter
-                def callback_wrapper():
+                def callback_wrapper(*args, **kwargs):
                     if interpreter and func_name in interpreter.functions:
                         from ..parser.parser import FunctionDecl
                         func = interpreter.functions[func_name]
