@@ -1081,6 +1081,35 @@ jass-runner/
   - 集成测试: 玩家控制器完整流程（6个）
 - **测试统计**: 所有 887 个测试通过
 
+---
+
+#### 65. GetLocalPlayer Native函数实现完成 (2026-03-08)
+- **新增组件**:
+  - `GetLocalPlayer` 类 - 获取本地玩家的Native函数
+- **功能描述**:
+  - 返回当前本地玩家的Player对象
+  - 在模拟环境中固定返回Player(0)作为"本地玩家"
+  - 常用于多玩家同步代码中区分不同玩家视角
+- **关键设计**:
+  - 继承自`NativeFunction`基类
+  - 通过`handle_manager.get_player(0)`获取玩家0
+  - 返回Player对象，与Player(0)返回相同对象
+  - 无参数，返回类型为player
+- **修改文件**:
+  - `src/jass_runner/natives/basic.py` - 添加GetLocalPlayer类（第292-314行）
+  - `src/jass_runner/natives/factory.py` - 注册GetLocalPlayer函数
+  - `tests/natives/test_get_local_player.py` - 新建，3个测试用例
+  - `tests/natives/test_factory.py` - 更新函数数量统计(175→176个)
+- **设计文档**:
+  - `docs/plans/2026-03-08-getlocalplayer-design.md` - 设计文档
+  - `docs/plans/2026-03-08-getlocalplayer-impl.md` - 实施计划
+- **测试覆盖**:
+  - 单元测试: 3个测试用例（返回有效Player、玩家ID为0、与Player(0)相同）
+  - 所有测试通过，无回归问题
+- **测试统计**: 所有 928 个测试通过
+
+---
+
 #### 62. 玩家插槽状态Native函数实现完成 (2026-03-06)
 - **新增组件**:
   - `player_slot_state_natives.py` - 2个玩家插槽状态相关Native函数

@@ -184,7 +184,8 @@
   - [x] 相机边界设置：SetCameraBounds
 - [ ] **P3** [Simulator] 对话框和多人游戏（未来版本）
   - [ ] 对话框API：DialogCreate, DialogAddButton
-  - [ ] 多人同步：GetLocalPlayer, GetPlayerId
+  - [x] 多人同步：GetLocalPlayer ✅ 已完成（2026-03-08）
+  - [ ] 多人同步：GetPlayerId
 
 
 ### 长期目标 (Long-term Goals)
