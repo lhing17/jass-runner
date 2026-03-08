@@ -13,7 +13,7 @@ from .control_flow import ExitLoopSignal, ReturnSignal
 class Interpreter:
     """解释和执行JASS AST。"""
 
-    def __init__(self, native_registry=None):
+    def __init__(self, native_registry=None, coroutine_runner=None):
         self.state_context = StateContext()
         self.state_context.interpreter = self  # 设置 interpreter 引用
         self.global_context = ExecutionContext(native_registry=native_registry, state_context=self.state_context, interpreter=self)
@@ -21,6 +21,7 @@ class Interpreter:
         self.functions = {}
         self.evaluator = Evaluator(self.current_context)
         self.type_checker = TypeChecker()  # 添加类型检查器
+        self.coroutine_runner = coroutine_runner  # 协程运行器，用于ExecuteFunc
 
     def execute(self, ast: AST):
         """执行AST。"""

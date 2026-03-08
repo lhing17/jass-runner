@@ -35,15 +35,18 @@ class JassVM:
         self.timer_system = TimerSystem() if enable_timers else None
         self.native_factory = NativeFactory(timer_system=self.timer_system)
         self.native_registry = self.native_factory.create_default_registry()
-        self.interpreter = Interpreter(native_registry=self.native_registry)
 
-        # 设置 ExecuteFunc 的 interpreter 引用
-        self._setup_execute_func()
-
-        # 计时器的模拟循环
+        # 计时器的模拟循环（先创建，以便interpreter可以使用coroutine_runner）
         self.simulation_loop: Optional[SimulationLoop] = None
         if enable_timers and self.timer_system:
             self.simulation_loop = SimulationLoop(self.timer_system)
+
+        # 创建解释器，传入coroutine_runner（如果simulation_loop存在）
+        coroutine_runner = self.simulation_loop.coroutine_runner if self.simulation_loop else None
+        self.interpreter = Interpreter(native_registry=self.native_registry, coroutine_runner=coroutine_runner)
+
+        # 设置 ExecuteFunc 的 interpreter 引用
+        self._setup_execute_func()
 
         self.ast = None
         self.loaded = False
