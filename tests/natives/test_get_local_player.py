@@ -34,8 +34,8 @@ class TestGetLocalPlayer:
         # 验证返回对象是Player类型
         assert isinstance(result, Player), f"期望返回Player对象，实际返回{type(result)}"
 
-        # 验证handle_type为"player"
-        assert result.type_name == "player", f"期望handle_type为'player'，实际为'{result.type_name}'"
+        # 验证type_name为"player"
+        assert result.type_name == "player", f"期望type_name为'player'，实际为'{result.type_name}'"
 
     def test_get_local_player_returns_player_id_zero(self):
         """测试GetLocalPlayer返回玩家ID为0。
@@ -59,4 +59,3 @@ class TestGetLocalPlayer:
 
         # 验证两个对象是同一个对象
         assert local_player is player_zero, "GetLocalPlayer返回的对象与Player(0)不是同一个对象"
-        assert local_player.id == player_zero.id, "GetLocalPlayer返回的对象ID与Player(0)不同"
