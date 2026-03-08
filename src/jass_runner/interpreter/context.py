@@ -152,7 +152,10 @@ class ExecutionContext:
                 self.parent.set_array_element(name, index, value)
                 return
             raise NameError(f"数组'{name}'未声明")
-        self.arrays[name][index] = value
+        try:
+            self.arrays[name][index] = value
+        except IndexError:
+            raise IndexError(f"数组'{name}'索引 {index} 超出范围")
 
     def set_variable(self, name: str, value: Any, var_type: str = None):
         """在此上下文中设置变量。
