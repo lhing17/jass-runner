@@ -287,3 +287,28 @@ class PlayerNative(NativeFunction):
         handle_manager = state_context.handle_manager
         player = handle_manager.get_player(player_id)
         return player
+
+
+class GetLocalPlayer(NativeFunction):
+    """获取本地玩家。
+
+    在当前模拟环境中，固定返回玩家0作为"本地玩家"。
+    """
+
+    @property
+    def name(self) -> str:
+        """获取native函数的名称。"""
+        return "GetLocalPlayer"
+
+    def execute(self, state_context, *args) -> Player:
+        """执行GetLocalPlayer native函数。
+
+        参数：
+            state_context: 状态上下文，包含handle_manager
+            *args: 无参数
+
+        返回：
+            Player: 玩家0的Player对象
+        """
+        handle_manager = state_context.handle_manager
+        return handle_manager.get_player(0)
