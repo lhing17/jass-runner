@@ -4890,6 +4890,8 @@ endfunction
 // 系统初始化
 // ============================================================================
 function InitGameTimeSystem takes nothing returns nothing
+
+    call DisplayTextToPlayer(GetLocalPlayer(), 0, 0, "游戏时间系统初始化完成")
     // 创建计时器
     set udg_game_timer=CreateTimer()
     
@@ -11725,6 +11727,7 @@ set udg_monster_targets[i]=null
     // Initialization Function
     // ============================================================================
     function DelayInit takes nothing returns nothing
+        call DisplayTextToPlayer(GetLocalPlayer(), 0, 0, "|cff00ff00正在进行游戏初始化|r")
         // 初始化其他系统
         call InitHeroAttributeSystem() // 英雄属性系统
 call InitSectSystem() // 门派系统
@@ -11751,6 +11754,7 @@ call InitGameTimeSystem() // 游戏时间系统
     function OnInit takes nothing returns nothing
         local integer i
         local timer t= CreateTimer()
+        call DisplayTextToPlayer(GetLocalPlayer(), 0, 0, "|cff00ff00正在初始化游戏状态|r")
         // 初始化游戏状态
         set i=0
         loop
@@ -12372,7 +12376,7 @@ function main takes nothing returns nothing
     call SetMapMusic("Music", true, 0)
     call CreateAllUnits()
     call InitBlizzard()
-
+call DisplayTextToPlayer(GetLocalPlayer(), 0, 0, "|cff00ff00正在执行main函数|r")
 call ExecuteFunc("jasshelper__initstructs249805250")
 call ExecuteFunc("InitCultivationData")
 call ExecuteFunc("InitDungeonData")
@@ -12454,6 +12458,7 @@ local integer this=f__arg_this
 endfunction
 
 function jasshelper__initstructs249805250 takes nothing returns nothing
+    call DisplayTextToPlayer(GetLocalPlayer(), 0, 0, "|cff00ff00正在初始化structs|r")
     set st__Skill_onDestroy=CreateTrigger()
     call TriggerAddCondition(st__Skill_onDestroy,Condition( function sa__Skill_onDestroy))
 
