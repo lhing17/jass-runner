@@ -49,14 +49,15 @@ class TimerSystem:
         self._current_time += delta_time
 
         timers_to_remove = []
-        for timer_id, timer in self._timers.items():
+        for timer_id, timer in list(self._timers.items()):
             fired = timer.update(delta_time)
             if fired and not timer.periodic and not timer.running:
                 timers_to_remove.append(timer_id)
 
-        # 移除已触发的一次性计时器
+        # 移除已触发的一次性计时器（检查是否仍存在，因为回调可能已销毁它）
         for timer_id in timers_to_remove:
-            del self._timers[timer_id]
+            if timer_id in self._timers:
+                del self._timers[timer_id]
 
     def get_elapsed_time(self, timer_id: str) -> Optional[float]:
         """获取计时器的经过时间。"""
