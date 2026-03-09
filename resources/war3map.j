@@ -216,97 +216,6 @@ boolean array dungeon_can_revive
 integer array dungeon_martial_book_id
 
 //endglobals from DungeonData
-//globals from DungeonMonsterData:
-constant boolean LIBRARY_DungeonMonsterData=true
-    // ========================================================================
-    // 小怪角色类型常量定义
-    // ========================================================================
-constant integer ROLE_TYPE_MELEE_DPS= 1
-constant integer ROLE_TYPE_RANGER= 2
-constant integer ROLE_TYPE_TANK= 3
-constant integer ROLE_TYPE_CASTER_CONTROL= 4
-constant integer ROLE_TYPE_HEALER_SUPPORT= 5
-constant integer ROLE_TYPE_SUMMONER= 6
-
-    // ========================================================================
-    // 副本主题类型常量定义
-    // ========================================================================
-constant integer THEME_TYPE_HEIFENG= 1
-constant integer THEME_TYPE_BANDIT= 2
-constant integer THEME_TYPE_SHAOLIN= 3
-constant integer THEME_TYPE_MING= 4
-constant integer THEME_TYPE_DARK= 5
-constant integer THEME_TYPE_BAMBOO= 6
-constant integer THEME_TYPE_XIAOYAO= 7
-constant integer THEME_TYPE_PLUM= 8
-constant integer THEME_TYPE_KONGTONG= 9
-constant integer THEME_TYPE_WATER_MOON= 10
-constant integer THEME_TYPE_SWORD= 11
-constant integer THEME_TYPE_MARSH= 12
-constant integer THEME_TYPE_SACRED= 13
-constant integer THEME_TYPE_FINAL= 14
-
-    // ========================================================================
-    // 技能类型常量定义
-    // ========================================================================
-constant integer SKILL_TYPE_ATTACK= 1
-constant integer SKILL_TYPE_DEFENSE= 2
-constant integer SKILL_TYPE_HEAL= 3
-constant integer SKILL_TYPE_SUMMON= 4
-constant integer SKILL_TYPE_CONTROL= 5
-constant integer SKILL_TYPE_BUFF= 6
-constant integer SKILL_TYPE_DEBUFF= 7
-constant integer SKILL_TYPE_AOE= 8
-
-    // ========================================================================
-    // 技能ID范围常量定义
-    // ========================================================================
-constant integer SKILL_ID_MIN= 91001
-constant integer SKILL_ID_MAX= 91014
-
-    // ========================================================================
-    // 小怪配置数组
-    // 使用公式: role_type * 100 + theme_type 作为索引
-    // ========================================================================
-integer array udg_monster_unit_id
-integer array udg_monster_base_hp
-integer array udg_monster_base_attack
-integer array udg_monster_base_defense
-integer array udg_monster_move_speed
-integer array udg_monster_attack_range
-integer array udg_monster_skill_id
-integer array udg_monster_skill_type
-
-    // ========================================================================
-    // BOSS配置数组
-    // 使用公式: boss_type * 100 + theme_type 作为索引
-    // ========================================================================
-integer array udg_boss_unit_id
-integer array udg_boss_base_hp
-integer array udg_boss_base_attack
-integer array udg_boss_base_defense
-integer array udg_boss_move_speed
-integer array udg_boss_attack_range
-integer array udg_boss_attribute_bonus
-
-    // ========================================================================
-    // 技能ID数组
-    // ========================================================================
-integer array udg_skill_id
-string array udg_skill_name
-integer array udg_skill_type
-integer array udg_skill_damage
-integer array udg_skill_cooldown
-integer array udg_skill_mana_cost
-integer array udg_skill_range
-integer array udg_skill_duration
-
-    // ========================================================================
-    // 标记变量
-    // ========================================================================
-boolean udg_monster_data_initialized= false
-
-//endglobals from DungeonMonsterData
 //globals from DzAPI:
 constant boolean LIBRARY_DzAPI=true
 //endglobals from DzAPI
@@ -645,6 +554,85 @@ constant integer EVERY_WAVE_DELAY= 150
 //globals from CommonFunction:
 constant boolean LIBRARY_CommonFunction=true
 //endglobals from CommonFunction
+//globals from DungeonMonsterData:
+constant boolean LIBRARY_DungeonMonsterData=true
+    // ========================================================================
+    // 小怪角色类型常量定义
+    // ========================================================================
+constant integer ROLE_TYPE_MELEE_DPS= 1
+constant integer ROLE_TYPE_RANGER= 2
+constant integer ROLE_TYPE_TANK= 3
+constant integer ROLE_TYPE_CASTER_CONTROL= 4
+constant integer ROLE_TYPE_HEALER_SUPPORT= 5
+constant integer ROLE_TYPE_SUMMONER= 6
+
+    // ========================================================================
+    // 副本主题类型常量定义
+    // ========================================================================
+constant integer THEME_TYPE_HEIFENG= 1
+constant integer THEME_TYPE_BANDIT= 2
+constant integer THEME_TYPE_SHAOLIN= 3
+constant integer THEME_TYPE_MING= 4
+constant integer THEME_TYPE_DARK= 5
+constant integer THEME_TYPE_BAMBOO= 6
+constant integer THEME_TYPE_XIAOYAO= 7
+constant integer THEME_TYPE_PLUM= 8
+constant integer THEME_TYPE_KONGTONG= 9
+constant integer THEME_TYPE_WATER_MOON= 10
+constant integer THEME_TYPE_SWORD= 11
+constant integer THEME_TYPE_MARSH= 12
+constant integer THEME_TYPE_SACRED= 13
+constant integer THEME_TYPE_FINAL= 14
+
+    // ========================================================================
+    // 技能类型常量定义
+    // ========================================================================
+constant integer SKILL_TYPE_ATTACK= 1
+constant integer SKILL_TYPE_DEFENSE= 2
+constant integer SKILL_TYPE_HEAL= 3
+constant integer SKILL_TYPE_SUMMON= 4
+constant integer SKILL_TYPE_CONTROL= 5
+constant integer SKILL_TYPE_BUFF= 6
+constant integer SKILL_TYPE_DEBUFF= 7
+constant integer SKILL_TYPE_AOE= 8
+
+    // ========================================================================
+    // 技能ID范围常量定义
+    // ========================================================================
+constant integer SKILL_ID_MIN= 91001
+constant integer SKILL_ID_MAX= 91014
+
+    // ========================================================================
+    // 小怪配置数组
+    // 使用公式: role_type * 100 + theme_type 作为索引
+    // ========================================================================
+integer array udg_monster_unit_id
+integer array udg_monster_base_hp
+integer array udg_monster_base_attack
+integer array udg_monster_base_defense
+integer array udg_monster_move_speed
+integer array udg_monster_attack_range
+integer array udg_monster_skill_id
+integer array udg_monster_skill_type
+
+    // ========================================================================
+    // BOSS配置数组
+    // 使用公式: boss_type * 100 + theme_type 作为索引
+    // ========================================================================
+integer array udg_boss_unit_id
+integer array udg_boss_base_hp
+integer array udg_boss_base_attack
+integer array udg_boss_base_defense
+integer array udg_boss_move_speed
+integer array udg_boss_attack_range
+integer array udg_boss_attribute_bonus
+
+    // ========================================================================
+    // 标记变量
+    // ========================================================================
+boolean udg_monster_data_initialized= false
+
+//endglobals from DungeonMonsterData
 //globals from GeneralBonusSystem:
 constant boolean LIBRARY_GeneralBonusSystem=true
 integer array GeneralBonusSystem___ABILITY_COUNT
@@ -1671,7 +1659,7 @@ endfunction
         // 波次1-10: 主要是普通怪物，偶尔出现坦克
         loop
             exitwhen wave > 10
-            set udg_monster_count_per_wave[wave]=3 + ( wave / 3 ) // 从3开始，每3波增加1个
+            set udg_monster_count_per_wave[wave]=10 + wave // 从10开始，每波增加1个
 
             set monster_idx=1
             loop
@@ -1694,7 +1682,7 @@ endfunction
         // 波次11-20: 普通和输出怪物混合，更多坦克
         loop
             exitwhen wave > 20
-            set udg_monster_count_per_wave[wave]=5 + ( ( wave - 10 ) / 2 ) // 从5开始，每2波增加1个
+            set udg_monster_count_per_wave[wave]=10 + wave * 2 // 从10开始，每波增加2个
 
             set monster_idx=1
             loop
@@ -2563,1158 +2551,6 @@ endfunction
     endfunction
 
 //library DungeonData ends
-//library DungeonMonsterData:
-// ============================================================================
-// 检查角色类型是否有效
-// ============================================================================
-function DungeonMonsterData___IsValidRoleType takes integer role_type returns boolean
-    // 角色类型范围: 1-6
-    return role_type >= ROLE_TYPE_MELEE_DPS and role_type <= ROLE_TYPE_SUMMONER
-endfunction
-// ============================================================================
-// 检查小怪索引是否有效
-// ============================================================================
-function DungeonMonsterData___IsValidMonsterIndex takes integer index returns boolean
-    // 小怪索引范围: 101 (1*100+1) 到 614 (6*100+14)
-    return index >= 101 and index <= 614
-endfunction
-// ============================================================================
-// 检查BOSS索引是否有效
-// ============================================================================
-function DungeonMonsterData___IsValidBossIndex takes integer index returns boolean
-    // BOSS索引范围: 101 (1*100+1) 到 514 (5*100+14)
-    return index >= 101 and index <= 514
-endfunction
-// ============================================================================
-// 检查技能ID是否有效
-// ============================================================================
-function DungeonMonsterData___IsValidSkillId takes integer skill_id returns boolean
-    // 使用常量定义技能ID范围
-    return skill_id >= SKILL_ID_MIN and skill_id <= SKILL_ID_MAX
-endfunction
-// ============================================================================
-// 检查BOSS类型是否有效
-// ============================================================================
-function DungeonMonsterData___IsValidBossType takes integer boss_type returns boolean
-    // BOSS类型范围: 1-5
-    return boss_type >= BOSS_TYPE_STRENGTH and boss_type <= BOSS_TYPE_SUMMONER
-endfunction
-// ============================================================================
-// 检查主题类型是否有效
-// ============================================================================
-function IsValidThemeType takes integer theme_type returns boolean
-    // 主题类型范围: 1-14
-    return theme_type >= THEME_TYPE_HEIFENG and theme_type <= THEME_TYPE_FINAL
-endfunction
-// ============================================================================
-// 检查技能类型是否有效
-// ============================================================================
-function DungeonMonsterData___IsValidSkillType takes integer skill_type returns boolean
-    // 技能类型范围: 1-8
-    return skill_type >= SKILL_TYPE_ATTACK and skill_type <= SKILL_TYPE_AOE
-endfunction
-// ============================================================================
-// MonsterData_GetMonsterIndex
-// ============================================================================
-// 计算小怪配置索引
-// 参数:
-//   role_type - 角色类型 (1-6)
-//   theme_type - 主题类型 (1-14)
-// 返回: 小怪配置索引，如果参数无效则返回0
-// ============================================================================
-function MonsterData_GetMonsterIndex takes integer role_type,integer theme_type returns integer
-    // 参数验证，防止索引计算溢出
-    if not DungeonMonsterData___IsValidRoleType(role_type) or not IsValidThemeType(theme_type) then
-        return 0
-    endif
-    return ( role_type * 100 ) + theme_type
-endfunction
-// ============================================================================
-// MonsterData_GetBossIndex
-// ============================================================================
-// 计算BOSS配置索引
-// 参数:
-//   boss_type - BOSS类型 (1-5)
-//   theme_type - 主题类型 (1-14)
-// 返回: BOSS配置索引，如果参数无效则返回0
-// ============================================================================
-function MonsterData_GetBossIndex takes integer boss_type,integer theme_type returns integer
-    // 参数验证，防止索引计算溢出
-    if not DungeonMonsterData___IsValidBossType(boss_type) or not IsValidThemeType(theme_type) then
-        return 0
-    endif
-    return ( boss_type * 100 ) + theme_type
-endfunction
-// ============================================================================
-// 显示错误消息
-// ============================================================================
-function DungeonMonsterData___ShowError takes string message returns nothing
-    // 使用第一个玩家显示错误，避免多人游戏不同步
-    call DisplayTextToPlayer(Player(0), 0, 0, "|cffff0000[系统]|r怪物数据错误: " + message)
-endfunction
-// ============================================================================
-// 检查怪物数据是否已初始化
-// ============================================================================
-function DungeonMonsterData___CheckMonsterDataInitialized takes nothing returns boolean
-    if not udg_monster_data_initialized then
-        call DungeonMonsterData___ShowError("怪物数据未初始化")
-        return false
-    endif
-    return true
-endfunction
-// ============================================================================
-// 设置小怪类型配置
-// ============================================================================
-function MonsterData_SetMonsterType takes integer role_type,integer theme_type,integer unit_id,integer base_hp,integer base_attack,integer base_defense,integer move_speed,integer attack_range returns nothing
-    local integer index
-    // 参数验证
-    if not DungeonMonsterData___IsValidRoleType(role_type) then
-        call DungeonMonsterData___ShowError("角色类型超出范围 (1-6)")
-        return
-    endif
-    if not IsValidThemeType(theme_type) then
-        call DungeonMonsterData___ShowError("主题类型超出范围 (1-14)")
-        return
-    endif
-    if base_hp < 0 then
-        call DungeonMonsterData___ShowError("基础生命值不能为负数")
-        return
-    endif
-    if base_attack < 0 then
-        call DungeonMonsterData___ShowError("基础攻击力不能为负数")
-        return
-    endif
-    if base_defense < 0 then
-        call DungeonMonsterData___ShowError("基础防御不能为负数")
-        return
-    endif
-    if move_speed < 0 then
-        call DungeonMonsterData___ShowError("移动速度不能为负数")
-        return
-    endif
-    if attack_range < 0 then
-        call DungeonMonsterData___ShowError("攻击范围不能为负数")
-        return
-    endif
-    set index=MonsterData_GetMonsterIndex(role_type , theme_type)
-    set udg_monster_unit_id[index]=unit_id
-    set udg_monster_base_hp[index]=base_hp
-    set udg_monster_base_attack[index]=base_attack
-    set udg_monster_base_defense[index]=base_defense
-    set udg_monster_move_speed[index]=move_speed
-    set udg_monster_attack_range[index]=attack_range
-endfunction
-// ============================================================================
-// 设置小怪技能配置
-// ============================================================================
-function MonsterData_SetMonsterSkill takes integer role_type,integer theme_type,integer skill_id,integer skill_type returns nothing
-    local integer index
-    // 参数验证
-    if not DungeonMonsterData___IsValidRoleType(role_type) then
-        call DungeonMonsterData___ShowError("角色类型超出范围 (1-6)")
-        return
-    endif
-    if not IsValidThemeType(theme_type) then
-        call DungeonMonsterData___ShowError("主题类型超出范围 (1-14)")
-        return
-    endif
-    if not DungeonMonsterData___IsValidSkillId(skill_id) then
-        call DungeonMonsterData___ShowError("技能ID超出范围 (1001-1014)")
-        return
-    endif
-    if not DungeonMonsterData___IsValidSkillType(skill_type) then
-        call DungeonMonsterData___ShowError("技能类型超出范围 (1-8)")
-        return
-    endif
-    set index=MonsterData_GetMonsterIndex(role_type , theme_type)
-    set udg_monster_skill_id[index]=skill_id
-    set udg_monster_skill_type[index]=skill_type
-endfunction
-// ============================================================================
-// 设置BOSS配置
-// ============================================================================
-function MonsterData_SetBossConfig takes integer boss_type,integer theme_type,integer unit_id,integer base_hp,integer base_attack,integer base_defense,integer move_speed,integer attack_range,integer attribute_bonus returns nothing
-    local integer index
-    // 参数验证
-    if not DungeonMonsterData___IsValidBossType(boss_type) then
-        call DungeonMonsterData___ShowError("BOSS类型超出范围 (1-5)")
-        return
-    endif
-    if not IsValidThemeType(theme_type) then
-        call DungeonMonsterData___ShowError("主题类型超出范围 (1-14)")
-        return
-    endif
-    if base_hp < 0 then
-        call DungeonMonsterData___ShowError("基础生命值不能为负数")
-        return
-    endif
-    if base_attack < 0 then
-        call DungeonMonsterData___ShowError("基础攻击力不能为负数")
-        return
-    endif
-    if base_defense < 0 then
-        call DungeonMonsterData___ShowError("基础防御不能为负数")
-        return
-    endif
-    if move_speed < 0 then
-        call DungeonMonsterData___ShowError("移动速度不能为负数")
-        return
-    endif
-    if attack_range < 0 then
-        call DungeonMonsterData___ShowError("攻击范围不能为负数")
-        return
-    endif
-    if attribute_bonus < 0 or attribute_bonus > 100 then
-        call DungeonMonsterData___ShowError("属性加成百分比超出范围 (0-100)")
-        return
-    endif
-    set index=MonsterData_GetBossIndex(boss_type , theme_type)
-    set udg_boss_unit_id[index]=unit_id
-    set udg_boss_base_hp[index]=base_hp
-    set udg_boss_base_attack[index]=base_attack
-    set udg_boss_base_defense[index]=base_defense
-    set udg_boss_move_speed[index]=move_speed
-    set udg_boss_attack_range[index]=attack_range
-    set udg_boss_attribute_bonus[index]=attribute_bonus
-endfunction
-// ============================================================================
-// 设置BOSS技能配置
-// ============================================================================
-function MonsterData_SetBossSkill takes integer boss_type,integer theme_type,integer skill_id,integer skill_type returns nothing
-    local integer index
-    // 参数验证
-    if not DungeonMonsterData___IsValidBossType(boss_type) then
-        call DungeonMonsterData___ShowError("BOSS类型超出范围 (1-5)")
-        return
-    endif
-    if not IsValidThemeType(theme_type) then
-        call DungeonMonsterData___ShowError("主题类型超出范围 (1-14)")
-        return
-    endif
-    if not DungeonMonsterData___IsValidSkillId(skill_id) then
-        call DungeonMonsterData___ShowError("技能ID超出范围 (1001-1014)")
-        return
-    endif
-    if not DungeonMonsterData___IsValidSkillType(skill_type) then
-        call DungeonMonsterData___ShowError("技能类型超出范围 (1-8)")
-        return
-    endif
-    set index=MonsterData_GetBossIndex(boss_type , theme_type)
-    set udg_boss_skill_id[index]=skill_id
-    set udg_boss_skill_type[index]=skill_type
-endfunction
-// ============================================================================
-// 设置技能配置
-// ============================================================================
-function MonsterData_SetSkill takes integer skill_id,string skill_name,integer skill_type,integer skill_damage,integer skill_cooldown,integer skill_mana_cost,integer skill_range,integer skill_duration returns nothing
-    // 参数验证
-    if not DungeonMonsterData___IsValidSkillId(skill_id) then
-        call DungeonMonsterData___ShowError("技能ID超出范围 (1001-1014)")
-        return
-    endif
-    if skill_name == "" then
-        call DungeonMonsterData___ShowError("技能名称不能为空")
-        return
-    endif
-    if not DungeonMonsterData___IsValidSkillType(skill_type) then
-        call DungeonMonsterData___ShowError("技能类型超出范围 (1-8)")
-        return
-    endif
-    if skill_damage < 0 then
-        call DungeonMonsterData___ShowError("技能伤害不能为负数")
-        return
-    endif
-    if skill_cooldown < 0 then
-        call DungeonMonsterData___ShowError("技能冷却时间不能为负数")
-        return
-    endif
-    if skill_mana_cost < 0 then
-        call DungeonMonsterData___ShowError("技能魔法消耗不能为负数")
-        return
-    endif
-    if skill_range < 0 then
-        call DungeonMonsterData___ShowError("技能范围不能为负数")
-        return
-    endif
-    if skill_duration < 0 then
-        call DungeonMonsterData___ShowError("技能持续时间不能为负数")
-        return
-    endif
-    set udg_skill_id[skill_id]=skill_id
-    set udg_skill_name[skill_id]=skill_name
-    set udg_skill_type[skill_id]=skill_type
-    set udg_skill_damage[skill_id]=skill_damage
-    set udg_skill_cooldown[skill_id]=skill_cooldown
-    set udg_skill_mana_cost[skill_id]=skill_mana_cost
-    set udg_skill_range[skill_id]=skill_range
-    set udg_skill_duration[skill_id]=skill_duration
-endfunction
-// ============================================================================
-// MonsterData_GetMonsterUnitId
-// ============================================================================
-// 获取小怪单位ID
-// 参数:
-//   role_type - 角色类型 (1-6)
-//   theme_type - 主题类型 (1-14)
-// 返回: 小怪单位ID，如果数据未初始化或参数无效则返回0
-// ============================================================================
-function MonsterData_GetMonsterUnitId takes integer role_type,integer theme_type returns integer
-    local integer index
-    // 检查数据是否已初始化
-    if not DungeonMonsterData___CheckMonsterDataInitialized() then
-        return 0
-    endif
-    set index=MonsterData_GetMonsterIndex(role_type , theme_type)
-    if index == 0 or not DungeonMonsterData___IsValidMonsterIndex(index) then
-        return 0
-    endif
-    return udg_monster_unit_id[index]
-endfunction
-// ============================================================================
-// 获取小怪基础生命值
-// ============================================================================
-function MonsterData_GetMonsterBaseHp takes integer role_type,integer theme_type returns integer
-    local integer index
-    // 检查数据是否已初始化
-    if not udg_monster_data_initialized then
-        call DungeonMonsterData___ShowError("怪物数据未初始化")
-        return 0
-    endif
-    set index=MonsterData_GetMonsterIndex(role_type , theme_type)
-    if index == 0 or not DungeonMonsterData___IsValidMonsterIndex(index) then
-        return 0
-    endif
-    return udg_monster_base_hp[index]
-endfunction
-// ============================================================================
-// 获取小怪基础攻击力
-// ============================================================================
-function MonsterData_GetMonsterBaseAttack takes integer role_type,integer theme_type returns integer
-    local integer index
-    // 检查数据是否已初始化
-    if not udg_monster_data_initialized then
-        call DungeonMonsterData___ShowError("怪物数据未初始化")
-        return 0
-    endif
-    set index=MonsterData_GetMonsterIndex(role_type , theme_type)
-    if index == 0 or not DungeonMonsterData___IsValidMonsterIndex(index) then
-        return 0
-    endif
-    return udg_monster_base_attack[index]
-endfunction
-// ============================================================================
-// 获取小怪基础防御
-// ============================================================================
-function MonsterData_GetMonsterBaseDefense takes integer role_type,integer theme_type returns integer
-    local integer index
-    // 检查数据是否已初始化
-    if not udg_monster_data_initialized then
-        call DungeonMonsterData___ShowError("怪物数据未初始化")
-        return 0
-    endif
-    set index=MonsterData_GetMonsterIndex(role_type , theme_type)
-    if index == 0 or not DungeonMonsterData___IsValidMonsterIndex(index) then
-        return 0
-    endif
-    return udg_monster_base_defense[index]
-endfunction
-// ============================================================================
-// 获取小怪移动速度
-// ============================================================================
-function MonsterData_GetMonsterMoveSpeed takes integer role_type,integer theme_type returns integer
-    local integer index
-    // 检查数据是否已初始化
-    if not udg_monster_data_initialized then
-        call DungeonMonsterData___ShowError("怪物数据未初始化")
-        return 0
-    endif
-    set index=MonsterData_GetMonsterIndex(role_type , theme_type)
-    if index == 0 or not DungeonMonsterData___IsValidMonsterIndex(index) then
-        return 0
-    endif
-    return udg_monster_move_speed[index]
-endfunction
-// ============================================================================
-// 获取小怪攻击范围
-// ============================================================================
-function MonsterData_GetMonsterAttackRange takes integer role_type,integer theme_type returns integer
-    local integer index
-    // 检查数据是否已初始化
-    if not udg_monster_data_initialized then
-        call DungeonMonsterData___ShowError("怪物数据未初始化")
-        return 0
-    endif
-    set index=MonsterData_GetMonsterIndex(role_type , theme_type)
-    if index == 0 or not DungeonMonsterData___IsValidMonsterIndex(index) then
-        return 0
-    endif
-    return udg_monster_attack_range[index]
-endfunction
-// ============================================================================
-// 获取小怪技能ID
-// ============================================================================
-function MonsterData_GetMonsterSkillId takes integer role_type,integer theme_type returns integer
-    local integer index
-    // 检查数据是否已初始化
-    if not udg_monster_data_initialized then
-        call DungeonMonsterData___ShowError("怪物数据未初始化")
-        return 0
-    endif
-    set index=MonsterData_GetMonsterIndex(role_type , theme_type)
-    if index == 0 or not DungeonMonsterData___IsValidMonsterIndex(index) then
-        return 0
-    endif
-    return udg_monster_skill_id[index]
-endfunction
-// ============================================================================
-// 获取小怪技能类型
-// ============================================================================
-function MonsterData_GetMonsterSkillType takes integer role_type,integer theme_type returns integer
-    local integer index
-    // 检查数据是否已初始化
-    if not udg_monster_data_initialized then
-        call DungeonMonsterData___ShowError("怪物数据未初始化")
-        return 0
-    endif
-    set index=MonsterData_GetMonsterIndex(role_type , theme_type)
-    if index == 0 or not DungeonMonsterData___IsValidMonsterIndex(index) then
-        return 0
-    endif
-    return udg_monster_skill_type[index]
-endfunction
-// ============================================================================
-// 获取BOSS单位ID
-// ============================================================================
-function MonsterData_GetBossUnitId takes integer boss_type,integer theme_type returns integer
-    local integer index
-    // 检查数据是否已初始化
-    if not udg_monster_data_initialized then
-        call DungeonMonsterData___ShowError("怪物数据未初始化")
-        return 0
-    endif
-    set index=MonsterData_GetBossIndex(boss_type , theme_type)
-    if index == 0 or not DungeonMonsterData___IsValidBossIndex(index) then
-        return 0
-    endif
-    return udg_boss_unit_id[index]
-endfunction
-// ============================================================================
-// 获取BOSS基础生命值
-// ============================================================================
-function MonsterData_GetBossBaseHp takes integer boss_type,integer theme_type returns integer
-    local integer index
-    // 检查数据是否已初始化
-    if not udg_monster_data_initialized then
-        call DungeonMonsterData___ShowError("怪物数据未初始化")
-        return 0
-    endif
-    set index=MonsterData_GetBossIndex(boss_type , theme_type)
-    if index == 0 or not DungeonMonsterData___IsValidBossIndex(index) then
-        return 0
-    endif
-    return udg_boss_base_hp[index]
-endfunction
-// ============================================================================
-// 获取BOSS基础攻击力
-// ============================================================================
-function MonsterData_GetBossBaseAttack takes integer boss_type,integer theme_type returns integer
-    local integer index
-    // 检查数据是否已初始化
-    if not udg_monster_data_initialized then
-        call DungeonMonsterData___ShowError("怪物数据未初始化")
-        return 0
-    endif
-    set index=MonsterData_GetBossIndex(boss_type , theme_type)
-    if index == 0 or not DungeonMonsterData___IsValidBossIndex(index) then
-        return 0
-    endif
-    return udg_boss_base_attack[index]
-endfunction
-// ============================================================================
-// 获取BOSS基础防御
-// ============================================================================
-function MonsterData_GetBossBaseDefense takes integer boss_type,integer theme_type returns integer
-    local integer index
-    // 检查数据是否已初始化
-    if not udg_monster_data_initialized then
-        call DungeonMonsterData___ShowError("怪物数据未初始化")
-        return 0
-    endif
-    set index=MonsterData_GetBossIndex(boss_type , theme_type)
-    if index == 0 or not DungeonMonsterData___IsValidBossIndex(index) then
-        return 0
-    endif
-    return udg_boss_base_defense[index]
-endfunction
-// ============================================================================
-// 获取BOSS移动速度
-// ============================================================================
-function MonsterData_GetBossMoveSpeed takes integer boss_type,integer theme_type returns integer
-    local integer index
-    // 检查数据是否已初始化
-    if not udg_monster_data_initialized then
-        call DungeonMonsterData___ShowError("怪物数据未初始化")
-        return 0
-    endif
-    set index=MonsterData_GetBossIndex(boss_type , theme_type)
-    if index == 0 or not DungeonMonsterData___IsValidBossIndex(index) then
-        return 0
-    endif
-    return udg_boss_move_speed[index]
-endfunction
-// ============================================================================
-// 获取BOSS攻击范围
-// ============================================================================
-function MonsterData_GetBossAttackRange takes integer boss_type,integer theme_type returns integer
-    local integer index
-    // 检查数据是否已初始化
-    if not udg_monster_data_initialized then
-        call DungeonMonsterData___ShowError("怪物数据未初始化")
-        return 0
-    endif
-    set index=MonsterData_GetBossIndex(boss_type , theme_type)
-    if index == 0 or not DungeonMonsterData___IsValidBossIndex(index) then
-        return 0
-    endif
-    return udg_boss_attack_range[index]
-endfunction
-// ============================================================================
-// 获取BOSS技能ID
-// ============================================================================
-function MonsterData_GetBossSkillId takes integer boss_type,integer theme_type returns integer
-    local integer index
-    // 检查数据是否已初始化
-    if not udg_monster_data_initialized then
-        call DungeonMonsterData___ShowError("怪物数据未初始化")
-        return 0
-    endif
-    set index=MonsterData_GetBossIndex(boss_type , theme_type)
-    if index == 0 or not DungeonMonsterData___IsValidBossIndex(index) then
-        return 0
-    endif
-    return udg_boss_skill_id[index]
-endfunction
-// ============================================================================
-// 获取BOSS技能类型
-// ============================================================================
-function MonsterData_GetBossSkillType takes integer boss_type,integer theme_type returns integer
-    local integer index
-    // 检查数据是否已初始化
-    if not udg_monster_data_initialized then
-        call DungeonMonsterData___ShowError("怪物数据未初始化")
-        return 0
-    endif
-    set index=MonsterData_GetBossIndex(boss_type , theme_type)
-    if index == 0 or not DungeonMonsterData___IsValidBossIndex(index) then
-        return 0
-    endif
-    return udg_boss_skill_type[index]
-endfunction
-// ============================================================================
-// 获取BOSS属性加成
-// ============================================================================
-function MonsterData_GetBossAttributeBonus takes integer boss_type,integer theme_type returns integer
-    local integer index
-    // 检查数据是否已初始化
-    if not udg_monster_data_initialized then
-        call DungeonMonsterData___ShowError("怪物数据未初始化")
-        return 0
-    endif
-    set index=MonsterData_GetBossIndex(boss_type , theme_type)
-    if index == 0 or not DungeonMonsterData___IsValidBossIndex(index) then
-        return 0
-    endif
-    return udg_boss_attribute_bonus[index]
-endfunction
-// ============================================================================
-// 获取技能名称
-// ============================================================================
-function MonsterData_GetSkillName takes integer skill_id returns string
-    // 检查数据是否已初始化
-    if not udg_monster_data_initialized then
-        call DungeonMonsterData___ShowError("怪物数据未初始化")
-        return ""
-    endif
-    if not DungeonMonsterData___IsValidSkillId(skill_id) then
-        return ""
-    endif
-    return udg_skill_name[skill_id]
-endfunction
-// ============================================================================
-// 获取技能类型
-// ============================================================================
-function MonsterData_GetSkillType takes integer skill_id returns integer
-    // 检查数据是否已初始化
-    if not udg_monster_data_initialized then
-        call DungeonMonsterData___ShowError("怪物数据未初始化")
-        return 0
-    endif
-    if not DungeonMonsterData___IsValidSkillId(skill_id) then
-        return 0
-    endif
-    return udg_skill_type[skill_id]
-endfunction
-// ============================================================================
-// 获取技能伤害
-// ============================================================================
-function MonsterData_GetSkillDamage takes integer skill_id returns integer
-    // 检查数据是否已初始化
-    if not udg_monster_data_initialized then
-        call DungeonMonsterData___ShowError("怪物数据未初始化")
-        return 0
-    endif
-    if not DungeonMonsterData___IsValidSkillId(skill_id) then
-        return 0
-    endif
-    return udg_skill_damage[skill_id]
-endfunction
-// ============================================================================
-// 获取技能冷却时间
-// ============================================================================
-function MonsterData_GetSkillCooldown takes integer skill_id returns integer
-    // 检查数据是否已初始化
-    if not udg_monster_data_initialized then
-        call DungeonMonsterData___ShowError("怪物数据未初始化")
-        return 0
-    endif
-    if not DungeonMonsterData___IsValidSkillId(skill_id) then
-        return 0
-    endif
-    return udg_skill_cooldown[skill_id]
-endfunction
-// ============================================================================
-// 获取技能魔法消耗
-// ============================================================================
-function MonsterData_GetSkillManaCost takes integer skill_id returns integer
-    // 检查数据是否已初始化
-    if not udg_monster_data_initialized then
-        call DungeonMonsterData___ShowError("怪物数据未初始化")
-        return 0
-    endif
-    if not DungeonMonsterData___IsValidSkillId(skill_id) then
-        return 0
-    endif
-    return udg_skill_mana_cost[skill_id]
-endfunction
-// ============================================================================
-// 获取技能范围
-// ============================================================================
-function MonsterData_GetSkillRange takes integer skill_id returns integer
-    // 检查数据是否已初始化
-    if not udg_monster_data_initialized then
-        call DungeonMonsterData___ShowError("怪物数据未初始化")
-        return 0
-    endif
-    if not DungeonMonsterData___IsValidSkillId(skill_id) then
-        return 0
-    endif
-    return udg_skill_range[skill_id]
-endfunction
-// ============================================================================
-// 获取技能持续时间
-// ============================================================================
-function MonsterData_GetSkillDuration takes integer skill_id returns integer
-    // 检查数据是否已初始化
-    if not udg_monster_data_initialized then
-        call DungeonMonsterData___ShowError("怪物数据未初始化")
-        return 0
-    endif
-    if not DungeonMonsterData___IsValidSkillId(skill_id) then
-        return 0
-    endif
-    return udg_skill_duration[skill_id]
-endfunction
-// ============================================================================
-// 初始化怪物数据
-// ============================================================================
-function InitDungeonMonsterData takes nothing returns nothing
-    local integer role_type
-    local integer theme_type
-    local integer boss_type
-    local integer skill_id
-    // 初始化标记
-    set udg_monster_data_initialized=true
-    // ========================================================================
-    // 初始化技能配置
-    // ========================================================================
-    // 技能ID: 91001 - 普通攻击
-    set skill_id=ENEMY_SKILL_NORMAL_ATTACK
-    call MonsterData_SetSkill(skill_id , "普通攻击" , SKILL_TYPE_ATTACK , 50 , 1 , 0 , 100 , 0)
-    // 技能ID: 91002 - 重击
-    set skill_id=ENEMY_SKILL_HEAVY_STRIKE
-    call MonsterData_SetSkill(skill_id , "重击" , SKILL_TYPE_ATTACK , 100 , 5 , 20 , 150 , 0)
-    // 技能ID: 91003 - 连击
-    set skill_id=ENEMY_SKILL_COMBO_STRIKE
-    call MonsterData_SetSkill(skill_id , "连击" , SKILL_TYPE_ATTACK , 75 , 3 , 15 , 100 , 0)
-    // 技能ID: 91004 - 远程射击
-    set skill_id=ENEMY_SKILL_RANGE_SHOT
-    call MonsterData_SetSkill(skill_id , "远程射击" , SKILL_TYPE_ATTACK , 60 , 2 , 10 , 600 , 0)
-    // 技能ID: 91005 - 精准射击
-    set skill_id=ENEMY_SKILL_PRECISION_SHOT
-    call MonsterData_SetSkill(skill_id , "精准射击" , SKILL_TYPE_ATTACK , 120 , 8 , 30 , 800 , 0)
-    // 技能ID: 91006 - 防御姿态
-    set skill_id=ENEMY_SKILL_DEFENSIVE_STANCE
-    call MonsterData_SetSkill(skill_id , "防御姿态" , SKILL_TYPE_DEFENSE , 0 , 10 , 25 , 0 , 10)
-    // 技能ID: 91007 - 嘲讽
-    set skill_id=ENEMY_SKILL_TAUNT
-    call MonsterData_SetSkill(skill_id , "嘲讽" , SKILL_TYPE_CONTROL , 0 , 15 , 20 , 300 , 5)
-    // 技能ID: 91008 - 火球术
-    set skill_id=ENEMY_SKILL_FIREBALL
-    call MonsterData_SetSkill(skill_id , "火球术" , SKILL_TYPE_ATTACK , 150 , 6 , 40 , 500 , 0)
-    // 技能ID: 91009 - 冰冻术
-    set skill_id=ENEMY_SKILL_FREEZE
-    call MonsterData_SetSkill(skill_id , "冰冻术" , SKILL_TYPE_CONTROL , 80 , 8 , 35 , 400 , 3)
-    // 技能ID: 91010 - 治疗术
-    set skill_id=ENEMY_SKILL_HEAL
-    call MonsterData_SetSkill(skill_id , "治疗术" , SKILL_TYPE_HEAL , 200 , 10 , 50 , 300 , 0)
-    // 技能ID: 91011 - 召唤小怪
-    set skill_id=ENEMY_SKILL_SUMMON_MINIONS
-    call MonsterData_SetSkill(skill_id , "召唤小怪" , SKILL_TYPE_SUMMON , 0 , 20 , 60 , 200 , 30)
-    // 技能ID: 91012 - 狂暴
-    set skill_id=ENEMY_SKILL_BERSERK
-    call MonsterData_SetSkill(skill_id , "狂暴" , SKILL_TYPE_BUFF , 0 , 30 , 40 , 0 , 15)
-    // 技能ID: 91013 - 虚弱诅咒
-    set skill_id=ENEMY_SKILL_WEAKEN_CURSE
-    call MonsterData_SetSkill(skill_id , "虚弱诅咒" , SKILL_TYPE_DEBUFF , 0 , 12 , 25 , 350 , 8)
-    // 技能ID: 91014 - 烈焰风暴
-    set skill_id=ENEMY_SKILL_FLAME_STORM
-    call MonsterData_SetSkill(skill_id , "烈焰风暴" , SKILL_TYPE_AOE , 200 , 25 , 80 , 400 , 0)
-    // ========================================================================
-    // 初始化黑风寨主题小怪配置 (THEME_TYPE_HEIFENG = 1)
-    // ========================================================================
-    set theme_type=THEME_TYPE_HEIFENG
-    // 近战输出小怪
-    set role_type=ROLE_TYPE_MELEE_DPS
-    call MonsterData_SetMonsterType(role_type , theme_type , 'n101' , 400 , 25 , 3 , 280 , 100)
-    call MonsterData_SetMonsterSkill(role_type , theme_type , ENEMY_SKILL_NORMAL_ATTACK , SKILL_TYPE_ATTACK)
-    // 远程射手小怪
-    set role_type=ROLE_TYPE_RANGER
-    call MonsterData_SetMonsterType(role_type , theme_type , 'n102' , 300 , 20 , 2 , 300 , 550)
-    call MonsterData_SetMonsterSkill(role_type , theme_type , ENEMY_SKILL_RANGE_SHOT , SKILL_TYPE_ATTACK)
-    // 坦克肉盾小怪
-    set role_type=ROLE_TYPE_TANK
-    call MonsterData_SetMonsterType(role_type , theme_type , 'n103' , 600 , 15 , 10 , 240 , 100)
-    call MonsterData_SetMonsterSkill(role_type , theme_type , ENEMY_SKILL_DEFENSIVE_STANCE , SKILL_TYPE_DEFENSE)
-    // 法师控制小怪
-    set role_type=ROLE_TYPE_CASTER_CONTROL
-    call MonsterData_SetMonsterType(role_type , theme_type , 'n104' , 250 , 30 , 1 , 270 , 500)
-    call MonsterData_SetMonsterSkill(role_type , theme_type , ENEMY_SKILL_FREEZE , SKILL_TYPE_CONTROL)
-    // 治疗辅助小怪
-    set role_type=ROLE_TYPE_HEALER_SUPPORT
-    call MonsterData_SetMonsterType(role_type , theme_type , 'n105' , 250 , 10 , 3 , 280 , 300)
-    call MonsterData_SetMonsterSkill(role_type , theme_type , ENEMY_SKILL_HEAL , SKILL_TYPE_HEAL)
-    // 召唤师小怪
-    set role_type=ROLE_TYPE_SUMMONER
-    call MonsterData_SetMonsterType(role_type , theme_type , 'n106' , 350 , 20 , 5 , 260 , 200)
-    call MonsterData_SetMonsterSkill(role_type , theme_type , ENEMY_SKILL_SUMMON_MINIONS , SKILL_TYPE_SUMMON)
-    // ========================================================================
-    // 初始化山贼主题小怪配置 (THEME_TYPE_BANDIT = 2)
-    // ========================================================================
-    set theme_type=THEME_TYPE_BANDIT
-    // 近战输出小怪
-    set role_type=ROLE_TYPE_MELEE_DPS
-    call MonsterData_SetMonsterType(role_type , theme_type , 'n111' , 500 , 30 , 5 , 300 , 100)
-    call MonsterData_SetMonsterSkill(role_type , theme_type , ENEMY_SKILL_HEAVY_STRIKE , SKILL_TYPE_ATTACK)
-    // 远程射手小怪
-    set role_type=ROLE_TYPE_RANGER
-    call MonsterData_SetMonsterType(role_type , theme_type , 'n112' , 400 , 25 , 3 , 320 , 600)
-    call MonsterData_SetMonsterSkill(role_type , theme_type , ENEMY_SKILL_RANGE_SHOT , SKILL_TYPE_ATTACK)
-    // 坦克肉盾小怪
-    set role_type=ROLE_TYPE_TANK
-    call MonsterData_SetMonsterType(role_type , theme_type , 'n113' , 800 , 20 , 15 , 250 , 100)
-    call MonsterData_SetMonsterSkill(role_type , theme_type , ENEMY_SKILL_DEFENSIVE_STANCE , SKILL_TYPE_DEFENSE)
-    // 法师控制小怪
-    set role_type=ROLE_TYPE_CASTER_CONTROL
-    call MonsterData_SetMonsterType(role_type , theme_type , 'n114' , 350 , 35 , 2 , 280 , 500)
-    call MonsterData_SetMonsterSkill(role_type , theme_type , ENEMY_SKILL_FREEZE , SKILL_TYPE_CONTROL)
-    // 治疗辅助小怪
-    set role_type=ROLE_TYPE_HEALER_SUPPORT
-    call MonsterData_SetMonsterType(role_type , theme_type , 'n115' , 300 , 15 , 4 , 290 , 300)
-    call MonsterData_SetMonsterSkill(role_type , theme_type , ENEMY_SKILL_HEAL , SKILL_TYPE_HEAL)
-    // 召唤师小怪
-    set role_type=ROLE_TYPE_SUMMONER
-    call MonsterData_SetMonsterType(role_type , theme_type , 'n116' , 450 , 25 , 6 , 270 , 200)
-    call MonsterData_SetMonsterSkill(role_type , theme_type , ENEMY_SKILL_SUMMON_MINIONS , SKILL_TYPE_SUMMON)
-    // ========================================================================
-    // 初始化山贼主题BOSS配置
-    // ========================================================================
-    // 力量型BOSS
-    set boss_type=BOSS_TYPE_STRENGTH
-    call MonsterData_SetBossConfig(boss_type , theme_type , 'n001' , 5000 , 100 , 30 , 280 , 150 , 20)
-    call MonsterData_SetBossSkill(boss_type , theme_type , ENEMY_SKILL_BERSERK , SKILL_TYPE_BUFF)
-    // 防御型BOSS
-    set boss_type=BOSS_TYPE_DEFENSE
-    call MonsterData_SetBossConfig(boss_type , theme_type , 'n002' , 8000 , 70 , 50 , 240 , 100 , 30)
-    call MonsterData_SetBossSkill(boss_type , theme_type , ENEMY_SKILL_DEFENSIVE_STANCE , SKILL_TYPE_DEFENSE)
-    // 敏捷型BOSS
-    set boss_type=BOSS_TYPE_AGILITY
-    call MonsterData_SetBossConfig(boss_type , theme_type , 'n003' , 4000 , 120 , 20 , 350 , 600 , 25)
-    call MonsterData_SetBossSkill(boss_type , theme_type , ENEMY_SKILL_PRECISION_SHOT , SKILL_TYPE_ATTACK)
-    // 法师型BOSS
-    set boss_type=BOSS_TYPE_CASTER
-    call MonsterData_SetBossConfig(boss_type , theme_type , 'n004' , 3500 , 150 , 15 , 300 , 500 , 35)
-    call MonsterData_SetBossSkill(boss_type , theme_type , ENEMY_SKILL_FLAME_STORM , SKILL_TYPE_AOE)
-    // 召唤型BOSS
-    set boss_type=BOSS_TYPE_SUMMONER
-    call MonsterData_SetBossConfig(boss_type , theme_type , 'n005' , 4500 , 90 , 25 , 260 , 200 , 40)
-    call MonsterData_SetBossSkill(boss_type , theme_type , ENEMY_SKILL_SUMMON_MINIONS , SKILL_TYPE_SUMMON)
-    // ========================================================================
-    // 初始化寺庙主题小怪配置 (THEME_TYPE_SHAOLIN = 3)
-    // ========================================================================
-    set theme_type=THEME_TYPE_SHAOLIN
-    // 近战输出小怪
-    set role_type=ROLE_TYPE_MELEE_DPS
-    call MonsterData_SetMonsterType(role_type , theme_type , 'n121' , 550 , 35 , 8 , 290 , 100)
-    call MonsterData_SetMonsterSkill(role_type , theme_type , ENEMY_SKILL_COMBO_STRIKE , SKILL_TYPE_ATTACK)
-    // 远程射手小怪
-    set role_type=ROLE_TYPE_RANGER
-    call MonsterData_SetMonsterType(role_type , theme_type , 'n122' , 450 , 30 , 5 , 310 , 650)
-    call MonsterData_SetMonsterSkill(role_type , theme_type , ENEMY_SKILL_PRECISION_SHOT , SKILL_TYPE_ATTACK)
-    // 坦克肉盾小怪
-    set role_type=ROLE_TYPE_TANK
-    call MonsterData_SetMonsterType(role_type , theme_type , 'n123' , 900 , 25 , 20 , 240 , 100)
-    call MonsterData_SetMonsterSkill(role_type , theme_type , ENEMY_SKILL_TAUNT , SKILL_TYPE_CONTROL)
-    // 法师控制小怪
-    set role_type=ROLE_TYPE_CASTER_CONTROL
-    call MonsterData_SetMonsterType(role_type , theme_type , 'n124' , 400 , 40 , 4 , 270 , 550)
-    call MonsterData_SetMonsterSkill(role_type , theme_type , ENEMY_SKILL_FIREBALL , SKILL_TYPE_ATTACK)
-    // 治疗辅助小怪
-    set role_type=ROLE_TYPE_HEALER_SUPPORT
-    call MonsterData_SetMonsterType(role_type , theme_type , 'n125' , 350 , 20 , 6 , 280 , 350)
-    call MonsterData_SetMonsterSkill(role_type , theme_type , ENEMY_SKILL_HEAL , SKILL_TYPE_HEAL)
-    // 召唤师小怪
-    set role_type=ROLE_TYPE_SUMMONER
-    call MonsterData_SetMonsterType(role_type , theme_type , 'n126' , 500 , 30 , 8 , 260 , 250)
-    call MonsterData_SetMonsterSkill(role_type , theme_type , ENEMY_SKILL_SUMMON_MINIONS , SKILL_TYPE_SUMMON)
-    // ========================================================================
-    // 初始化寺庙主题BOSS配置
-    // ========================================================================
-    // 力量型BOSS
-    set boss_type=BOSS_TYPE_STRENGTH
-    call MonsterData_SetBossConfig(boss_type , theme_type , 'n006' , 5500 , 110 , 35 , 270 , 150 , 25)
-    call MonsterData_SetBossSkill(boss_type , theme_type , ENEMY_SKILL_BERSERK , SKILL_TYPE_BUFF)
-    // 防御型BOSS
-    set boss_type=BOSS_TYPE_DEFENSE
-    call MonsterData_SetBossConfig(boss_type , theme_type , 'n007' , 8500 , 75 , 55 , 230 , 100 , 35)
-    call MonsterData_SetBossSkill(boss_type , theme_type , ENEMY_SKILL_DEFENSIVE_STANCE , SKILL_TYPE_DEFENSE)
-    // 敏捷型BOSS
-    set boss_type=BOSS_TYPE_AGILITY
-    call MonsterData_SetBossConfig(boss_type , theme_type , 'n008' , 4200 , 130 , 25 , 340 , 650 , 30)
-    call MonsterData_SetBossSkill(boss_type , theme_type , ENEMY_SKILL_PRECISION_SHOT , SKILL_TYPE_ATTACK)
-    // 法师型BOSS
-    set boss_type=BOSS_TYPE_CASTER
-    call MonsterData_SetBossConfig(boss_type , theme_type , 'n009' , 3700 , 160 , 18 , 290 , 550 , 40)
-    call MonsterData_SetBossSkill(boss_type , theme_type , ENEMY_SKILL_FLAME_STORM , SKILL_TYPE_AOE)
-    // 召唤型BOSS
-    set boss_type=BOSS_TYPE_SUMMONER
-    call MonsterData_SetBossConfig(boss_type , theme_type , 'n010' , 4800 , 95 , 30 , 250 , 250 , 45)
-    call MonsterData_SetBossSkill(boss_type , theme_type , ENEMY_SKILL_SUMMON_MINIONS , SKILL_TYPE_SUMMON)
-    // ========================================================================
-    // 初始化洞穴主题小怪配置 (THEME_TYPE_MING = 4)
-    // ========================================================================
-    set theme_type=THEME_TYPE_MING
-    // 近战输出小怪
-    set role_type=ROLE_TYPE_MELEE_DPS
-    call MonsterData_SetMonsterType(role_type , theme_type , 'n131' , 600 , 40 , 10 , 280 , 100)
-    call MonsterData_SetMonsterSkill(role_type , theme_type , ENEMY_SKILL_HEAVY_STRIKE , SKILL_TYPE_ATTACK)
-    // 远程射手小怪
-    set role_type=ROLE_TYPE_RANGER
-    call MonsterData_SetMonsterType(role_type , theme_type , 'n132' , 500 , 35 , 6 , 300 , 700)
-    call MonsterData_SetMonsterSkill(role_type , theme_type , ENEMY_SKILL_RANGE_SHOT , SKILL_TYPE_ATTACK)
-    // 坦克肉盾小怪
-    set role_type=ROLE_TYPE_TANK
-    call MonsterData_SetMonsterType(role_type , theme_type , 'n133' , 1000 , 30 , 25 , 230 , 100)
-    call MonsterData_SetMonsterSkill(role_type , theme_type , ENEMY_SKILL_DEFENSIVE_STANCE , SKILL_TYPE_DEFENSE)
-    // 法师控制小怪
-    set role_type=ROLE_TYPE_CASTER_CONTROL
-    call MonsterData_SetMonsterType(role_type , theme_type , 'n134' , 450 , 45 , 5 , 260 , 600)
-    call MonsterData_SetMonsterSkill(role_type , theme_type , ENEMY_SKILL_FREEZE , SKILL_TYPE_CONTROL)
-    // 治疗辅助小怪
-    set role_type=ROLE_TYPE_HEALER_SUPPORT
-    call MonsterData_SetMonsterType(role_type , theme_type , 'n135' , 400 , 25 , 8 , 270 , 400)
-    call MonsterData_SetMonsterSkill(role_type , theme_type , ENEMY_SKILL_HEAL , SKILL_TYPE_HEAL)
-    // 召唤师小怪
-    set role_type=ROLE_TYPE_SUMMONER
-    call MonsterData_SetMonsterType(role_type , theme_type , 'n136' , 550 , 35 , 10 , 250 , 300)
-    call MonsterData_SetMonsterSkill(role_type , theme_type , ENEMY_SKILL_SUMMON_MINIONS , SKILL_TYPE_SUMMON)
-    // ========================================================================
-    // 初始化洞穴主题BOSS配置
-    // ========================================================================
-    // 力量型BOSS
-    set boss_type=BOSS_TYPE_STRENGTH
-    call MonsterData_SetBossConfig(boss_type , theme_type , 'n011' , 6000 , 120 , 40 , 260 , 150 , 30)
-    call MonsterData_SetBossSkill(boss_type , theme_type , ENEMY_SKILL_BERSERK , SKILL_TYPE_BUFF)
-    // 防御型BOSS
-    set boss_type=BOSS_TYPE_DEFENSE
-    call MonsterData_SetBossConfig(boss_type , theme_type , 'n012' , 9000 , 80 , 60 , 220 , 100 , 40)
-    call MonsterData_SetBossSkill(boss_type , theme_type , ENEMY_SKILL_DEFENSIVE_STANCE , SKILL_TYPE_DEFENSE)
-    // 敏捷型BOSS
-    set boss_type=BOSS_TYPE_AGILITY
-    call MonsterData_SetBossConfig(boss_type , theme_type , 'n013' , 4400 , 140 , 30 , 330 , 700 , 35)
-    call MonsterData_SetBossSkill(boss_type , theme_type , ENEMY_SKILL_PRECISION_SHOT , SKILL_TYPE_ATTACK)
-    // 法师型BOSS
-    set boss_type=BOSS_TYPE_CASTER
-    call MonsterData_SetBossConfig(boss_type , theme_type , 'n014' , 3900 , 170 , 20 , 280 , 600 , 45)
-    call MonsterData_SetBossSkill(boss_type , theme_type , ENEMY_SKILL_FLAME_STORM , SKILL_TYPE_AOE)
-    // 召唤型BOSS
-    set boss_type=BOSS_TYPE_SUMMONER
-    call MonsterData_SetBossConfig(boss_type , theme_type , 'n015' , 5100 , 100 , 35 , 240 , 300 , 50)
-    call MonsterData_SetBossSkill(boss_type , theme_type , ENEMY_SKILL_SUMMON_MINIONS , SKILL_TYPE_SUMMON)
-    // ========================================================================
-    // 初始化深层洞穴主题小怪配置 (THEME_TYPE_DARK = 5)
-    // ========================================================================
-    set theme_type=THEME_TYPE_DARK
-    // 近战输出小怪 - 机关剑士
-    set role_type=ROLE_TYPE_MELEE_DPS
-    call MonsterData_SetMonsterType(role_type , theme_type , 'n141' , 650 , 45 , 11 , 285 , 100)
-    call MonsterData_SetMonsterSkill(role_type , theme_type , 91003 , SKILL_TYPE_ATTACK)
-    // 远程射手小怪 - 机关弩手
-    set role_type=ROLE_TYPE_RANGER
-    call MonsterData_SetMonsterType(role_type , theme_type , 'n142' , 550 , 38 , 7 , 310 , 720)
-    call MonsterData_SetMonsterSkill(role_type , theme_type , 91005 , SKILL_TYPE_ATTACK)
-    // 坦克肉盾小怪 - 机关重甲
-    set role_type=ROLE_TYPE_TANK
-    call MonsterData_SetMonsterType(role_type , theme_type , 'n143' , 1100 , 33 , 27 , 235 , 100)
-    call MonsterData_SetMonsterSkill(role_type , theme_type , 91006 , SKILL_TYPE_DEFENSE)
-    // 法师控制小怪 - 机关术士
-    set role_type=ROLE_TYPE_CASTER_CONTROL
-    call MonsterData_SetMonsterType(role_type , theme_type , 'n144' , 500 , 50 , 6 , 265 , 620)
-    call MonsterData_SetMonsterSkill(role_type , theme_type , 91009 , SKILL_TYPE_CONTROL)
-    // 治疗辅助小怪 - 机关医者
-    set role_type=ROLE_TYPE_HEALER_SUPPORT
-    call MonsterData_SetMonsterType(role_type , theme_type , 'n145' , 440 , 28 , 9 , 275 , 420)
-    call MonsterData_SetMonsterSkill(role_type , theme_type , 91010 , SKILL_TYPE_HEAL)
-    // 召唤师小怪 - 机关工匠
-    set role_type=ROLE_TYPE_SUMMONER
-    call MonsterData_SetMonsterType(role_type , theme_type , 'n146' , 600 , 39 , 11 , 255 , 320)
-    call MonsterData_SetMonsterSkill(role_type , theme_type , 91011 , SKILL_TYPE_SUMMON)
-    // ========================================================================
-    // 初始化竹林秘境主题小怪配置 (THEME_TYPE_BAMBOO = 6)
-    // ========================================================================
-    set theme_type=THEME_TYPE_BAMBOO
-    // 近战输出小怪 - 竹林剑客
-    set role_type=ROLE_TYPE_MELEE_DPS
-    call MonsterData_SetMonsterType(role_type , theme_type , 'n151' , 700 , 50 , 12 , 290 , 100)
-    call MonsterData_SetMonsterSkill(role_type , theme_type , 91003 , SKILL_TYPE_ATTACK)
-    // 远程射手小怪 - 竹叶镖手
-    set role_type=ROLE_TYPE_RANGER
-    call MonsterData_SetMonsterType(role_type , theme_type , 'n152' , 600 , 42 , 8 , 320 , 750)
-    call MonsterData_SetMonsterSkill(role_type , theme_type , 91005 , SKILL_TYPE_ATTACK)
-    // 坦克肉盾小怪 - 竹甲卫士
-    set role_type=ROLE_TYPE_TANK
-    call MonsterData_SetMonsterType(role_type , theme_type , 'n153' , 1200 , 36 , 30 , 240 , 100)
-    call MonsterData_SetMonsterSkill(role_type , theme_type , 91006 , SKILL_TYPE_DEFENSE)
-    // 法师控制小怪 - 竹笛乐师
-    set role_type=ROLE_TYPE_CASTER_CONTROL
-    call MonsterData_SetMonsterType(role_type , theme_type , 'n154' , 550 , 55 , 7 , 270 , 650)
-    call MonsterData_SetMonsterSkill(role_type , theme_type , 91009 , SKILL_TYPE_CONTROL)
-    // 治疗辅助小怪 - 竹露医者
-    set role_type=ROLE_TYPE_HEALER_SUPPORT
-    call MonsterData_SetMonsterType(role_type , theme_type , 'n155' , 480 , 31 , 10 , 280 , 450)
-    call MonsterData_SetMonsterSkill(role_type , theme_type , 91010 , SKILL_TYPE_HEAL)
-    // 召唤师小怪 - 竹阵法师
-    set role_type=ROLE_TYPE_SUMMONER
-    call MonsterData_SetMonsterType(role_type , theme_type , 'n156' , 650 , 43 , 12 , 260 , 350)
-    call MonsterData_SetMonsterSkill(role_type , theme_type , 91011 , SKILL_TYPE_SUMMON)
-    // ========================================================================
-    // 初始化逍遥山庄主题小怪配置 (THEME_TYPE_XIAOYAO = 7)
-    // ========================================================================
-    set theme_type=THEME_TYPE_XIAOYAO
-    // 近战输出小怪 - 琴剑客
-    set role_type=ROLE_TYPE_MELEE_DPS
-    call MonsterData_SetMonsterType(role_type , theme_type , 'n161' , 770 , 55 , 14 , 300 , 100)
-    call MonsterData_SetMonsterSkill(role_type , theme_type , 91003 , SKILL_TYPE_ATTACK)
-    // 远程射手小怪 - 棋射手
-    set role_type=ROLE_TYPE_RANGER
-    call MonsterData_SetMonsterType(role_type , theme_type , 'n162' , 660 , 46 , 9 , 330 , 770)
-    call MonsterData_SetMonsterSkill(role_type , theme_type , 91005 , SKILL_TYPE_ATTACK)
-    // 坦克肉盾小怪 - 书卷卫士
-    set role_type=ROLE_TYPE_TANK
-    call MonsterData_SetMonsterType(role_type , theme_type , 'n163' , 1320 , 40 , 33 , 250 , 100)
-    call MonsterData_SetMonsterSkill(role_type , theme_type , 91006 , SKILL_TYPE_DEFENSE)
-    // 法师控制小怪 - 画境术士
-    set role_type=ROLE_TYPE_CASTER_CONTROL
-    call MonsterData_SetMonsterType(role_type , theme_type , 'n164' , 605 , 60 , 8 , 280 , 670)
-    call MonsterData_SetMonsterSkill(role_type , theme_type , 91009 , SKILL_TYPE_CONTROL)
-    // 治疗辅助小怪 - 琴音医者
-    set role_type=ROLE_TYPE_HEALER_SUPPORT
-    call MonsterData_SetMonsterType(role_type , theme_type , 'n165' , 530 , 34 , 11 , 290 , 460)
-    call MonsterData_SetMonsterSkill(role_type , theme_type , 91010 , SKILL_TYPE_HEAL)
-    // 召唤师小怪 - 四艺召唤师
-    set role_type=ROLE_TYPE_SUMMONER
-    call MonsterData_SetMonsterType(role_type , theme_type , 'n166' , 715 , 47 , 13 , 270 , 360)
-    call MonsterData_SetMonsterSkill(role_type , theme_type , 91011 , SKILL_TYPE_SUMMON)
-    // ========================================================================
-    // 初始化梅花坞主题小怪配置 (THEME_TYPE_PLUM = 8)
-    // ========================================================================
-    set theme_type=THEME_TYPE_PLUM
-    // 近战输出小怪 - 寒梅剑客
-    set role_type=ROLE_TYPE_MELEE_DPS
-    call MonsterData_SetMonsterType(role_type , theme_type , 'n171' , 850 , 61 , 16 , 315 , 100)
-    call MonsterData_SetMonsterSkill(role_type , theme_type , 91003 , SKILL_TYPE_ATTACK)
-    // 远程射手小怪 - 梅枝射手
-    set role_type=ROLE_TYPE_RANGER
-    call MonsterData_SetMonsterType(role_type , theme_type , 'n172' , 725 , 51 , 10 , 345 , 785)
-    call MonsterData_SetMonsterSkill(role_type , theme_type , 91005 , SKILL_TYPE_ATTACK)
-    // 坦克肉盾小怪 - 梅干卫士
-    set role_type=ROLE_TYPE_TANK
-    call MonsterData_SetMonsterType(role_type , theme_type , 'n173' , 1450 , 44 , 37 , 260 , 100)
-    call MonsterData_SetMonsterSkill(role_type , theme_type , 91006 , SKILL_TYPE_DEFENSE)
-    // 法师控制小怪 - 梅香术士
-    set role_type=ROLE_TYPE_CASTER_CONTROL
-    call MonsterData_SetMonsterType(role_type , theme_type , 'n174' , 665 , 66 , 9 , 295 , 685)
-    call MonsterData_SetMonsterSkill(role_type , theme_type , 91009 , SKILL_TYPE_CONTROL)
-    // 治疗辅助小怪 - 梅蕊医者
-    set role_type=ROLE_TYPE_HEALER_SUPPORT
-    call MonsterData_SetMonsterType(role_type , theme_type , 'n175' , 580 , 37 , 12 , 305 , 475)
-    call MonsterData_SetMonsterSkill(role_type , theme_type , 91010 , SKILL_TYPE_HEAL)
-    // 召唤师小怪 - 梅花召唤师
-    set role_type=ROLE_TYPE_SUMMONER
-    call MonsterData_SetMonsterType(role_type , theme_type , 'n176' , 785 , 52 , 15 , 285 , 375)
-    call MonsterData_SetMonsterSkill(role_type , theme_type , 91011 , SKILL_TYPE_SUMMON)
-    // ========================================================================
-    // 初始化五行峰主题小怪配置 (THEME_TYPE_KONGTONG = 9)
-    // ========================================================================
-    set theme_type=THEME_TYPE_KONGTONG
-    // 近战输出小怪 - 金行剑客
-    set role_type=ROLE_TYPE_MELEE_DPS
-    call MonsterData_SetMonsterType(role_type , theme_type , 'n181' , 940 , 68 , 18 , 350 , 100)
-    call MonsterData_SetMonsterSkill(role_type , theme_type , 91003 , SKILL_TYPE_ATTACK)
-    // 远程射手小怪 - 木行射手
-    set role_type=ROLE_TYPE_RANGER
-    call MonsterData_SetMonsterType(role_type , theme_type , 'n182' , 800 , 56 , 11 , 380 , 800)
-    call MonsterData_SetMonsterSkill(role_type , theme_type , 91005 , SKILL_TYPE_ATTACK)
-    // 坦克肉盾小怪 - 水行卫士
-    set role_type=ROLE_TYPE_TANK
-    call MonsterData_SetMonsterType(role_type , theme_type , 'n183' , 1600 , 48 , 41 , 285 , 100)
-    call MonsterData_SetMonsterSkill(role_type , theme_type , 91006 , SKILL_TYPE_DEFENSE)
-    // 法师控制小怪 - 火行术士
-    set role_type=ROLE_TYPE_CASTER_CONTROL
-    call MonsterData_SetMonsterType(role_type , theme_type , 'n184' , 735 , 73 , 10 , 325 , 700)
-    call MonsterData_SetMonsterSkill(role_type , theme_type , 91009 , SKILL_TYPE_CONTROL)
-    // 治疗辅助小怪 - 土行医者
-    set role_type=ROLE_TYPE_HEALER_SUPPORT
-    call MonsterData_SetMonsterType(role_type , theme_type , 'n185' , 640 , 41 , 13 , 335 , 490)
-    call MonsterData_SetMonsterSkill(role_type , theme_type , 91010 , SKILL_TYPE_HEAL)
-    // 召唤师小怪 - 五行阵法师
-    set role_type=ROLE_TYPE_SUMMONER
-    call MonsterData_SetMonsterType(role_type , theme_type , 'n186' , 865 , 57 , 17 , 315 , 390)
-    call MonsterData_SetMonsterSkill(role_type , theme_type , 91011 , SKILL_TYPE_SUMMON)
-    // ========================================================================
-    // 初始化水月洞主题小怪配置 (THEME_TYPE_WATER_MOON = 10)
-    // ========================================================================
-    set theme_type=THEME_TYPE_WATER_MOON
-    // 近战输出小怪 - 镜花剑客
-    set role_type=ROLE_TYPE_MELEE_DPS
-    call MonsterData_SetMonsterType(role_type , theme_type , 'n191' , 1035 , 75 , 20 , 385 , 100)
-    call MonsterData_SetMonsterSkill(role_type , theme_type , 91003 , SKILL_TYPE_ATTACK)
-    // 远程射手小怪 - 水月射手
-    set role_type=ROLE_TYPE_RANGER
-    call MonsterData_SetMonsterType(role_type , theme_type , 'n192' , 880 , 62 , 12 , 418 , 880)
-    call MonsterData_SetMonsterSkill(role_type , theme_type , 91005 , SKILL_TYPE_ATTACK)
-    // 坦克肉盾小怪 - 幻影卫士
-    set role_type=ROLE_TYPE_TANK
-    call MonsterData_SetMonsterType(role_type , theme_type , 'n193' , 1760 , 53 , 45 , 314 , 100)
-    call MonsterData_SetMonsterSkill(role_type , theme_type , 91006 , SKILL_TYPE_DEFENSE)
-    // 法师控制小怪 - 虚幻术士
-    set role_type=ROLE_TYPE_CASTER_CONTROL
-    call MonsterData_SetMonsterType(role_type , theme_type , 'n194' , 810 , 80 , 11 , 358 , 770)
-    call MonsterData_SetMonsterSkill(role_type , theme_type , 91009 , SKILL_TYPE_CONTROL)
-    // 治疗辅助小怪 - 倒影医者
-    set role_type=ROLE_TYPE_HEALER_SUPPORT
-    call MonsterData_SetMonsterType(role_type , theme_type , 'n195' , 705 , 45 , 14 , 369 , 540)
-    call MonsterData_SetMonsterSkill(role_type , theme_type , 91010 , SKILL_TYPE_HEAL)
-    // 召唤师小怪 - 镜月召唤师
-    set role_type=ROLE_TYPE_SUMMONER
-    call MonsterData_SetMonsterType(role_type , theme_type , 'n196' , 950 , 63 , 19 , 347 , 430)
-    call MonsterData_SetMonsterSkill(role_type , theme_type , 91011 , SKILL_TYPE_SUMMON)
-    // ========================================================================
-    // 初始化剑圣谷主题小怪配置 (THEME_TYPE_SWORD = 11)
-    // ========================================================================
-    set theme_type=THEME_TYPE_SWORD
-    // 近战输出小怪 - 剑圣传人
-    set role_type=ROLE_TYPE_MELEE_DPS
-    call MonsterData_SetMonsterType(role_type , theme_type , 'n1A1' , 1140 , 83 , 22 , 424 , 100)
-    call MonsterData_SetMonsterSkill(role_type , theme_type , 91003 , SKILL_TYPE_ATTACK)
-    // 远程射手小怪 - 剑气射手
-    set role_type=ROLE_TYPE_RANGER
-    call MonsterData_SetMonsterType(role_type , theme_type , 'n1A2' , 968 , 68 , 13 , 460 , 968)
-    call MonsterData_SetMonsterSkill(role_type , theme_type , 91005 , SKILL_TYPE_ATTACK)
-    // 坦克肉盾小怪 - 剑盾卫士
-    set role_type=ROLE_TYPE_TANK
-    call MonsterData_SetMonsterType(role_type , theme_type , 'n1A3' , 1936 , 58 , 50 , 345 , 100)
-    call MonsterData_SetMonsterSkill(role_type , theme_type , 91006 , SKILL_TYPE_DEFENSE)
-    // 法师控制小怪 - 剑心术士
-    set role_type=ROLE_TYPE_CASTER_CONTROL
-    call MonsterData_SetMonsterType(role_type , theme_type , 'n1A4' , 891 , 88 , 12 , 394 , 847)
-    call MonsterData_SetMonsterSkill(role_type , theme_type , 91009 , SKILL_TYPE_CONTROL)
-    // 治疗辅助小怪 - 剑魂医者
-    set role_type=ROLE_TYPE_HEALER_SUPPORT
-    call MonsterData_SetMonsterType(role_type , theme_type , 'n1A5' , 776 , 50 , 15 , 406 , 594)
-    call MonsterData_SetMonsterSkill(role_type , theme_type , 91010 , SKILL_TYPE_HEAL)
-    // 召唤师小怪 - 剑灵召唤师
-    set role_type=ROLE_TYPE_SUMMONER
-    call MonsterData_SetMonsterType(role_type , theme_type , 'n1A6' , 1045 , 69 , 21 , 382 , 473)
-    call MonsterData_SetMonsterSkill(role_type , theme_type , 91011 , SKILL_TYPE_SUMMON)
-    // ========================================================================
-    // 初始化云梦泽主题小怪配置 (THEME_TYPE_MARSH = 12)
-    // ========================================================================
-    set theme_type=THEME_TYPE_MARSH
-    // 近战输出小怪 - 毒雾剑客
-    set role_type=ROLE_TYPE_MELEE_DPS
-    call MonsterData_SetMonsterType(role_type , theme_type , 'n1B1' , 1254 , 91 , 24 , 466 , 100)
-    call MonsterData_SetMonsterSkill(role_type , theme_type , 91003 , SKILL_TYPE_ATTACK)
-    // 远程射手小怪 - 沼泽射手
-    set role_type=ROLE_TYPE_RANGER
-    call MonsterData_SetMonsterType(role_type , theme_type , 'n1B2' , 1065 , 75 , 14 , 506 , 1065)
-    call MonsterData_SetMonsterSkill(role_type , theme_type , 91005 , SKILL_TYPE_ATTACK)
-    // 坦克肉盾小怪 - 毒瘴卫士
-    set role_type=ROLE_TYPE_TANK
-    call MonsterData_SetMonsterType(role_type , theme_type , 'n1B3' , 2130 , 64 , 55 , 380 , 100)
-    call MonsterData_SetMonsterSkill(role_type , theme_type , 91006 , SKILL_TYPE_DEFENSE)
-    // 法师控制小怪 - 毒雾术士
-    set role_type=ROLE_TYPE_CASTER_CONTROL
-    call MonsterData_SetMonsterType(role_type , theme_type , 'n1B4' , 980 , 97 , 13 , 433 , 932)
-    call MonsterData_SetMonsterSkill(role_type , theme_type , 91009 , SKILL_TYPE_CONTROL)
-    // 治疗辅助小怪 - 沼泽医者
-    set role_type=ROLE_TYPE_HEALER_SUPPORT
-    call MonsterData_SetMonsterType(role_type , theme_type , 'n1B5' , 854 , 55 , 16 , 447 , 653)
-    call MonsterData_SetMonsterSkill(role_type , theme_type , 91010 , SKILL_TYPE_HEAL)
-    // 召唤师小怪 - 毒泽召唤师
-    set role_type=ROLE_TYPE_SUMMONER
-    call MonsterData_SetMonsterType(role_type , theme_type , 'n1B6' , 1150 , 76 , 23 , 420 , 520)
-    call MonsterData_SetMonsterSkill(role_type , theme_type , 91011 , SKILL_TYPE_SUMMON)
-    // ========================================================================
-    // 初始化武林圣地主题小怪配置 (THEME_TYPE_SACRED = 13)
-    // ========================================================================
-    set theme_type=THEME_TYPE_SACRED
-    // 近战输出小怪 - 剑宗传人
-    set role_type=ROLE_TYPE_MELEE_DPS
-    call MonsterData_SetMonsterType(role_type , theme_type , 'n1C1' , 1379 , 100 , 26 , 513 , 100)
-    call MonsterData_SetMonsterSkill(role_type , theme_type , 91003 , SKILL_TYPE_ATTACK)
-    // 远程射手小怪 - 弓宗高手
-    set role_type=ROLE_TYPE_RANGER
-    call MonsterData_SetMonsterType(role_type , theme_type , 'n1C2' , 1172 , 83 , 15 , 557 , 1172)
-    call MonsterData_SetMonsterSkill(role_type , theme_type , 91005 , SKILL_TYPE_ATTACK)
-    // 坦克肉盾小怪 - 盾宗卫士
-    set role_type=ROLE_TYPE_TANK
-    call MonsterData_SetMonsterType(role_type , theme_type , 'n1C3' , 2343 , 70 , 61 , 418 , 100)
-    call MonsterData_SetMonsterSkill(role_type , theme_type , 91006 , SKILL_TYPE_DEFENSE)
-    // 法师控制小怪 - 术宗大师
-    set role_type=ROLE_TYPE_CASTER_CONTROL
-    call MonsterData_SetMonsterType(role_type , theme_type , 'n1C4' , 1078 , 107 , 14 , 476 , 1025)
-    call MonsterData_SetMonsterSkill(role_type , theme_type , 91009 , SKILL_TYPE_CONTROL)
-    // 治疗辅助小怪 - 医宗圣手
-    set role_type=ROLE_TYPE_HEALER_SUPPORT
-    call MonsterData_SetMonsterType(role_type , theme_type , 'n1C5' , 939 , 61 , 18 , 492 , 718)
-    call MonsterData_SetMonsterSkill(role_type , theme_type , 91010 , SKILL_TYPE_HEAL)
-    // 召唤师小怪 - 召唤宗师
-    set role_type=ROLE_TYPE_SUMMONER
-    call MonsterData_SetMonsterType(role_type , theme_type , 'n1C6' , 1265 , 84 , 25 , 462 , 572)
-    call MonsterData_SetMonsterSkill(role_type , theme_type , 91011 , SKILL_TYPE_SUMMON)
-endfunction
-
-//library DungeonMonsterData ends
 //library DzAPI:
 
 
@@ -4382,6 +3218,7 @@ endfunction
         loop
             exitwhen i > udg_equip_count
             if udg_equip_item_type_id[i] == 0 then
+                call DisplayTextToPlayer(Player(0), 0, 0, "装备ID " + I2S(i) + "为：" + I2S(udg_equip_item_type_id[i]))
                 call DisplayTextToPlayer(Player(0), 0, 0, "装备ID " + I2S(i) + " 缺少物品类型ID")
                 set valid=false
             endif
@@ -4890,8 +3727,6 @@ endfunction
 // 系统初始化
 // ============================================================================
 function InitGameTimeSystem takes nothing returns nothing
-
-    call DisplayTextToPlayer(GetLocalPlayer(), 0, 0, "游戏时间系统初始化完成")
     // 创建计时器
     set udg_game_timer=CreateTimer()
     
@@ -6891,6 +5726,1053 @@ endfunction
     endfunction
 
 //library CommonFunction ends
+//library DungeonMonsterData:
+// ============================================================================
+// 检查角色类型是否有效
+// ============================================================================
+function DungeonMonsterData___IsValidRoleType takes integer role_type returns boolean
+    // 角色类型范围: 1-6
+    return role_type >= ROLE_TYPE_MELEE_DPS and role_type <= ROLE_TYPE_SUMMONER
+endfunction
+// ============================================================================
+// 检查小怪索引是否有效
+// ============================================================================
+function DungeonMonsterData___IsValidMonsterIndex takes integer index returns boolean
+    // 小怪索引范围: 101 (1*100+1) 到 614 (6*100+14)
+    return index >= 101 and index <= 614
+endfunction
+// ============================================================================
+// 检查BOSS索引是否有效
+// ============================================================================
+function DungeonMonsterData___IsValidBossIndex takes integer index returns boolean
+    // BOSS索引范围: 101 (1*100+1) 到 514 (5*100+14)
+    return index >= 101 and index <= 514
+endfunction
+// ============================================================================
+// 检查技能ID是否有效
+// ============================================================================
+function DungeonMonsterData___IsValidSkillId takes integer skill_id returns boolean
+    // 使用常量定义技能ID范围
+    return skill_id >= SKILL_ID_MIN and skill_id <= SKILL_ID_MAX
+endfunction
+// ============================================================================
+// 检查BOSS类型是否有效
+// ============================================================================
+function DungeonMonsterData___IsValidBossType takes integer boss_type returns boolean
+    // BOSS类型范围: 1-5
+    return boss_type >= BOSS_TYPE_STRENGTH and boss_type <= BOSS_TYPE_SUMMONER
+endfunction
+// ============================================================================
+// 检查主题类型是否有效
+// ============================================================================
+function IsValidThemeType takes integer theme_type returns boolean
+    // 主题类型范围: 1-14
+    return theme_type >= THEME_TYPE_HEIFENG and theme_type <= THEME_TYPE_FINAL
+endfunction
+// ============================================================================
+// 检查技能类型是否有效
+// ============================================================================
+function DungeonMonsterData___IsValidSkillType takes integer skill_type returns boolean
+    // 技能类型范围: 1-8
+    return skill_type >= SKILL_TYPE_ATTACK and skill_type <= SKILL_TYPE_AOE
+endfunction
+// ============================================================================
+// MonsterData_GetMonsterIndex
+// ============================================================================
+// 计算小怪配置索引
+// 参数:
+//   role_type - 角色类型 (1-6)
+//   theme_type - 主题类型 (1-14)
+// 返回: 小怪配置索引，如果参数无效则返回0
+// ============================================================================
+function MonsterData_GetMonsterIndex takes integer role_type,integer theme_type returns integer
+    // 参数验证，防止索引计算溢出
+    if not DungeonMonsterData___IsValidRoleType(role_type) or not IsValidThemeType(theme_type) then
+        return 0
+    endif
+    return ( role_type * 100 ) + theme_type
+endfunction
+// ============================================================================
+// MonsterData_GetBossIndex
+// ============================================================================
+// 计算BOSS配置索引
+// 参数:
+//   boss_type - BOSS类型 (1-5)
+//   theme_type - 主题类型 (1-14)
+// 返回: BOSS配置索引，如果参数无效则返回0
+// ============================================================================
+function MonsterData_GetBossIndex takes integer boss_type,integer theme_type returns integer
+    // 参数验证，防止索引计算溢出
+    if not DungeonMonsterData___IsValidBossType(boss_type) or not IsValidThemeType(theme_type) then
+        return 0
+    endif
+    return ( boss_type * 100 ) + theme_type
+endfunction
+// ============================================================================
+// 显示错误消息
+// ============================================================================
+function DungeonMonsterData___ShowError takes string message returns nothing
+    // 使用第一个玩家显示错误，避免多人游戏不同步
+    call DisplayTextToPlayer(Player(0), 0, 0, "|cffff0000[系统]|r怪物数据错误: " + message)
+endfunction
+// ============================================================================
+// 检查怪物数据是否已初始化
+// ============================================================================
+function DungeonMonsterData___CheckMonsterDataInitialized takes nothing returns boolean
+    if not udg_monster_data_initialized then
+        call DungeonMonsterData___ShowError("怪物数据未初始化")
+        return false
+    endif
+    return true
+endfunction
+// ============================================================================
+// 设置小怪类型配置
+// ============================================================================
+function MonsterData_SetMonsterType takes integer role_type,integer theme_type,integer unit_id,integer base_hp,integer base_attack,integer base_defense,integer move_speed,integer attack_range returns nothing
+    local integer index
+    // 参数验证
+    if not DungeonMonsterData___IsValidRoleType(role_type) then
+        call DungeonMonsterData___ShowError("角色类型超出范围 (1-6)")
+        return
+    endif
+    if not IsValidThemeType(theme_type) then
+        call DungeonMonsterData___ShowError("主题类型超出范围 (1-14)")
+        return
+    endif
+    if base_hp < 0 then
+        call DungeonMonsterData___ShowError("基础生命值不能为负数")
+        return
+    endif
+    if base_attack < 0 then
+        call DungeonMonsterData___ShowError("基础攻击力不能为负数")
+        return
+    endif
+    if base_defense < 0 then
+        call DungeonMonsterData___ShowError("基础防御不能为负数")
+        return
+    endif
+    if move_speed < 0 then
+        call DungeonMonsterData___ShowError("移动速度不能为负数")
+        return
+    endif
+    if attack_range < 0 then
+        call DungeonMonsterData___ShowError("攻击范围不能为负数")
+        return
+    endif
+    set index=MonsterData_GetMonsterIndex(role_type , theme_type)
+    set udg_monster_unit_id[index]=unit_id
+    set udg_monster_base_hp[index]=base_hp
+    set udg_monster_base_attack[index]=base_attack
+    set udg_monster_base_defense[index]=base_defense
+    set udg_monster_move_speed[index]=move_speed
+    set udg_monster_attack_range[index]=attack_range
+endfunction
+// ============================================================================
+// 设置小怪技能配置
+// ============================================================================
+function MonsterData_SetMonsterSkill takes integer role_type,integer theme_type,integer skill_id,integer skill_type returns nothing
+    local integer index
+    // 参数验证
+    if not DungeonMonsterData___IsValidRoleType(role_type) then
+        call DungeonMonsterData___ShowError("角色类型超出范围 (1-6)")
+        return
+    endif
+    if not IsValidThemeType(theme_type) then
+        call DungeonMonsterData___ShowError("主题类型超出范围 (1-14)")
+        return
+    endif
+    if not DungeonMonsterData___IsValidSkillId(skill_id) then
+        call DungeonMonsterData___ShowError("技能ID超出范围 (1001-1014)")
+        return
+    endif
+    if not DungeonMonsterData___IsValidSkillType(skill_type) then
+        call DungeonMonsterData___ShowError("技能类型超出范围 (1-8)")
+        return
+    endif
+    set index=MonsterData_GetMonsterIndex(role_type , theme_type)
+    set udg_monster_skill_id[index]=skill_id
+    set udg_monster_skill_type[index]=skill_type
+endfunction
+// ============================================================================
+// 设置BOSS配置
+// ============================================================================
+function MonsterData_SetBossConfig takes integer boss_type,integer theme_type,integer unit_id,integer base_hp,integer base_attack,integer base_defense,integer move_speed,integer attack_range,integer attribute_bonus returns nothing
+    local integer index
+    // 参数验证
+    if not DungeonMonsterData___IsValidBossType(boss_type) then
+        call DungeonMonsterData___ShowError("BOSS类型超出范围 (1-5)")
+        return
+    endif
+    if not IsValidThemeType(theme_type) then
+        call DungeonMonsterData___ShowError("主题类型超出范围 (1-14)")
+        return
+    endif
+    if base_hp < 0 then
+        call DungeonMonsterData___ShowError("基础生命值不能为负数")
+        return
+    endif
+    if base_attack < 0 then
+        call DungeonMonsterData___ShowError("基础攻击力不能为负数")
+        return
+    endif
+    if base_defense < 0 then
+        call DungeonMonsterData___ShowError("基础防御不能为负数")
+        return
+    endif
+    if move_speed < 0 then
+        call DungeonMonsterData___ShowError("移动速度不能为负数")
+        return
+    endif
+    if attack_range < 0 then
+        call DungeonMonsterData___ShowError("攻击范围不能为负数")
+        return
+    endif
+    if attribute_bonus < 0 or attribute_bonus > 100 then
+        call DungeonMonsterData___ShowError("属性加成百分比超出范围 (0-100)")
+        return
+    endif
+    set index=MonsterData_GetBossIndex(boss_type , theme_type)
+    set udg_boss_unit_id[index]=unit_id
+    set udg_boss_base_hp[index]=base_hp
+    set udg_boss_base_attack[index]=base_attack
+    set udg_boss_base_defense[index]=base_defense
+    set udg_boss_move_speed[index]=move_speed
+    set udg_boss_attack_range[index]=attack_range
+    set udg_boss_attribute_bonus[index]=attribute_bonus
+endfunction
+// ============================================================================
+// 设置BOSS技能配置
+// ============================================================================
+function MonsterData_SetBossSkill takes integer boss_type,integer theme_type,integer skill_id,integer skill_type returns nothing
+    local integer index
+    // 参数验证
+    if not DungeonMonsterData___IsValidBossType(boss_type) then
+        call DungeonMonsterData___ShowError("BOSS类型超出范围 (1-5)")
+        return
+    endif
+    if not IsValidThemeType(theme_type) then
+        call DungeonMonsterData___ShowError("主题类型超出范围 (1-14)")
+        return
+    endif
+    if not DungeonMonsterData___IsValidSkillId(skill_id) then
+        call DungeonMonsterData___ShowError("技能ID超出范围 (1001-1014)")
+        return
+    endif
+    if not DungeonMonsterData___IsValidSkillType(skill_type) then
+        call DungeonMonsterData___ShowError("技能类型超出范围 (1-8)")
+        return
+    endif
+    set index=MonsterData_GetBossIndex(boss_type , theme_type)
+    set udg_boss_skill_id[index]=skill_id
+    set udg_boss_skill_type[index]=skill_type
+endfunction
+// ============================================================================
+// MonsterData_GetMonsterUnitId
+// ============================================================================
+// 获取小怪单位ID
+// 参数:
+//   role_type - 角色类型 (1-6)
+//   theme_type - 主题类型 (1-14)
+// 返回: 小怪单位ID，如果数据未初始化或参数无效则返回0
+// ============================================================================
+function MonsterData_GetMonsterUnitId takes integer role_type,integer theme_type returns integer
+    local integer index
+    // 检查数据是否已初始化
+    if not DungeonMonsterData___CheckMonsterDataInitialized() then
+        return 0
+    endif
+    set index=MonsterData_GetMonsterIndex(role_type , theme_type)
+    if index == 0 or not DungeonMonsterData___IsValidMonsterIndex(index) then
+        return 0
+    endif
+    return udg_monster_unit_id[index]
+endfunction
+// ============================================================================
+// 获取小怪基础生命值
+// ============================================================================
+function MonsterData_GetMonsterBaseHp takes integer role_type,integer theme_type returns integer
+    local integer index
+    // 检查数据是否已初始化
+    if not udg_monster_data_initialized then
+        call DungeonMonsterData___ShowError("怪物数据未初始化")
+        return 0
+    endif
+    set index=MonsterData_GetMonsterIndex(role_type , theme_type)
+    if index == 0 or not DungeonMonsterData___IsValidMonsterIndex(index) then
+        return 0
+    endif
+    return udg_monster_base_hp[index]
+endfunction
+// ============================================================================
+// 获取小怪基础攻击力
+// ============================================================================
+function MonsterData_GetMonsterBaseAttack takes integer role_type,integer theme_type returns integer
+    local integer index
+    // 检查数据是否已初始化
+    if not udg_monster_data_initialized then
+        call DungeonMonsterData___ShowError("怪物数据未初始化")
+        return 0
+    endif
+    set index=MonsterData_GetMonsterIndex(role_type , theme_type)
+    if index == 0 or not DungeonMonsterData___IsValidMonsterIndex(index) then
+        return 0
+    endif
+    return udg_monster_base_attack[index]
+endfunction
+// ============================================================================
+// 获取小怪基础防御
+// ============================================================================
+function MonsterData_GetMonsterBaseDefense takes integer role_type,integer theme_type returns integer
+    local integer index
+    // 检查数据是否已初始化
+    if not udg_monster_data_initialized then
+        call DungeonMonsterData___ShowError("怪物数据未初始化")
+        return 0
+    endif
+    set index=MonsterData_GetMonsterIndex(role_type , theme_type)
+    if index == 0 or not DungeonMonsterData___IsValidMonsterIndex(index) then
+        return 0
+    endif
+    return udg_monster_base_defense[index]
+endfunction
+// ============================================================================
+// 获取小怪移动速度
+// ============================================================================
+function MonsterData_GetMonsterMoveSpeed takes integer role_type,integer theme_type returns integer
+    local integer index
+    // 检查数据是否已初始化
+    if not udg_monster_data_initialized then
+        call DungeonMonsterData___ShowError("怪物数据未初始化")
+        return 0
+    endif
+    set index=MonsterData_GetMonsterIndex(role_type , theme_type)
+    if index == 0 or not DungeonMonsterData___IsValidMonsterIndex(index) then
+        return 0
+    endif
+    return udg_monster_move_speed[index]
+endfunction
+// ============================================================================
+// 获取小怪攻击范围
+// ============================================================================
+function MonsterData_GetMonsterAttackRange takes integer role_type,integer theme_type returns integer
+    local integer index
+    // 检查数据是否已初始化
+    if not udg_monster_data_initialized then
+        call DungeonMonsterData___ShowError("怪物数据未初始化")
+        return 0
+    endif
+    set index=MonsterData_GetMonsterIndex(role_type , theme_type)
+    if index == 0 or not DungeonMonsterData___IsValidMonsterIndex(index) then
+        return 0
+    endif
+    return udg_monster_attack_range[index]
+endfunction
+// ============================================================================
+// 获取小怪技能ID
+// ============================================================================
+function MonsterData_GetMonsterSkillId takes integer role_type,integer theme_type returns integer
+    local integer index
+    // 检查数据是否已初始化
+    if not udg_monster_data_initialized then
+        call DungeonMonsterData___ShowError("怪物数据未初始化")
+        return 0
+    endif
+    set index=MonsterData_GetMonsterIndex(role_type , theme_type)
+    if index == 0 or not DungeonMonsterData___IsValidMonsterIndex(index) then
+        return 0
+    endif
+    return udg_monster_skill_id[index]
+endfunction
+// ============================================================================
+// 获取小怪技能类型
+// ============================================================================
+function MonsterData_GetMonsterSkillType takes integer role_type,integer theme_type returns integer
+    local integer index
+    // 检查数据是否已初始化
+    if not udg_monster_data_initialized then
+        call DungeonMonsterData___ShowError("怪物数据未初始化")
+        return 0
+    endif
+    set index=MonsterData_GetMonsterIndex(role_type , theme_type)
+    if index == 0 or not DungeonMonsterData___IsValidMonsterIndex(index) then
+        return 0
+    endif
+    return udg_monster_skill_type[index]
+endfunction
+// ============================================================================
+// 获取BOSS单位ID
+// ============================================================================
+function MonsterData_GetBossUnitId takes integer boss_type,integer theme_type returns integer
+    local integer index
+    // 检查数据是否已初始化
+    if not udg_monster_data_initialized then
+        call DungeonMonsterData___ShowError("怪物数据未初始化")
+        return 0
+    endif
+    set index=MonsterData_GetBossIndex(boss_type , theme_type)
+    if index == 0 or not DungeonMonsterData___IsValidBossIndex(index) then
+        return 0
+    endif
+    return udg_boss_unit_id[index]
+endfunction
+// ============================================================================
+// 获取BOSS基础生命值
+// ============================================================================
+function MonsterData_GetBossBaseHp takes integer boss_type,integer theme_type returns integer
+    local integer index
+    // 检查数据是否已初始化
+    if not udg_monster_data_initialized then
+        call DungeonMonsterData___ShowError("怪物数据未初始化")
+        return 0
+    endif
+    set index=MonsterData_GetBossIndex(boss_type , theme_type)
+    if index == 0 or not DungeonMonsterData___IsValidBossIndex(index) then
+        return 0
+    endif
+    return udg_boss_base_hp[index]
+endfunction
+// ============================================================================
+// 获取BOSS基础攻击力
+// ============================================================================
+function MonsterData_GetBossBaseAttack takes integer boss_type,integer theme_type returns integer
+    local integer index
+    // 检查数据是否已初始化
+    if not udg_monster_data_initialized then
+        call DungeonMonsterData___ShowError("怪物数据未初始化")
+        return 0
+    endif
+    set index=MonsterData_GetBossIndex(boss_type , theme_type)
+    if index == 0 or not DungeonMonsterData___IsValidBossIndex(index) then
+        return 0
+    endif
+    return udg_boss_base_attack[index]
+endfunction
+// ============================================================================
+// 获取BOSS基础防御
+// ============================================================================
+function MonsterData_GetBossBaseDefense takes integer boss_type,integer theme_type returns integer
+    local integer index
+    // 检查数据是否已初始化
+    if not udg_monster_data_initialized then
+        call DungeonMonsterData___ShowError("怪物数据未初始化")
+        return 0
+    endif
+    set index=MonsterData_GetBossIndex(boss_type , theme_type)
+    if index == 0 or not DungeonMonsterData___IsValidBossIndex(index) then
+        return 0
+    endif
+    return udg_boss_base_defense[index]
+endfunction
+// ============================================================================
+// 获取BOSS移动速度
+// ============================================================================
+function MonsterData_GetBossMoveSpeed takes integer boss_type,integer theme_type returns integer
+    local integer index
+    // 检查数据是否已初始化
+    if not udg_monster_data_initialized then
+        call DungeonMonsterData___ShowError("怪物数据未初始化")
+        return 0
+    endif
+    set index=MonsterData_GetBossIndex(boss_type , theme_type)
+    if index == 0 or not DungeonMonsterData___IsValidBossIndex(index) then
+        return 0
+    endif
+    return udg_boss_move_speed[index]
+endfunction
+// ============================================================================
+// 获取BOSS攻击范围
+// ============================================================================
+function MonsterData_GetBossAttackRange takes integer boss_type,integer theme_type returns integer
+    local integer index
+    // 检查数据是否已初始化
+    if not udg_monster_data_initialized then
+        call DungeonMonsterData___ShowError("怪物数据未初始化")
+        return 0
+    endif
+    set index=MonsterData_GetBossIndex(boss_type , theme_type)
+    if index == 0 or not DungeonMonsterData___IsValidBossIndex(index) then
+        return 0
+    endif
+    return udg_boss_attack_range[index]
+endfunction
+// ============================================================================
+// 获取BOSS技能ID
+// ============================================================================
+function MonsterData_GetBossSkillId takes integer boss_type,integer theme_type returns integer
+    local integer index
+    // 检查数据是否已初始化
+    if not udg_monster_data_initialized then
+        call DungeonMonsterData___ShowError("怪物数据未初始化")
+        return 0
+    endif
+    set index=MonsterData_GetBossIndex(boss_type , theme_type)
+    if index == 0 or not DungeonMonsterData___IsValidBossIndex(index) then
+        return 0
+    endif
+    return udg_boss_skill_id[index]
+endfunction
+// ============================================================================
+// 获取BOSS技能类型
+// ============================================================================
+function MonsterData_GetBossSkillType takes integer boss_type,integer theme_type returns integer
+    local integer index
+    // 检查数据是否已初始化
+    if not udg_monster_data_initialized then
+        call DungeonMonsterData___ShowError("怪物数据未初始化")
+        return 0
+    endif
+    set index=MonsterData_GetBossIndex(boss_type , theme_type)
+    if index == 0 or not DungeonMonsterData___IsValidBossIndex(index) then
+        return 0
+    endif
+    return udg_boss_skill_type[index]
+endfunction
+// ============================================================================
+// 获取BOSS属性加成
+// ============================================================================
+function MonsterData_GetBossAttributeBonus takes integer boss_type,integer theme_type returns integer
+    local integer index
+    // 检查数据是否已初始化
+    if not udg_monster_data_initialized then
+        call DungeonMonsterData___ShowError("怪物数据未初始化")
+        return 0
+    endif
+    set index=MonsterData_GetBossIndex(boss_type , theme_type)
+    if index == 0 or not DungeonMonsterData___IsValidBossIndex(index) then
+        return 0
+    endif
+    return udg_boss_attribute_bonus[index]
+endfunction
+// ============================================================================
+// 获取技能名称
+// ============================================================================
+function MonsterData_GetSkillName takes integer skill_id returns string
+    // 检查数据是否已初始化
+    if not udg_monster_data_initialized then
+        call DungeonMonsterData___ShowError("怪物数据未初始化")
+        return ""
+    endif
+    if not DungeonMonsterData___IsValidSkillId(skill_id) then
+        return ""
+    endif
+    return s__Skill_skill_name[GetSkillById(skill_id)]
+endfunction
+// ============================================================================
+// 获取技能类型
+// ============================================================================
+function MonsterData_GetSkillType takes integer skill_id returns integer
+    // 检查数据是否已初始化
+    if not udg_monster_data_initialized then
+        call DungeonMonsterData___ShowError("怪物数据未初始化")
+        return 0
+    endif
+    if not DungeonMonsterData___IsValidSkillId(skill_id) then
+        return 0
+    endif
+    return s__Skill_skill_type[GetSkillById(skill_id)]
+endfunction
+// ============================================================================
+// 获取技能伤害
+// ============================================================================
+function MonsterData_GetSkillDamage takes integer skill_id returns real
+    // 检查数据是否已初始化
+    if not udg_monster_data_initialized then
+        call DungeonMonsterData___ShowError("怪物数据未初始化")
+        return 0.0
+    endif
+    if not DungeonMonsterData___IsValidSkillId(skill_id) then
+        return 0.0
+    endif
+    return s__Skill_skill_damage_coefficient[GetSkillById(skill_id)]
+endfunction
+// ============================================================================
+// 获取技能冷却时间
+// ============================================================================
+function MonsterData_GetSkillCooldown takes integer skill_id returns real
+    // 检查数据是否已初始化
+    if not udg_monster_data_initialized then
+        call DungeonMonsterData___ShowError("怪物数据未初始化")
+        return 0.0
+    endif
+    if not DungeonMonsterData___IsValidSkillId(skill_id) then
+        return 0.0
+    endif
+    return s__Skill_skill_cooldown[GetSkillById(skill_id)]
+endfunction
+// ============================================================================
+// 获取技能魔法消耗
+// ============================================================================
+function MonsterData_GetSkillManaCost takes integer skill_id returns integer
+    // 检查数据是否已初始化
+    if not udg_monster_data_initialized then
+        call DungeonMonsterData___ShowError("怪物数据未初始化")
+        return 0
+    endif
+    if not DungeonMonsterData___IsValidSkillId(skill_id) then
+        return 0
+    endif
+    return s__Skill_skill_magic_cost[GetSkillById(skill_id)]
+endfunction
+// ============================================================================
+// 获取技能范围
+// ============================================================================
+function MonsterData_GetSkillRange takes integer skill_id returns real
+    // 检查数据是否已初始化
+    if not udg_monster_data_initialized then
+        call DungeonMonsterData___ShowError("怪物数据未初始化")
+        return 0.0
+    endif
+    if not DungeonMonsterData___IsValidSkillId(skill_id) then
+        return 0.0
+    endif
+    return s__Skill_skill_cast_range[GetSkillById(skill_id)]
+endfunction
+// ============================================================================
+// 初始化怪物数据
+// ============================================================================
+function InitDungeonMonsterData takes nothing returns nothing
+    local integer role_type
+    local integer theme_type
+    local integer boss_type
+    local integer skill_id
+    // 初始化标记
+    set udg_monster_data_initialized=true
+    // ========================================================================
+    // 初始化黑风寨主题小怪配置 (THEME_TYPE_HEIFENG = 1)
+    // ========================================================================
+    set theme_type=THEME_TYPE_HEIFENG
+    // 近战输出小怪
+    set role_type=ROLE_TYPE_MELEE_DPS
+    call MonsterData_SetMonsterType(role_type , theme_type , 'n101' , 400 , 25 , 3 , 280 , 100)
+    call MonsterData_SetMonsterSkill(role_type , theme_type , ENEMY_SKILL_NORMAL_ATTACK , SKILL_TYPE_ATTACK)
+    // 远程射手小怪
+    set role_type=ROLE_TYPE_RANGER
+    call MonsterData_SetMonsterType(role_type , theme_type , 'n102' , 300 , 20 , 2 , 300 , 550)
+    call MonsterData_SetMonsterSkill(role_type , theme_type , ENEMY_SKILL_RANGE_SHOT , SKILL_TYPE_ATTACK)
+    // 坦克肉盾小怪
+    set role_type=ROLE_TYPE_TANK
+    call MonsterData_SetMonsterType(role_type , theme_type , 'n103' , 600 , 15 , 10 , 240 , 100)
+    call MonsterData_SetMonsterSkill(role_type , theme_type , ENEMY_SKILL_DEFENSIVE_STANCE , SKILL_TYPE_DEFENSE)
+    // 法师控制小怪
+    set role_type=ROLE_TYPE_CASTER_CONTROL
+    call MonsterData_SetMonsterType(role_type , theme_type , 'n104' , 250 , 30 , 1 , 270 , 500)
+    call MonsterData_SetMonsterSkill(role_type , theme_type , ENEMY_SKILL_FREEZE , SKILL_TYPE_CONTROL)
+    // 治疗辅助小怪
+    set role_type=ROLE_TYPE_HEALER_SUPPORT
+    call MonsterData_SetMonsterType(role_type , theme_type , 'n105' , 250 , 10 , 3 , 280 , 300)
+    call MonsterData_SetMonsterSkill(role_type , theme_type , ENEMY_SKILL_HEAL , SKILL_TYPE_HEAL)
+    // 召唤师小怪
+    set role_type=ROLE_TYPE_SUMMONER
+    call MonsterData_SetMonsterType(role_type , theme_type , 'n106' , 350 , 20 , 5 , 260 , 200)
+    call MonsterData_SetMonsterSkill(role_type , theme_type , ENEMY_SKILL_SUMMON_MINIONS , SKILL_TYPE_SUMMON)
+    // ========================================================================
+    // 初始化山贼主题小怪配置 (THEME_TYPE_BANDIT = 2)
+    // ========================================================================
+    set theme_type=THEME_TYPE_BANDIT
+    // 近战输出小怪
+    set role_type=ROLE_TYPE_MELEE_DPS
+    call MonsterData_SetMonsterType(role_type , theme_type , 'n111' , 500 , 30 , 5 , 300 , 100)
+    call MonsterData_SetMonsterSkill(role_type , theme_type , ENEMY_SKILL_HEAVY_STRIKE , SKILL_TYPE_ATTACK)
+    // 远程射手小怪
+    set role_type=ROLE_TYPE_RANGER
+    call MonsterData_SetMonsterType(role_type , theme_type , 'n112' , 400 , 25 , 3 , 320 , 600)
+    call MonsterData_SetMonsterSkill(role_type , theme_type , ENEMY_SKILL_RANGE_SHOT , SKILL_TYPE_ATTACK)
+    // 坦克肉盾小怪
+    set role_type=ROLE_TYPE_TANK
+    call MonsterData_SetMonsterType(role_type , theme_type , 'n113' , 800 , 20 , 15 , 250 , 100)
+    call MonsterData_SetMonsterSkill(role_type , theme_type , ENEMY_SKILL_DEFENSIVE_STANCE , SKILL_TYPE_DEFENSE)
+    // 法师控制小怪
+    set role_type=ROLE_TYPE_CASTER_CONTROL
+    call MonsterData_SetMonsterType(role_type , theme_type , 'n114' , 350 , 35 , 2 , 280 , 500)
+    call MonsterData_SetMonsterSkill(role_type , theme_type , ENEMY_SKILL_FREEZE , SKILL_TYPE_CONTROL)
+    // 治疗辅助小怪
+    set role_type=ROLE_TYPE_HEALER_SUPPORT
+    call MonsterData_SetMonsterType(role_type , theme_type , 'n115' , 300 , 15 , 4 , 290 , 300)
+    call MonsterData_SetMonsterSkill(role_type , theme_type , ENEMY_SKILL_HEAL , SKILL_TYPE_HEAL)
+    // 召唤师小怪
+    set role_type=ROLE_TYPE_SUMMONER
+    call MonsterData_SetMonsterType(role_type , theme_type , 'n116' , 450 , 25 , 6 , 270 , 200)
+    call MonsterData_SetMonsterSkill(role_type , theme_type , ENEMY_SKILL_SUMMON_MINIONS , SKILL_TYPE_SUMMON)
+    // ========================================================================
+    // 初始化山贼主题BOSS配置
+    // ========================================================================
+    // 力量型BOSS
+    set boss_type=BOSS_TYPE_STRENGTH
+    call MonsterData_SetBossConfig(boss_type , theme_type , 'n001' , 5000 , 100 , 30 , 280 , 150 , 20)
+    call MonsterData_SetBossSkill(boss_type , theme_type , ENEMY_SKILL_BERSERK , SKILL_TYPE_BUFF)
+    // 防御型BOSS
+    set boss_type=BOSS_TYPE_DEFENSE
+    call MonsterData_SetBossConfig(boss_type , theme_type , 'n002' , 8000 , 70 , 50 , 240 , 100 , 30)
+    call MonsterData_SetBossSkill(boss_type , theme_type , ENEMY_SKILL_DEFENSIVE_STANCE , SKILL_TYPE_DEFENSE)
+    // 敏捷型BOSS
+    set boss_type=BOSS_TYPE_AGILITY
+    call MonsterData_SetBossConfig(boss_type , theme_type , 'n003' , 4000 , 120 , 20 , 350 , 600 , 25)
+    call MonsterData_SetBossSkill(boss_type , theme_type , ENEMY_SKILL_PRECISION_SHOT , SKILL_TYPE_ATTACK)
+    // 法师型BOSS
+    set boss_type=BOSS_TYPE_CASTER
+    call MonsterData_SetBossConfig(boss_type , theme_type , 'n004' , 3500 , 150 , 15 , 300 , 500 , 35)
+    call MonsterData_SetBossSkill(boss_type , theme_type , ENEMY_SKILL_FLAME_STORM , SKILL_TYPE_AOE)
+    // 召唤型BOSS
+    set boss_type=BOSS_TYPE_SUMMONER
+    call MonsterData_SetBossConfig(boss_type , theme_type , 'n005' , 4500 , 90 , 25 , 260 , 200 , 40)
+    call MonsterData_SetBossSkill(boss_type , theme_type , ENEMY_SKILL_SUMMON_MINIONS , SKILL_TYPE_SUMMON)
+    // ========================================================================
+    // 初始化寺庙主题小怪配置 (THEME_TYPE_SHAOLIN = 3)
+    // ========================================================================
+    set theme_type=THEME_TYPE_SHAOLIN
+    // 近战输出小怪
+    set role_type=ROLE_TYPE_MELEE_DPS
+    call MonsterData_SetMonsterType(role_type , theme_type , 'n121' , 550 , 35 , 8 , 290 , 100)
+    call MonsterData_SetMonsterSkill(role_type , theme_type , ENEMY_SKILL_COMBO_STRIKE , SKILL_TYPE_ATTACK)
+    // 远程射手小怪
+    set role_type=ROLE_TYPE_RANGER
+    call MonsterData_SetMonsterType(role_type , theme_type , 'n122' , 450 , 30 , 5 , 310 , 650)
+    call MonsterData_SetMonsterSkill(role_type , theme_type , ENEMY_SKILL_PRECISION_SHOT , SKILL_TYPE_ATTACK)
+    // 坦克肉盾小怪
+    set role_type=ROLE_TYPE_TANK
+    call MonsterData_SetMonsterType(role_type , theme_type , 'n123' , 900 , 25 , 20 , 240 , 100)
+    call MonsterData_SetMonsterSkill(role_type , theme_type , ENEMY_SKILL_TAUNT , SKILL_TYPE_CONTROL)
+    // 法师控制小怪
+    set role_type=ROLE_TYPE_CASTER_CONTROL
+    call MonsterData_SetMonsterType(role_type , theme_type , 'n124' , 400 , 40 , 4 , 270 , 550)
+    call MonsterData_SetMonsterSkill(role_type , theme_type , ENEMY_SKILL_FIREBALL , SKILL_TYPE_ATTACK)
+    // 治疗辅助小怪
+    set role_type=ROLE_TYPE_HEALER_SUPPORT
+    call MonsterData_SetMonsterType(role_type , theme_type , 'n125' , 350 , 20 , 6 , 280 , 350)
+    call MonsterData_SetMonsterSkill(role_type , theme_type , ENEMY_SKILL_HEAL , SKILL_TYPE_HEAL)
+    // 召唤师小怪
+    set role_type=ROLE_TYPE_SUMMONER
+    call MonsterData_SetMonsterType(role_type , theme_type , 'n126' , 500 , 30 , 8 , 260 , 250)
+    call MonsterData_SetMonsterSkill(role_type , theme_type , ENEMY_SKILL_SUMMON_MINIONS , SKILL_TYPE_SUMMON)
+    // ========================================================================
+    // 初始化寺庙主题BOSS配置
+    // ========================================================================
+    // 力量型BOSS
+    set boss_type=BOSS_TYPE_STRENGTH
+    call MonsterData_SetBossConfig(boss_type , theme_type , 'n006' , 5500 , 110 , 35 , 270 , 150 , 25)
+    call MonsterData_SetBossSkill(boss_type , theme_type , ENEMY_SKILL_BERSERK , SKILL_TYPE_BUFF)
+    // 防御型BOSS
+    set boss_type=BOSS_TYPE_DEFENSE
+    call MonsterData_SetBossConfig(boss_type , theme_type , 'n007' , 8500 , 75 , 55 , 230 , 100 , 35)
+    call MonsterData_SetBossSkill(boss_type , theme_type , ENEMY_SKILL_DEFENSIVE_STANCE , SKILL_TYPE_DEFENSE)
+    // 敏捷型BOSS
+    set boss_type=BOSS_TYPE_AGILITY
+    call MonsterData_SetBossConfig(boss_type , theme_type , 'n008' , 4200 , 130 , 25 , 340 , 650 , 30)
+    call MonsterData_SetBossSkill(boss_type , theme_type , ENEMY_SKILL_PRECISION_SHOT , SKILL_TYPE_ATTACK)
+    // 法师型BOSS
+    set boss_type=BOSS_TYPE_CASTER
+    call MonsterData_SetBossConfig(boss_type , theme_type , 'n009' , 3700 , 160 , 18 , 290 , 550 , 40)
+    call MonsterData_SetBossSkill(boss_type , theme_type , ENEMY_SKILL_FLAME_STORM , SKILL_TYPE_AOE)
+    // 召唤型BOSS
+    set boss_type=BOSS_TYPE_SUMMONER
+    call MonsterData_SetBossConfig(boss_type , theme_type , 'n010' , 4800 , 95 , 30 , 250 , 250 , 45)
+    call MonsterData_SetBossSkill(boss_type , theme_type , ENEMY_SKILL_SUMMON_MINIONS , SKILL_TYPE_SUMMON)
+    // ========================================================================
+    // 初始化洞穴主题小怪配置 (THEME_TYPE_MING = 4)
+    // ========================================================================
+    set theme_type=THEME_TYPE_MING
+    // 近战输出小怪
+    set role_type=ROLE_TYPE_MELEE_DPS
+    call MonsterData_SetMonsterType(role_type , theme_type , 'n131' , 600 , 40 , 10 , 280 , 100)
+    call MonsterData_SetMonsterSkill(role_type , theme_type , ENEMY_SKILL_HEAVY_STRIKE , SKILL_TYPE_ATTACK)
+    // 远程射手小怪
+    set role_type=ROLE_TYPE_RANGER
+    call MonsterData_SetMonsterType(role_type , theme_type , 'n132' , 500 , 35 , 6 , 300 , 700)
+    call MonsterData_SetMonsterSkill(role_type , theme_type , ENEMY_SKILL_RANGE_SHOT , SKILL_TYPE_ATTACK)
+    // 坦克肉盾小怪
+    set role_type=ROLE_TYPE_TANK
+    call MonsterData_SetMonsterType(role_type , theme_type , 'n133' , 1000 , 30 , 25 , 230 , 100)
+    call MonsterData_SetMonsterSkill(role_type , theme_type , ENEMY_SKILL_DEFENSIVE_STANCE , SKILL_TYPE_DEFENSE)
+    // 法师控制小怪
+    set role_type=ROLE_TYPE_CASTER_CONTROL
+    call MonsterData_SetMonsterType(role_type , theme_type , 'n134' , 450 , 45 , 5 , 260 , 600)
+    call MonsterData_SetMonsterSkill(role_type , theme_type , ENEMY_SKILL_FREEZE , SKILL_TYPE_CONTROL)
+    // 治疗辅助小怪
+    set role_type=ROLE_TYPE_HEALER_SUPPORT
+    call MonsterData_SetMonsterType(role_type , theme_type , 'n135' , 400 , 25 , 8 , 270 , 400)
+    call MonsterData_SetMonsterSkill(role_type , theme_type , ENEMY_SKILL_HEAL , SKILL_TYPE_HEAL)
+    // 召唤师小怪
+    set role_type=ROLE_TYPE_SUMMONER
+    call MonsterData_SetMonsterType(role_type , theme_type , 'n136' , 550 , 35 , 10 , 250 , 300)
+    call MonsterData_SetMonsterSkill(role_type , theme_type , ENEMY_SKILL_SUMMON_MINIONS , SKILL_TYPE_SUMMON)
+    // ========================================================================
+    // 初始化洞穴主题BOSS配置
+    // ========================================================================
+    // 力量型BOSS
+    set boss_type=BOSS_TYPE_STRENGTH
+    call MonsterData_SetBossConfig(boss_type , theme_type , 'n011' , 6000 , 120 , 40 , 260 , 150 , 30)
+    call MonsterData_SetBossSkill(boss_type , theme_type , ENEMY_SKILL_BERSERK , SKILL_TYPE_BUFF)
+    // 防御型BOSS
+    set boss_type=BOSS_TYPE_DEFENSE
+    call MonsterData_SetBossConfig(boss_type , theme_type , 'n012' , 9000 , 80 , 60 , 220 , 100 , 40)
+    call MonsterData_SetBossSkill(boss_type , theme_type , ENEMY_SKILL_DEFENSIVE_STANCE , SKILL_TYPE_DEFENSE)
+    // 敏捷型BOSS
+    set boss_type=BOSS_TYPE_AGILITY
+    call MonsterData_SetBossConfig(boss_type , theme_type , 'n013' , 4400 , 140 , 30 , 330 , 700 , 35)
+    call MonsterData_SetBossSkill(boss_type , theme_type , ENEMY_SKILL_PRECISION_SHOT , SKILL_TYPE_ATTACK)
+    // 法师型BOSS
+    set boss_type=BOSS_TYPE_CASTER
+    call MonsterData_SetBossConfig(boss_type , theme_type , 'n014' , 3900 , 170 , 20 , 280 , 600 , 45)
+    call MonsterData_SetBossSkill(boss_type , theme_type , ENEMY_SKILL_FLAME_STORM , SKILL_TYPE_AOE)
+    // 召唤型BOSS
+    set boss_type=BOSS_TYPE_SUMMONER
+    call MonsterData_SetBossConfig(boss_type , theme_type , 'n015' , 5100 , 100 , 35 , 240 , 300 , 50)
+    call MonsterData_SetBossSkill(boss_type , theme_type , ENEMY_SKILL_SUMMON_MINIONS , SKILL_TYPE_SUMMON)
+    // ========================================================================
+    // 初始化深层洞穴主题小怪配置 (THEME_TYPE_DARK = 5)
+    // ========================================================================
+    set theme_type=THEME_TYPE_DARK
+    // 近战输出小怪 - 机关剑士
+    set role_type=ROLE_TYPE_MELEE_DPS
+    call MonsterData_SetMonsterType(role_type , theme_type , 'n141' , 650 , 45 , 11 , 285 , 100)
+    call MonsterData_SetMonsterSkill(role_type , theme_type , 91003 , SKILL_TYPE_ATTACK)
+    // 远程射手小怪 - 机关弩手
+    set role_type=ROLE_TYPE_RANGER
+    call MonsterData_SetMonsterType(role_type , theme_type , 'n142' , 550 , 38 , 7 , 310 , 720)
+    call MonsterData_SetMonsterSkill(role_type , theme_type , 91005 , SKILL_TYPE_ATTACK)
+    // 坦克肉盾小怪 - 机关重甲
+    set role_type=ROLE_TYPE_TANK
+    call MonsterData_SetMonsterType(role_type , theme_type , 'n143' , 1100 , 33 , 27 , 235 , 100)
+    call MonsterData_SetMonsterSkill(role_type , theme_type , 91006 , SKILL_TYPE_DEFENSE)
+    // 法师控制小怪 - 机关术士
+    set role_type=ROLE_TYPE_CASTER_CONTROL
+    call MonsterData_SetMonsterType(role_type , theme_type , 'n144' , 500 , 50 , 6 , 265 , 620)
+    call MonsterData_SetMonsterSkill(role_type , theme_type , 91009 , SKILL_TYPE_CONTROL)
+    // 治疗辅助小怪 - 机关医者
+    set role_type=ROLE_TYPE_HEALER_SUPPORT
+    call MonsterData_SetMonsterType(role_type , theme_type , 'n145' , 440 , 28 , 9 , 275 , 420)
+    call MonsterData_SetMonsterSkill(role_type , theme_type , 91010 , SKILL_TYPE_HEAL)
+    // 召唤师小怪 - 机关工匠
+    set role_type=ROLE_TYPE_SUMMONER
+    call MonsterData_SetMonsterType(role_type , theme_type , 'n146' , 600 , 39 , 11 , 255 , 320)
+    call MonsterData_SetMonsterSkill(role_type , theme_type , 91011 , SKILL_TYPE_SUMMON)
+    // ========================================================================
+    // 初始化竹林秘境主题小怪配置 (THEME_TYPE_BAMBOO = 6)
+    // ========================================================================
+    set theme_type=THEME_TYPE_BAMBOO
+    // 近战输出小怪 - 竹林剑客
+    set role_type=ROLE_TYPE_MELEE_DPS
+    call MonsterData_SetMonsterType(role_type , theme_type , 'n151' , 700 , 50 , 12 , 290 , 100)
+    call MonsterData_SetMonsterSkill(role_type , theme_type , 91003 , SKILL_TYPE_ATTACK)
+    // 远程射手小怪 - 竹叶镖手
+    set role_type=ROLE_TYPE_RANGER
+    call MonsterData_SetMonsterType(role_type , theme_type , 'n152' , 600 , 42 , 8 , 320 , 750)
+    call MonsterData_SetMonsterSkill(role_type , theme_type , 91005 , SKILL_TYPE_ATTACK)
+    // 坦克肉盾小怪 - 竹甲卫士
+    set role_type=ROLE_TYPE_TANK
+    call MonsterData_SetMonsterType(role_type , theme_type , 'n153' , 1200 , 36 , 30 , 240 , 100)
+    call MonsterData_SetMonsterSkill(role_type , theme_type , 91006 , SKILL_TYPE_DEFENSE)
+    // 法师控制小怪 - 竹笛乐师
+    set role_type=ROLE_TYPE_CASTER_CONTROL
+    call MonsterData_SetMonsterType(role_type , theme_type , 'n154' , 550 , 55 , 7 , 270 , 650)
+    call MonsterData_SetMonsterSkill(role_type , theme_type , 91009 , SKILL_TYPE_CONTROL)
+    // 治疗辅助小怪 - 竹露医者
+    set role_type=ROLE_TYPE_HEALER_SUPPORT
+    call MonsterData_SetMonsterType(role_type , theme_type , 'n155' , 480 , 31 , 10 , 280 , 450)
+    call MonsterData_SetMonsterSkill(role_type , theme_type , 91010 , SKILL_TYPE_HEAL)
+    // 召唤师小怪 - 竹阵法师
+    set role_type=ROLE_TYPE_SUMMONER
+    call MonsterData_SetMonsterType(role_type , theme_type , 'n156' , 650 , 43 , 12 , 260 , 350)
+    call MonsterData_SetMonsterSkill(role_type , theme_type , 91011 , SKILL_TYPE_SUMMON)
+    // ========================================================================
+    // 初始化逍遥山庄主题小怪配置 (THEME_TYPE_XIAOYAO = 7)
+    // ========================================================================
+    set theme_type=THEME_TYPE_XIAOYAO
+    // 近战输出小怪 - 琴剑客
+    set role_type=ROLE_TYPE_MELEE_DPS
+    call MonsterData_SetMonsterType(role_type , theme_type , 'n161' , 770 , 55 , 14 , 300 , 100)
+    call MonsterData_SetMonsterSkill(role_type , theme_type , 91003 , SKILL_TYPE_ATTACK)
+    // 远程射手小怪 - 棋射手
+    set role_type=ROLE_TYPE_RANGER
+    call MonsterData_SetMonsterType(role_type , theme_type , 'n162' , 660 , 46 , 9 , 330 , 770)
+    call MonsterData_SetMonsterSkill(role_type , theme_type , 91005 , SKILL_TYPE_ATTACK)
+    // 坦克肉盾小怪 - 书卷卫士
+    set role_type=ROLE_TYPE_TANK
+    call MonsterData_SetMonsterType(role_type , theme_type , 'n163' , 1320 , 40 , 33 , 250 , 100)
+    call MonsterData_SetMonsterSkill(role_type , theme_type , 91006 , SKILL_TYPE_DEFENSE)
+    // 法师控制小怪 - 画境术士
+    set role_type=ROLE_TYPE_CASTER_CONTROL
+    call MonsterData_SetMonsterType(role_type , theme_type , 'n164' , 605 , 60 , 8 , 280 , 670)
+    call MonsterData_SetMonsterSkill(role_type , theme_type , 91009 , SKILL_TYPE_CONTROL)
+    // 治疗辅助小怪 - 琴音医者
+    set role_type=ROLE_TYPE_HEALER_SUPPORT
+    call MonsterData_SetMonsterType(role_type , theme_type , 'n165' , 530 , 34 , 11 , 290 , 460)
+    call MonsterData_SetMonsterSkill(role_type , theme_type , 91010 , SKILL_TYPE_HEAL)
+    // 召唤师小怪 - 四艺召唤师
+    set role_type=ROLE_TYPE_SUMMONER
+    call MonsterData_SetMonsterType(role_type , theme_type , 'n166' , 715 , 47 , 13 , 270 , 360)
+    call MonsterData_SetMonsterSkill(role_type , theme_type , 91011 , SKILL_TYPE_SUMMON)
+    // ========================================================================
+    // 初始化梅花坞主题小怪配置 (THEME_TYPE_PLUM = 8)
+    // ========================================================================
+    set theme_type=THEME_TYPE_PLUM
+    // 近战输出小怪 - 寒梅剑客
+    set role_type=ROLE_TYPE_MELEE_DPS
+    call MonsterData_SetMonsterType(role_type , theme_type , 'n171' , 850 , 61 , 16 , 315 , 100)
+    call MonsterData_SetMonsterSkill(role_type , theme_type , 91003 , SKILL_TYPE_ATTACK)
+    // 远程射手小怪 - 梅枝射手
+    set role_type=ROLE_TYPE_RANGER
+    call MonsterData_SetMonsterType(role_type , theme_type , 'n172' , 725 , 51 , 10 , 345 , 785)
+    call MonsterData_SetMonsterSkill(role_type , theme_type , 91005 , SKILL_TYPE_ATTACK)
+    // 坦克肉盾小怪 - 梅干卫士
+    set role_type=ROLE_TYPE_TANK
+    call MonsterData_SetMonsterType(role_type , theme_type , 'n173' , 1450 , 44 , 37 , 260 , 100)
+    call MonsterData_SetMonsterSkill(role_type , theme_type , 91006 , SKILL_TYPE_DEFENSE)
+    // 法师控制小怪 - 梅香术士
+    set role_type=ROLE_TYPE_CASTER_CONTROL
+    call MonsterData_SetMonsterType(role_type , theme_type , 'n174' , 665 , 66 , 9 , 295 , 685)
+    call MonsterData_SetMonsterSkill(role_type , theme_type , 91009 , SKILL_TYPE_CONTROL)
+    // 治疗辅助小怪 - 梅蕊医者
+    set role_type=ROLE_TYPE_HEALER_SUPPORT
+    call MonsterData_SetMonsterType(role_type , theme_type , 'n175' , 580 , 37 , 12 , 305 , 475)
+    call MonsterData_SetMonsterSkill(role_type , theme_type , 91010 , SKILL_TYPE_HEAL)
+    // 召唤师小怪 - 梅花召唤师
+    set role_type=ROLE_TYPE_SUMMONER
+    call MonsterData_SetMonsterType(role_type , theme_type , 'n176' , 785 , 52 , 15 , 285 , 375)
+    call MonsterData_SetMonsterSkill(role_type , theme_type , 91011 , SKILL_TYPE_SUMMON)
+    // ========================================================================
+    // 初始化五行峰主题小怪配置 (THEME_TYPE_KONGTONG = 9)
+    // ========================================================================
+    set theme_type=THEME_TYPE_KONGTONG
+    // 近战输出小怪 - 金行剑客
+    set role_type=ROLE_TYPE_MELEE_DPS
+    call MonsterData_SetMonsterType(role_type , theme_type , 'n181' , 940 , 68 , 18 , 350 , 100)
+    call MonsterData_SetMonsterSkill(role_type , theme_type , 91003 , SKILL_TYPE_ATTACK)
+    // 远程射手小怪 - 木行射手
+    set role_type=ROLE_TYPE_RANGER
+    call MonsterData_SetMonsterType(role_type , theme_type , 'n182' , 800 , 56 , 11 , 380 , 800)
+    call MonsterData_SetMonsterSkill(role_type , theme_type , 91005 , SKILL_TYPE_ATTACK)
+    // 坦克肉盾小怪 - 水行卫士
+    set role_type=ROLE_TYPE_TANK
+    call MonsterData_SetMonsterType(role_type , theme_type , 'n183' , 1600 , 48 , 41 , 285 , 100)
+    call MonsterData_SetMonsterSkill(role_type , theme_type , 91006 , SKILL_TYPE_DEFENSE)
+    // 法师控制小怪 - 火行术士
+    set role_type=ROLE_TYPE_CASTER_CONTROL
+    call MonsterData_SetMonsterType(role_type , theme_type , 'n184' , 735 , 73 , 10 , 325 , 700)
+    call MonsterData_SetMonsterSkill(role_type , theme_type , 91009 , SKILL_TYPE_CONTROL)
+    // 治疗辅助小怪 - 土行医者
+    set role_type=ROLE_TYPE_HEALER_SUPPORT
+    call MonsterData_SetMonsterType(role_type , theme_type , 'n185' , 640 , 41 , 13 , 335 , 490)
+    call MonsterData_SetMonsterSkill(role_type , theme_type , 91010 , SKILL_TYPE_HEAL)
+    // 召唤师小怪 - 五行阵法师
+    set role_type=ROLE_TYPE_SUMMONER
+    call MonsterData_SetMonsterType(role_type , theme_type , 'n186' , 865 , 57 , 17 , 315 , 390)
+    call MonsterData_SetMonsterSkill(role_type , theme_type , 91011 , SKILL_TYPE_SUMMON)
+    // ========================================================================
+    // 初始化水月洞主题小怪配置 (THEME_TYPE_WATER_MOON = 10)
+    // ========================================================================
+    set theme_type=THEME_TYPE_WATER_MOON
+    // 近战输出小怪 - 镜花剑客
+    set role_type=ROLE_TYPE_MELEE_DPS
+    call MonsterData_SetMonsterType(role_type , theme_type , 'n191' , 1035 , 75 , 20 , 385 , 100)
+    call MonsterData_SetMonsterSkill(role_type , theme_type , 91003 , SKILL_TYPE_ATTACK)
+    // 远程射手小怪 - 水月射手
+    set role_type=ROLE_TYPE_RANGER
+    call MonsterData_SetMonsterType(role_type , theme_type , 'n192' , 880 , 62 , 12 , 418 , 880)
+    call MonsterData_SetMonsterSkill(role_type , theme_type , 91005 , SKILL_TYPE_ATTACK)
+    // 坦克肉盾小怪 - 幻影卫士
+    set role_type=ROLE_TYPE_TANK
+    call MonsterData_SetMonsterType(role_type , theme_type , 'n193' , 1760 , 53 , 45 , 314 , 100)
+    call MonsterData_SetMonsterSkill(role_type , theme_type , 91006 , SKILL_TYPE_DEFENSE)
+    // 法师控制小怪 - 虚幻术士
+    set role_type=ROLE_TYPE_CASTER_CONTROL
+    call MonsterData_SetMonsterType(role_type , theme_type , 'n194' , 810 , 80 , 11 , 358 , 770)
+    call MonsterData_SetMonsterSkill(role_type , theme_type , 91009 , SKILL_TYPE_CONTROL)
+    // 治疗辅助小怪 - 倒影医者
+    set role_type=ROLE_TYPE_HEALER_SUPPORT
+    call MonsterData_SetMonsterType(role_type , theme_type , 'n195' , 705 , 45 , 14 , 369 , 540)
+    call MonsterData_SetMonsterSkill(role_type , theme_type , 91010 , SKILL_TYPE_HEAL)
+    // 召唤师小怪 - 镜月召唤师
+    set role_type=ROLE_TYPE_SUMMONER
+    call MonsterData_SetMonsterType(role_type , theme_type , 'n196' , 950 , 63 , 19 , 347 , 430)
+    call MonsterData_SetMonsterSkill(role_type , theme_type , 91011 , SKILL_TYPE_SUMMON)
+    // ========================================================================
+    // 初始化剑圣谷主题小怪配置 (THEME_TYPE_SWORD = 11)
+    // ========================================================================
+    set theme_type=THEME_TYPE_SWORD
+    // 近战输出小怪 - 剑圣传人
+    set role_type=ROLE_TYPE_MELEE_DPS
+    call MonsterData_SetMonsterType(role_type , theme_type , 'n1A1' , 1140 , 83 , 22 , 424 , 100)
+    call MonsterData_SetMonsterSkill(role_type , theme_type , 91003 , SKILL_TYPE_ATTACK)
+    // 远程射手小怪 - 剑气射手
+    set role_type=ROLE_TYPE_RANGER
+    call MonsterData_SetMonsterType(role_type , theme_type , 'n1A2' , 968 , 68 , 13 , 460 , 968)
+    call MonsterData_SetMonsterSkill(role_type , theme_type , 91005 , SKILL_TYPE_ATTACK)
+    // 坦克肉盾小怪 - 剑盾卫士
+    set role_type=ROLE_TYPE_TANK
+    call MonsterData_SetMonsterType(role_type , theme_type , 'n1A3' , 1936 , 58 , 50 , 345 , 100)
+    call MonsterData_SetMonsterSkill(role_type , theme_type , 91006 , SKILL_TYPE_DEFENSE)
+    // 法师控制小怪 - 剑心术士
+    set role_type=ROLE_TYPE_CASTER_CONTROL
+    call MonsterData_SetMonsterType(role_type , theme_type , 'n1A4' , 891 , 88 , 12 , 394 , 847)
+    call MonsterData_SetMonsterSkill(role_type , theme_type , 91009 , SKILL_TYPE_CONTROL)
+    // 治疗辅助小怪 - 剑魂医者
+    set role_type=ROLE_TYPE_HEALER_SUPPORT
+    call MonsterData_SetMonsterType(role_type , theme_type , 'n1A5' , 776 , 50 , 15 , 406 , 594)
+    call MonsterData_SetMonsterSkill(role_type , theme_type , 91010 , SKILL_TYPE_HEAL)
+    // 召唤师小怪 - 剑灵召唤师
+    set role_type=ROLE_TYPE_SUMMONER
+    call MonsterData_SetMonsterType(role_type , theme_type , 'n1A6' , 1045 , 69 , 21 , 382 , 473)
+    call MonsterData_SetMonsterSkill(role_type , theme_type , 91011 , SKILL_TYPE_SUMMON)
+    // ========================================================================
+    // 初始化云梦泽主题小怪配置 (THEME_TYPE_MARSH = 12)
+    // ========================================================================
+    set theme_type=THEME_TYPE_MARSH
+    // 近战输出小怪 - 毒雾剑客
+    set role_type=ROLE_TYPE_MELEE_DPS
+    call MonsterData_SetMonsterType(role_type , theme_type , 'n1B1' , 1254 , 91 , 24 , 466 , 100)
+    call MonsterData_SetMonsterSkill(role_type , theme_type , 91003 , SKILL_TYPE_ATTACK)
+    // 远程射手小怪 - 沼泽射手
+    set role_type=ROLE_TYPE_RANGER
+    call MonsterData_SetMonsterType(role_type , theme_type , 'n1B2' , 1065 , 75 , 14 , 506 , 1065)
+    call MonsterData_SetMonsterSkill(role_type , theme_type , 91005 , SKILL_TYPE_ATTACK)
+    // 坦克肉盾小怪 - 毒瘴卫士
+    set role_type=ROLE_TYPE_TANK
+    call MonsterData_SetMonsterType(role_type , theme_type , 'n1B3' , 2130 , 64 , 55 , 380 , 100)
+    call MonsterData_SetMonsterSkill(role_type , theme_type , 91006 , SKILL_TYPE_DEFENSE)
+    // 法师控制小怪 - 毒雾术士
+    set role_type=ROLE_TYPE_CASTER_CONTROL
+    call MonsterData_SetMonsterType(role_type , theme_type , 'n1B4' , 980 , 97 , 13 , 433 , 932)
+    call MonsterData_SetMonsterSkill(role_type , theme_type , 91009 , SKILL_TYPE_CONTROL)
+    // 治疗辅助小怪 - 沼泽医者
+    set role_type=ROLE_TYPE_HEALER_SUPPORT
+    call MonsterData_SetMonsterType(role_type , theme_type , 'n1B5' , 854 , 55 , 16 , 447 , 653)
+    call MonsterData_SetMonsterSkill(role_type , theme_type , 91010 , SKILL_TYPE_HEAL)
+    // 召唤师小怪 - 毒泽召唤师
+    set role_type=ROLE_TYPE_SUMMONER
+    call MonsterData_SetMonsterType(role_type , theme_type , 'n1B6' , 1150 , 76 , 23 , 420 , 520)
+    call MonsterData_SetMonsterSkill(role_type , theme_type , 91011 , SKILL_TYPE_SUMMON)
+    // ========================================================================
+    // 初始化武林圣地主题小怪配置 (THEME_TYPE_SACRED = 13)
+    // ========================================================================
+    set theme_type=THEME_TYPE_SACRED
+    // 近战输出小怪 - 剑宗传人
+    set role_type=ROLE_TYPE_MELEE_DPS
+    call MonsterData_SetMonsterType(role_type , theme_type , 'n1C1' , 1379 , 100 , 26 , 513 , 100)
+    call MonsterData_SetMonsterSkill(role_type , theme_type , 91003 , SKILL_TYPE_ATTACK)
+    // 远程射手小怪 - 弓宗高手
+    set role_type=ROLE_TYPE_RANGER
+    call MonsterData_SetMonsterType(role_type , theme_type , 'n1C2' , 1172 , 83 , 15 , 557 , 1172)
+    call MonsterData_SetMonsterSkill(role_type , theme_type , 91005 , SKILL_TYPE_ATTACK)
+    // 坦克肉盾小怪 - 盾宗卫士
+    set role_type=ROLE_TYPE_TANK
+    call MonsterData_SetMonsterType(role_type , theme_type , 'n1C3' , 2343 , 70 , 61 , 418 , 100)
+    call MonsterData_SetMonsterSkill(role_type , theme_type , 91006 , SKILL_TYPE_DEFENSE)
+    // 法师控制小怪 - 术宗大师
+    set role_type=ROLE_TYPE_CASTER_CONTROL
+    call MonsterData_SetMonsterType(role_type , theme_type , 'n1C4' , 1078 , 107 , 14 , 476 , 1025)
+    call MonsterData_SetMonsterSkill(role_type , theme_type , 91009 , SKILL_TYPE_CONTROL)
+    // 治疗辅助小怪 - 医宗圣手
+    set role_type=ROLE_TYPE_HEALER_SUPPORT
+    call MonsterData_SetMonsterType(role_type , theme_type , 'n1C5' , 939 , 61 , 18 , 492 , 718)
+    call MonsterData_SetMonsterSkill(role_type , theme_type , 91010 , SKILL_TYPE_HEAL)
+    // 召唤师小怪 - 召唤宗师
+    set role_type=ROLE_TYPE_SUMMONER
+    call MonsterData_SetMonsterType(role_type , theme_type , 'n1C6' , 1265 , 84 , 25 , 462 , 572)
+    call MonsterData_SetMonsterSkill(role_type , theme_type , 91011 , SKILL_TYPE_SUMMON)
+endfunction
+
+//library DungeonMonsterData ends
 //library GeneralBonusSystem:
 //以下函数仅仅是让技能ID出现在代码里，不然SLK优化器会删除这些技能
 function GeneralBonusSystem___DisplayAllAbilityId takes nothing returns nothing
@@ -11727,7 +11609,6 @@ set udg_monster_targets[i]=null
     // Initialization Function
     // ============================================================================
     function DelayInit takes nothing returns nothing
-        call DisplayTextToPlayer(GetLocalPlayer(), 0, 0, "|cff00ff00正在进行游戏初始化|r")
         // 初始化其他系统
         call InitHeroAttributeSystem() // 英雄属性系统
 call InitSectSystem() // 门派系统
@@ -11754,7 +11635,6 @@ call InitGameTimeSystem() // 游戏时间系统
     function OnInit takes nothing returns nothing
         local integer i
         local timer t= CreateTimer()
-        call DisplayTextToPlayer(GetLocalPlayer(), 0, 0, "|cff00ff00正在初始化游戏状态|r")
         // 初始化游戏状态
         set i=0
         loop
@@ -11847,7 +11727,7 @@ call InitGameTimeSystem() // 游戏时间系统
 // 
 //   Warcraft III map script
 //   Generated by the Warcraft III World Editor
-//   Date: Mon Mar 02 14:51:54 2026
+//   Date: Mon Mar 09 11:14:08 2026
 //   Map Author: Zeikale
 // 
 //===========================================================================
@@ -12376,17 +12256,17 @@ function main takes nothing returns nothing
     call SetMapMusic("Music", true, 0)
     call CreateAllUnits()
     call InitBlizzard()
-call DisplayTextToPlayer(GetLocalPlayer(), 0, 0, "|cff00ff00正在执行main函数|r")
-call ExecuteFunc("jasshelper__initstructs249805250")
+
+call ExecuteFunc("jasshelper__initstructs841559156")
 call ExecuteFunc("InitCultivationData")
 call ExecuteFunc("InitDungeonData")
-call ExecuteFunc("InitDungeonMonsterData")
 call ExecuteFunc("InitEquipmentData")
 call ExecuteFunc("InitGameTimeSystem")
 call ExecuteFunc("LBKKAPI___Init")
 call ExecuteFunc("InitSectData")
 call ExecuteFunc("InitTestEquipmentGenerate")
 call ExecuteFunc("InitializeYD")
+call ExecuteFunc("InitDungeonMonsterData")
 call ExecuteFunc("GeneralBonusSystem___Initialize")
 call ExecuteFunc("InitEnemySkill")
 call ExecuteFunc("InitHeroSelectionSystem")
@@ -12457,8 +12337,7 @@ local integer this=f__arg_this
    return true
 endfunction
 
-function jasshelper__initstructs249805250 takes nothing returns nothing
-    call DisplayTextToPlayer(GetLocalPlayer(), 0, 0, "|cff00ff00正在初始化structs|r")
+function jasshelper__initstructs841559156 takes nothing returns nothing
     set st__Skill_onDestroy=CreateTrigger()
     call TriggerAddCondition(st__Skill_onDestroy,Condition( function sa__Skill_onDestroy))
 

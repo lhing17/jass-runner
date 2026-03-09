@@ -7,13 +7,13 @@ def test_fourcc_to_int():
     """测试FourCC字符串转换为整数。"""
     from jass_runner.utils import fourcc_to_int
 
-    # 测试常见单位类型 (little-endian)
-    assert fourcc_to_int('hfoo') == 1869571688  # 'hfoo' -> 0x6F6F6668
-    assert fourcc_to_int('hkni') == 1768844136  # 'hkni' -> 0x696E6B68
-    assert fourcc_to_int('hpea') == 1634037864  # 'hpea' -> 0x61657068
+    # 测试常见单位类型 (big-endian)
+    assert fourcc_to_int('hfoo') == 1751543663  # 'hfoo' -> 0x68666F6F
+    assert fourcc_to_int('hkni') == 1751871081  # 'hkni' -> 0x686B6E69
+    assert fourcc_to_int('hpea') == 1752196449  # 'hpea' -> 0x68706561
 
     # 测试技能类型
-    assert fourcc_to_int('AHdr') == 1919174721  # 'AHdr' -> 0x72644841
+    assert fourcc_to_int('AHdr') == 1095263346  # 'AHdr' -> 0x41486472
 
 
 def test_fourcc_to_int_invalid_length():
@@ -31,9 +31,9 @@ def test_int_to_fourcc():
     """测试整数转换为FourCC字符串。"""
     from jass_runner.utils import int_to_fourcc
 
-    assert int_to_fourcc(1869571688) == 'hfoo'
-    assert int_to_fourcc(1768844136) == 'hkni'
-    assert int_to_fourcc(1634037864) == 'hpea'
+    assert int_to_fourcc(1751543663) == 'hfoo'
+    assert int_to_fourcc(1751871081) == 'hkni'
+    assert int_to_fourcc(1752196449) == 'hpea'
 
 
 def test_fourcc_roundtrip():

@@ -82,8 +82,8 @@ class TestUnitAddItemById:
         unit = handle_manager.create_unit(0, player, 0.0, 0.0, 0.0)
         native = UnitAddItemById()
 
-        # FourCC 'ratf' = 1718903154
-        item_type_id = 1718903154
+        # FourCC 'ratf' = 1918989414 (big-endian)
+        item_type_id = 1918989414
         result = native.execute(state_context, unit, item_type_id, -1)
 
         assert result is not None
@@ -200,13 +200,13 @@ class TestGetItemTypeId:
         """测试获取物品类型ID正确。"""
         state_context = StateContext()
         handle_manager = state_context.handle_manager
-        # 'ratf' = 1718903154 (小端序)
+        # 'ratf' = 1918989414 (big-endian)
         item = handle_manager.create_item("ratf", 1.0, 1.0)
         native = GetItemTypeId()
 
         result = native.execute(state_context, item)
 
-        assert result == 1718903154
+        assert result == 1918989414
 
     def test_get_item_type_id_different_items(self):
         """测试不同类型物品返回不同ID。"""

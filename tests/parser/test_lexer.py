@@ -151,9 +151,8 @@ def test_lexer_fourcc_in_function_call():
             break
 
     assert fourcc_token is not None, "FourCC token not found"
-    # 'hfoo' = 0x68666F6F in big-endian, but we store as little-endian bytes
-    # little-endian: 0x6F6F6668 = 1869571688
-    assert fourcc_token.value == 1869571688
+    # 'hfoo' = 0x68666F6F in big-endian (war3 字节序)
+    assert fourcc_token.value == 1751543663
 
 
 def test_lexer_fourcc_vs_string():

@@ -4,7 +4,7 @@ from typing import Any
 from .context import ExecutionContext
 from .evaluator import Evaluator
 from ..parser.parser import AST, FunctionDecl, LocalDecl, NativeCallNode, SetStmt, IfStmt, LoopStmt, ExitWhenStmt, ReturnStmt, GlobalDecl
-from ..parser.ast_nodes import ArrayDecl, SetArrayStmt, SetArrayStmt
+from ..parser.ast_nodes import ArrayAccess, ArrayDecl, SetArrayStmt
 from ..natives.state import StateContext
 from ..types import TypeChecker
 from .control_flow import ExitLoopSignal, ReturnSignal
@@ -194,6 +194,10 @@ class Interpreter:
             # 如果是字符串，可能是表达式，需要求值
             result = self.evaluator.evaluate(stmt.value)
             value_type = self._infer_type(result)
+        elif isinstance(stmt.value, ArrayAccess):
+            # 如果是数组访问，需要求值
+            result = self.evaluator.evaluate(stmt.value)
+            value_type = self._infer_type(result)
         else:
             result = stmt.value
             value_type = self._infer_type(result)
@@ -214,6 +218,7 @@ class Interpreter:
         参数：
             stmt: 数组赋值语句节点
         """
+
         # 求值索引表达式
         index = self.evaluator.evaluate(stmt.index)
         # 求值右侧值
