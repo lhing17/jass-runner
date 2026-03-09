@@ -1626,57 +1626,39 @@ jass-runner/
 - **测试统计**: 所有 937 个测试通过
 
 ---
-*最后更新: 2026-03-09*
 
 ---
 
-#### 62. 玩家插槽状态Native函数实现完成 (2026-03-06)
+#### 67. Hashtable系统实现完成 (2026-03-09)
 - **新增组件**:
-  - `player_slot_state_natives.py` - 2个玩家插槽状态相关Native函数
-  - Player类slot_state属性改为整数类型（0=EMPTY, 1=PLAYING, 2=LEFT）
-- **新增Native函数** (2个):
-  - `GetPlayerSlotState` - 获取玩家插槽状态（返回playerslotstate）
-  - `ConvertPlayerSlotState` - 将整数转换为playerslotstate类型
+  - `Hashtable` 类 - 核心数据结构，继承Handle基类
+  - `hashtable_natives.py` - 27个Native函数实现
+  - 嵌套字典存储结构：{parent: {child: {type: value}}}
+- **新增Native函数** (27个):
+  - `InitHashtable` - 创建hashtable
+  - Save类型: `SaveInteger`, `SaveReal`, `SaveBoolean`, `SaveStr`, `SaveUnitHandle`, `SaveItemHandle`, `SavePlayerHandle`
+  - Load类型: `LoadInteger`, `LoadReal`, `LoadBoolean`, `LoadStr`, `LoadUnitHandle`, `LoadItemHandle`, `LoadPlayerHandle`
+  - HaveSaved类型: `HaveSavedInteger`, `HaveSavedReal`, `HaveSavedBoolean`, `HaveSavedString`, `HaveSavedHandle`
+  - RemoveSaved类型: `RemoveSavedInteger`, `RemoveSavedReal`, `RemoveSavedBoolean`, `RemoveSavedString`, `RemoveSavedHandle`
+  - Flush类型: `FlushChildHashtable`, `FlushParentHashtable`
 - **关键设计**:
-  - Player.slot_state从字符串改为整数，与JASS常量定义一致
-  - player_id < 12: PLAYER_SLOT_STATE_PLAYING (1)
-  - player_id >= 12: PLAYER_SLOT_STATE_EMPTY (0)
-  - ConvertPlayerSlotState直接返回传入的整数（类型转换函数）
-  - 支持integer到playerslotstate的隐式类型转换
+  - 存储handle_id字符串而非对象，避免循环引用
+  - Load时通过HandleManager解析handle_id
+  - 同一(parent, child)键下可同时存储不同类型数据
+  - 无效hashtable时返回类型默认值
 - **修改文件**:
-  - `src/jass_runner/natives/player.py` - 修改slot_state属性为整数类型
-  - `src/jass_runner/natives/player_slot_state_natives.py` - 新建，实现2个native函数
-  - `src/jass_runner/natives/factory.py` - 注册2个新函数
-  - `src/jass_runner/types/checker.py` - 添加integer→playerslotstate隐式转换
-  - `tests/natives/test_factory.py` - 更新函数数量统计(170→172个)
-  - `tests/natives/test_handle.py` - 更新slot_state断言（字符串→整数）
+  - `src/jass_runner/natives/hashtable.py` - 新建，Hashtable类
+  - `src/jass_runner/natives/hashtable_natives.py` - 新建，27个Native函数
+  - `src/jass_runner/natives/manager.py` - 添加create_hashtable/get_hashtable
+  - `src/jass_runner/natives/factory.py` - 注册27个新函数
+  - `tests/natives/test_hashtable.py` - 新建，Hashtable类单元测试
+  - `tests/natives/test_hashtable_natives.py` - 新建，Native函数单元测试
+  - `tests/natives/test_manager.py` - 添加HandleManager测试
+  - `tests/natives/test_factory.py` - 更新函数计数(204个)
+  - `tests/integration/test_hashtable_integration.py` - 新建，集成测试
 - **测试覆盖**:
-  - 单元测试: GetPlayerSlotState（5个）、ConvertPlayerSlotState（4个）
-  - 集成测试: 玩家插槽状态完整流程（7个）
-- **测试统计**: 所有 903 个测试通过
+  - 单元测试: Hashtable类(21个), Native函数(17个), HandleManager(2个)
+  - 集成测试: 5个完整工作流程测试
+- **测试统计**: 所有测试通过
 
-#### 61. 玩家控制器Native函数实现完成 (2026-03-06)
-- **新增组件**:
-  - `player_controller_natives.py` - 2个玩家控制器相关Native函数
-  - Player类controller属性改为整数类型（0=USER, 1=COMPUTER, 3=NEUTRAL）
-- **新增Native函数** (2个):
-  - `GetPlayerController` - 获取玩家控制器类型（返回mapcontrol）
-  - `ConvertMapControl` - 将整数转换为mapcontrol类型
-- **关键设计**:
-  - Player.controller从字符串改为整数，与JASS常量定义一致
-  - player_id < 8: MAP_CONTROL_USER (0)
-  - player_id 8-11: MAP_CONTROL_COMPUTER (1)
-  - player_id >= 12: MAP_CONTROL_NEUTRAL (3)
-  - ConvertMapControl直接返回传入的整数（类型转换函数）
-  - 支持integer到mapcontrol的隐式类型转换
-- **修改文件**:
-  - `src/jass_runner/natives/player.py` - 修改controller属性为整数类型
-  - `src/jass_runner/natives/player_controller_natives.py` - 新建，实现2个native函数
-  - `src/jass_runner/natives/factory.py` - 注册2个新函数
-  - `src/jass_runner/types/checker.py` - 添加integer→mapcontrol隐式转换
-  - `tests/natives/test_factory.py` - 更新函数数量统计(168→170个)
-  - `tests/natives/test_handle.py` - 更新controller断言（字符串→整数）
-- **测试覆盖**:
-  - 单元测试: GetPlayerController（4个）、ConvertMapControl（4个）
-  - 集成测试: 玩家控制器完整流程（6个）
-- **测试统计**: 所有 887 个测试通过
+*最后更新: 2026-03-09*
