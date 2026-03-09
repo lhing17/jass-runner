@@ -547,3 +547,50 @@ class RemoveSavedHandle(NativeFunction):
 
         hashtable.remove_saved_handle(parent_key, child_key)
         return None
+
+
+class FlushChildHashtable(NativeFunction):
+    """FlushChildHashtable native 函数"""
+
+    @property
+    def name(self) -> str:
+        return "FlushChildHashtable"
+
+    def execute(self, state_context, hashtable_id: str, parent_key: int,
+                *args, **kwargs):
+        """清空指定 parentKey 下所有数据"""
+        if state_context is None or not hasattr(state_context, 'handle_manager'):
+            logger.error("[FlushChildHashtable] state_context or handle_manager not found")
+            return None
+
+        hashtable = state_context.handle_manager.get_hashtable(hashtable_id)
+        if hashtable is None:
+            logger.warning(f"[FlushChildHashtable] Hashtable not found: {hashtable_id}")
+            return None
+
+        hashtable.flush_child(parent_key)
+        logger.info(f"[FlushChildHashtable] Flushed child {parent_key} from {hashtable_id}")
+        return None
+
+
+class FlushParentHashtable(NativeFunction):
+    """FlushParentHashtable native 函数"""
+
+    @property
+    def name(self) -> str:
+        return "FlushParentHashtable"
+
+    def execute(self, state_context, hashtable_id: str, *args, **kwargs):
+        """清空整个 hashtable"""
+        if state_context is None or not hasattr(state_context, 'handle_manager'):
+            logger.error("[FlushParentHashtable] state_context or handle_manager not found")
+            return None
+
+        hashtable = state_context.handle_manager.get_hashtable(hashtable_id)
+        if hashtable is None:
+            logger.warning(f"[FlushParentHashtable] Hashtable not found: {hashtable_id}")
+            return None
+
+        hashtable.flush_all()
+        logger.info(f"[FlushParentHashtable] Flushed hashtable {hashtable_id}")
+        return None

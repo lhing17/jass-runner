@@ -227,3 +227,33 @@ class TestRemoveSavedOperations:
         native.execute(mock_state, "hashtable_1", 0, 0)
 
         mock_ht.remove_saved_handle.assert_called_once_with(0, 0)
+
+
+class TestFlushOperations:
+    """测试 Flush* native 函数"""
+
+    def test_flush_child_hashtable(self):
+        """测试 FlushChildHashtable"""
+        from jass_runner.natives.hashtable_natives import FlushChildHashtable
+
+        mock_ht = MagicMock()
+        mock_state = MagicMock()
+        mock_state.handle_manager.get_hashtable.return_value = mock_ht
+
+        native = FlushChildHashtable()
+        native.execute(mock_state, "hashtable_1", 0)
+
+        mock_ht.flush_child.assert_called_once_with(0)
+
+    def test_flush_parent_hashtable(self):
+        """测试 FlushParentHashtable"""
+        from jass_runner.natives.hashtable_natives import FlushParentHashtable
+
+        mock_ht = MagicMock()
+        mock_state = MagicMock()
+        mock_state.handle_manager.get_hashtable.return_value = mock_ht
+
+        native = FlushParentHashtable()
+        native.execute(mock_state, "hashtable_1")
+
+        mock_ht.flush_all.assert_called_once()
