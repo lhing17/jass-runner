@@ -200,3 +200,14 @@ class Hashtable(Handle):
         for ht in handle_types:
             if ht in child_data:
                 del child_data[ht]
+
+    # ========== 清空方法 ==========
+
+    def flush_child(self, parent_key: int) -> None:
+        """删除指定 parentKey 下所有数据"""
+        if parent_key in self._data:
+            del self._data[parent_key]
+
+    def flush_all(self) -> None:
+        """清空整个 hashtable"""
+        self._data.clear()

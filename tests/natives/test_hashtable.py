@@ -212,3 +212,32 @@ class TestHashtableExistenceAndRemoval:
 
         assert ht.have_saved_handle(0, 0) is False
         assert ht.have_saved_integer(0, 0) is True  # 整数仍然存在
+
+
+class TestHashtableFlush:
+    """测试清空方法"""
+
+    def test_flush_child(self):
+        """测试清空指定 parentKey 下所有数据"""
+        ht = Hashtable("ht_1")
+        ht.save_integer(0, 0, 42)
+        ht.save_integer(0, 1, 100)
+        ht.save_integer(1, 0, 200)
+
+        ht.flush_child(0)
+
+        assert ht.load_integer(0, 0) == 0
+        assert ht.load_integer(0, 1) == 0
+        assert ht.load_integer(1, 0) == 200  # parentKey=1 的数据保留
+
+    def test_flush_all(self):
+        """测试清空整个 hashtable"""
+        ht = Hashtable("ht_1")
+        ht.save_integer(0, 0, 42)
+        ht.save_real(1, 1, 3.14)
+
+        ht.flush_all()
+
+        assert ht.load_integer(0, 0) == 0
+        assert ht.load_real(1, 1) == 0.0
+        assert ht._data == {}
