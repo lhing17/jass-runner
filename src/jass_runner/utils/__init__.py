@@ -25,7 +25,7 @@ def fourcc_to_int(fourcc: str) -> int:
     """
     if len(fourcc) != 4:
         raise ValueError(f"FourCC必须是4个字符，得到: {fourcc}")
-    return int.from_bytes(fourcc.encode('ascii'), 'little')
+    return int.from_bytes(fourcc.encode('ascii'), 'big')
 
 
 def int_to_fourcc(value: int) -> str:
@@ -41,7 +41,7 @@ def int_to_fourcc(value: int) -> str:
         >>> int_to_fourcc(1213484355)
         'hfoo'
     """
-    return value.to_bytes(4, 'little').decode('ascii')
+    return value.to_bytes(4, 'big').decode('ascii')
 
 
 def is_fourcc(value) -> bool:
