@@ -147,6 +147,17 @@ from .unit_slots_natives import (
     SetUnitTypeSlots,
 )
 
+from .hashtable_natives import (
+    InitHashtable,
+    SaveInteger, SaveReal, SaveBoolean, SaveStr,
+    SaveUnitHandle, SaveItemHandle, SavePlayerHandle,
+    LoadInteger, LoadReal, LoadBoolean, LoadStr,
+    LoadUnitHandle, LoadItemHandle, LoadPlayerHandle,
+    HaveSavedInteger, HaveSavedReal, HaveSavedBoolean, HaveSavedString, HaveSavedHandle,
+    RemoveSavedInteger, RemoveSavedReal, RemoveSavedBoolean, RemoveSavedString, RemoveSavedHandle,
+    FlushChildHashtable, FlushParentHashtable,
+)
+
 
 class NativeFactory:
     """Native函数工厂。
@@ -430,5 +441,35 @@ class NativeFactory:
         registry.register(SetAllUnitTypeSlots())
         registry.register(SetItemTypeSlots())
         registry.register(SetUnitTypeSlots())
+
+        # 注册hashtable native函数
+        registry.register(InitHashtable())
+        registry.register(SaveInteger())
+        registry.register(SaveReal())
+        registry.register(SaveBoolean())
+        registry.register(SaveStr())
+        registry.register(SaveUnitHandle())
+        registry.register(SaveItemHandle())
+        registry.register(SavePlayerHandle())
+        registry.register(LoadInteger())
+        registry.register(LoadReal())
+        registry.register(LoadBoolean())
+        registry.register(LoadStr())
+        registry.register(LoadUnitHandle())
+        registry.register(LoadItemHandle())
+        registry.register(LoadPlayerHandle())
+        registry.register(HaveSavedInteger())
+        registry.register(HaveSavedReal())
+        registry.register(HaveSavedBoolean())
+        registry.register(HaveSavedString())
+        registry.register(HaveSavedHandle())
+        registry.register(RemoveSavedInteger())
+        registry.register(RemoveSavedReal())
+        registry.register(RemoveSavedBoolean())
+        registry.register(RemoveSavedString())
+        registry.register(RemoveSavedHandle())
+        registry.register(FlushChildHashtable())
+        registry.register(FlushParentHashtable())
+
 
         return registry

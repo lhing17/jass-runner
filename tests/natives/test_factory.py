@@ -126,7 +126,7 @@ def test_create_default_registry():
 
     # 检查注册的函数总数
     all_funcs = registry.get_all()
-    assert len(all_funcs) == 177  # Total native functions
+    assert len(all_funcs) == 204  # 原有177个 + 新增27个hashtable函数
 
 
 def test_all_math_natives_registered():
