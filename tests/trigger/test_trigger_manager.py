@@ -434,13 +434,16 @@ class TestEventDispatch:
         manager.register_event(trigger_id1, "unit_death", None)
         manager.register_event(trigger_id2, "unit_death", None)
 
+        # 模拟events属性，包含匹配的事件
         mock_trigger1 = Mock()
         mock_trigger1.enabled = True
         mock_trigger1.evaluate_conditions.return_value = True
+        mock_trigger1.events = [{"type": "unit_death", "filter": None}]
 
         mock_trigger2 = Mock()
         mock_trigger2.enabled = True
         mock_trigger2.evaluate_conditions.return_value = True
+        mock_trigger2.events = [{"type": "unit_death", "filter": None}]
 
         manager._triggers[trigger_id1] = mock_trigger1
         manager._triggers[trigger_id2] = mock_trigger2

@@ -223,3 +223,63 @@ class TestTriggerRegisterGameEvent:
         result = native.execute(mock_state_context, "trigger_0", "game_timer_expired")
 
         assert result is None
+
+
+class TestTriggerRegisterPlayerChatEvent:
+    """测试 TriggerRegisterPlayerChatEvent 原生函数。"""
+
+    def test_register_player_chat_event_returns_event_handle(self, mock_state_context):
+        """测试 TriggerRegisterPlayerChatEvent 返回事件handle。"""
+        from jass_runner.natives.trigger_register_event_natives import TriggerRegisterPlayerChatEvent
+
+        mock_state_context.trigger_manager.register_event.return_value = "event_chat001"
+
+        native = TriggerRegisterPlayerChatEvent()
+        assert native.name == "TriggerRegisterPlayerChatEvent"
+
+        result = native.execute(mock_state_context, "trigger_0", 0, "hello", False)
+
+        assert result == "event_chat001"
+        mock_state_context.trigger_manager.register_event.assert_called_once()
+        call_args = mock_state_context.trigger_manager.register_event.call_args
+        assert call_args[0][0] == "trigger_0"
+        assert call_args[0][2]["player_id"] == 0
+        assert call_args[0][2]["chat_message"] == "hello"
+        assert call_args[0][2]["exact_match_only"] == False
+
+    def test_register_player_chat_event_exact_match(self, mock_state_context):
+        """测试 TriggerRegisterPlayerChatEvent 精确匹配模式。"""
+        from jass_runner.natives.trigger_register_event_natives import TriggerRegisterPlayerChatEvent
+
+        mock_state_context.trigger_manager.register_event.return_value = "event_chat002"
+
+        native = TriggerRegisterPlayerChatEvent()
+        result = native.execute(mock_state_context, "trigger_0", 1, "exact", True)
+
+        assert result == "event_chat002"
+        call_args = mock_state_context.trigger_manager.register_event.call_args
+        assert call_args[0][2]["player_id"] == 1
+        assert call_args[0][2]["chat_message"] == "exact"
+        assert call_args[0][2]["exact_match_only"] == True
+
+    def test_register_player_chat_event_invalid_trigger(self, mock_state_context):
+        """测试注册玩家聊天事件到不存在的触发器返回None。"""
+        from jass_runner.natives.trigger_register_event_natives import TriggerRegisterPlayerChatEvent
+
+        mock_state_context.trigger_manager.register_event.return_value = None
+
+        native = TriggerRegisterPlayerChatEvent()
+        result = native.execute(mock_state_context, "trigger_invalid", 0, "hello", False)
+
+        assert result is None
+
+    def test_register_player_chat_event_without_trigger_manager(self, mock_state_context):
+        """测试没有trigger_manager时注册玩家聊天事件返回None。"""
+        from jass_runner.natives.trigger_register_event_natives import TriggerRegisterPlayerChatEvent
+
+        delattr(mock_state_context, 'trigger_manager')
+
+        native = TriggerRegisterPlayerChatEvent()
+        result = native.execute(mock_state_context, "trigger_0", 0, "hello", False)
+
+        assert result is None

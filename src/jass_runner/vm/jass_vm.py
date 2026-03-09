@@ -178,6 +178,29 @@ class JassVM:
         if simulate_seconds > 0 and self.enable_timers:
             self.run_simulation(simulate_seconds)
 
+    def simulate_player_chat(self, player_id: int, message: str):
+        """模拟玩家聊天输入。
+
+        通过Python代码模拟玩家发送聊天消息，触发已注册的聊天事件。
+        根据注册时的匹配设置，精确匹配或子字符串匹配会触发相应触发器。
+
+        参数:
+            player_id: 发送消息的玩家ID
+            message: 聊天消息内容
+        """
+        from ..trigger.event_types import EVENT_PLAYER_CHAT
+
+        logger.info(f"[模拟] 玩家 {player_id} 发送聊天消息: '{message}'")
+
+        # 触发聊天事件
+        self.interpreter.state_context.trigger_manager.fire_event(
+            EVENT_PLAYER_CHAT,
+            {
+                "player_id": player_id,
+                "message": message
+            }
+        )
+
     def _load_constants(self):
         """从 common.j 加载常量定义。"""
         common_j_paths = [

@@ -31,6 +31,7 @@ from .trigger_register_event_natives import (
     TriggerRegisterUnitEvent,
     TriggerRegisterPlayerEvent,
     TriggerRegisterGameEvent,
+    TriggerRegisterPlayerChatEvent,
 )
 from .gamestate_event_natives import TriggerRegisterGameStateEvent
 from .async_natives import TriggerSleepAction, ExecuteFunc
@@ -209,6 +210,7 @@ class NativeFactory:
         registry.register(TriggerRegisterUnitEvent())
         registry.register(TriggerRegisterPlayerEvent())
         registry.register(TriggerRegisterGameEvent())
+        registry.register(TriggerRegisterPlayerChatEvent())
 
         # 注册游戏状态事件注册native函数
         registry.register(TriggerRegisterGameStateEvent())

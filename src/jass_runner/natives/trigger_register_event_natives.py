@@ -321,3 +321,73 @@ class TriggerRegisterGameEvent(NativeFunction):
                         f"event on trigger {trigger_id}")
 
         return result
+
+
+class TriggerRegisterPlayerChatEvent(NativeFunction):
+    """注册玩家聊天事件的原生函数。
+
+    为触发器注册一个当特定玩家发送聊天消息时触发的事件。
+    支持精确匹配或子字符串匹配聊天内容。
+    """
+
+    @property
+    def name(self) -> str:
+        """获取native函数的名称。
+
+        返回：
+            "TriggerRegisterPlayerChatEvent"
+        """
+        return "TriggerRegisterPlayerChatEvent"
+
+    def execute(self, state_context, trigger_id: str, player,
+                chat_message: str, exact_match_only: bool, *args, **kwargs):
+        """执行 TriggerRegisterPlayerChatEvent 原生函数。
+
+        参数：
+            state_context: 状态上下文，必须包含trigger_manager
+            trigger_id: 要注册事件的触发器ID
+            player: Player对象或玩家ID
+            chat_message: 要匹配的聊天消息内容
+            exact_match_only: 是否只匹配完全相同的聊天内容
+            *args: 额外位置参数
+            **kwargs: 关键字参数
+
+        返回：
+            事件handle字符串，如果触发器不存在则返回None
+        """
+        # 检查state_context和trigger_manager存在性
+        if state_context is None or not hasattr(state_context, 'trigger_manager'):
+            logger.error("[TriggerRegisterPlayerChatEvent] state_context or trigger_manager not found")
+            return None
+
+        from jass_runner.trigger.event_types import EVENT_PLAYER_CHAT
+
+        # 处理player参数，可能是Player对象或整数ID
+        if hasattr(player, 'player_id'):
+            player_id = player.player_id
+        else:
+            player_id = player
+
+        filter_data = {
+            "player_id": player_id,
+            "chat_message": chat_message,
+            "exact_match_only": exact_match_only
+        }
+
+        result = state_context.trigger_manager.register_event(
+            trigger_id, EVENT_PLAYER_CHAT, filter_data
+        )
+
+        if result:
+            logger.info(
+                f"[TriggerRegisterPlayerChatEvent] Registered player chat event "
+                f"{result} (player_id={player_id}, chat_message='{chat_message}', "
+                f"exact_match={exact_match_only}) on trigger {trigger_id}"
+            )
+        else:
+            logger.warning(
+                f"[TriggerRegisterPlayerChatEvent] Failed to register player chat "
+                f"event on trigger {trigger_id}"
+            )
+
+        return result

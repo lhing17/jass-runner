@@ -183,6 +183,44 @@ class TriggerManager:
 
         return True
 
+    def _check_event_filter(self, event: Dict[str, Any], event_data: Dict[str, Any]) -> bool:
+        """检查事件是否匹配过滤条件。
+
+        参数：
+            event: 触发器上注册的事件信息
+            event_data: 当前触发的事件数据
+
+        返回：
+            事件匹配过滤条件返回True，否则返回False
+        """
+        filter_data = event.get("filter")
+        if not filter_data:
+            return True
+
+        # 检查玩家ID匹配
+        filter_player_id = filter_data.get("player_id")
+        if filter_player_id is not None:
+            event_player_id = event_data.get("player_id")
+            if event_player_id is not None and filter_player_id != event_player_id:
+                return False
+
+        # 检查聊天消息匹配
+        chat_message = filter_data.get("chat_message")
+        if chat_message is not None:
+            event_message = event_data.get("message", "")
+            exact_match = filter_data.get("exact_match_only", False)
+
+            if exact_match:
+                # 精确匹配
+                if event_message != chat_message:
+                    return False
+            else:
+                # 子字符串匹配
+                if chat_message not in event_message:
+                    return False
+
+        return True
+
     def fire_event(self, event_type: str, event_data: Dict[str, Any]):
         """触发事件。
 
@@ -193,6 +231,7 @@ class TriggerManager:
         1. 根据event_type查询_event_index获取候选触发器列表
         2. 对每个候选触发器：
            - 检查enabled状态，跳过禁用的
+           - 检查事件过滤条件，跳过不匹配的
            - 调用evaluate_conditions()，任一条件失败则跳过
            - 调用execute_actions()执行动作
 
@@ -222,6 +261,17 @@ class TriggerManager:
 
             # 检查触发器是否启用
             if not trigger.enabled:
+                continue
+
+            # 检查事件过滤条件
+            event_matched = False
+            for event in trigger.events:
+                if event["type"] == event_type:
+                    if self._check_event_filter(event, event_data):
+                        event_matched = True
+                        break
+
+            if not event_matched:
                 continue
 
             # 评估条件
