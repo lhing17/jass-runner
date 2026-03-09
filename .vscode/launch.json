@@ -2,10 +2,10 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "运行 run_complete_example.py",
+            "name": "运行 run_war3map.py",
             "type": "debugpy",
             "request": "launch",
-            "program": "${workspaceFolder}/examples/python/run_complete_example.py",
+            "program": "${workspaceFolder}/examples/python/run_war3map.py",
             "console": "integratedTerminal",
             "cwd": "${workspaceFolder}",
             "env": {
