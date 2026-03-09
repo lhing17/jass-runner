@@ -6,6 +6,7 @@
 from typing import Dict, List, Optional, Union
 import logging
 from .handle import Handle, Unit, Player, Item, Group, Rect, Effect, BoolExpr, Sound
+from .hashtable import Hashtable
 
 
 logger = logging.getLogger(__name__)
@@ -493,5 +494,19 @@ class HandleManager:
         """
         handle = self.get_handle(handle_id)
         if isinstance(handle, BoolExpr):
+            return handle
+        return None
+
+    def create_hashtable(self) -> Hashtable:
+        """创建 hashtable 并返回"""
+        handle_id = f"hashtable_{self._generate_id()}"
+        hashtable = Hashtable(handle_id)
+        self._register_handle(hashtable)
+        return hashtable
+
+    def get_hashtable(self, handle_id: str) -> Optional[Hashtable]:
+        """获取 hashtable 对象"""
+        handle = self.get_handle(handle_id)
+        if isinstance(handle, Hashtable):
             return handle
         return None

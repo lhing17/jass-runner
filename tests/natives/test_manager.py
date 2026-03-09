@@ -494,3 +494,28 @@ def test_get_player_by_id_invalid_returns_none():
     assert manager.get_player_by_id(-1) is None
     assert manager.get_player_by_id(16) is None
     assert manager.get_player_by_id(100) is None
+
+
+class TestHandleManagerHashtable:
+    """测试 HandleManager 的 hashtable 支持"""
+
+    def test_create_hashtable(self):
+        """测试创建 hashtable"""
+        from jass_runner.natives.manager import HandleManager
+        from jass_runner.natives.hashtable import Hashtable
+
+        manager = HandleManager()
+
+        ht = manager.create_hashtable()
+
+        assert isinstance(ht, Hashtable)
+        assert ht.id.startswith("hashtable_")
+        assert manager.get_hashtable(ht.id) == ht
+
+    def test_get_hashtable_invalid(self):
+        """测试获取无效的 hashtable"""
+        from jass_runner.natives.manager import HandleManager
+
+        manager = HandleManager()
+
+        assert manager.get_hashtable("hashtable_invalid") is None
