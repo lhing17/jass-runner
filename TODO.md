@@ -205,6 +205,7 @@
   - [x] LimitOp类型和GameStateManager管理器
   - [x] TriggerRegisterGameStateEvent Native函数
   - [x] 日夜循环系统（TIME_OF_DAY）
+  - [x] SuspendTimeOfDay Native函数 ✅ 已完成（2026-03-09）
 - [x] **P3** [Simulator] Rect区域系统支持 ✅ 已完成（2026-03-05）
   - [x] Rect类和10个相关Native函数
   - [x] 支持构造、修改、查询操作
@@ -221,6 +222,11 @@
   - [x] 4个Native函数（SetAllItemTypeSlots, SetAllUnitTypeSlots, SetItemTypeSlots, SetUnitTypeSlots）
   - [x] 全局变量和单位属性管理
   - [x] 截断逻辑实现
+- [x] **P3** [Simulator] Hashtable系统 ✅ 已完成（2026-03-09）
+  - [x] Hashtable类实现（两层整数键结构，支持多数据类型）
+  - [x] 27个Native函数（InitHashtable, Save*, Load*, HaveSaved*, RemoveSaved*, Flush*）
+  - [x] 支持数据类型：integer, real, boolean, string, unit, item, player
+  - [x] HandleManager集成，支持hashtable的创建和获取
 - [ ] **P3** [Simulator] 完整的common.j模拟
   - [ ] 覆盖80%+的common.j函数（当前约25%）
   - [ ] 完整的Blz（Blizzard）API支持

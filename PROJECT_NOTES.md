@@ -1661,4 +1661,21 @@ jass-runner/
   - 集成测试: 5个完整工作流程测试
 - **测试统计**: 所有测试通过
 
+---
+
+#### 68. SuspendTimeOfDay Native函数实现完成 (2026-03-09)
+- **新增组件**:
+  - `SuspendTimeOfDay` 类 - 暂停/恢复日夜循环的Native函数
+- **功能描述**:
+  - 接收 `pause` 参数（boolean），True表示暂停，False表示恢复
+  - 在模拟环境中仅记录日志，不实际暂停日夜循环
+  - 返回 `None`（对应JASS的nothing类型）
+- **修改文件**:
+  - `src/jass_runner/natives/gamestate_event_natives.py` - 添加SuspendTimeOfDay类
+  - `src/jass_runner/natives/factory.py` - 注册新函数
+  - `tests/natives/test_factory.py` - 更新函数计数(204→205个)
+- **测试覆盖**:
+  - 工厂测试验证函数已注册
+  - 所有205个native函数测试通过
+
 *最后更新: 2026-03-09*
