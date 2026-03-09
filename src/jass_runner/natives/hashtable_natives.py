@@ -328,3 +328,222 @@ class LoadPlayerHandle(NativeFunction):
             return None
 
         return hashtable.load_player_handle(parent_key, child_key, state_context.handle_manager)
+
+
+# ========== HaveSaved* 函数 ==========
+
+class HaveSavedInteger(NativeFunction):
+    """HaveSavedInteger native 函数"""
+
+    @property
+    def name(self) -> str:
+        return "HaveSavedInteger"
+
+    def execute(self, state_context, hashtable_id: str, parent_key: int,
+                child_key: int, *args, **kwargs) -> bool:
+        if state_context is None or not hasattr(state_context, 'handle_manager'):
+            logger.error("[HaveSavedInteger] state_context or handle_manager not found")
+            return False
+
+        hashtable = state_context.handle_manager.get_hashtable(hashtable_id)
+        if hashtable is None:
+            logger.warning(f"[HaveSavedInteger] Hashtable not found: {hashtable_id}")
+            return False
+
+        return hashtable.have_saved_integer(parent_key, child_key)
+
+
+class HaveSavedReal(NativeFunction):
+    """HaveSavedReal native 函数"""
+
+    @property
+    def name(self) -> str:
+        return "HaveSavedReal"
+
+    def execute(self, state_context, hashtable_id: str, parent_key: int,
+                child_key: int, *args, **kwargs) -> bool:
+        if state_context is None or not hasattr(state_context, 'handle_manager'):
+            logger.error("[HaveSavedReal] state_context or handle_manager not found")
+            return False
+
+        hashtable = state_context.handle_manager.get_hashtable(hashtable_id)
+        if hashtable is None:
+            logger.warning(f"[HaveSavedReal] Hashtable not found: {hashtable_id}")
+            return False
+
+        return hashtable.have_saved_real(parent_key, child_key)
+
+
+class HaveSavedBoolean(NativeFunction):
+    """HaveSavedBoolean native 函数"""
+
+    @property
+    def name(self) -> str:
+        return "HaveSavedBoolean"
+
+    def execute(self, state_context, hashtable_id: str, parent_key: int,
+                child_key: int, *args, **kwargs) -> bool:
+        if state_context is None or not hasattr(state_context, 'handle_manager'):
+            logger.error("[HaveSavedBoolean] state_context or handle_manager not found")
+            return False
+
+        hashtable = state_context.handle_manager.get_hashtable(hashtable_id)
+        if hashtable is None:
+            logger.warning(f"[HaveSavedBoolean] Hashtable not found: {hashtable_id}")
+            return False
+
+        return hashtable.have_saved_boolean(parent_key, child_key)
+
+
+class HaveSavedString(NativeFunction):
+    """HaveSavedString native 函数"""
+
+    @property
+    def name(self) -> str:
+        return "HaveSavedString"
+
+    def execute(self, state_context, hashtable_id: str, parent_key: int,
+                child_key: int, *args, **kwargs) -> bool:
+        if state_context is None or not hasattr(state_context, 'handle_manager'):
+            logger.error("[HaveSavedString] state_context or handle_manager not found")
+            return False
+
+        hashtable = state_context.handle_manager.get_hashtable(hashtable_id)
+        if hashtable is None:
+            logger.warning(f"[HaveSavedString] Hashtable not found: {hashtable_id}")
+            return False
+
+        return hashtable.have_saved_string(parent_key, child_key)
+
+
+class HaveSavedHandle(NativeFunction):
+    """HaveSavedHandle native 函数"""
+
+    @property
+    def name(self) -> str:
+        return "HaveSavedHandle"
+
+    def execute(self, state_context, hashtable_id: str, parent_key: int,
+                child_key: int, *args, **kwargs) -> bool:
+        if state_context is None or not hasattr(state_context, 'handle_manager'):
+            logger.error("[HaveSavedHandle] state_context or handle_manager not found")
+            return False
+
+        hashtable = state_context.handle_manager.get_hashtable(hashtable_id)
+        if hashtable is None:
+            logger.warning(f"[HaveSavedHandle] Hashtable not found: {hashtable_id}")
+            return False
+
+        return hashtable.have_saved_handle(parent_key, child_key)
+
+
+# ========== RemoveSaved* 函数 ==========
+
+class RemoveSavedInteger(NativeFunction):
+    """RemoveSavedInteger native 函数"""
+
+    @property
+    def name(self) -> str:
+        return "RemoveSavedInteger"
+
+    def execute(self, state_context, hashtable_id: str, parent_key: int,
+                child_key: int, *args, **kwargs):
+        if state_context is None or not hasattr(state_context, 'handle_manager'):
+            logger.error("[RemoveSavedInteger] state_context or handle_manager not found")
+            return None
+
+        hashtable = state_context.handle_manager.get_hashtable(hashtable_id)
+        if hashtable is None:
+            logger.warning(f"[RemoveSavedInteger] Hashtable not found: {hashtable_id}")
+            return None
+
+        hashtable.remove_saved_integer(parent_key, child_key)
+        return None
+
+
+class RemoveSavedReal(NativeFunction):
+    """RemoveSavedReal native 函数"""
+
+    @property
+    def name(self) -> str:
+        return "RemoveSavedReal"
+
+    def execute(self, state_context, hashtable_id: str, parent_key: int,
+                child_key: int, *args, **kwargs):
+        if state_context is None or not hasattr(state_context, 'handle_manager'):
+            logger.error("[RemoveSavedReal] state_context or handle_manager not found")
+            return None
+
+        hashtable = state_context.handle_manager.get_hashtable(hashtable_id)
+        if hashtable is None:
+            logger.warning(f"[RemoveSavedReal] Hashtable not found: {hashtable_id}")
+            return None
+
+        hashtable.remove_saved_real(parent_key, child_key)
+        return None
+
+
+class RemoveSavedBoolean(NativeFunction):
+    """RemoveSavedBoolean native 函数"""
+
+    @property
+    def name(self) -> str:
+        return "RemoveSavedBoolean"
+
+    def execute(self, state_context, hashtable_id: str, parent_key: int,
+                child_key: int, *args, **kwargs):
+        if state_context is None or not hasattr(state_context, 'handle_manager'):
+            logger.error("[RemoveSavedBoolean] state_context or handle_manager not found")
+            return None
+
+        hashtable = state_context.handle_manager.get_hashtable(hashtable_id)
+        if hashtable is None:
+            logger.warning(f"[RemoveSavedBoolean] Hashtable not found: {hashtable_id}")
+            return None
+
+        hashtable.remove_saved_boolean(parent_key, child_key)
+        return None
+
+
+class RemoveSavedString(NativeFunction):
+    """RemoveSavedString native 函数"""
+
+    @property
+    def name(self) -> str:
+        return "RemoveSavedString"
+
+    def execute(self, state_context, hashtable_id: str, parent_key: int,
+                child_key: int, *args, **kwargs):
+        if state_context is None or not hasattr(state_context, 'handle_manager'):
+            logger.error("[RemoveSavedString] state_context or handle_manager not found")
+            return None
+
+        hashtable = state_context.handle_manager.get_hashtable(hashtable_id)
+        if hashtable is None:
+            logger.warning(f"[RemoveSavedString] Hashtable not found: {hashtable_id}")
+            return None
+
+        hashtable.remove_saved_string(parent_key, child_key)
+        return None
+
+
+class RemoveSavedHandle(NativeFunction):
+    """RemoveSavedHandle native 函数"""
+
+    @property
+    def name(self) -> str:
+        return "RemoveSavedHandle"
+
+    def execute(self, state_context, hashtable_id: str, parent_key: int,
+                child_key: int, *args, **kwargs):
+        if state_context is None or not hasattr(state_context, 'handle_manager'):
+            logger.error("[RemoveSavedHandle] state_context or handle_manager not found")
+            return None
+
+        hashtable = state_context.handle_manager.get_hashtable(hashtable_id)
+        if hashtable is None:
+            logger.warning(f"[RemoveSavedHandle] Hashtable not found: {hashtable_id}")
+            return None
+
+        hashtable.remove_saved_handle(parent_key, child_key)
+        return None

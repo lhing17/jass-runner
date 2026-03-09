@@ -165,3 +165,65 @@ class TestLoadOperations:
         result = native.execute(mock_state, "invalid_ht", 0, 0)
 
         assert result == 0  # 默认值
+
+
+class TestHaveSavedOperations:
+    """测试 HaveSaved* native 函数"""
+
+    def test_have_saved_integer(self):
+        """测试 HaveSavedInteger"""
+        from jass_runner.natives.hashtable_natives import HaveSavedInteger
+
+        mock_ht = MagicMock()
+        mock_ht.have_saved_integer.return_value = True
+        mock_state = MagicMock()
+        mock_state.handle_manager.get_hashtable.return_value = mock_ht
+
+        native = HaveSavedInteger()
+        result = native.execute(mock_state, "hashtable_1", 0, 0)
+
+        assert result is True
+
+    def test_have_saved_handle(self):
+        """测试 HaveSavedHandle"""
+        from jass_runner.natives.hashtable_natives import HaveSavedHandle
+
+        mock_ht = MagicMock()
+        mock_ht.have_saved_handle.return_value = True
+        mock_state = MagicMock()
+        mock_state.handle_manager.get_hashtable.return_value = mock_ht
+
+        native = HaveSavedHandle()
+        result = native.execute(mock_state, "hashtable_1", 0, 0)
+
+        assert result is True
+
+
+class TestRemoveSavedOperations:
+    """测试 RemoveSaved* native 函数"""
+
+    def test_remove_saved_integer(self):
+        """测试 RemoveSavedInteger"""
+        from jass_runner.natives.hashtable_natives import RemoveSavedInteger
+
+        mock_ht = MagicMock()
+        mock_state = MagicMock()
+        mock_state.handle_manager.get_hashtable.return_value = mock_ht
+
+        native = RemoveSavedInteger()
+        native.execute(mock_state, "hashtable_1", 0, 0)
+
+        mock_ht.remove_saved_integer.assert_called_once_with(0, 0)
+
+    def test_remove_saved_handle(self):
+        """测试 RemoveSavedHandle"""
+        from jass_runner.natives.hashtable_natives import RemoveSavedHandle
+
+        mock_ht = MagicMock()
+        mock_state = MagicMock()
+        mock_state.handle_manager.get_hashtable.return_value = mock_ht
+
+        native = RemoveSavedHandle()
+        native.execute(mock_state, "hashtable_1", 0, 0)
+
+        mock_ht.remove_saved_handle.assert_called_once_with(0, 0)
