@@ -82,3 +82,78 @@ class TestHashtableBasicTypes:
         assert ht.load_integer(0, 0) == 42
         assert ht.load_real(0, 0) == 3.14
         assert ht.load_string(0, 0) == "test"
+
+
+from unittest.mock import Mock
+
+
+class TestHashtableHandleTypes:
+    """测试 Handle 类型 Save/Load"""
+
+    def test_save_and_load_unit_handle(self):
+        """测试单位 handle 存储和加载"""
+        ht = Hashtable("ht_1")
+        mock_unit = Mock()
+        mock_unit.id = "unit_123"
+
+        ht.save_unit_handle(0, 0, mock_unit)
+
+        # 验证存储的是 handle_id
+        assert ht._data[0][0]["unit"] == "unit_123"
+
+    def test_load_unit_handle(self):
+        """测试加载单位 handle"""
+        ht = Hashtable("ht_1")
+        mock_manager = Mock()
+        mock_unit = Mock()
+        mock_manager.get_unit.return_value = mock_unit
+
+        # 直接设置内部数据
+        ht._data[0] = {0: {"unit": "unit_123"}}
+
+        result = ht.load_unit_handle(0, 0, mock_manager)
+
+        assert result == mock_unit
+        mock_manager.get_unit.assert_called_once_with("unit_123")
+
+    def test_load_unit_handle_not_found(self):
+        """测试加载不存在的单位返回 None"""
+        ht = Hashtable("ht_1")
+        mock_manager = Mock()
+        mock_manager.get_unit.return_value = None
+
+        ht._data[0] = {0: {"unit": "unit_123"}}
+
+        result = ht.load_unit_handle(0, 0, mock_manager)
+
+        assert result is None
+
+    def test_load_unit_handle_no_data(self):
+        """测试加载未设置过的单位返回 None"""
+        ht = Hashtable("ht_1")
+        mock_manager = Mock()
+
+        result = ht.load_unit_handle(0, 0, mock_manager)
+
+        assert result is None
+        mock_manager.get_unit.assert_not_called()
+
+    def test_save_and_load_player_handle(self):
+        """测试玩家 handle 存储和加载"""
+        ht = Hashtable("ht_1")
+        mock_player = Mock()
+        mock_player.id = "player_0"
+
+        ht.save_player_handle(0, 0, mock_player)
+
+        assert ht._data[0][0]["player"] == "player_0"
+
+    def test_save_and_load_item_handle(self):
+        """测试物品 handle 存储和加载"""
+        ht = Hashtable("ht_1")
+        mock_item = Mock()
+        mock_item.id = "item_456"
+
+        ht.save_item_handle(0, 0, mock_item)
+
+        assert ht._data[0][0]["item"] == "item_456"

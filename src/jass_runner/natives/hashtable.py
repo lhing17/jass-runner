@@ -1,7 +1,10 @@
 """JASS Hashtable 实现"""
 
-from typing import Dict, Any, Optional
+from typing import Dict, Any, Optional, TYPE_CHECKING
 from .handle_base import Handle
+
+if TYPE_CHECKING:
+    from .manager import HandleManager
 
 
 class Hashtable(Handle):
@@ -66,6 +69,35 @@ class Hashtable(Handle):
         self._data[parent_key][child_key]["string"] = value
         return True
 
+    # ========== Handle Save 方法 ==========
+
+    def save_unit_handle(self, parent_key: int, child_key: int, unit) -> bool:
+        """存储单位 handle，返回是否成功"""
+        if parent_key not in self._data:
+            self._data[parent_key] = {}
+        if child_key not in self._data[parent_key]:
+            self._data[parent_key][child_key] = {}
+        self._data[parent_key][child_key]["unit"] = unit.id
+        return True
+
+    def save_item_handle(self, parent_key: int, child_key: int, item) -> bool:
+        """存储物品 handle，返回是否成功"""
+        if parent_key not in self._data:
+            self._data[parent_key] = {}
+        if child_key not in self._data[parent_key]:
+            self._data[parent_key][child_key] = {}
+        self._data[parent_key][child_key]["item"] = item.id
+        return True
+
+    def save_player_handle(self, parent_key: int, child_key: int, player) -> bool:
+        """存储玩家 handle，返回是否成功"""
+        if parent_key not in self._data:
+            self._data[parent_key] = {}
+        if child_key not in self._data[parent_key]:
+            self._data[parent_key][child_key] = {}
+        self._data[parent_key][child_key]["player"] = player.id
+        return True
+
     # ========== Load 方法 ==========
 
     def load_integer(self, parent_key: int, child_key: int) -> int:
@@ -83,3 +115,30 @@ class Hashtable(Handle):
     def load_string(self, parent_key: int, child_key: int) -> Optional[str]:
         """加载字符串，不存在返回 null"""
         return self._data.get(parent_key, {}).get(child_key, {}).get("string", None)
+
+    # ========== Handle Load 方法 ==========
+
+    def load_unit_handle(self, parent_key: int, child_key: int, handle_manager: "HandleManager"):
+        """加载单位 handle，不存在或已销毁返回 null"""
+        handle_id = self._data.get(parent_key, {}).get(child_key, {}).get("unit", None)
+        if handle_id is None:
+            return None
+        return handle_manager.get_unit(handle_id)
+
+    def load_item_handle(self, parent_key: int, child_key: int, handle_manager: "HandleManager"):
+        """加载物品 handle"""
+        handle_id = self._data.get(parent_key, {}).get(child_key, {}).get("item", None)
+        if handle_id is None:
+            return None
+        return handle_manager.get_item(handle_id)
+
+    def load_player_handle(self, parent_key: int, child_key: int, handle_manager: "HandleManager"):
+        """加载玩家 handle"""
+        handle_id = self._data.get(parent_key, {}).get(child_key, {}).get("player", None)
+        if handle_id is None:
+            return None
+        # 玩家ID格式为 "player_N"，提取N
+        if isinstance(handle_id, str) and handle_id.startswith("player_"):
+            player_id = int(handle_id.split("_")[1])
+            return handle_manager.get_player(player_id)
+        return None
