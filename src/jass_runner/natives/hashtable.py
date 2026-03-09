@@ -142,3 +142,61 @@ class Hashtable(Handle):
             player_id = int(handle_id.split("_")[1])
             return handle_manager.get_player(player_id)
         return None
+
+    # ========== 存在性检查 ==========
+
+    def have_saved_integer(self, parent_key: int, child_key: int) -> bool:
+        """检查是否存在整数"""
+        return "integer" in self._data.get(parent_key, {}).get(child_key, {})
+
+    def have_saved_real(self, parent_key: int, child_key: int) -> bool:
+        """检查是否存在实数"""
+        return "real" in self._data.get(parent_key, {}).get(child_key, {})
+
+    def have_saved_boolean(self, parent_key: int, child_key: int) -> bool:
+        """检查是否存在布尔值"""
+        return "boolean" in self._data.get(parent_key, {}).get(child_key, {})
+
+    def have_saved_string(self, parent_key: int, child_key: int) -> bool:
+        """检查是否存在字符串"""
+        return "string" in self._data.get(parent_key, {}).get(child_key, {})
+
+    def have_saved_handle(self, parent_key: int, child_key: int) -> bool:
+        """检查是否存在任意 handle 类型"""
+        child_data = self._data.get(parent_key, {}).get(child_key, {})
+        handle_types = ["unit", "item", "player"]
+        return any(ht in child_data for ht in handle_types)
+
+    # ========== 删除方法 ==========
+
+    def remove_saved_integer(self, parent_key: int, child_key: int) -> None:
+        """删除整数"""
+        child_data = self._data.get(parent_key, {}).get(child_key, {})
+        if "integer" in child_data:
+            del child_data["integer"]
+
+    def remove_saved_real(self, parent_key: int, child_key: int) -> None:
+        """删除实数"""
+        child_data = self._data.get(parent_key, {}).get(child_key, {})
+        if "real" in child_data:
+            del child_data["real"]
+
+    def remove_saved_boolean(self, parent_key: int, child_key: int) -> None:
+        """删除布尔值"""
+        child_data = self._data.get(parent_key, {}).get(child_key, {})
+        if "boolean" in child_data:
+            del child_data["boolean"]
+
+    def remove_saved_string(self, parent_key: int, child_key: int) -> None:
+        """删除字符串"""
+        child_data = self._data.get(parent_key, {}).get(child_key, {})
+        if "string" in child_data:
+            del child_data["string"]
+
+    def remove_saved_handle(self, parent_key: int, child_key: int) -> None:
+        """删除所有 handle 类型"""
+        child_data = self._data.get(parent_key, {}).get(child_key, {})
+        handle_types = ["unit", "item", "player"]
+        for ht in handle_types:
+            if ht in child_data:
+                del child_data[ht]

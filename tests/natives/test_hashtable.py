@@ -157,3 +157,58 @@ class TestHashtableHandleTypes:
         ht.save_item_handle(0, 0, mock_item)
 
         assert ht._data[0][0]["item"] == "item_456"
+
+
+class TestHashtableExistenceAndRemoval:
+    """测试存在性检查和删除方法"""
+
+    def test_have_saved_integer_true(self):
+        """测试检查存在的整数"""
+        ht = Hashtable("ht_1")
+        ht.save_integer(0, 0, 42)
+
+        assert ht.have_saved_integer(0, 0) is True
+
+    def test_have_saved_integer_false(self):
+        """测试检查不存在的整数"""
+        ht = Hashtable("ht_1")
+
+        assert ht.have_saved_integer(0, 0) is False
+
+    def test_have_saved_handle(self):
+        """测试检查任意 handle 类型"""
+        ht = Hashtable("ht_1")
+        mock_unit = Mock()
+        mock_unit.id = "unit_123"
+
+        ht.save_unit_handle(0, 0, mock_unit)
+
+        assert ht.have_saved_handle(0, 0) is True
+        assert ht.have_saved_integer(0, 0) is False  # 整数不存在
+
+    def test_remove_saved_integer(self):
+        """测试删除整数"""
+        ht = Hashtable("ht_1")
+        ht.save_integer(0, 0, 42)
+
+        ht.remove_saved_integer(0, 0)
+
+        assert ht.have_saved_integer(0, 0) is False
+        assert ht.load_integer(0, 0) == 0  # 返回默认值
+
+    def test_remove_saved_handle(self):
+        """测试删除所有 handle 类型"""
+        ht = Hashtable("ht_1")
+        mock_unit = Mock()
+        mock_unit.id = "unit_123"
+        mock_item = Mock()
+        mock_item.id = "item_456"
+
+        ht.save_unit_handle(0, 0, mock_unit)
+        ht.save_item_handle(0, 0, mock_item)
+        ht.save_integer(0, 0, 42)
+
+        ht.remove_saved_handle(0, 0)
+
+        assert ht.have_saved_handle(0, 0) is False
+        assert ht.have_saved_integer(0, 0) is True  # 整数仍然存在
