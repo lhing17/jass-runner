@@ -534,8 +534,11 @@ jass-runner/
 │   │   ├── test_trigger_system.py      # 触发器系统基础集成测试
 │   │   ├── test_trigger_natives.py     # 触发器Native函数集成测试
 │   │   ├── test_trigger_timer.py       # 计时器事件集成测试
-│   │   └── test_item_inventory_integration.py # 物品背包系统集成测试
-├── examples/hello_world.j # 示例脚本
+│   │   ├── test_item_inventory_integration.py # 物品背包系统集成测试
+│   │   └── test_player_chat_event.py   # 玩家聊天事件集成测试
+├── examples/
+│   ├── hello_world.j          # 示例脚本
+│   ├── player_chat_example.py # 玩家聊天事件示例
 ├── docs/plans/         # 实施计划文档
 │   ├── 2026-02-24-jass-simulator-design.md
 │   ├── 2026-02-24-jass-simulator-phase1-setup.md
@@ -661,6 +664,12 @@ jass-runner/
     - SetAllXxx函数修改全局变量，影响后续所有单位的槽位设置上限
     - SetXxx函数为单位设置具体槽位数，受全局变量限制（截断处理）
     - 使用模块引用方式修改全局变量，确保跨模块修改生效
+20. **玩家聊天事件设计**：
+    - TriggerRegisterPlayerChatEvent支持Player对象或整数ID作为player参数
+    - 事件过滤在TriggerManager._check_event_filter中统一处理
+    - 支持子字符串匹配（contains）和精确匹配（equals）两种模式
+    - 通过JassVM.simulate_player_chat方法从Python代码模拟玩家输入
+    - 不同玩家的聊天事件相互隔离，确保事件触发准确性
 
 ## 待解决问题
 
@@ -1028,6 +1037,13 @@ jass-runner/
   - GetPlayerSlotState和ConvertPlayerSlotState函数
   - Player.slot_state改为整数类型
   - 所有 903 个测试通过
+- ✅ **GetLocalPlayer Native函数实现完成** (2026-03-08)
+  - 返回Player(0)作为本地玩家
+  - 所有 928 个测试通过
+- ✅ **玩家聊天事件系统实现完成** (2026-03-09)
+  - TriggerRegisterPlayerChatEvent Native函数
+  - simulate_player_chat方法支持Python模拟玩家输入
+  - 所有 937 个测试通过
 
 #### 60. 玩家科技系统Native函数实现完成 (2026-03-06)
 - **新增组件**:
@@ -1577,7 +1593,40 @@ jass-runner/
 - **测试统计**: 所有 922 个测试通过
 
 ---
-*最后更新: 2026-03-07*
+
+#### 66. 玩家聊天事件系统实现完成 (2026-03-09)
+- **新增组件**:
+  - `TriggerRegisterPlayerChatEvent` 类 - 注册玩家聊天事件的Native函数
+  - `simulate_player_chat()` 方法 - JassVM中模拟玩家聊天输入
+  - `_check_event_filter()` 方法 - TriggerManager中事件过滤检查
+- **功能描述**:
+  - 支持注册玩家聊天事件监听（指定玩家、匹配聊天内容）
+  - 支持子字符串匹配和精确匹配两种模式
+  - 通过Python代码模拟玩家聊天输入触发事件
+  - 事件过滤机制检查玩家ID和消息匹配
+- **关键设计**:
+  - 支持Player对象或整数ID作为player参数
+  - filter_data存储过滤条件：player_id、chat_message、exact_match_only
+  - 子字符串匹配：chat_message包含在event_message中即触发
+  - 精确匹配：event_message与chat_message完全一致才触发
+  - 不同玩家的聊天事件相互隔离
+- **修改文件**:
+  - `src/jass_runner/natives/trigger_register_event_natives.py` - 添加TriggerRegisterPlayerChatEvent类
+  - `src/jass_runner/natives/factory.py` - 注册新函数并更新导入
+  - `src/jass_runner/trigger/manager.py` - 添加_check_event_filter方法
+  - `src/jass_runner/vm/jass_vm.py` - 添加simulate_player_chat方法
+  - `tests/natives/test_trigger_register_event_natives_unit.py` - 添加4个单元测试
+  - `tests/integration/test_player_chat_event.py` - 新建，5个集成测试
+  - `tests/trigger/test_trigger_manager.py` - 修复mock触发器events属性
+  - `tests/natives/test_factory.py` - 更新函数数量统计(176→177个)
+  - `examples/player_chat_example.py` - 新建示例脚本
+- **测试覆盖**:
+  - 单元测试: 4个测试用例（正常注册、精确匹配、无效触发器、缺少trigger_manager）
+  - 集成测试: 5个测试（子字符串匹配、精确匹配、不匹配不触发、不同玩家隔离、多触发器）
+- **测试统计**: 所有 937 个测试通过
+
+---
+*最后更新: 2026-03-09*
 
 ---
 

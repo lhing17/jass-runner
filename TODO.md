@@ -186,6 +186,7 @@
   - [ ] 对话框API：DialogCreate, DialogAddButton
   - [x] 多人同步：GetLocalPlayer ✅ 已完成（2026-03-08）
   - [ ] 多人同步：GetPlayerId
+  - [x] 玩家聊天事件：TriggerRegisterPlayerChatEvent ✅ 已完成（2026-03-09）
 
 
 ### 长期目标 (Long-term Goals)
