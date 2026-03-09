@@ -124,13 +124,11 @@ class AssignmentParserMixin:
         if not arg_tokens:
             return None
 
-        # 如果只有一个token且是NativeCallNode，直接返回
-        if len(arg_tokens) == 1 and hasattr(arg_tokens[0], 'func_name'):
-            return arg_tokens[0]
-
-        # 如果只有一个token且是字面量，直接返回
+        # 如果只有一个token且是NativeCallNode或ArrayAccess，直接返回
         if len(arg_tokens) == 1:
             token = arg_tokens[0]
+            if hasattr(token, 'func_name') or type(token).__name__ == 'ArrayAccess':
+                return token
             # 尝试解析为数字
             try:
                 return str(int(token))

@@ -11,9 +11,13 @@
 
 import sys
 sys.path.insert(0, 'src')
-
+import logging
 from jass_runner.vm.jass_vm import JassVM
 from jass_runner.utils import fourcc_to_int
+
+# 配置日志
+logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+logger = logging.getLogger(__name__)
 
 test_code = '''
 globals
@@ -36,6 +40,10 @@ endfunction
 
 function main takes nothing returns nothing
     call InitEquipmentData()
+    call DisplayTextToPlayer(Player(0), 0, 0, "测试开始")
+    call DisplayTextToPlayer(Player(0), 0, 0, "ID:" + I2S(udg_equip_item_type_id[1]))
+    call DisplayTextToPlayer(Player(0), 0, 0, "ID:" + I2S(udg_equip_item_type_id[2]))
+    call DisplayTextToPlayer(Player(0), 0, 0, "测试结束")
 endfunction
 '''
 

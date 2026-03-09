@@ -1,0 +1,7 @@
+Parsing errors: []
+
+Functions count: 1
+
+Function: main
+  body: []
+  body len: 0

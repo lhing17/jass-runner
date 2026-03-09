@@ -451,8 +451,19 @@ class Evaluator:
                 # NativeCallNode，递归求值
                 args.append(self.evaluate_native_call(arg))
             else:
-                # 其他类型（如对象），直接使用
-                args.append(arg)
+                # 其他类型（可能是 AST 节点如 ArrayAccess）
+                # 尝试使用 evaluate 方法求值
+                import logging
+                logger = logging.getLogger(__name__)
+                logger.debug(f"[DEBUG evaluate_native_call] 处理其他类型参数: {type(arg).__name__} = {arg!r}")
+                try:
+                    result = self.evaluate(arg)
+                    logger.debug(f"[DEBUG evaluate_native_call] 求值结果: {result!r}")
+                    args.append(result)
+                except Exception as e:
+                    logger.debug(f"[DEBUG evaluate_native_call] 求值失败: {e}")
+                    # 如果不能求值，直接使用
+                    args.append(arg)
 
         # 从上下文中获取原生函数
         native_func = self.context.get_native_function(func_name)
@@ -491,6 +502,10 @@ class Evaluator:
                 # 是 NativeCallNode，求值并获取结果
                 func_result = self.evaluate_native_call(token)
                 processed_tokens.append(str(func_result))
+            elif type(token).__name__ == 'ArrayAccess':
+                # 是 ArrayAccess 节点，使用 evaluate 求值
+                array_result = self.evaluate(token)
+                processed_tokens.append(str(array_result))
             else:
                 processed_tokens.append(str(token))
 
