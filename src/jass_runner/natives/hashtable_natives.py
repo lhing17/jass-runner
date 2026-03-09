@@ -181,3 +181,150 @@ class SavePlayerHandle(NativeFunction):
             return False
 
         return hashtable.save_player_handle(parent_key, child_key, player)
+
+
+class LoadInteger(NativeFunction):
+    """LoadInteger native 函数"""
+
+    @property
+    def name(self) -> str:
+        return "LoadInteger"
+
+    def execute(self, state_context, hashtable_id: str, parent_key: int,
+                child_key: int, *args, **kwargs) -> int:
+        if state_context is None or not hasattr(state_context, 'handle_manager'):
+            logger.error("[LoadInteger] state_context or handle_manager not found")
+            return 0
+
+        hashtable = state_context.handle_manager.get_hashtable(hashtable_id)
+        if hashtable is None:
+            logger.warning(f"[LoadInteger] Hashtable not found: {hashtable_id}")
+            return 0
+
+        return hashtable.load_integer(parent_key, child_key)
+
+
+class LoadReal(NativeFunction):
+    """LoadReal native 函数"""
+
+    @property
+    def name(self) -> str:
+        return "LoadReal"
+
+    def execute(self, state_context, hashtable_id: str, parent_key: int,
+                child_key: int, *args, **kwargs) -> float:
+        if state_context is None or not hasattr(state_context, 'handle_manager'):
+            logger.error("[LoadReal] state_context or handle_manager not found")
+            return 0.0
+
+        hashtable = state_context.handle_manager.get_hashtable(hashtable_id)
+        if hashtable is None:
+            logger.warning(f"[LoadReal] Hashtable not found: {hashtable_id}")
+            return 0.0
+
+        return hashtable.load_real(parent_key, child_key)
+
+
+class LoadBoolean(NativeFunction):
+    """LoadBoolean native 函数"""
+
+    @property
+    def name(self) -> str:
+        return "LoadBoolean"
+
+    def execute(self, state_context, hashtable_id: str, parent_key: int,
+                child_key: int, *args, **kwargs) -> bool:
+        if state_context is None or not hasattr(state_context, 'handle_manager'):
+            logger.error("[LoadBoolean] state_context or handle_manager not found")
+            return False
+
+        hashtable = state_context.handle_manager.get_hashtable(hashtable_id)
+        if hashtable is None:
+            logger.warning(f"[LoadBoolean] Hashtable not found: {hashtable_id}")
+            return False
+
+        return hashtable.load_boolean(parent_key, child_key)
+
+
+class LoadStr(NativeFunction):
+    """LoadStr native 函数"""
+
+    @property
+    def name(self) -> str:
+        return "LoadStr"
+
+    def execute(self, state_context, hashtable_id: str, parent_key: int,
+                child_key: int, *args, **kwargs):
+        if state_context is None or not hasattr(state_context, 'handle_manager'):
+            logger.error("[LoadStr] state_context or handle_manager not found")
+            return None
+
+        hashtable = state_context.handle_manager.get_hashtable(hashtable_id)
+        if hashtable is None:
+            logger.warning(f"[LoadStr] Hashtable not found: {hashtable_id}")
+            return None
+
+        return hashtable.load_string(parent_key, child_key)
+
+
+class LoadUnitHandle(NativeFunction):
+    """LoadUnitHandle native 函数"""
+
+    @property
+    def name(self) -> str:
+        return "LoadUnitHandle"
+
+    def execute(self, state_context, hashtable_id: str, parent_key: int,
+                child_key: int, *args, **kwargs):
+        if state_context is None or not hasattr(state_context, 'handle_manager'):
+            logger.error("[LoadUnitHandle] state_context or handle_manager not found")
+            return None
+
+        hashtable = state_context.handle_manager.get_hashtable(hashtable_id)
+        if hashtable is None:
+            logger.warning(f"[LoadUnitHandle] Hashtable not found: {hashtable_id}")
+            return None
+
+        return hashtable.load_unit_handle(parent_key, child_key, state_context.handle_manager)
+
+
+class LoadItemHandle(NativeFunction):
+    """LoadItemHandle native 函数"""
+
+    @property
+    def name(self) -> str:
+        return "LoadItemHandle"
+
+    def execute(self, state_context, hashtable_id: str, parent_key: int,
+                child_key: int, *args, **kwargs):
+        if state_context is None or not hasattr(state_context, 'handle_manager'):
+            logger.error("[LoadItemHandle] state_context or handle_manager not found")
+            return None
+
+        hashtable = state_context.handle_manager.get_hashtable(hashtable_id)
+        if hashtable is None:
+            logger.warning(f"[LoadItemHandle] Hashtable not found: {hashtable_id}")
+            return None
+
+        return hashtable.load_item_handle(parent_key, child_key, state_context.handle_manager)
+
+
+class LoadPlayerHandle(NativeFunction):
+    """LoadPlayerHandle native 函数"""
+
+    @property
+    def name(self) -> str:
+        return "LoadPlayerHandle"
+
+    def execute(self, state_context, hashtable_id: str, parent_key: int,
+                child_key: int, *args, **kwargs):
+        if state_context is None or not hasattr(state_context, 'handle_manager'):
+            logger.error("[LoadPlayerHandle] state_context or handle_manager not found")
+            return None
+
+        hashtable = state_context.handle_manager.get_hashtable(hashtable_id)
+        if hashtable is None:
+            logger.warning(f"[LoadPlayerHandle] Hashtable not found: {hashtable_id}")
+            return None
+
+        return hashtable.load_player_handle(parent_key, child_key, state_context.handle_manager)

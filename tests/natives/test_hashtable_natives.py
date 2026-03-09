@@ -104,3 +104,64 @@ class TestSaveOperations:
         result = native.execute(mock_state, "invalid_ht", 0, 0, 42)
 
         assert result is None
+
+
+class TestLoadOperations:
+    """测试 Load* native 函数"""
+
+    def test_load_integer(self):
+        """测试 LoadInteger"""
+        from jass_runner.natives.hashtable_natives import LoadInteger
+
+        mock_ht = MagicMock()
+        mock_ht.load_integer.return_value = 42
+        mock_state = MagicMock()
+        mock_state.handle_manager.get_hashtable.return_value = mock_ht
+
+        native = LoadInteger()
+        result = native.execute(mock_state, "hashtable_1", 0, 0)
+
+        assert result == 42
+        mock_ht.load_integer.assert_called_once_with(0, 0)
+
+    def test_load_real(self):
+        """测试 LoadReal"""
+        from jass_runner.natives.hashtable_natives import LoadReal
+
+        mock_ht = MagicMock()
+        mock_ht.load_real.return_value = 3.14
+        mock_state = MagicMock()
+        mock_state.handle_manager.get_hashtable.return_value = mock_ht
+
+        native = LoadReal()
+        result = native.execute(mock_state, "hashtable_1", 0, 0)
+
+        assert result == 3.14
+
+    def test_load_unit_handle(self):
+        """测试 LoadUnitHandle"""
+        from jass_runner.natives.hashtable_natives import LoadUnitHandle
+
+        mock_ht = MagicMock()
+        mock_unit = MagicMock()
+        mock_ht.load_unit_handle.return_value = mock_unit
+        mock_state = MagicMock()
+        mock_state.handle_manager.get_hashtable.return_value = mock_ht
+
+        native = LoadUnitHandle()
+        result = native.execute(mock_state, "hashtable_1", 0, 0)
+
+        assert result == mock_unit
+        mock_ht.load_unit_handle.assert_called_once_with(0, 0, mock_state.handle_manager)
+
+    def test_load_invalid_hashtable(self):
+        """测试无效 hashtable 返回默认值"""
+        from jass_runner.natives.hashtable_natives import LoadInteger
+
+        mock_state = MagicMock()
+        mock_state.handle_manager.get_hashtable.return_value = None
+
+        native = LoadInteger()
+        result = native.execute(mock_state, "invalid_ht", 0, 0)
+
+        assert result == 0  # 默认值
