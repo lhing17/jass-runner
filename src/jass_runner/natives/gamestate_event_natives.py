@@ -72,3 +72,31 @@ class TriggerRegisterGameStateEvent(NativeFunction):
             )
 
         return result
+
+
+class SuspendTimeOfDay(NativeFunction):
+    """暂停/恢复日夜循环的原生函数。
+
+    在模拟环境中仅记录日志。
+    """
+
+    @property
+    def name(self) -> str:
+        """获取 native 函数的名称。"""
+        return "SuspendTimeOfDay"
+
+    def execute(self, state_context, pause: bool, *args, **kwargs):
+        """执行 SuspendTimeOfDay 原生函数。
+
+        参数：
+            state_context: 状态上下文
+            pause: True 表示暂停，False 表示恢复
+            *args: 额外位置参数
+            **kwargs: 关键字参数
+
+        返回：
+            None
+        """
+        action = "暂停" if pause else "恢复"
+        logger.info(f"[SuspendTimeOfDay] {action}日夜循环")
+        return None
