@@ -110,16 +110,26 @@ class ExpressionParserMixin:
         return None
 
     def _parse_identifier_or_call(self: 'BaseParser') -> Optional[str]:
-        """解析标识符或函数调用。
+        """解析标识符、函数调用或数组访问。
 
         返回：
-            标识符名称或函数调用字符串
+            标识符名称、函数调用字符串或数组访问字符串
         """
         if not self.current_token or self.current_token.type != 'IDENTIFIER':
             return None
 
         name = self.current_token.value
         self.next_token()
+
+        # 检查是否是数组访问
+        if self.current_token and self.current_token.value == '[':
+            self.next_token()  # 跳过 '['
+            # 解析索引
+            index = self._parse_expression(0)
+            # 跳过右方括号
+            if self.current_token and self.current_token.value == ']':
+                self.next_token()
+            return f"{name}[{index}]"
 
         # 检查是否是函数调用
         if self.current_token and self.current_token.value == '(':

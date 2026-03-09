@@ -39,10 +39,18 @@ function InitEquipmentData takes nothing returns nothing
 endfunction
 
 function main takes nothing returns nothing
+    local boolean valid = true
     call InitEquipmentData()
     call DisplayTextToPlayer(Player(0), 0, 0, "测试开始")
     call DisplayTextToPlayer(Player(0), 0, 0, "ID:" + I2S(udg_equip_item_type_id[1]))
-    call DisplayTextToPlayer(Player(0), 0, 0, "ID:" + I2S(udg_equip_item_type_id[2]))
+    if udg_equip_item_type_id[2] == 0 then
+        call DisplayTextToPlayer(Player(0), 0, 0, "ID:" + I2S(udg_equip_item_type_id[2]))
+    endif
+    if valid then
+        call DisplayTextToPlayer(Player(0), 0, 0, "测试通过11")
+    else
+        call DisplayTextToPlayer(Player(0), 0, 0, "测试失败11")
+    endif
     call DisplayTextToPlayer(Player(0), 0, 0, "测试结束")
 endfunction
 '''

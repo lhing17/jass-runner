@@ -233,6 +233,10 @@ class AssignmentParserMixin:
                     elif self.current_token.type == 'STRING':
                         value = self.current_token.value[1:-1]  # 移除引号
                         self.next_token()
+                    elif self.current_token.type == 'KEYWORD' and self.current_token.value in ('true', 'false'):
+                        # 布尔值
+                        value = self.current_token.value
+                        self.next_token()
                     elif self.current_token.type == 'IDENTIFIER' or (self.current_token.type == 'KEYWORD' and self.current_token.value in self.TYPE_KEYWORDS):
                         # 可能是函数调用，如 CreateUnit(...) 或 CreateForce()
                         # 注意：类型关键词（如 force）在函数名位置也应被视为标识符
@@ -511,6 +515,10 @@ class AssignmentParserMixin:
                     self.next_token()
                 elif self.current_token.type == 'STRING':
                     value = self.current_token.value[1:-1]
+                    self.next_token()
+                elif self.current_token.type == 'KEYWORD' and self.current_token.value in ('true', 'false'):
+                    # 布尔值
+                    value = self.current_token.value
                     self.next_token()
 
             # 如果存在分号则跳过

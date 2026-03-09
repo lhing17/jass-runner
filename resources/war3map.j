@@ -3218,12 +3218,16 @@ endfunction
         loop
             exitwhen i > udg_equip_count
             if udg_equip_item_type_id[i] == 0 then
-                call DisplayTextToPlayer(Player(0), 0, 0, "装备ID " + I2S(i) + "为：" + I2S(udg_equip_item_type_id[i]))
                 call DisplayTextToPlayer(Player(0), 0, 0, "装备ID " + I2S(i) + " 缺少物品类型ID")
                 set valid=false
             endif
             set i=i + 1
         endloop
+        if valid then
+            call DisplayTextToPlayer(Player(0), 0, 0, "装备数据验证通过1")
+        else
+            call DisplayTextToPlayer(Player(0), 0, 0, "装备数据验证失败1")
+        endif
         return valid
     endfunction
     // ============================================================================
