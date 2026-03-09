@@ -157,6 +157,7 @@ from .hashtable_natives import (
     RemoveSavedInteger, RemoveSavedReal, RemoveSavedBoolean, RemoveSavedString, RemoveSavedHandle,
     FlushChildHashtable, FlushParentHashtable,
 )
+from .kkapi_natives import DzUnlockOpCodeLimit
 
 
 class NativeFactory:
@@ -472,5 +473,7 @@ class NativeFactory:
         registry.register(FlushChildHashtable())
         registry.register(FlushParentHashtable())
 
+        # 注册KK对战平台扩展API
+        registry.register(DzUnlockOpCodeLimit())
 
         return registry
