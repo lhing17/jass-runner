@@ -26,6 +26,10 @@ class TypeHierarchy:
         'effect': 'handle',
         'location': 'handle',
         'version': 'handle',
+        'playerunitevent': 'handle',
+        'playerevent': 'handle',
+        'gameevent': 'handle',
+        'unitevent': 'handle',
     }
 
     @classmethod
