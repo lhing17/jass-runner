@@ -8,6 +8,7 @@ import logging
 from .handle import Handle, Unit, Player, Item, Group, Rect, Effect, BoolExpr, Sound
 from .hashtable import Hashtable
 from .event_handles import PlayerUnitEvent, PlayerEvent, GameEvent, UnitEvent
+from .timerdialog import TimerDialog
 
 
 logger = logging.getLogger(__name__)
@@ -566,5 +567,33 @@ class HandleManager:
         """获取通用单位事件对象，进行类型检查。"""
         handle = self.get_handle(handle_id)
         if isinstance(handle, UnitEvent):
+            return handle
+        return None
+
+    def create_timerdialog(self, timer) -> "TimerDialog":
+        """创建 timerdialog 并返回。
+
+        参数：
+            timer: 关联的 timer 对象
+
+        返回：
+            创建的 TimerDialog 对象
+        """
+        handle_id = f"timerdialog_{self._generate_id()}"
+        timerdialog = TimerDialog(handle_id, timer)
+        self._register_handle(timerdialog)
+        return timerdialog
+
+    def get_timerdialog(self, handle_id: str) -> "Optional[TimerDialog]":
+        """获取 timerdialog 对象，进行类型检查。
+
+        参数：
+            handle_id: timerdialog ID
+
+        返回：
+            TimerDialog 对象，如果不存在或类型不匹配返回 None
+        """
+        handle = self.get_handle(handle_id)
+        if isinstance(handle, TimerDialog):
             return handle
         return None
