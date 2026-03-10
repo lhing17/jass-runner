@@ -15,6 +15,7 @@ from .rect import Rect
 from .effect import Effect
 from .force import Force
 from .boolexpr import BoolExpr, ConditionFunc, FilterFunc, AndExpr, OrExpr, NotExpr
+from .timerdialog import TimerDialog
 
 
 class Sound(Handle):
@@ -76,4 +77,5 @@ __all__ = [
     "OrExpr",
     "NotExpr",
     "Sound",
+    "TimerDialog",
 ]
