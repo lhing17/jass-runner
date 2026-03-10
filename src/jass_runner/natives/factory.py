@@ -4,7 +4,7 @@
 """
 
 from .registry import NativeRegistry
-from .basic import DisplayTextToPlayer, KillUnit, CreateUnit, GetUnitState, CreateItem, RemoveItem, PlayerNative, GetLocalPlayer
+from .basic import DisplayTextToPlayer, KillUnit, RemoveUnit, CreateUnit, GetUnitState, CreateItem, RemoveItem, PlayerNative, GetLocalPlayer
 from .math_core import SquareRoot, Pow, Cos, Sin, R2I, I2R
 from .math_extended import Tan, ModuloInteger, ModuloReal, R2S, S2R, I2S, S2I, GetRandomInt, GetRandomReal
 from .timer_natives import CreateTimer, TimerStart, TimerGetElapsed, DestroyTimer, PauseTimer, ResumeTimer
@@ -186,6 +186,7 @@ class NativeFactory:
         # 注册基础native函数
         registry.register(DisplayTextToPlayer())
         registry.register(KillUnit())
+        registry.register(RemoveUnit())
         registry.register(CreateUnit())
         registry.register(GetUnitState())
         registry.register(CreateItem())
