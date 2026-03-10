@@ -1044,6 +1044,10 @@ jass-runner/
   - TriggerRegisterPlayerChatEvent Native函数
   - simulate_player_chat方法支持Python模拟玩家输入
   - 所有 937 个测试通过
+- ✅ **RemoveUnit Native函数实现完成** (2026-03-10)
+  - 立即移除单位，不触发死亡事件
+  - 与KillUnit形成互补
+  - 所有测试通过
 
 #### 60. 玩家科技系统Native函数实现完成 (2026-03-06)
 - **新增组件**:
@@ -1678,4 +1682,31 @@ jass-runner/
   - 工厂测试验证函数已注册
   - 所有205个native函数测试通过
 
-*最后更新: 2026-03-09*
+#### 69. RemoveUnit Native函数实现完成 (2026-03-10)
+- **新增组件**:
+  - `RemoveUnit` 类 - 立即移除单位的Native函数
+- **功能描述**:
+  - 立即移除单位，不触发死亡事件（与KillUnit的区别）
+  - 通过HandleManager.destroy_handle()销毁单位句柄
+  - 返回bool表示操作是否成功
+  - 对None单位返回False并记录警告日志
+  - 对已被移除的单位返回False
+- **关键设计**:
+  - 与KillUnit类保持一致的代码结构
+  - 日志格式：`[RemoveUnit] 单位{id}已被移除`
+  - 区别于KillUnit的日志：`[KillUnit] 单位{id}已被击杀`
+  - 不触发任何死亡事件，直接销毁单位对象
+- **修改文件**:
+  - `src/jass_runner/natives/basic.py` - 添加RemoveUnit类（第95-133行）
+  - `src/jass_runner/natives/factory.py` - 导入并注册RemoveUnit函数
+  - `tests/natives/test_basic.py` - 添加3个单元测试
+- **测试覆盖**:
+  - `test_remove_unit` - 测试正常移除单位和None单位处理
+  - `test_remove_unit_already_removed` - 测试重复移除已移除的单位
+  - `test_remove_unit_vs_kill_unit` - 对比测试RemoveUnit和KillUnit的行为
+- **设计文档**:
+  - `docs/superpowers/specs/2026-03-10-removeunit-design.md` - 设计文档
+  - `docs/superpowers/plans/2026-03-10-removeunit.md` - 实施计划
+- **测试统计**: 所有12个basic测试通过，无回归问题
+
+*最后更新: 2026-03-10*

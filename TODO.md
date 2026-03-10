@@ -40,7 +40,7 @@
 
 ### Native API 实现状态
 
-- [x] **基础单位操作**: CreateUnit, KillUnit, GetUnitState, SetUnitState
+- [x] **基础单位操作**: CreateUnit, KillUnit, RemoveUnit, GetUnitState, SetUnitState
 - [x] **位置操作**: GetUnitX/Y/Loc, SetUnitPosition, CreateUnitAtLoc
 - [x] **朝向控制**: GetUnitFacing, SetUnitFacing
 - [x] **单位信息**: GetUnitTypeId, GetUnitName
