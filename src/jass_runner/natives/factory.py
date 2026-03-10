@@ -34,6 +34,7 @@ from .trigger_register_event_natives import (
     TriggerRegisterPlayerChatEvent,
 )
 from .gamestate_event_natives import TriggerRegisterGameStateEvent, SuspendTimeOfDay
+from .event_natives import ConvertPlayerUnitEvent, ConvertPlayerEvent, ConvertGameEvent, ConvertUnitEvent
 from .async_natives import TriggerSleepAction, ExecuteFunc
 from .unit_property_natives import SetUnitState, GetUnitX, GetUnitY, GetUnitLoc, GetUnitTypeId, GetUnitName
 from .unit_position_natives import SetUnitPosition, SetUnitPositionLoc, CreateUnitAtLoc, GetUnitFacing, SetUnitFacing, CreateUnitAtLocByName
@@ -193,6 +194,12 @@ class NativeFactory:
         registry.register(RemoveItem())
         registry.register(PlayerNative())
         registry.register(GetLocalPlayer())
+
+        # 注册事件类型 Convert 函数
+        registry.register(ConvertPlayerUnitEvent())
+        registry.register(ConvertPlayerEvent())
+        registry.register(ConvertGameEvent())
+        registry.register(ConvertUnitEvent())
 
         # 注册触发器生命周期native函数
         registry.register(CreateTrigger())
