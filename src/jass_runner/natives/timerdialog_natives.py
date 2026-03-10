@@ -5,9 +5,29 @@
 
 import logging
 from ..natives.base import NativeFunction
+from .timerdialog import TimerDialog
 
 
 logger = logging.getLogger(__name__)
+
+
+def _resolve_timerdialog(state_context, timerdialog):
+    """解析 timerdialog，支持对象或字符串 ID。
+
+    参数：
+        state_context: 状态上下文
+        timerdialog: TimerDialog 对象或 handle ID 字符串
+
+    返回：
+        TimerDialog 对象，如果无效返回 None
+    """
+    if isinstance(timerdialog, str):
+        # 如果是字符串 ID，从 handle manager 获取对象
+        return state_context.handle_manager.get_timerdialog(timerdialog)
+    elif isinstance(timerdialog, TimerDialog):
+        # 如果已经是对象，直接返回
+        return timerdialog
+    return None
 
 
 class CreateTimerDialog(NativeFunction):
@@ -45,16 +65,17 @@ class DestroyTimerDialog(NativeFunction):
 
         参数：
             state_context: 状态上下文
-            timerdialog: TimerDialog 对象
+            timerdialog: TimerDialog 对象或 handle ID 字符串
 
         返回：
             bool: 是否成功销毁
         """
-        if not timerdialog:
+        td = _resolve_timerdialog(state_context, timerdialog)
+        if not td:
             logger.warning("[DestroyTimerDialog] 无效的 timerdialog")
             return False
 
-        handle_id = timerdialog.id if hasattr(timerdialog, 'id') else str(timerdialog)
+        handle_id = td.id
         success = state_context.handle_manager.destroy_handle(handle_id)
         if success:
             logger.info(f"[DestroyTimerDialog] 销毁 timerdialog: {handle_id}")
@@ -75,19 +96,19 @@ class TimerDialogSetTitle(NativeFunction):
 
         参数：
             state_context: 状态上下文
-            timerdialog: TimerDialog 对象
+            timerdialog: TimerDialog 对象或 handle ID 字符串
             title: 标题字符串
 
         返回：
             bool: 是否成功设置
         """
-        if not timerdialog:
+        td = _resolve_timerdialog(state_context, timerdialog)
+        if not td:
             logger.warning("[TimerDialogSetTitle] 无效的 timerdialog")
             return False
 
-        timerdialog.title = title
-        handle_id = timerdialog.id if hasattr(timerdialog, 'id') else str(timerdialog)
-        logger.info(f'[TimerDialogSetTitle] 设置 timerdialog {handle_id} 标题为: "{title}"')
+        td.title = title
+        logger.info(f'[TimerDialogSetTitle] 设置 timerdialog {td.id} 标题为: "{title}"')
         return True
 
 
@@ -103,20 +124,20 @@ class TimerDialogDisplay(NativeFunction):
 
         参数：
             state_context: 状态上下文
-            timerdialog: TimerDialog 对象
+            timerdialog: TimerDialog 对象或 handle ID 字符串
             display: 是否显示（布尔值）
 
         返回：
             bool: 是否成功设置
         """
-        if not timerdialog:
+        td = _resolve_timerdialog(state_context, timerdialog)
+        if not td:
             logger.warning("[TimerDialogDisplay] 无效的 timerdialog")
             return False
 
-        timerdialog.displayed = display
-        handle_id = timerdialog.id if hasattr(timerdialog, 'id') else str(timerdialog)
+        td.displayed = display
         action = "显示" if display else "隐藏"
-        logger.info(f"[TimerDialogDisplay] {action} timerdialog: {handle_id}")
+        logger.info(f"[TimerDialogDisplay] {action} timerdialog: {td.id}")
         return True
 
 
@@ -132,13 +153,14 @@ class IsTimerDialogDisplayed(NativeFunction):
 
         参数：
             state_context: 状态上下文
-            timerdialog: TimerDialog 对象
+            timerdialog: TimerDialog 对象或 handle ID 字符串
 
         返回：
             bool: 是否显示
         """
-        if not timerdialog:
+        td = _resolve_timerdialog(state_context, timerdialog)
+        if not td:
             logger.warning("[IsTimerDialogDisplayed] 无效的 timerdialog")
             return False
 
-        return timerdialog.displayed
+        return td.displayed

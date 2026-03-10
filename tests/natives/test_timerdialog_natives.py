@@ -9,7 +9,50 @@ from jass_runner.natives.timerdialog_natives import (
     TimerDialogSetTitle,
     TimerDialogDisplay,
     IsTimerDialogDisplayed,
+    _resolve_timerdialog,
 )
+
+
+class TestResolveTimerDialog:
+    """测试 _resolve_timerdialog 辅助函数。"""
+
+    def test_resolve_with_timerdialog_object(self):
+        """测试解析 TimerDialog 对象。"""
+        state_context = MagicMock()
+        mock_timer = MagicMock()
+        timerdialog = TimerDialog("timerdialog_1", mock_timer)
+
+        result = _resolve_timerdialog(state_context, timerdialog)
+
+        assert result == timerdialog
+
+    def test_resolve_with_string_id(self):
+        """测试解析字符串 ID。"""
+        state_context = MagicMock()
+        mock_timerdialog = MagicMock()
+        state_context.handle_manager.get_timerdialog.return_value = mock_timerdialog
+
+        result = _resolve_timerdialog(state_context, "timerdialog_1")
+
+        assert result == mock_timerdialog
+        state_context.handle_manager.get_timerdialog.assert_called_once_with("timerdialog_1")
+
+    def test_resolve_with_invalid_string(self):
+        """测试解析无效的字符串 ID。"""
+        state_context = MagicMock()
+        state_context.handle_manager.get_timerdialog.return_value = None
+
+        result = _resolve_timerdialog(state_context, "invalid_id")
+
+        assert result is None
+
+    def test_resolve_with_none(self):
+        """测试解析 None。"""
+        state_context = MagicMock()
+
+        result = _resolve_timerdialog(state_context, None)
+
+        assert result is None
 
 
 class TestCreateTimerDialog:
@@ -35,17 +78,32 @@ class TestCreateTimerDialog:
 class TestDestroyTimerDialog:
     """测试 DestroyTimerDialog native 函数。"""
 
-    def test_destroy_timer_dialog_success(self):
-        """测试成功销毁 timerdialog。"""
+    def test_destroy_timer_dialog_with_object(self):
+        """测试使用 TimerDialog 对象销毁。"""
+        native = DestroyTimerDialog()
+        state_context = MagicMock()
+        mock_timer = MagicMock()
+        timerdialog = TimerDialog("timerdialog_1", mock_timer)
+        state_context.handle_manager.destroy_handle.return_value = True
+
+        result = native.execute(state_context, timerdialog)
+
+        assert result is True
+        state_context.handle_manager.destroy_handle.assert_called_once_with("timerdialog_1")
+
+    def test_destroy_timer_dialog_with_string_id(self):
+        """测试使用字符串 ID 销毁。"""
         native = DestroyTimerDialog()
         state_context = MagicMock()
         mock_timerdialog = MagicMock()
         mock_timerdialog.id = "timerdialog_1"
+        state_context.handle_manager.get_timerdialog.return_value = mock_timerdialog
         state_context.handle_manager.destroy_handle.return_value = True
 
-        result = native.execute(state_context, mock_timerdialog)
+        result = native.execute(state_context, "timerdialog_1")
 
         assert result is True
+        state_context.handle_manager.get_timerdialog.assert_called_once_with("timerdialog_1")
         state_context.handle_manager.destroy_handle.assert_called_once_with("timerdialog_1")
 
     def test_destroy_timer_dialog_invalid(self):
@@ -61,17 +119,31 @@ class TestDestroyTimerDialog:
 class TestTimerDialogSetTitle:
     """测试 TimerDialogSetTitle native 函数。"""
 
-    def test_set_title_success(self):
-        """测试成功设置标题。"""
+    def test_set_title_with_object(self):
+        """测试使用 TimerDialog 对象设置标题。"""
+        native = TimerDialogSetTitle()
+        state_context = MagicMock()
+        mock_timer = MagicMock()
+        timerdialog = TimerDialog("timerdialog_1", mock_timer)
+
+        result = native.execute(state_context, timerdialog, "游戏时间")
+
+        assert result is True
+        assert timerdialog.title == "游戏时间"
+
+    def test_set_title_with_string_id(self):
+        """测试使用字符串 ID 设置标题。"""
         native = TimerDialogSetTitle()
         state_context = MagicMock()
         mock_timerdialog = MagicMock()
         mock_timerdialog.id = "timerdialog_1"
+        state_context.handle_manager.get_timerdialog.return_value = mock_timerdialog
 
-        result = native.execute(state_context, mock_timerdialog, "游戏时间")
+        result = native.execute(state_context, "timerdialog_1", "游戏时间")
 
         assert result is True
         assert mock_timerdialog.title == "游戏时间"
+        state_context.handle_manager.get_timerdialog.assert_called_once_with("timerdialog_1")
 
     def test_set_title_invalid_timerdialog(self):
         """测试设置无效 timerdialog 的标题。"""
@@ -86,29 +158,43 @@ class TestTimerDialogSetTitle:
 class TestTimerDialogDisplay:
     """测试 TimerDialogDisplay native 函数。"""
 
-    def test_display_show(self):
-        """测试显示 timerdialog。"""
+    def test_display_show_with_object(self):
+        """测试使用 TimerDialog 对象显示。"""
+        native = TimerDialogDisplay()
+        state_context = MagicMock()
+        mock_timer = MagicMock()
+        timerdialog = TimerDialog("timerdialog_1", mock_timer)
+
+        result = native.execute(state_context, timerdialog, True)
+
+        assert result is True
+        assert timerdialog.displayed is True
+
+    def test_display_hide_with_object(self):
+        """测试使用 TimerDialog 对象隐藏。"""
+        native = TimerDialogDisplay()
+        state_context = MagicMock()
+        mock_timer = MagicMock()
+        timerdialog = TimerDialog("timerdialog_1", mock_timer)
+
+        result = native.execute(state_context, timerdialog, False)
+
+        assert result is True
+        assert timerdialog.displayed is False
+
+    def test_display_with_string_id(self):
+        """测试使用字符串 ID 显示。"""
         native = TimerDialogDisplay()
         state_context = MagicMock()
         mock_timerdialog = MagicMock()
         mock_timerdialog.id = "timerdialog_1"
+        state_context.handle_manager.get_timerdialog.return_value = mock_timerdialog
 
-        result = native.execute(state_context, mock_timerdialog, True)
+        result = native.execute(state_context, "timerdialog_1", True)
 
         assert result is True
         assert mock_timerdialog.displayed is True
-
-    def test_display_hide(self):
-        """测试隐藏 timerdialog。"""
-        native = TimerDialogDisplay()
-        state_context = MagicMock()
-        mock_timerdialog = MagicMock()
-        mock_timerdialog.id = "timerdialog_1"
-
-        result = native.execute(state_context, mock_timerdialog, False)
-
-        assert result is True
-        assert mock_timerdialog.displayed is False
+        state_context.handle_manager.get_timerdialog.assert_called_once_with("timerdialog_1")
 
     def test_display_invalid_timerdialog(self):
         """测试显示无效的 timerdialog。"""
@@ -123,27 +209,42 @@ class TestTimerDialogDisplay:
 class TestIsTimerDialogDisplayed:
     """测试 IsTimerDialogDisplayed native 函数。"""
 
-    def test_is_displayed_true(self):
-        """测试检查 timerdialog 显示状态为 true。"""
+    def test_is_displayed_true_with_object(self):
+        """测试使用 TimerDialog 对象检查显示状态为 true。"""
+        native = IsTimerDialogDisplayed()
+        state_context = MagicMock()
+        mock_timer = MagicMock()
+        timerdialog = TimerDialog("timerdialog_1", mock_timer)
+        timerdialog.displayed = True
+
+        result = native.execute(state_context, timerdialog)
+
+        assert result is True
+
+    def test_is_displayed_false_with_object(self):
+        """测试使用 TimerDialog 对象检查显示状态为 false。"""
+        native = IsTimerDialogDisplayed()
+        state_context = MagicMock()
+        mock_timer = MagicMock()
+        timerdialog = TimerDialog("timerdialog_1", mock_timer)
+        timerdialog.displayed = False
+
+        result = native.execute(state_context, timerdialog)
+
+        assert result is False
+
+    def test_is_displayed_with_string_id(self):
+        """测试使用字符串 ID 检查显示状态。"""
         native = IsTimerDialogDisplayed()
         state_context = MagicMock()
         mock_timerdialog = MagicMock()
         mock_timerdialog.displayed = True
+        state_context.handle_manager.get_timerdialog.return_value = mock_timerdialog
 
-        result = native.execute(state_context, mock_timerdialog)
+        result = native.execute(state_context, "timerdialog_1")
 
         assert result is True
-
-    def test_is_displayed_false(self):
-        """测试检查 timerdialog 显示状态为 false。"""
-        native = IsTimerDialogDisplayed()
-        state_context = MagicMock()
-        mock_timerdialog = MagicMock()
-        mock_timerdialog.displayed = False
-
-        result = native.execute(state_context, mock_timerdialog)
-
-        assert result is False
+        state_context.handle_manager.get_timerdialog.assert_called_once_with("timerdialog_1")
 
     def test_is_displayed_invalid(self):
         """测试检查无效 timerdialog 的显示状态。"""
