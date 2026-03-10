@@ -103,6 +103,12 @@ class Evaluator:
                 i += 1
                 continue
 
+            # 处理方括号（数组访问）
+            if expression[i] in '[]':
+                tokens.append(expression[i])
+                i += 1
+                continue
+
             # 处理比较运算符 (==, !=, >=, <=, >, <)
             if expression[i] in '=!><':
                 # 检查双字符运算符
@@ -280,17 +286,48 @@ class Evaluator:
         if len(tokens) == 1:
             return self._parse_value(tokens[0])
 
-        # 第一步：处理函数调用模式（如 GetCameraMargin(0)）
+        # 第一步：处理函数调用模式（如 GetCameraMargin(0)）和数组访问（如 arr[0]）
         # 将函数调用转换为先求值函数，然后再参与表达式计算
         i = 0
         processed_tokens = []
         while i < len(tokens):
             token = tokens[i]
 
+            # 检查是否是数组访问模式：标识符 + 左方括号
+            if (token not in self.OPERATOR_PRECEDENCE and
+                token not in self.UNARY_OPERATORS and
+                token not in ('+', '-', '*', '/', '(', ')', '[', ']') and
+                i + 1 < len(tokens) and tokens[i + 1] == '['):
+
+                # 这是一个数组访问
+                array_name = token
+                i += 2  # 跳过数组名和左方括号
+
+                # 收集索引表达式直到右方括号
+                index_tokens = []
+                while i < len(tokens) and tokens[i] != ']':
+                    index_tokens.append(tokens[i])
+                    i += 1
+
+                # 跳过右方括号
+                if i < len(tokens) and tokens[i] == ']':
+                    i += 1
+
+                # 求值索引表达式
+                if index_tokens:
+                    index_value = self._parse_and_evaluate(index_tokens)
+                else:
+                    index_value = 0
+
+                # 获取数组元素值
+                array_value = self.context.get_array_element(array_name, int(index_value))
+                processed_tokens.append(FunctionResult(array_value))
+                continue
+
             # 检查是否是函数调用模式：标识符 + 左括号
             if (token not in self.OPERATOR_PRECEDENCE and
                 token not in self.UNARY_OPERATORS and
-                token not in ('+', '-', '*', '/', '(', ')') and
+                token not in ('+', '-', '*', '/', '(', ')', '[', ']') and
                 i + 1 < len(tokens) and tokens[i + 1] == '('):
 
                 # 这是一个函数调用

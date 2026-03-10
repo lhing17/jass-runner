@@ -207,15 +207,20 @@ class StatementParserMixin:
                         expr_parts.append(self.current_token.value)  # '('
                         self.next_token()
 
-                        # 解析参数直到 ')'
-                        while (self.current_token and
-                               self.current_token.value != ')'):
-                            expr_parts.append(str(self.current_token.value))
-                            self.next_token()
-
-                        if self.current_token and self.current_token.value == ')':
-                            expr_parts.append(self.current_token.value)  # ')'
-                            self.next_token()
+                        # 解析参数直到匹配的 ')'
+                        paren_depth = 1
+                        while (self.current_token and paren_depth > 0):
+                            if self.current_token.value == '(':
+                                paren_depth += 1
+                                expr_parts.append(str(self.current_token.value))
+                                self.next_token()
+                            elif self.current_token.value == ')':
+                                paren_depth -= 1
+                                expr_parts.append(str(self.current_token.value))
+                                self.next_token()
+                            else:
+                                expr_parts.append(str(self.current_token.value))
+                                self.next_token()
 
                         value = ' '.join(expr_parts)
                     elif self.current_token and self.current_token.type == 'OPERATOR':
