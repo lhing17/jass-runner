@@ -7,6 +7,7 @@ from typing import Dict, List, Optional, Union
 import logging
 from .handle import Handle, Unit, Player, Item, Group, Rect, Effect, BoolExpr, Sound
 from .hashtable import Hashtable
+from .event_handles import PlayerUnitEvent, PlayerEvent, GameEvent, UnitEvent
 
 
 logger = logging.getLogger(__name__)
@@ -508,5 +509,61 @@ class HandleManager:
         """获取 hashtable 对象"""
         handle = self.get_handle(handle_id)
         if isinstance(handle, Hashtable):
+            return handle
+        return None
+
+    def create_playerunit_event(self, event_id: int) -> PlayerUnitEvent:
+        """创建玩家-单位事件类型 handle。"""
+        handle_id = f"playerunitevent_{self._generate_id()}"
+        event = PlayerUnitEvent(handle_id, event_id)
+        self._register_handle(event)
+        return event
+
+    def create_playerevent(self, event_id: int) -> PlayerEvent:
+        """创建玩家事件类型 handle。"""
+        handle_id = f"playerevent_{self._generate_id()}"
+        event = PlayerEvent(handle_id, event_id)
+        self._register_handle(event)
+        return event
+
+    def create_gameevent(self, event_id: int) -> GameEvent:
+        """创建游戏事件类型 handle。"""
+        handle_id = f"gameevent_{self._generate_id()}"
+        event = GameEvent(handle_id, event_id)
+        self._register_handle(event)
+        return event
+
+    def create_unitevent(self, event_id: int) -> UnitEvent:
+        """创建通用单位事件类型 handle。"""
+        handle_id = f"unitevent_{self._generate_id()}"
+        event = UnitEvent(handle_id, event_id)
+        self._register_handle(event)
+        return event
+
+    def get_playerunit_event(self, handle_id: str) -> Optional[PlayerUnitEvent]:
+        """获取玩家-单位事件对象，进行类型检查。"""
+        handle = self.get_handle(handle_id)
+        if isinstance(handle, PlayerUnitEvent):
+            return handle
+        return None
+
+    def get_playerevent(self, handle_id: str) -> Optional[PlayerEvent]:
+        """获取玩家事件对象，进行类型检查。"""
+        handle = self.get_handle(handle_id)
+        if isinstance(handle, PlayerEvent):
+            return handle
+        return None
+
+    def get_gameevent(self, handle_id: str) -> Optional[GameEvent]:
+        """获取游戏事件对象，进行类型检查。"""
+        handle = self.get_handle(handle_id)
+        if isinstance(handle, GameEvent):
+            return handle
+        return None
+
+    def get_unitevent(self, handle_id: str) -> Optional[UnitEvent]:
+        """获取通用单位事件对象，进行类型检查。"""
+        handle = self.get_handle(handle_id)
+        if isinstance(handle, UnitEvent):
             return handle
         return None
