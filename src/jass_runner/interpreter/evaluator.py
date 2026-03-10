@@ -577,12 +577,13 @@ class Evaluator:
         if isinstance(expression, str):
             expression = expression.strip()
 
-            # 检查是否包含算术运算符、比较运算符、逻辑运算符或函数调用
+            # 检查是否包含算术运算符、比较运算符、逻辑运算符、函数调用或数组访问
             operators = ['+', '-', '*', '/', '==', '!=', '>', '<', '>=', '<=', 'and', 'or', 'not']
             has_operator = any(op in expression for op in operators)
             has_function_call = '(' in expression and ')' in expression
+            has_array_access = '[' in expression and ']' in expression
 
-            if has_operator or has_function_call:
+            if has_operator or has_function_call or has_array_access:
                 # 确保不是字符串字面量或函数引用
                 if not (expression.startswith('"') and expression.endswith('"')) and \
                    not expression.startswith('function:'):
