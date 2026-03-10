@@ -94,13 +94,16 @@ class TestTriggerRegisterPlayerUnitEvent:
     def test_register_player_unit_event_returns_event_handle(self, mock_state_context):
         """测试 TriggerRegisterPlayerUnitEvent 返回事件handle。"""
         from jass_runner.natives.trigger_register_event_natives import TriggerRegisterPlayerUnitEvent
+        from jass_runner.natives.event_handles import PlayerUnitEvent
+        from jass_runner.trigger.event_types import EVENT_PLAYER_UNIT_DEATH
 
         mock_state_context.trigger_manager.register_event.return_value = "event_ghi789"
 
         native = TriggerRegisterPlayerUnitEvent()
         assert native.name == "TriggerRegisterPlayerUnitEvent"
 
-        result = native.execute(mock_state_context, "trigger_0", 0, "player_unit_death", None)
+        event = PlayerUnitEvent("playerunitevent_001", EVENT_PLAYER_UNIT_DEATH)
+        result = native.execute(mock_state_context, "trigger_0", 0, event, None)
 
         assert result == "event_ghi789"
         mock_state_context.trigger_manager.register_event.assert_called_once()
@@ -111,11 +114,14 @@ class TestTriggerRegisterPlayerUnitEvent:
     def test_register_player_unit_event_invalid_trigger(self, mock_state_context):
         """测试注册玩家单位事件到不存在的触发器返回None。"""
         from jass_runner.natives.trigger_register_event_natives import TriggerRegisterPlayerUnitEvent
+        from jass_runner.natives.event_handles import PlayerUnitEvent
+        from jass_runner.trigger.event_types import EVENT_PLAYER_UNIT_DEATH
 
         mock_state_context.trigger_manager.register_event.return_value = None
 
         native = TriggerRegisterPlayerUnitEvent()
-        result = native.execute(mock_state_context, "trigger_invalid", 0, "player_unit_death", None)
+        event = PlayerUnitEvent("playerunitevent_001", EVENT_PLAYER_UNIT_DEATH)
+        result = native.execute(mock_state_context, "trigger_invalid", 0, event, None)
 
         assert result is None
 
@@ -126,13 +132,16 @@ class TestTriggerRegisterUnitEvent:
     def test_register_unit_event_returns_event_handle(self, mock_state_context):
         """测试 TriggerRegisterUnitEvent 返回事件handle。"""
         from jass_runner.natives.trigger_register_event_natives import TriggerRegisterUnitEvent
+        from jass_runner.natives.event_handles import UnitEvent
+        from jass_runner.trigger.event_types import EVENT_UNIT_DEATH
 
         mock_state_context.trigger_manager.register_event.return_value = "event_jkl012"
 
         native = TriggerRegisterUnitEvent()
         assert native.name == "TriggerRegisterUnitEvent"
 
-        result = native.execute(mock_state_context, "trigger_0", "unit_death", None)
+        event = UnitEvent("unitevent_001", EVENT_UNIT_DEATH)
+        result = native.execute(mock_state_context, "trigger_0", event, None)
 
         assert result == "event_jkl012"
         mock_state_context.trigger_manager.register_event.assert_called_once()
@@ -142,11 +151,14 @@ class TestTriggerRegisterUnitEvent:
     def test_register_unit_event_invalid_trigger(self, mock_state_context):
         """测试注册单位事件到不存在的触发器返回None。"""
         from jass_runner.natives.trigger_register_event_natives import TriggerRegisterUnitEvent
+        from jass_runner.natives.event_handles import UnitEvent
+        from jass_runner.trigger.event_types import EVENT_UNIT_DEATH
 
         mock_state_context.trigger_manager.register_event.return_value = None
 
         native = TriggerRegisterUnitEvent()
-        result = native.execute(mock_state_context, "trigger_invalid", "unit_death", None)
+        event = UnitEvent("unitevent_001", EVENT_UNIT_DEATH)
+        result = native.execute(mock_state_context, "trigger_invalid", event, None)
 
         assert result is None
 
@@ -157,13 +169,16 @@ class TestTriggerRegisterPlayerEvent:
     def test_register_player_event_returns_event_handle(self, mock_state_context):
         """测试 TriggerRegisterPlayerEvent 返回事件handle。"""
         from jass_runner.natives.trigger_register_event_natives import TriggerRegisterPlayerEvent
+        from jass_runner.natives.event_handles import PlayerEvent
+        from jass_runner.trigger.event_types import EVENT_PLAYER_DEFEAT
 
         mock_state_context.trigger_manager.register_event.return_value = "event_mno345"
 
         native = TriggerRegisterPlayerEvent()
         assert native.name == "TriggerRegisterPlayerEvent"
 
-        result = native.execute(mock_state_context, "trigger_0", 0, "player_defeat")
+        event = PlayerEvent("playerevent_001", EVENT_PLAYER_DEFEAT)
+        result = native.execute(mock_state_context, "trigger_0", 0, event)
 
         assert result == "event_mno345"
         mock_state_context.trigger_manager.register_event.assert_called_once()
@@ -174,11 +189,14 @@ class TestTriggerRegisterPlayerEvent:
     def test_register_player_event_invalid_trigger(self, mock_state_context):
         """测试注册玩家事件到不存在的触发器返回None。"""
         from jass_runner.natives.trigger_register_event_natives import TriggerRegisterPlayerEvent
+        from jass_runner.natives.event_handles import PlayerEvent
+        from jass_runner.trigger.event_types import EVENT_PLAYER_DEFEAT
 
         mock_state_context.trigger_manager.register_event.return_value = None
 
         native = TriggerRegisterPlayerEvent()
-        result = native.execute(mock_state_context, "trigger_invalid", 0, "player_defeat")
+        event = PlayerEvent("playerevent_001", EVENT_PLAYER_DEFEAT)
+        result = native.execute(mock_state_context, "trigger_invalid", 0, event)
 
         assert result is None
 
@@ -189,13 +207,16 @@ class TestTriggerRegisterGameEvent:
     def test_register_game_event_returns_event_handle(self, mock_state_context):
         """测试 TriggerRegisterGameEvent 返回事件handle。"""
         from jass_runner.natives.trigger_register_event_natives import TriggerRegisterGameEvent
+        from jass_runner.natives.event_handles import GameEvent
+        from jass_runner.trigger.event_types import EVENT_GAME_TIMER_EXPIRED
 
         mock_state_context.trigger_manager.register_event.return_value = "event_pqr678"
 
         native = TriggerRegisterGameEvent()
         assert native.name == "TriggerRegisterGameEvent"
 
-        result = native.execute(mock_state_context, "trigger_0", "game_timer_expired")
+        event = GameEvent("gameevent_001", EVENT_GAME_TIMER_EXPIRED)
+        result = native.execute(mock_state_context, "trigger_0", event)
 
         assert result == "event_pqr678"
         mock_state_context.trigger_manager.register_event.assert_called_once()
@@ -205,22 +226,28 @@ class TestTriggerRegisterGameEvent:
     def test_register_game_event_invalid_trigger(self, mock_state_context):
         """测试注册游戏事件到不存在的触发器返回None。"""
         from jass_runner.natives.trigger_register_event_natives import TriggerRegisterGameEvent
+        from jass_runner.natives.event_handles import GameEvent
+        from jass_runner.trigger.event_types import EVENT_GAME_TIMER_EXPIRED
 
         mock_state_context.trigger_manager.register_event.return_value = None
 
         native = TriggerRegisterGameEvent()
-        result = native.execute(mock_state_context, "trigger_invalid", "game_timer_expired")
+        event = GameEvent("gameevent_001", EVENT_GAME_TIMER_EXPIRED)
+        result = native.execute(mock_state_context, "trigger_invalid", event)
 
         assert result is None
 
     def test_register_game_event_without_trigger_manager(self, mock_state_context):
         """测试没有trigger_manager时注册游戏事件返回None。"""
         from jass_runner.natives.trigger_register_event_natives import TriggerRegisterGameEvent
+        from jass_runner.natives.event_handles import GameEvent
+        from jass_runner.trigger.event_types import EVENT_GAME_TIMER_EXPIRED
 
         delattr(mock_state_context, 'trigger_manager')
 
         native = TriggerRegisterGameEvent()
-        result = native.execute(mock_state_context, "trigger_0", "game_timer_expired")
+        event = GameEvent("gameevent_001", EVENT_GAME_TIMER_EXPIRED)
+        result = native.execute(mock_state_context, "trigger_0", event)
 
         assert result is None
 

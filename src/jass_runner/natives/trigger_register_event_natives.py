@@ -9,6 +9,8 @@ from typing import Any
 
 from ..natives.base import NativeFunction
 from jass_runner.trigger.event_types import EVENT_GAME_TIMER_EXPIRED
+from ..trigger.event_types import EVENT_ID_TO_NAME
+from ..natives.event_handles import PlayerUnitEvent, PlayerEvent, GameEvent, UnitEvent
 
 
 logger = logging.getLogger(__name__)
@@ -133,14 +135,14 @@ class TriggerRegisterPlayerUnitEvent(NativeFunction):
         return "TriggerRegisterPlayerUnitEvent"
 
     def execute(self, state_context, trigger_id: str, player_id: int,
-                event_type: str, filter_func: Any = None, *args, **kwargs):
+                event: PlayerUnitEvent, filter_func: Any = None, *args, **kwargs):
         """执行 TriggerRegisterPlayerUnitEvent 原生函数。
 
         参数：
             state_context: 状态上下文，必须包含trigger_manager
             trigger_id: 要注册事件的触发器ID
             player_id: 玩家ID
-            event_type: 事件类型
+            event: 玩家单位事件handle对象
             filter_func: 可选的过滤函数
             *args: 额外位置参数
             **kwargs: 关键字参数
@@ -152,6 +154,10 @@ class TriggerRegisterPlayerUnitEvent(NativeFunction):
         if state_context is None or not hasattr(state_context, 'trigger_manager'):
             logger.error("[TriggerRegisterPlayerUnitEvent] state_context or trigger_manager not found")
             return None
+
+        # 从event对象获取事件ID，然后映射为事件名称
+        event_id = event.event_id
+        event_type = EVENT_ID_TO_NAME.get(event_id, "unknown_event")
 
         filter_data = {"player_id": player_id}
         if filter_func is not None:
@@ -186,14 +192,14 @@ class TriggerRegisterUnitEvent(NativeFunction):
         """
         return "TriggerRegisterUnitEvent"
 
-    def execute(self, state_context, trigger_id: str, event_type: str,
+    def execute(self, state_context, trigger_id: str, event: UnitEvent,
                 filter_func: Any = None, *args, **kwargs):
         """执行 TriggerRegisterUnitEvent 原生函数。
 
         参数：
             state_context: 状态上下文，必须包含trigger_manager
             trigger_id: 要注册事件的触发器ID
-            event_type: 事件类型
+            event: 单位事件handle对象
             filter_func: 可选的过滤函数
             *args: 额外位置参数
             **kwargs: 关键字参数
@@ -205,6 +211,10 @@ class TriggerRegisterUnitEvent(NativeFunction):
         if state_context is None or not hasattr(state_context, 'trigger_manager'):
             logger.error("[TriggerRegisterUnitEvent] state_context or trigger_manager not found")
             return None
+
+        # 从event对象获取事件ID，然后映射为事件名称
+        event_id = event.event_id
+        event_type = EVENT_ID_TO_NAME.get(event_id, "unknown_event")
 
         filter_data = {}
         if filter_func is not None:
@@ -240,14 +250,14 @@ class TriggerRegisterPlayerEvent(NativeFunction):
         return "TriggerRegisterPlayerEvent"
 
     def execute(self, state_context, trigger_id: str, player_id: int,
-                event_type: str, *args, **kwargs):
+                event: PlayerEvent, *args, **kwargs):
         """执行 TriggerRegisterPlayerEvent 原生函数。
 
         参数：
             state_context: 状态上下文，必须包含trigger_manager
             trigger_id: 要注册事件的触发器ID
             player_id: 玩家ID
-            event_type: 事件类型
+            event: 玩家事件handle对象
             *args: 额外位置参数
             **kwargs: 关键字参数
 
@@ -258,6 +268,10 @@ class TriggerRegisterPlayerEvent(NativeFunction):
         if state_context is None or not hasattr(state_context, 'trigger_manager'):
             logger.error("[TriggerRegisterPlayerEvent] state_context or trigger_manager not found")
             return None
+
+        # 从event对象获取事件ID，然后映射为事件名称
+        event_id = event.event_id
+        event_type = EVENT_ID_TO_NAME.get(event_id, "unknown_event")
 
         filter_data = {"player_id": player_id}
 
@@ -290,14 +304,14 @@ class TriggerRegisterGameEvent(NativeFunction):
         """
         return "TriggerRegisterGameEvent"
 
-    def execute(self, state_context, trigger_id: str, event_type: str,
+    def execute(self, state_context, trigger_id: str, event: GameEvent,
                 *args, **kwargs):
         """执行 TriggerRegisterGameEvent 原生函数。
 
         参数：
             state_context: 状态上下文，必须包含trigger_manager
             trigger_id: 要注册事件的触发器ID
-            event_type: 事件类型
+            event: 游戏事件handle对象
             *args: 额外位置参数
             **kwargs: 关键字参数
 
@@ -308,6 +322,10 @@ class TriggerRegisterGameEvent(NativeFunction):
         if state_context is None or not hasattr(state_context, 'trigger_manager'):
             logger.error("[TriggerRegisterGameEvent] state_context or trigger_manager not found")
             return None
+
+        # 从event对象获取事件ID，然后映射为事件名称
+        event_id = event.event_id
+        event_type = EVENT_ID_TO_NAME.get(event_id, "unknown_event")
 
         result = state_context.trigger_manager.register_event(
             trigger_id, event_type, None
