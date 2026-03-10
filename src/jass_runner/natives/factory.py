@@ -8,6 +8,13 @@ from .basic import DisplayTextToPlayer, KillUnit, RemoveUnit, CreateUnit, GetUni
 from .math_core import SquareRoot, Pow, Cos, Sin, R2I, I2R
 from .math_extended import Tan, ModuloInteger, ModuloReal, R2S, S2R, I2S, S2I, GetRandomInt, GetRandomReal
 from .timer_natives import CreateTimer, TimerStart, TimerGetElapsed, DestroyTimer, PauseTimer, ResumeTimer
+from .timerdialog_natives import (
+    CreateTimerDialog,
+    DestroyTimerDialog,
+    TimerDialogSetTitle,
+    TimerDialogDisplay,
+    IsTimerDialogDisplayed,
+)
 from .trigger_natives import (
     CreateTrigger,
     DestroyTrigger,
@@ -263,6 +270,13 @@ class NativeFactory:
             registry.register(DestroyTimer(self._timer_system))
             registry.register(PauseTimer(self._timer_system))
             registry.register(ResumeTimer(self._timer_system))
+
+            # 注册 timerdialog 原生函数
+            registry.register(CreateTimerDialog())
+            registry.register(DestroyTimerDialog())
+            registry.register(TimerDialogSetTitle())
+            registry.register(TimerDialogDisplay())
+            registry.register(IsTimerDialogDisplayed())
 
         # 注册异步原生函数
         registry.register(TriggerSleepAction())
