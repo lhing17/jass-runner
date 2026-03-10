@@ -6,7 +6,7 @@
 
 import pytest
 from jass_runner.natives.state import StateContext
-from jass_runner.trigger.event_types import EVENT_UNIT_DEATH
+from jass_runner.trigger.event_types import EVENT_UNIT_DEATH, EVENT_ID_TO_NAME
 
 
 class TestTriggerSystemIntegration:
@@ -53,7 +53,7 @@ class TestTriggerSystemIntegration:
 
         # 注册单位死亡事件
         event_handle = trigger_manager.register_event(
-            trigger_id, EVENT_UNIT_DEATH, None
+            trigger_id, EVENT_ID_TO_NAME[EVENT_UNIT_DEATH], None
         )
 
         # 执行：杀死单位
@@ -95,7 +95,7 @@ class TestTriggerSystemIntegration:
         trigger.add_action(action_func)
 
         # 注册单位死亡事件
-        trigger_manager.register_event(trigger_id, EVENT_UNIT_DEATH, None)
+        trigger_manager.register_event(trigger_id, EVENT_ID_TO_NAME[EVENT_UNIT_DEATH], None)
 
         # 执行：杀死单位
         context.handle_manager.kill_unit(unit.id)
@@ -129,7 +129,7 @@ class TestTriggerSystemIntegration:
         trigger.add_action(action_func)
 
         # 注册单位死亡事件
-        trigger_manager.register_event(trigger_id, EVENT_UNIT_DEATH, None)
+        trigger_manager.register_event(trigger_id, EVENT_ID_TO_NAME[EVENT_UNIT_DEATH], None)
 
         # 禁用触发器
         trigger_manager.disable_trigger(trigger_id)
@@ -178,8 +178,8 @@ class TestTriggerSystemIntegration:
         trigger_2.add_action(action_func_2)
 
         # 为两个触发器注册同一事件
-        trigger_manager.register_event(trigger_id_1, EVENT_UNIT_DEATH, None)
-        trigger_manager.register_event(trigger_id_2, EVENT_UNIT_DEATH, None)
+        trigger_manager.register_event(trigger_id_1, EVENT_ID_TO_NAME[EVENT_UNIT_DEATH], None)
+        trigger_manager.register_event(trigger_id_2, EVENT_ID_TO_NAME[EVENT_UNIT_DEATH], None)
 
         # 执行：杀死单位
         context.handle_manager.kill_unit(unit.id)
@@ -214,7 +214,7 @@ class TestTriggerSystemIntegration:
         trigger.add_action(action_func)
 
         # 注册单位死亡事件
-        trigger_manager.register_event(trigger_id, EVENT_UNIT_DEATH, None)
+        trigger_manager.register_event(trigger_id, EVENT_ID_TO_NAME[EVENT_UNIT_DEATH], None)
 
         # 销毁触发器
         trigger_manager.destroy_trigger(trigger_id)

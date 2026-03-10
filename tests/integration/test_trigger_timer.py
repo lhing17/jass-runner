@@ -7,7 +7,7 @@
 import pytest
 from jass_runner.natives.state import StateContext
 from jass_runner.timer.system import TimerSystem
-from jass_runner.trigger.event_types import EVENT_GAME_TIMER_EXPIRED
+from jass_runner.trigger.event_types import EVENT_GAME_TIMER_EXPIRED, EVENT_ID_TO_NAME
 
 
 class TestTriggerTimerIntegration:
@@ -46,7 +46,7 @@ class TestTriggerTimerIntegration:
 
         # 注册计时器过期事件
         trigger_manager.register_event(
-            trigger_id, EVENT_GAME_TIMER_EXPIRED, None
+            trigger_id, EVENT_ID_TO_NAME[EVENT_GAME_TIMER_EXPIRED], None
         )
 
         # 创建并启动计时器
@@ -94,7 +94,7 @@ class TestTriggerTimerIntegration:
 
         # 注册通用计时器事件
         trigger_manager.register_event(
-            trigger_id, EVENT_GAME_TIMER_EXPIRED, None
+            trigger_id, EVENT_ID_TO_NAME[EVENT_GAME_TIMER_EXPIRED], None
         )
 
         # 创建两个计时器
@@ -145,7 +145,7 @@ class TestTriggerTimerIntegration:
 
         # 注册计时器过期事件
         trigger_manager.register_event(
-            trigger_id, EVENT_GAME_TIMER_EXPIRED, None
+            trigger_id, EVENT_ID_TO_NAME[EVENT_GAME_TIMER_EXPIRED], None
         )
 
         # 创建周期性计时器
@@ -203,10 +203,10 @@ class TestTriggerTimerIntegration:
 
         # 为两个触发器注册计时器事件
         trigger_manager.register_event(
-            trigger_id_1, EVENT_GAME_TIMER_EXPIRED, None
+            trigger_id_1, EVENT_ID_TO_NAME[EVENT_GAME_TIMER_EXPIRED], None
         )
         trigger_manager.register_event(
-            trigger_id_2, EVENT_GAME_TIMER_EXPIRED, None
+            trigger_id_2, EVENT_ID_TO_NAME[EVENT_GAME_TIMER_EXPIRED], None
         )
 
         # 创建并启动计时器
@@ -260,7 +260,7 @@ class TestTriggerTimerIntegration:
 
         # 注册计时器过期事件
         trigger_manager.register_event(
-            trigger_id, EVENT_GAME_TIMER_EXPIRED, None
+            trigger_id, EVENT_ID_TO_NAME[EVENT_GAME_TIMER_EXPIRED], None
         )
 
         # 创建并启动计时器

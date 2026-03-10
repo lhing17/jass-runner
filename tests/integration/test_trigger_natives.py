@@ -11,6 +11,7 @@ from io import StringIO
 from jass_runner.natives.state import StateContext
 from jass_runner.natives.factory import NativeFactory
 from jass_runner.trigger.event_types import EVENT_UNIT_DEATH
+from jass_runner.natives.event_handles import UnitEvent
 
 
 class TestTriggerNativesIntegration:
@@ -197,8 +198,9 @@ class TestTriggerNativesIntegration:
 
         # 注册单位死亡事件
         add_action.execute(state_context, trigger_id, action_func)
+        event = UnitEvent("unitevent_test", EVENT_UNIT_DEATH)
         event_handle = register_unit_event.execute(
-            state_context, trigger_id, EVENT_UNIT_DEATH
+            state_context, trigger_id, event
         )
 
         assert event_handle is not None, "注册事件应该返回有效的handle"

@@ -269,6 +269,55 @@ class JassVM:
                     return int(const_value)
             except (ValueError, AttributeError):
                 return 0
+        elif const_type == 'playerunitevent':
+            # 处理 ConvertPlayerUnitEvent(271) 格式的函数调用
+            try:
+                import re
+                match = re.search(r'ConvertPlayerUnitEvent\((\d+)\)', const_value)
+                if match:
+                    from ..natives.event_handles import PlayerUnitEvent
+                    event_id = int(match.group(1))
+                    return self.interpreter.state_context.handle_manager.create_playerunit_event(event_id)
+                else:
+                    return const_value
+            except (ValueError, AttributeError):
+                return const_value
+        elif const_type == 'playerevent':
+            # 处理 ConvertPlayerEvent(200) 格式的函数调用
+            try:
+                import re
+                match = re.search(r'ConvertPlayerEvent\((\d+)\)', const_value)
+                if match:
+                    event_id = int(match.group(1))
+                    return self.interpreter.state_context.handle_manager.create_playerevent(event_id)
+                else:
+                    return const_value
+            except (ValueError, AttributeError):
+                return const_value
+        elif const_type == 'gameevent':
+            # 处理 ConvertGameEvent(300) 格式的函数调用
+            try:
+                import re
+                match = re.search(r'ConvertGameEvent\((\d+)\)', const_value)
+                if match:
+                    event_id = int(match.group(1))
+                    return self.interpreter.state_context.handle_manager.create_gameevent(event_id)
+                else:
+                    return const_value
+            except (ValueError, AttributeError):
+                return const_value
+        elif const_type == 'unitevent':
+            # 处理 ConvertUnitEvent(100) 格式的函数调用
+            try:
+                import re
+                match = re.search(r'ConvertUnitEvent\((\d+)\)', const_value)
+                if match:
+                    event_id = int(match.group(1))
+                    return self.interpreter.state_context.handle_manager.create_unitevent(event_id)
+                else:
+                    return const_value
+            except (ValueError, AttributeError):
+                return const_value
         else:
             # 对于handle类型和其他类型，存储字符串值
             return const_value

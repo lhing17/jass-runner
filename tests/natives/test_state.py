@@ -93,8 +93,9 @@ def test_state_context_handle_manager_triggers_events():
     trigger_id = context.trigger_manager.create_trigger()
     trigger = context.trigger_manager.get_trigger(trigger_id)
 
-    # 注册事件监听
-    context.trigger_manager.register_event(trigger_id, EVENT_UNIT_DEATH)
+    # 注册事件监听（使用事件名称字符串）
+    from jass_runner.trigger.event_types import EVENT_ID_TO_NAME
+    context.trigger_manager.register_event(trigger_id, EVENT_ID_TO_NAME[EVENT_UNIT_DEATH])
 
     # 添加动作
     trigger.add_action(mock_callback)

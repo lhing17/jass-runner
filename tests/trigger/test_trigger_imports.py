@@ -34,15 +34,15 @@ class TestTriggerImports:
             EVENT_PLAYER_UNIT_ISSUED_ORDER,
         )
 
-        # 验证所有常量都是字符串类型
-        assert isinstance(EVENT_PLAYER_UNIT_DEATH, str)
-        assert isinstance(EVENT_PLAYER_UNIT_ATTACKED, str)
-        assert isinstance(EVENT_PLAYER_UNIT_SPELL_EFFECT, str)
-        assert isinstance(EVENT_PLAYER_UNIT_DAMAGED, str)
-        assert isinstance(EVENT_PLAYER_UNIT_PICKUP_ITEM, str)
-        assert isinstance(EVENT_PLAYER_UNIT_DROP_ITEM, str)
-        assert isinstance(EVENT_PLAYER_UNIT_USE_ITEM, str)
-        assert isinstance(EVENT_PLAYER_UNIT_ISSUED_ORDER, str)
+        # 验证所有常量都是整数类型
+        assert isinstance(EVENT_PLAYER_UNIT_DEATH, int)
+        assert isinstance(EVENT_PLAYER_UNIT_ATTACKED, int)
+        assert isinstance(EVENT_PLAYER_UNIT_SPELL_EFFECT, int)
+        assert isinstance(EVENT_PLAYER_UNIT_DAMAGED, int)
+        assert isinstance(EVENT_PLAYER_UNIT_PICKUP_ITEM, int)
+        assert isinstance(EVENT_PLAYER_UNIT_DROP_ITEM, int)
+        assert isinstance(EVENT_PLAYER_UNIT_USE_ITEM, int)
+        assert isinstance(EVENT_PLAYER_UNIT_ISSUED_ORDER, int)
 
     def test_unit_events_import(self):
         """测试所有通用单位事件常量可以导入。"""
@@ -51,8 +51,8 @@ class TestTriggerImports:
             EVENT_UNIT_DAMAGED,
         )
 
-        assert isinstance(EVENT_UNIT_DEATH, str)
-        assert isinstance(EVENT_UNIT_DAMAGED, str)
+        assert isinstance(EVENT_UNIT_DEATH, int)
+        assert isinstance(EVENT_UNIT_DAMAGED, int)
 
     def test_player_events_import(self):
         """测试所有玩家事件常量可以导入。"""
@@ -63,16 +63,16 @@ class TestTriggerImports:
             EVENT_PLAYER_CHAT,
         )
 
-        assert isinstance(EVENT_PLAYER_DEFEAT, str)
-        assert isinstance(EVENT_PLAYER_VICTORY, str)
-        assert isinstance(EVENT_PLAYER_LEAVE, str)
-        assert isinstance(EVENT_PLAYER_CHAT, str)
+        assert isinstance(EVENT_PLAYER_DEFEAT, int)
+        assert isinstance(EVENT_PLAYER_VICTORY, int)
+        assert isinstance(EVENT_PLAYER_LEAVE, int)
+        assert isinstance(EVENT_PLAYER_CHAT, int)
 
     def test_game_events_import(self):
         """测试所有游戏事件常量可以导入。"""
         from jass_runner.trigger import EVENT_GAME_TIMER_EXPIRED
 
-        assert isinstance(EVENT_GAME_TIMER_EXPIRED, str)
+        assert isinstance(EVENT_GAME_TIMER_EXPIRED, int)
 
     def test_event_categories_import(self):
         """测试所有事件分类列表可以导入。"""
@@ -157,7 +157,8 @@ class TestTriggerImports:
             EVENT_GAME_TIMER_EXPIRED,
         )
 
-        assert EVENT_PLAYER_UNIT_DEATH == "player_unit_death"
-        assert EVENT_UNIT_DEATH == "unit_death"
-        assert EVENT_PLAYER_DEFEAT == "player_defeat"
-        assert EVENT_GAME_TIMER_EXPIRED == "game_timer_expired"
+        # 事件常量现在是整数
+        assert EVENT_PLAYER_UNIT_DEATH == 275
+        assert EVENT_UNIT_DEATH == 100
+        assert EVENT_PLAYER_DEFEAT == 200
+        assert EVENT_GAME_TIMER_EXPIRED == 300

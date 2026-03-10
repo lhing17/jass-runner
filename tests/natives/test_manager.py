@@ -384,7 +384,9 @@ def test_handle_manager_kill_unit_triggers_death_event():
     # 验证触发了死亡事件
     mock_trigger_manager.fire_event.assert_called_once()
     call_args = mock_trigger_manager.fire_event.call_args
-    assert call_args[0][0] == EVENT_UNIT_DEATH
+    # 现在 fire_event 使用事件名称字符串而不是整数
+    from jass_runner.trigger.event_types import EVENT_ID_TO_NAME
+    assert call_args[0][0] == EVENT_ID_TO_NAME[EVENT_UNIT_DEATH]
     assert call_args[0][1]["unit_id"] == unit_id
     assert call_args[0][1]["unit_type"] == "hfoo"
 

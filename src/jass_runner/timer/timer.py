@@ -46,8 +46,9 @@ class Timer:
 
             # 触发计时器到期事件
             if self._trigger_manager:
-                from ..trigger.event_types import EVENT_GAME_TIMER_EXPIRED
-                self._trigger_manager.fire_event(EVENT_GAME_TIMER_EXPIRED, {
+                from ..trigger.event_types import EVENT_GAME_TIMER_EXPIRED, EVENT_ID_TO_NAME
+                event_name = EVENT_ID_TO_NAME.get(EVENT_GAME_TIMER_EXPIRED, "game_timer_expired")
+                self._trigger_manager.fire_event(event_name, {
                     "timer_id": self.timer_id
                 })
 

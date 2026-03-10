@@ -216,8 +216,9 @@ class HandleManager:
 
         # 触发单位死亡事件
         if self._trigger_manager:
-            from ..trigger.event_types import EVENT_UNIT_DEATH
-            self._trigger_manager.fire_event(EVENT_UNIT_DEATH, {
+            from ..trigger.event_types import EVENT_UNIT_DEATH, EVENT_ID_TO_NAME
+            event_name = EVENT_ID_TO_NAME.get(EVENT_UNIT_DEATH, "unit_death")
+            self._trigger_manager.fire_event(event_name, {
                 "unit_id": unit_id,
                 "unit_type": unit_type
             })
