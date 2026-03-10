@@ -198,9 +198,61 @@ class StatementParserMixin:
                 elif self.current_token.type == 'IDENTIFIER':
                     value = self.current_token.value
                     self.next_token()
+
+                    # 检查是否是函数调用或表达式
+                    if self.current_token and self.current_token.value == '(':
+                        # 函数调用，回退并解析完整调用
+                        # 将标识符放回，解析函数调用
+                        expr_parts = [value]
+                        expr_parts.append(self.current_token.value)  # '('
+                        self.next_token()
+
+                        # 解析参数直到 ')'
+                        while (self.current_token and
+                               self.current_token.value != ')'):
+                            expr_parts.append(str(self.current_token.value))
+                            self.next_token()
+
+                        if self.current_token and self.current_token.value == ')':
+                            expr_parts.append(self.current_token.value)  # ')'
+                            self.next_token()
+
+                        value = ' '.join(expr_parts)
+                    elif self.current_token and self.current_token.type == 'OPERATOR':
+                        # 表达式开始（如 a + b）
+                        expr_parts = [value]
+                        # 继续读取直到语句结束
+                        statement_keywords = ('endfunction', 'set', 'call', 'local',
+                                              'return', 'exitwhen', 'loop', 'if',
+                                              'elseif', 'else', 'endif', 'endloop')
+                        while (self.current_token and
+                               not (self.current_token.type == 'KEYWORD' and
+                                    self.current_token.value in statement_keywords)):
+                            if self.current_token.value == ';':
+                                self.next_token()
+                                break
+                            expr_parts.append(str(self.current_token.value))
+                            self.next_token()
+                        value = ' '.join(expr_parts)
+
                 elif self.current_token.type == 'KEYWORD' and self.current_token.value in ('true', 'false'):
                     value = self.current_token.value
                     self.next_token()
+                elif self.current_token.value == '(':
+                    # 括号表达式，如 (role_type * 100) + theme_type
+                    expr_parts = []
+                    statement_keywords = ('endfunction', 'set', 'call', 'local',
+                                          'return', 'exitwhen', 'loop', 'if',
+                                          'elseif', 'else', 'endif', 'endloop')
+                    while (self.current_token and
+                           not (self.current_token.type == 'KEYWORD' and
+                                self.current_token.value in statement_keywords)):
+                        if self.current_token.value == ';':
+                            self.next_token()
+                            break
+                        expr_parts.append(str(self.current_token.value))
+                        self.next_token()
+                    value = ' '.join(expr_parts)
 
             return ReturnStmt(value=value)
 

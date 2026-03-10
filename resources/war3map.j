@@ -5794,6 +5794,7 @@ function MonsterData_GetMonsterIndex takes integer role_type,integer theme_type 
     if not DungeonMonsterData___IsValidRoleType(role_type) or not IsValidThemeType(theme_type) then
         return 0
     endif
+    call DisplayTextToPlayer(Player(0), 0, 0, "|cffff0000[系统]|r计算小怪索引: 角色类型=" + I2S(role_type) + ", 主题类型=" + I2S(theme_type))
     return ( role_type * 100 ) + theme_type
 endfunction
 // ============================================================================
@@ -5864,6 +5865,8 @@ function MonsterData_SetMonsterType takes integer role_type,integer theme_type,i
         return
     endif
     set index=MonsterData_GetMonsterIndex(role_type , theme_type)
+    call DisplayTextToPlayer(Player(0), 0, 0, "|cffff0000[系统]|r设置小怪类型配置: 角色类型=" + I2S(role_type) + ", 主题类型=" + I2S(theme_type) + ", 单位ID=" + I2S(unit_id) + ", 基础生命值=" + I2S(base_hp) + ", 基础攻击力=" + I2S(base_attack) + ", 基础防御=" + I2S(base_defense) + ", 移动速度=" + I2S(move_speed) + ", 攻击范围=" + I2S(attack_range))
+    call DisplayTextToPlayer(Player(0), 0, 0, "index=" + I2S(index))
     set udg_monster_unit_id[index]=unit_id
     set udg_monster_base_hp[index]=base_hp
     set udg_monster_base_attack[index]=base_attack
