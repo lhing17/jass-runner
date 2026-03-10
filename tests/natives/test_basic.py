@@ -2,7 +2,7 @@
 
 import pytest
 from jass_runner.natives.basic import (
-    DisplayTextToPlayer, KillUnit, CreateUnit, GetUnitState, PlayerNative,
+    DisplayTextToPlayer, KillUnit, RemoveUnit, CreateUnit, GetUnitState, PlayerNative,
     UNIT_STATE_LIFE, UNIT_STATE_MANA
 )
 from jass_runner.natives.state import StateContext
@@ -224,3 +224,62 @@ def test_item_lifecycle_integration(state_context):
 
     # 验证物品已被销毁
     assert state_context.handle_manager.get_item(item.id) is None
+
+
+def test_remove_unit(state_context):
+    """测试RemoveUnit原生函数。"""
+    from jass_runner.natives.handle import Unit
+
+    native = RemoveUnit()
+    assert native.name == "RemoveUnit"
+
+    # 先创建一个单位
+    unit = state_context.handle_manager.create_unit("hfoo", 0, 0.0, 0.0, 0.0)
+
+    # 测试移除存在的单位
+    result = native.execute(state_context, unit)
+    assert result is True
+
+    # 验证单位已被销毁
+    retrieved_unit = state_context.handle_manager.get_unit(unit.id)
+    assert retrieved_unit is None
+
+    # 测试使用None单位
+    result = native.execute(state_context, None)
+    assert result is False
+
+
+def test_remove_unit_already_removed(state_context):
+    """测试重复移除已移除的单位。"""
+    native = RemoveUnit()
+
+    # 创建一个单位
+    unit = state_context.handle_manager.create_unit("hfoo", 0, 0.0, 0.0, 0.0)
+
+    # 第一次移除
+    result = native.execute(state_context, unit)
+    assert result is True
+
+    # 第二次移除（单位已不存在）
+    result = native.execute(state_context, unit)
+    assert result is False
+
+
+def test_remove_unit_vs_kill_unit(state_context):
+    """测试RemoveUnit和KillUnit都能成功移除单位。"""
+    remove_native = RemoveUnit()
+    kill_native = KillUnit()
+
+    # 创建两个单位
+    unit1 = state_context.handle_manager.create_unit("hfoo", 0, 0.0, 0.0, 0.0)
+    unit2 = state_context.handle_manager.create_unit("hkni", 0, 10.0, 10.0, 0.0)
+
+    # 使用RemoveUnit移除第一个单位
+    result1 = remove_native.execute(state_context, unit1)
+    assert result1 is True
+    assert state_context.handle_manager.get_unit(unit1.id) is None
+
+    # 使用KillUnit击杀第二个单位
+    result2 = kill_native.execute(state_context, unit2)
+    assert result2 is True
+    assert state_context.handle_manager.get_unit(unit2.id) is None
