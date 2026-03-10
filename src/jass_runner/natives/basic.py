@@ -92,6 +92,47 @@ class KillUnit(NativeFunction):
         return success
 
 
+class RemoveUnit(NativeFunction):
+    """移除一个单位（通过状态管理系统）。
+
+    此函数模拟JASS中的RemoveUnit native函数，通过HandleManager真正销毁单位。
+    """
+
+    @property
+    def name(self) -> str:
+        """获取函数名称。
+
+        返回：
+            函数名称"RemoveUnit"
+        """
+        return "RemoveUnit"
+
+    def execute(self, state_context, unit: Unit):
+        """执行RemoveUnit native函数。
+
+        参数：
+            state_context: 状态上下文
+            unit: Unit对象（由CreateUnit返回）
+
+        返回：
+            bool: 成功移除单位返回True，否则返回False
+        """
+        if unit is None:
+            logger.warning("[RemoveUnit] 尝试移除None单位")
+            return False
+
+        # 通过HandleManager销毁单位
+        handle_manager = state_context.handle_manager
+        success = handle_manager.destroy_handle(unit.id)
+
+        if success:
+            logger.info(f"[RemoveUnit] 单位{unit.id}已被移除")
+        else:
+            logger.warning(f"[RemoveUnit] 单位{unit.id}不存在或已被移除")
+
+        return success
+
+
 class CreateUnit(NativeFunction):
     """创建一个单位（通过状态管理系统）。
 
