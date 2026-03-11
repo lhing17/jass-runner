@@ -164,18 +164,4 @@ class GlobalParserMixin:
             ))
             return None
 
-        # 这里的 value 如果是字符串字面量，是否应该包含引号？
-        # 如果是 ExpressionParser 解析出来的，它是带引号的 '"foo"'
-        # 原来的 parser 是去掉引号的 'foo'
-        # 我们需要确认 GlobalDecl 的消费者（Interpreter）期望什么
-        # 假设 Interpreter 直接使用 value，如果是字符串，它需要知道这是一个字符串值还是变量名
-        # 在 GlobalDecl 中，value 可能是 NativeCallNode，也可能是字面量
-        # 如果是 'foo'，解释器怎么知道它是字符串 "foo" 还是变量 foo？
-        # 通常 AST 中字面量应该有专门的节点，或者保留引号。
-        # 让我们查看 Interpreter.visit_GlobalDecl 或相关逻辑
-        
-        # 修正：原来的 parser 在 L110 确实去掉了引号。
-        # 让我们看看 Evaluator 对 GlobalDecl 的处理。
-        # 搜索 Interpreter 逻辑...
-        
         return GlobalDecl(name=var_name, type=var_type, value=value, is_constant=is_constant)

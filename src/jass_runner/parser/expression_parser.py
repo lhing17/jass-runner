@@ -1,9 +1,8 @@
-from typing import Optional, TYPE_CHECKING, Any, List
+from typing import Optional, TYPE_CHECKING, Any
 from .ast_nodes import NativeCallNode
 
 if TYPE_CHECKING:
     from .base_parser import BaseParser
-    from .lexer import Token
 
 class ExpressionParserMixin:
     """提供表达式解析功能。"""
