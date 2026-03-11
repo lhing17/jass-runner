@@ -3215,11 +3215,14 @@ endfunction
     function EquipmentData_Validate takes nothing returns boolean
         local integer i= 1
         local boolean valid= true
+        call DisplayTextToPlayer(Player(0), 0, 0, "装备数据开始验证！")
         loop
             exitwhen i > udg_equip_count
             if udg_equip_item_type_id[i] == 0 then
                 call DisplayTextToPlayer(Player(0), 0, 0, "装备ID " + I2S(i) + " 缺少物品类型ID")
                 set valid=false
+            else
+                call DisplayTextToPlayer(Player(0), 0, 0, "装备ID " + I2S(i) + " 物品类型ID: " + I2S(udg_equip_item_type_id[i]))
             endif
             set i=i + 1
         endloop
@@ -3595,6 +3598,7 @@ endfunction
         set udg_set_bonus_4[5]=25
         set udg_set_bonus_6[5]=50
         set udg_set_count[5]=6
+         call DisplayTextToPlayer(Player(0), 0, 0, "装备数据加载完成！")
         // 验证数据完整性
         if not EquipmentData_Validate() then
             call DisplayTextToPlayer(Player(0), 0, 0, "装备数据验证失败！")

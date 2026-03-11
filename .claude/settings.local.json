@@ -46,7 +46,8 @@
       "Bash(grep:*)",
       "Bash(git pull:*)",
       "mcp__ide__executeCode",
-      "Bash(del test_trigger_evaluate_fix.py)"
+      "Bash(del test_trigger_evaluate_fix.py)",
+      "Bash(git show:*)"
     ]
   }
 }
