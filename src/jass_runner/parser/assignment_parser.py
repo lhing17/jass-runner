@@ -124,11 +124,13 @@ class AssignmentParserMixin:
         if not arg_tokens:
             return None
 
-        # 如果只有一个token且是NativeCallNode或ArrayAccess，直接返回
+        # 如果只有一个token且是NativeCallNode，直接返回
+        if len(arg_tokens) == 1 and hasattr(arg_tokens[0], 'func_name'):
+            return arg_tokens[0]
+
+        # 如果只有一个token且是字面量，直接返回
         if len(arg_tokens) == 1:
             token = arg_tokens[0]
-            if hasattr(token, 'func_name') or type(token).__name__ == 'ArrayAccess':
-                return token
             # 尝试解析为数字
             try:
                 return str(int(token))
@@ -232,10 +234,6 @@ class AssignmentParserMixin:
                         self.next_token()
                     elif self.current_token.type == 'STRING':
                         value = self.current_token.value[1:-1]  # 移除引号
-                        self.next_token()
-                    elif self.current_token.type == 'KEYWORD' and self.current_token.value in ('true', 'false'):
-                        # 布尔值
-                        value = self.current_token.value
                         self.next_token()
                     elif self.current_token.type == 'IDENTIFIER' or (self.current_token.type == 'KEYWORD' and self.current_token.value in self.TYPE_KEYWORDS):
                         # 可能是函数调用，如 CreateUnit(...) 或 CreateForce()
@@ -390,7 +388,7 @@ class AssignmentParserMixin:
                 value = IntegerExpr(value=self.current_token.value)
                 self.next_token()
             elif self.current_token.type == 'IDENTIFIER' or (self.current_token.type == 'KEYWORD' and self.current_token.value in self.TYPE_KEYWORDS):
-                # 可能是函数调用、数组访问或变量引用
+                # 可能是函数调用或变量引用
                 # 注意：类型关键词（如 force）在函数名位置也应被视为标识符
                 expr_name = self.current_token.value
                 self.next_token()
@@ -407,52 +405,8 @@ class AssignmentParserMixin:
                         self.next_token()
 
                     value = NativeCallNode(func_name=expr_name, args=args)
-                elif self.current_token and self.current_token.value == '[':
-                    # 这是数组访问，可能是表达式的一部分
-                    expr_parts = [expr_name]
-
-                    # 解析数组访问部分
-                    expr_parts.append(self.current_token.value)  # '['
-                    self.next_token()
-
-                    # 解析索引
-                    if self.current_token:
-                        if self.current_token.type == 'INTEGER':
-                            expr_parts.append(str(self.current_token.value))
-                            self.next_token()
-                        elif self.current_token.type == 'IDENTIFIER':
-                            expr_parts.append(self.current_token.value)
-                            self.next_token()
-
-                    # 跳过右方括号
-                    if self.current_token and self.current_token.value == ']':
-                        expr_parts.append(self.current_token.value)  # ']'
-                        self.next_token()
-
-                    # 检查是否有后续运算符（表达式）
-                    if self.current_token and self.current_token.type == 'OPERATOR':
-                        # 是表达式，继续收集token
-                        statement_keywords = ('endloop', 'endif', 'else', 'elseif', 'endfunction',
-                                             'set', 'call', 'local', 'return', 'exitwhen', 'loop', 'if', 'elseif')
-                        while (self.current_token and
-                               not (self.current_token.type == 'KEYWORD' and
-                                    self.current_token.value in statement_keywords)):
-                            if self.current_token.value == ';':
-                                self.next_token()
-                                break
-                            expr_parts.append(str(self.current_token.value))
-                            self.next_token()
-                        value = ' '.join(expr_parts)
-                    else:
-                        # 只是简单的数组访问
-                        from .ast_nodes import ArrayAccess
-                        # 提取数组名和索引
-                        array_name = expr_parts[0]
-                        index_value = int(expr_parts[2]) if expr_parts[2].isdigit() else expr_parts[2]
-                        index = IntegerExpr(value=index_value) if isinstance(index_value, int) else VariableExpr(name=index_value)
-                        value = ArrayAccess(array_name=array_name, index=index)
                 else:
-                    # 不是函数调用也不是数组访问，作为变量引用
+                    # 不是函数调用，作为变量引用
                     value = VariableExpr(name=expr_name)
 
         # 如果存在分号则跳过
@@ -559,10 +513,6 @@ class AssignmentParserMixin:
                     self.next_token()
                 elif self.current_token.type == 'STRING':
                     value = self.current_token.value[1:-1]
-                    self.next_token()
-                elif self.current_token.type == 'KEYWORD' and self.current_token.value in ('true', 'false'):
-                    # 布尔值
-                    value = self.current_token.value
                     self.next_token()
 
             # 如果存在分号则跳过
