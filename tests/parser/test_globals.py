@@ -1,6 +1,7 @@
 """测试全局变量解析。"""
 
-from jass_runner.parser.parser import Parser, GlobalDecl
+from jass_runner.parser.parser import Parser
+from jass_runner.parser.ast_nodes import GlobalDecl
 
 
 def test_parse_globals_with_initial_values():

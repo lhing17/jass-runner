@@ -50,7 +50,10 @@ class Parser(
 
         # 存储全局变量名和常量名用于冲突检查
         self.global_names = {g.name for g in globals_list}
-        self.constant_names = {g.name for g in globals_list if g.is_constant}
+        # ArrayDecl 没有 is_constant 属性，需要检查类型
+        self.constant_names = {
+            g.name for g in globals_list if hasattr(g, "is_constant") and g.is_constant
+        }
 
         functions: List[FunctionDecl] = []
 

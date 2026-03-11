@@ -5,10 +5,8 @@ This module contains tests for the parser that converts token streams
 from the lexer into an Abstract Syntax Tree (AST).
 """
 
-import pytest
 from src.jass_runner.parser.parser import (
-    Parser, AST, FunctionDecl, Parameter,
-    ParseError, MissingKeywordError, UnexpectedTokenError, ParameterError
+    Parser, AST
 )
 
 
@@ -557,7 +555,9 @@ def test_parse_exitwhen_statement():
 
 def test_parse_return_statement():
     """测试解析return语句"""
-    from jass_runner.parser.parser import Parser, ReturnStmt, IfStmt
+    from jass_runner.parser.parser import Parser
+    from jass_runner.parser.ast_nodes import ReturnStmt
+    
 
     code = """
     function test takes integer x returns integer

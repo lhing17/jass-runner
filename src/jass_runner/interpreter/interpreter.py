@@ -3,8 +3,8 @@
 from typing import Any
 from .context import ExecutionContext
 from .evaluator import Evaluator
-from ..parser.parser import AST, FunctionDecl, LocalDecl, NativeCallNode, SetStmt, IfStmt, LoopStmt, ExitWhenStmt, ReturnStmt, GlobalDecl
-from ..parser.ast_nodes import ArrayAccess, ArrayDecl, SetArrayStmt
+from ..parser.parser import AST, FunctionDecl
+from ..parser.ast_nodes import ArrayAccess, ArrayDecl, SetArrayStmt, LocalDecl, NativeCallNode, SetStmt, IfStmt, LoopStmt, ExitWhenStmt, ReturnStmt
 from ..natives.state import StateContext
 from ..types import TypeChecker
 from .control_flow import ExitLoopSignal, ReturnSignal
