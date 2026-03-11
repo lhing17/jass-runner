@@ -277,7 +277,8 @@ endfunction
 
 def test_parser_can_parse_local_declaration():
     """Test that parser can parse local variable declarations."""
-    from jass_runner.parser.parser import Parser, LocalDecl
+    from jass_runner.parser.parser import Parser
+    from jass_runner.parser.ast_nodes import LocalDecl
 
     code = """
     function test takes nothing returns nothing
@@ -312,7 +313,8 @@ def test_parser_can_parse_local_declaration():
 
 def test_parse_simple_if_statement():
     """测试解析简单if语句"""
-    from jass_runner.parser.parser import Parser, IfStmt
+    from jass_runner.parser.parser import Parser
+    from jass_runner.parser.ast_nodes import IfStmt
 
     code = """
     function main takes nothing returns nothing
@@ -334,7 +336,8 @@ def test_parse_simple_if_statement():
 
 def test_parse_if_else_statement():
     """测试解析if/else语句"""
-    from jass_runner.parser.parser import Parser, IfStmt, NativeCallNode
+    from jass_runner.parser.parser import Parser
+    from jass_runner.parser.ast_nodes import IfStmt, NativeCallNode
 
     code = """
     function main takes nothing returns nothing
@@ -369,7 +372,8 @@ def test_parse_if_else_statement():
 
 def test_parse_if_elseif_else_statement():
     """测试解析if/elseif/else语句"""
-    from jass_runner.parser.parser import Parser, IfStmt, NativeCallNode
+    from jass_runner.parser.parser import Parser
+    from jass_runner.parser.ast_nodes import IfStmt, NativeCallNode
 
     code = """
     function main takes nothing returns nothing
@@ -410,7 +414,8 @@ def test_parse_if_elseif_else_statement():
 
 def test_parse_nested_if_statement():
     """测试解析嵌套if语句"""
-    from jass_runner.parser.parser import Parser, IfStmt, NativeCallNode
+    from jass_runner.parser.parser import Parser
+    from jass_runner.parser.ast_nodes import IfStmt, NativeCallNode
 
     code = """
     function main takes nothing returns nothing
@@ -444,7 +449,8 @@ def test_parse_nested_if_statement():
 
 def test_parse_loop_statement():
     """测试解析loop语句"""
-    from jass_runner.parser.parser import Parser, LoopStmt, NativeCallNode
+    from jass_runner.parser.parser import Parser
+    from jass_runner.parser.ast_nodes import LoopStmt, NativeCallNode
 
     code = """
     function main takes nothing returns nothing
@@ -470,7 +476,8 @@ def test_parse_loop_statement():
 
 def test_parse_loop_with_multiple_statements():
     """测试解析包含多个语句的loop"""
-    from jass_runner.parser.parser import Parser, LoopStmt, NativeCallNode, SetStmt
+    from jass_runner.parser.parser import Parser
+    from jass_runner.parser.ast_nodes import LoopStmt, NativeCallNode, SetStmt
 
     code = """
     function main takes nothing returns nothing
@@ -500,7 +507,8 @@ def test_parse_loop_with_multiple_statements():
 
 def test_parse_nested_loop():
     """测试解析嵌套loop语句"""
-    from jass_runner.parser.parser import Parser, LoopStmt, NativeCallNode
+    from jass_runner.parser.parser import Parser
+    from jass_runner.parser.ast_nodes import LoopStmt, NativeCallNode
 
     code = """
     function main takes nothing returns nothing
@@ -533,7 +541,8 @@ def test_parse_nested_loop():
 
 def test_parse_exitwhen_statement():
     """测试解析exitwhen语句"""
-    from jass_runner.parser.parser import Parser, ExitWhenStmt
+    from jass_runner.parser.parser import Parser
+    from jass_runner.parser.ast_nodes import ExitWhenStmt
 
     code = """
     function main takes nothing returns nothing
@@ -580,7 +589,8 @@ def test_parse_return_statement():
 
 def test_parse_return_nothing():
     """测试解析return nothing"""
-    from jass_runner.parser.parser import Parser, ReturnStmt
+    from jass_runner.parser.parser import Parser
+    from jass_runner.parser.ast_nodes import ReturnStmt
 
     code = """
     function main takes nothing returns nothing

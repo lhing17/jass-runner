@@ -55,7 +55,7 @@ def test_evaluator_can_evaluate_native_call():
     from jass_runner.interpreter.context import ExecutionContext
     from jass_runner.natives.base import NativeFunction
     from jass_runner.natives.registry import NativeRegistry
-    from jass_runner.parser.parser import NativeCallNode
+    from jass_runner.parser.ast_nodes import NativeCallNode
 
     # 创建一个模拟的原生函数
     class MockNativeFunction(NativeFunction):

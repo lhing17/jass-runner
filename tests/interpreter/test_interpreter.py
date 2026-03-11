@@ -73,7 +73,7 @@ def test_interpreter_sets_variable_values():
     """Test that interpreter correctly sets variable values."""
     from jass_runner.interpreter.interpreter import Interpreter
     from jass_runner.interpreter.context import ExecutionContext
-    from jass_runner.parser.parser import LocalDecl
+    from jass_runner.parser.ast_nodes import LocalDecl
 
     # Create a mock function with local declarations
     local_decl1 = LocalDecl(name='x', type='integer', value=42)
@@ -97,7 +97,8 @@ def test_execute_if_then_branch():
     """测试执行if语句的then分支。"""
     from jass_runner.interpreter.interpreter import Interpreter
     from jass_runner.interpreter.context import ExecutionContext
-    from jass_runner.parser.parser import Parser, IfStmt, SetStmt
+    from jass_runner.parser.parser import Parser
+    from jass_runner.parser.ast_nodes import IfStmt, SetStmt
 
     # 创建解释器
     interpreter = Interpreter()
@@ -123,7 +124,8 @@ def test_execute_if_else_branch():
     """测试执行if语句的else分支。"""
     from jass_runner.interpreter.interpreter import Interpreter
     from jass_runner.interpreter.context import ExecutionContext
-    from jass_runner.parser.parser import Parser, IfStmt, SetStmt
+    from jass_runner.parser.parser import Parser
+    from jass_runner.parser.ast_nodes import IfStmt, SetStmt
 
     # 创建解释器
     interpreter = Interpreter()
@@ -150,7 +152,8 @@ def test_execute_if_elseif():
     """测试执行if/elseif语句。"""
     from jass_runner.interpreter.interpreter import Interpreter
     from jass_runner.interpreter.context import ExecutionContext
-    from jass_runner.parser.parser import Parser, IfStmt, SetStmt
+    from jass_runner.parser.parser import Parser
+    from jass_runner.parser.ast_nodes import IfStmt, SetStmt
 
     # 创建解释器
     interpreter = Interpreter()
