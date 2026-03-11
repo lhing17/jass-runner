@@ -5,13 +5,9 @@
 """
 
 from typing import List
+
 # Re-export AST nodes to maintain backward compatibility
-from .ast_nodes import (
-    Parameter, GlobalDecl, LocalDecl, FunctionDecl, AST,
-    NativeCallNode, SetStmt, IfStmt, LoopStmt, ExitWhenStmt, ReturnStmt
-)
-# Re-export errors to maintain backward compatibility
-from .errors import ParseError, MissingKeywordError, UnexpectedTokenError, ParameterError
+from .ast_nodes import FunctionDecl, AST
 from .base_parser import BaseParser
 from .expression_parser import ExpressionParserMixin
 from .global_parser import GlobalParserMixin
@@ -19,7 +15,15 @@ from .statement_parser import StatementParserMixin
 from .function_parser import FunctionParserMixin
 from .assignment_parser import AssignmentParserMixin
 
-class Parser(BaseParser, GlobalParserMixin, FunctionParserMixin, StatementParserMixin, ExpressionParserMixin, AssignmentParserMixin):
+
+class Parser(
+    BaseParser,
+    GlobalParserMixin,
+    FunctionParserMixin,
+    StatementParserMixin,
+    ExpressionParserMixin,
+    AssignmentParserMixin,
+):
     """JASS代码的递归下降解析器。"""
 
     def parse(self) -> AST:
@@ -30,8 +34,9 @@ class Parser(BaseParser, GlobalParserMixin, FunctionParserMixin, StatementParser
         """
         # 从词法分析器获取所有标记，过滤掉空白和注释
         self.tokens = [
-            token for token in self.lexer.tokenize()
-            if token.type not in ('WHITESPACE', 'COMMENT', 'MULTILINE_COMMENT')
+            token
+            for token in self.lexer.tokenize()
+            if token.type not in ("WHITESPACE", "COMMENT", "MULTILINE_COMMENT")
         ]
 
         if not self.tokens:
@@ -51,8 +56,10 @@ class Parser(BaseParser, GlobalParserMixin, FunctionParserMixin, StatementParser
 
         # 主解析循环：查找函数声明
         while self.current_token is not None:
-            if (self.current_token.type == 'KEYWORD'
-                    and self.current_token.value == 'function'):
+            if (
+                self.current_token.type == "KEYWORD"
+                and self.current_token.value == "function"
+            ):
                 func = self.parse_function_declaration()
                 if func is not None:
                     functions.append(func)
