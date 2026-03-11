@@ -189,3 +189,11 @@ tools: read_file, search, grep, bash, apply_patch
 必须明确说明：
 
 是否可能影响 runtime 行为。
+
+# 回归测试
+
+重构后必须运行完整的测试套件，确保所有功能正常。
+
+```
+pytest
+```
