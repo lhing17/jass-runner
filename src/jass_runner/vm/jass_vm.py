@@ -6,7 +6,6 @@
 
 import logging
 import os
-import re
 from typing import Optional
 
 from ..parser.parser import Parser
@@ -14,6 +13,8 @@ from ..interpreter.interpreter import Interpreter
 from ..natives.factory import NativeFactory
 from ..timer.system import TimerSystem
 from ..timer.simulation import SimulationLoop
+from ..utils.constant_loader import ConstantLoader
+from ..trigger.event_types import EVENT_PLAYER_CHAT
 
 
 logger = logging.getLogger(__name__)
@@ -45,8 +46,8 @@ class JassVM:
         coroutine_runner = self.simulation_loop.coroutine_runner if self.simulation_loop else None
         self.interpreter = Interpreter(native_registry=self.native_registry, coroutine_runner=coroutine_runner)
 
-        # 设置 ExecuteFunc 的 interpreter 引用
-        self._setup_execute_func()
+        # 初始化常量加载器
+        self.constant_loader = ConstantLoader(self.interpreter)
 
         self.ast = None
         self.loaded = False
@@ -55,16 +56,6 @@ class JassVM:
 
         # 加载 common.j 中的常量
         self._load_constants()
-
-    def _setup_execute_func(self):
-        """设置 ExecuteFunc 的 interpreter 引用。
-
-        ExecuteFunc 需要访问 interpreter 来创建新协程执行指定函数。
-        """
-        from ..natives.async_natives import ExecuteFunc
-        execute_func = self.native_registry.get('ExecuteFunc')
-        if execute_func and isinstance(execute_func, ExecuteFunc):
-            execute_func.interpreter = self.interpreter
 
     def load_script(self, script_content: str):
         """加载并解析 JASS 脚本。"""
@@ -91,7 +82,7 @@ class JassVM:
         """
         # 自动查找路径
         if path is None:
-            path = self._find_blizzard_path()
+            path = self._find_resource_path('blizzard.j')
             if path is None:
                 logger.warning("未找到 blizzard.j，已跳过加载")
                 return False
@@ -113,12 +104,12 @@ class JassVM:
             logger.warning(f"blizzard.j 解析失败: {e}")
             return False
 
-    def _find_blizzard_path(self) -> Optional[str]:
-        """自动查找 blizzard.j 的默认路径。"""
+    def _find_resource_path(self, filename: str) -> Optional[str]:
+        """自动查找资源的默认路径。"""
         possible_paths = [
-            'resources/blizzard.j',
-            os.path.join(os.path.dirname(__file__), '..', '..', '..', 'resources', 'blizzard.j'),
-            os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', '..', '..', 'resources', 'blizzard.j'),
+            f'resources/{filename}',
+            os.path.join(os.path.dirname(__file__), '..', '..', '..', 'resources', filename),
+            os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', '..', '..', 'resources', filename),
         ]
 
         for p in possible_paths:
@@ -188,8 +179,6 @@ class JassVM:
             player_id: 发送消息的玩家ID
             message: 聊天消息内容
         """
-        from ..trigger.event_types import EVENT_PLAYER_CHAT
-
         logger.info(f"[模拟] 玩家 {player_id} 发送聊天消息: '{message}'")
 
         # 触发聊天事件
@@ -203,121 +192,6 @@ class JassVM:
 
     def _load_constants(self):
         """从 common.j 加载常量定义。"""
-        common_j_paths = [
-            'resources/common.j',
-            os.path.join(os.path.dirname(__file__), '..', '..', '..', 'resources', 'common.j')
-        ]
-
-        for path in common_j_paths:
-            if os.path.exists(path):
-                self._parse_constants_from_file(path)
-                break
-
-    def _parse_constants_from_file(self, filepath: str):
-        """解析文件中的常量定义。"""
-        constant_pattern = re.compile(
-            r'constant\s+(\w+)\s+(\w+)\s*=\s*([^\s]+)',
-            re.MULTILINE
-        )
-
-        with open(filepath, 'r', encoding='utf-8') as f:
-            content = f.read()
-
-        for match in constant_pattern.finditer(content):
-            const_type = match.group(1)  # integer, real, boolean, etc.
-            const_name = match.group(2)   # CAMERA_MARGIN_LEFT
-            const_value = match.group(3) # 0, true, etc.
-
-            # 转换值为Python类型并存储到解释器的全局变量
-            value = self._convert_constant_value(const_type, const_value)
-            self.interpreter.global_context.variables[const_name] = value
-
-    def _convert_constant_value(self, const_type: str, const_value: str):
-        """将JASS常量值转换为Python值。"""
-        if const_type == 'integer':
-            try:
-                return int(const_value)
-            except ValueError:
-                return 0
-        elif const_type == 'real':
-            try:
-                return float(const_value)
-            except ValueError:
-                return 0.0
-        elif const_type == 'boolean':
-            return const_value.lower() == 'true'
-        elif const_type == 'alliancetype':
-            # 处理 ConvertAllianceType(0) 格式的函数调用
-            # 提取括号中的整数
-            try:
-                import re
-                match = re.search(r'ConvertAllianceType\((\d+)\)', const_value)
-                if match:
-                    return int(match.group(1))
-                else:
-                    return int(const_value)
-            except (ValueError, AttributeError):
-                return 0
-        elif const_type == 'playerstate':
-            # 处理 ConvertPlayerState(0) 格式的函数调用
-            try:
-                import re
-                match = re.search(r'ConvertPlayerState\((\d+)\)', const_value)
-                if match:
-                    return int(match.group(1))
-                else:
-                    return int(const_value)
-            except (ValueError, AttributeError):
-                return 0
-        elif const_type == 'playerunitevent':
-            # 处理 ConvertPlayerUnitEvent(271) 格式的函数调用
-            try:
-                import re
-                match = re.search(r'ConvertPlayerUnitEvent\((\d+)\)', const_value)
-                if match:
-                    from ..natives.event_handles import PlayerUnitEvent
-                    event_id = int(match.group(1))
-                    return self.interpreter.state_context.handle_manager.create_playerunit_event(event_id)
-                else:
-                    return const_value
-            except (ValueError, AttributeError):
-                return const_value
-        elif const_type == 'playerevent':
-            # 处理 ConvertPlayerEvent(200) 格式的函数调用
-            try:
-                import re
-                match = re.search(r'ConvertPlayerEvent\((\d+)\)', const_value)
-                if match:
-                    event_id = int(match.group(1))
-                    return self.interpreter.state_context.handle_manager.create_playerevent(event_id)
-                else:
-                    return const_value
-            except (ValueError, AttributeError):
-                return const_value
-        elif const_type == 'gameevent':
-            # 处理 ConvertGameEvent(300) 格式的函数调用
-            try:
-                import re
-                match = re.search(r'ConvertGameEvent\((\d+)\)', const_value)
-                if match:
-                    event_id = int(match.group(1))
-                    return self.interpreter.state_context.handle_manager.create_gameevent(event_id)
-                else:
-                    return const_value
-            except (ValueError, AttributeError):
-                return const_value
-        elif const_type == 'unitevent':
-            # 处理 ConvertUnitEvent(100) 格式的函数调用
-            try:
-                import re
-                match = re.search(r'ConvertUnitEvent\((\d+)\)', const_value)
-                if match:
-                    event_id = int(match.group(1))
-                    return self.interpreter.state_context.handle_manager.create_unitevent(event_id)
-                else:
-                    return const_value
-            except (ValueError, AttributeError):
-                return const_value
-        else:
-            # 对于handle类型和其他类型，存储字符串值
-            return const_value
+        path = self._find_resource_path('common.j')
+        if path:
+             self.constant_loader.load_from_file(path)

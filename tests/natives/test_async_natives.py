@@ -26,8 +26,11 @@ def test_execute_func_creates_coroutine():
     mock_interpreter.functions = {"test_func": mock_func}
     mock_interpreter.coroutine_runner = Mock()
 
-    execute_func.interpreter = mock_interpreter
-    execute_func.execute(None, "test_func")
+    # 模拟 state_context
+    mock_context = Mock()
+    mock_context.interpreter = mock_interpreter
+
+    # execute_func.interpreter = mock_interpreter # 不再需要手动设置 interpreter
+    execute_func.execute(mock_context, "test_func")
 
     mock_interpreter.coroutine_runner.execute_func.assert_called_once()
-

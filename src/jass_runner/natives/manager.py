@@ -9,6 +9,10 @@ from .handle import Handle, Unit, Player, Item, Group, Rect, Effect, BoolExpr, S
 from .hashtable import Hashtable
 from .event_handles import PlayerUnitEvent, PlayerEvent, GameEvent, UnitEvent
 from .timerdialog import TimerDialog
+from .gamestate import (
+    GameState, IGameState, FGameState, PlayerState, UnitState,
+    AllianceType, LimitOp, WidgetEvent, DialogEvent
+)
 
 
 logger = logging.getLogger(__name__)
@@ -597,3 +601,66 @@ class HandleManager:
         if isinstance(handle, TimerDialog):
             return handle
         return None
+
+    def create_gamestate(self, state_id: int) -> GameState:
+        """创建游戏状态 handle。"""
+        handle_id = f"gamestate_{self._generate_id()}"
+        state = GameState(handle_id, state_id)
+        self._register_handle(state)
+        return state
+
+    def create_igamestate(self, state_id: int) -> IGameState:
+        """创建整数游戏状态 handle。"""
+        handle_id = f"igamestate_{self._generate_id()}"
+        state = IGameState(handle_id, state_id)
+        self._register_handle(state)
+        return state
+
+    def create_fgamestate(self, state_id: int) -> FGameState:
+        """创建浮点游戏状态 handle。"""
+        handle_id = f"fgamestate_{self._generate_id()}"
+        state = FGameState(handle_id, state_id)
+        self._register_handle(state)
+        return state
+
+    def create_playerstate(self, state_id: int) -> PlayerState:
+        """创建玩家状态 handle。"""
+        handle_id = f"playerstate_{self._generate_id()}"
+        state = PlayerState(handle_id, state_id)
+        self._register_handle(state)
+        return state
+
+    def create_unitstate(self, state_id: int) -> UnitState:
+        """创建单位状态 handle。"""
+        handle_id = f"unitstate_{self._generate_id()}"
+        state = UnitState(handle_id, state_id)
+        self._register_handle(state)
+        return state
+
+    def create_alliancetype(self, alliance_id: int) -> AllianceType:
+        """创建联盟类型 handle。"""
+        handle_id = f"alliancetype_{self._generate_id()}"
+        alliance = AllianceType(handle_id, alliance_id)
+        self._register_handle(alliance)
+        return alliance
+
+    def create_limitop(self, op_id: int) -> LimitOp:
+        """创建限制操作 handle。"""
+        handle_id = f"limitop_{self._generate_id()}"
+        op = LimitOp(handle_id, op_id)
+        self._register_handle(op)
+        return op
+
+    def create_widgetevent(self, event_id: int) -> WidgetEvent:
+        """创建控件事件 handle。"""
+        handle_id = f"widgetevent_{self._generate_id()}"
+        event = WidgetEvent(handle_id, event_id)
+        self._register_handle(event)
+        return event
+
+    def create_dialogevent(self, event_id: int) -> DialogEvent:
+        """创建对话框事件 handle。"""
+        handle_id = f"dialogevent_{self._generate_id()}"
+        event = DialogEvent(handle_id, event_id)
+        self._register_handle(event)
+        return event

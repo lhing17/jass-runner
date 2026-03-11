@@ -5,6 +5,9 @@
 
 from .base import NativeFunction
 from ..coroutine.exceptions import SleepInterrupt
+import logging
+
+logger = logging.getLogger(__name__)
 
 
 class TriggerSleepAction(NativeFunction):
@@ -29,10 +32,6 @@ class TriggerSleepAction(NativeFunction):
 class ExecuteFunc(NativeFunction):
     """JASS 原生函数：创建新协程执行指定函数。"""
 
-    def __init__(self):
-        """初始化 ExecuteFunc，interpreter 将通过属性设置。"""
-        self.interpreter = None
-
     @property
     def name(self) -> str:
         return "ExecuteFunc"
@@ -47,13 +46,24 @@ class ExecuteFunc(NativeFunction):
             创建新协程执行函数，但不等待其完成
             当前协程继续执行
         """
-        if not self.interpreter:
-            return  # interpreter 未设置，静默返回
+        # 从 state_context 获取 interpreter
+        # 注意：这里假设 state_context.interpreter 是可用的
+        # 在 Interpreter.execute_function 中，我们将 interpreter 注入到了 state_context
+        interpreter = getattr(state_context, 'interpreter', None)
 
-        func = self.interpreter.functions.get(func_name)
+        if not interpreter:
+            logger.warning("[ExecuteFunc] 无法获取 interpreter 实例")
+            return
+
+        func = interpreter.functions.get(func_name)
         if not func:
-            return  # 函数不存在静默返回
+            logger.warning(f"[ExecuteFunc] 函数未找到: {func_name}")
+            return
 
-        self.interpreter.coroutine_runner.execute_func(
-            self.interpreter, func, []
+        if not interpreter.coroutine_runner:
+             logger.warning("[ExecuteFunc] 协程运行器未初始化")
+             return
+
+        interpreter.coroutine_runner.execute_func(
+            interpreter, func, []
         )
