@@ -227,6 +227,11 @@
   - [x] 27个Native函数（InitHashtable, Save*, Load*, HaveSaved*, RemoveSaved*, Flush*）
   - [x] 支持数据类型：integer, real, boolean, string, unit, item, player
   - [x] HandleManager集成，支持hashtable的创建和获取
+- [x] **P3** [Parser] 表达式解析器重构与修复 ✅ 已完成（2026-03-11）
+  - [x] 恢复expression_parser.py完整功能（函数调用、not运算符、数组访问）
+  - [x] 恢复assignment_parser.py完整功能（嵌套调用、数组参数）
+  - [x] 修复测试文件AST节点导入路径
+  - [x] 代码清理：global parser、constant loader、FourCC工具重构
 - [ ] **P3** [Simulator] 完整的common.j模拟
   - [ ] 覆盖80%+的common.j函数（当前约25%）
   - [ ] 完整的Blz（Blizzard）API支持

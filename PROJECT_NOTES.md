@@ -1048,6 +1048,12 @@ jass-runner/
   - 立即移除单位，不触发死亡事件
   - 与KillUnit形成互补
   - 所有测试通过
+- ✅ **解析器重构与代码清理完成** (2026-03-11)
+  - 恢复expression_parser.py和assignment_parser.py完整功能
+  - 修复测试文件AST节点导入路径
+  - 代码清理和重构（global parser、constant loader、FourCC工具）
+  - 新增4个专家技能文档
+  - 所有 1043 个测试通过
 
 #### 60. 玩家科技系统Native函数实现完成 (2026-03-06)
 - **新增组件**:
@@ -1709,4 +1715,37 @@ jass-runner/
   - `docs/superpowers/plans/2026-03-10-removeunit.md` - 实施计划
 - **测试统计**: 所有12个basic测试通过，无回归问题
 
-*最后更新: 2026-03-10*
+---
+
+#### 70. 解析器重构与代码清理完成 (2026-03-11)
+- **问题背景**:
+  - git提交f7ee398错误地删除了expression_parser.py和assignment_parser.py的部分内容
+  - 导致if条件中的函数调用、not运算符、数组访问等功能失效
+  - AST节点已从parser.py迁移到ast_nodes.py，测试文件导入路径需要更新
+- **修复内容**:
+  - **expression_parser.py**: 恢复完整的表达式解析功能
+    - 支持函数调用参数解析（`TriggerEvaluate(trig)`）
+    - 支持not运算符（`not EquipmentData_Validate()`）
+    - 支持数组访问（`udg_equip_item_type_id[i]`）
+    - Pratt解析算法实现（运算符优先级处理）
+  - **assignment_parser.py**: 恢复完整的赋值解析功能
+    - 支持嵌套函数调用参数解析
+    - 支持数组访问作为参数
+  - **测试导入修复**: 更新测试文件中的AST节点导入路径
+    - `tests/interpreter/test_evaluator.py`: 从`parser.parser`改为`parser.ast_nodes`
+    - `tests/interpreter/test_interpreter.py`: 拆分导入语句
+    - `tests/parser/test_parser.py`: 更新`LocalDecl`, `IfStmt`等节点导入
+- **代码清理**:
+  - 移除未使用的导入和注释（ca05b1c）
+  - 优化导入语句格式（61d0f85）
+  - GlobalParser及相关文件重构（52ef4e5）
+  - 常量加载逻辑重构（72fcce0）
+  - FourCC工具和ExecuteFunc实现改进（0127e25）
+- **新增技能文档**:
+  - `docs/skills/code-review-expert.md` - 代码审查专家技能
+  - `docs/skills/jass-runtime-review-expert.md` - JASS运行时审查专家技能
+  - `docs/skills/runtime-safety-expert.md` - 运行时安全审查专家技能
+  - `docs/skills/code-refactor-expert.md` - 代码重构专家技能
+- **测试统计**: 所有 1043 个测试通过
+
+*最后更新: 2026-03-11*
