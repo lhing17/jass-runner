@@ -1,4 +1,4 @@
-from typing import Optional, TYPE_CHECKING
+from typing import Optional, TYPE_CHECKING, Any
 if TYPE_CHECKING:
     from .base_parser import BaseParser
     from .lexer import Token
@@ -6,11 +6,11 @@ if TYPE_CHECKING:
 class ExpressionParserMixin:
     """提供条件表达式解析功能。"""
 
-    def parse_condition(self: 'BaseParser') -> Optional[str]:
-        """解析条件表达式（支持比较操作符）。
+    def parse_condition(self: 'BaseParser') -> Optional[Any]:
+        """解析条件表达式（支持比较操作符和函数调用）。
 
         返回：
-            条件表达式字符串，如果解析失败返回None
+            条件表达式字符串或NativeCallNode，如果解析失败返回None
         """
         if not self.current_token:
             return None
@@ -30,15 +30,27 @@ class ExpressionParserMixin:
             if self.current_token and self.current_token.value == '(':
                 self.next_token()  # 跳过 '('
 
-                # 解析参数列表（简化处理）
-                while self.current_token and self.current_token.value != ')':
-                    self.next_token()
+                # 使用 _parse_call_args 解析参数列表
+                args = self._parse_call_args()
 
                 # 跳过右括号
                 if self.current_token and self.current_token.value == ')':
                     self.next_token()
 
-                condition += "()"
+                # 如果有参数，构建带参数的表达式字符串
+                # 将参数转换为字符串表示
+                arg_strs = []
+                for arg in args:
+                    if hasattr(arg, 'func_name'):
+                        # 嵌套函数调用，使用占位符表示
+                        arg_strs.append(f"{arg.func_name}()")
+                    elif isinstance(arg, list):
+                        # 混合表达式
+                        arg_strs.append(''.join(str(t) for t in arg))
+                    else:
+                        arg_strs.append(str(arg))
+
+                condition += f"({', '.join(arg_strs)})"
 
             # 检查是否有比较操作符（如 >, <, ==, !=, >=, <=）
             if self.current_token and self.current_token.type == 'OPERATOR':

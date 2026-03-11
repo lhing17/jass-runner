@@ -5,11 +5,27 @@
 
 import logging
 from .base import NativeFunction
+from .registry import NativeRegistry
 from .handle import Unit, Item, Player
 from ..utils import int_to_fourcc
 
 
 logger = logging.getLogger(__name__)
+
+# 模块级注册表，用于装饰器注册
+registry = NativeRegistry()
+
+
+# 便捷装饰器函数
+def native(name: str):
+    """注册native函数的装饰器。
+
+    使用示例：
+        @native("DisplayTextToPlayer")
+        class DisplayTextToPlayer(NativeFunction):
+            ...
+    """
+    return registry.decorator(name)
 
 # 单位状态常量
 UNIT_STATE_LIFE = 0
@@ -18,6 +34,7 @@ UNIT_STATE_MANA = 2
 UNIT_STATE_MAX_MANA = 3
 
 
+@native("DisplayTextToPlayer")
 class DisplayTextToPlayer(NativeFunction):
     """向玩家显示文本（通过控制台输出模拟）。
 
@@ -51,6 +68,7 @@ class DisplayTextToPlayer(NativeFunction):
         return None
 
 
+@native("KillUnit")
 class KillUnit(NativeFunction):
     """杀死一个单位（通过状态管理系统）。
 
@@ -92,6 +110,7 @@ class KillUnit(NativeFunction):
         return success
 
 
+@native("RemoveUnit")
 class RemoveUnit(NativeFunction):
     """移除一个单位（通过状态管理系统）。
 
@@ -133,6 +152,7 @@ class RemoveUnit(NativeFunction):
         return success
 
 
+@native("CreateUnit")
 class CreateUnit(NativeFunction):
     """创建一个单位（通过状态管理系统）。
 
@@ -174,6 +194,7 @@ class CreateUnit(NativeFunction):
         return unit
 
 
+@native("GetUnitState")
 class GetUnitState(NativeFunction):
     """获取单位状态（通过状态管理系统）。
 
@@ -223,6 +244,7 @@ class GetUnitState(NativeFunction):
         return value
 
 
+@native("CreateItem")
 class CreateItem(NativeFunction):
     """创建一个物品（通过状态管理系统）。
 
@@ -261,6 +283,7 @@ class CreateItem(NativeFunction):
         return item
 
 
+@native("RemoveItem")
 class RemoveItem(NativeFunction):
     """移除一个物品（通过状态管理系统）。
 
@@ -300,6 +323,7 @@ class RemoveItem(NativeFunction):
             logger.warning(f"[RemoveItem] 物品{item.id}不存在或已被移除")
 
 
+@native("Player")
 class PlayerNative(NativeFunction):
     """获取Player对象（通过player_id）。
 
@@ -330,6 +354,7 @@ class PlayerNative(NativeFunction):
         return player
 
 
+@native("GetLocalPlayer")
 class GetLocalPlayer(NativeFunction):
     """获取本地玩家。
 

@@ -4,7 +4,7 @@
 """
 
 from .registry import NativeRegistry
-from .basic import DisplayTextToPlayer, KillUnit, RemoveUnit, CreateUnit, GetUnitState, CreateItem, RemoveItem, PlayerNative, GetLocalPlayer
+from . import basic
 from .math_core import SquareRoot, Pow, Cos, Sin, R2I, I2R
 from .math_extended import Tan, ModuloInteger, ModuloReal, R2S, S2R, I2S, S2I, GetRandomInt, GetRandomReal
 from .timer_natives import CreateTimer, TimerStart, TimerGetElapsed, DestroyTimer, PauseTimer, ResumeTimer
@@ -191,16 +191,11 @@ class NativeFactory:
         """
         registry = NativeRegistry()
 
-        # 注册基础native函数
-        registry.register(DisplayTextToPlayer())
-        registry.register(KillUnit())
-        registry.register(RemoveUnit())
-        registry.register(CreateUnit())
-        registry.register(GetUnitState())
-        registry.register(CreateItem())
-        registry.register(RemoveItem())
-        registry.register(PlayerNative())
-        registry.register(GetLocalPlayer())
+        # 自动注册basic模块中的native函数（通过装饰器）
+        for func in basic.registry.get_all().values():
+            registry.register(func)
+
+        # 手动注册其他模块的native函数（向后兼容）
 
         # 注册事件类型 Convert 函数
         registry.register(ConvertPlayerUnitEvent())

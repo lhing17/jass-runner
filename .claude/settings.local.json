@@ -45,7 +45,8 @@
       "WebSearch",
       "Bash(grep:*)",
       "Bash(git pull:*)",
-      "mcp__ide__executeCode"
+      "mcp__ide__executeCode",
+      "Bash(del test_trigger_evaluate_fix.py)"
     ]
   }
 }
