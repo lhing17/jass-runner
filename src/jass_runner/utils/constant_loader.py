@@ -7,6 +7,7 @@ import os
 import re
 import logging
 from typing import Dict, Any, Optional
+from .fourcc import fourcc_to_int
 
 logger = logging.getLogger(__name__)
 
@@ -27,6 +28,34 @@ class ConstantLoader:
             re.MULTILINE
         )
         self.func_call_pattern = re.compile(r'(\w+)\((\d+)\)')
+
+        # 初始化 Handle 创建器映射
+        self._init_handle_creators()
+
+    def _init_handle_creators(self):
+        """初始化 Handle 类型到创建函数的映射。"""
+        # 注意：这里的 handle_manager 在初始化时获取可能为 None（如果 interpreter 还没准备好）
+        # 所以我们使用 lambda 在运行时获取 handle_manager
+        
+        def get_hm():
+            return self.interpreter.state_context.handle_manager
+
+        self.handle_creators = {
+            'playerunitevent': lambda val: get_hm().create_playerunit_event(val),
+            'playerevent': lambda val: get_hm().create_playerevent(val),
+            'gameevent': lambda val: get_hm().create_gameevent(val),
+            'unitevent': lambda val: get_hm().create_unitevent(val),
+            'limitop': lambda val: get_hm().create_limitop(val),
+            'widgetevent': lambda val: get_hm().create_widgetevent(val),
+            'dialogevent': lambda val: get_hm().create_dialogevent(val),
+            'gamestate': lambda val: get_hm().create_gamestate(val),
+            'igamestate': lambda val: get_hm().create_igamestate(val),
+            'fgamestate': lambda val: get_hm().create_fgamestate(val),
+            # 以下类型目前仅作为整数别名处理，直接返回整数值
+            'playerstate': lambda val: val,
+            'unitstate': lambda val: val,
+            'alliancetype': lambda val: val,
+        }
 
     def load_from_file(self, filepath: str) -> None:
         """从文件加载常量定义。
@@ -79,7 +108,6 @@ class ConstantLoader:
                  return int(value.replace('$', '0x'), 16)
             # 处理字符常量 'hfoo'
             if value.startswith("'") and value.endswith("'") and len(value) == 6:
-                from .fourcc import fourcc_to_int
                 return fourcc_to_int(value[1:-1])
             return int(value)
         except (ValueError, ImportError):
@@ -98,42 +126,15 @@ class ConstantLoader:
         # 尝试匹配 ConvertXxx(int) 格式
         match = self.func_call_pattern.search(const_value)
         if match:
-            func_name = match.group(1)
+            # func_name = match.group(1) # 目前不需要函数名，只用类型
             arg_value = int(match.group(2))
 
-            # 根据类型创建相应的 Handle 对象
-            # 注意：这会产生副作用（创建 Handle），但在加载 common.j 时是必要的
-            handle_manager = self.interpreter.state_context.handle_manager
-
-            if const_type == 'playerunitevent':
-                 return handle_manager.create_playerunit_event(arg_value)
-            elif const_type == 'playerevent':
-                return handle_manager.create_playerevent(arg_value)
-            elif const_type == 'gameevent':
-                return handle_manager.create_gameevent(arg_value)
-            elif const_type == 'unitevent':
-                return handle_manager.create_unitevent(arg_value)
-            elif const_type == 'limitop':
-                return handle_manager.create_limitop(arg_value)
-            elif const_type == 'widgetevent':
-                return handle_manager.create_widgetevent(arg_value)
-            elif const_type == 'dialogevent':
-                return handle_manager.create_dialogevent(arg_value)
-            elif const_type == 'gamestate':
-                 return handle_manager.create_gamestate(arg_value)
-            elif const_type == 'igamestate':
-                 return handle_manager.create_igamestate(arg_value)
-            elif const_type == 'fgamestate':
-                 return handle_manager.create_fgamestate(arg_value)
-            elif const_type == 'playerstate':
-                 return arg_value # 许多 state 只是整数别名，视具体实现而定，这里假设先返回整数或后续完善 Handle
-            elif const_type == 'unitstate':
-                 return arg_value
-            elif const_type == 'alliancetype':
-                 return arg_value
-            # ... 其他类型待补充
-
-            # 如果没有匹配的特殊处理，返回原始整数值（模拟 Handle ID）
+            # 使用映射查找创建函数
+            creator = self.handle_creators.get(const_type)
+            if creator:
+                return creator(arg_value)
+            
+            # 如果没有匹配的创建函数，返回原始整数值（模拟 Handle ID）
             return arg_value
 
         # 如果不是函数调用，可能是 null 或其他变量引用
