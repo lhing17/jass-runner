@@ -1,4 +1,4 @@
-from typing import List, Optional, TYPE_CHECKING, Any, Union
+from typing import List, Optional, TYPE_CHECKING, Union
 from .ast_nodes import GlobalDecl, ArrayDecl
 from .errors import ParseError
 
